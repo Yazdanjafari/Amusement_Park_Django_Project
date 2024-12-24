@@ -65,8 +65,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     verbose_name_plural = "آشپز ها"
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'nationality_id', 'phone_number', 'email', 'date_of_birth']
-
+    
     def __str__(self):
         return self.username
 
