@@ -65,3 +65,14 @@
 </main>
 <!-- **************** MAIN CONTENT END **************** -->
 {% endblock body %}
+
+
+
+{% block script %}
+{% if error_message and request.method == "POST" %}
+<script>
+    alert("{{ error_message }}");
+</script>
+{% endif %}
+{% endblock script %}
+	

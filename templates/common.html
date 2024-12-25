@@ -132,13 +132,19 @@
 			}
 		}
 	
-		{% comment %} header logo size {% endcomment %}
+		{% comment %} header {% endcomment %}
 		.navbar-brand-item {
 			width: 40px !important;
 			height: auto !important;
 		}		
 
 		</style>
+
+		
+		{% block style %}
+			
+		{% endblock style %}
+			
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" href='{% static "assets/images/favicon.ico" %}'>
@@ -180,128 +186,40 @@
 				<!-- Nav Main menu START -->
 				<ul class="navbar-nav navbar-nav-scroll me-auto">
 
+					<li class="nav-item dropdown" style="padding-top: 5px !important; padding-bottom: 5px !important;">
+						<a class="nav-link bg-primary bg-opacity-10 rounded-3 text-primary px-3 py-3 py-xl-0" href="#" id="categoryMenu" 
+						   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="bi bi-cart me-2"></i><span>سبد خرید</span>
+						</a>
+					</li>
+					
+					
 					<li class="nav-item dropdown">
 						<a class="nav-link {% block active_main %}{% endblock active_main %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">صفحه اصلی</a>
 					</li>
 
-
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle {% block active_cost_control %}{% endblock active_cost_control %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">امور مالی</a>
-						<ul class="dropdown-menu" aria-labelledby="demoMenu">
-							<li> <a class="dropdown-item" href="#">ثبت تراکنش</a></li>
-							<li> <a class="dropdown-item" href="#">عودت وجه</a></li>
-							<li> <a class="dropdown-item" href="#">اسکن بارکد</a></li>
-						</ul>
-					</li>
-
-
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle {% block active_offer %}{% endblock active_offer %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">تخفیف</a>
-						<ul class="dropdown-menu" aria-labelledby="demoMenu">
-							<li> <a class="dropdown-item" href="#">ایجاد کد تخفیف</a></li>
-							<li> <a class="dropdown-item" href="#">کد های تخفیف ایجاد شده</a></li>
-						</ul>
+						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ثبت تراکنش</a>
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_sms_pannel %}{% endblock active_sms_pannel %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">پنل پیامکی</a>
+						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">عودت وجه</a>
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_admin_pannel %}{% endblock active_admin_pannel %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">پنل ادمین</a>
+						<a class="nav-link {% block active_scan %}{% endblock active_scan %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">اسکن بارکد</a>
+					</li>				
+					
+					<li class="nav-item dropdown">
+						<a class="nav-link" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">پنل ادمین</a>
 					</li>					
-
+				
 				</ul>
 				<!-- Nav Main menu END -->
 
-				<!-- Add to cart START -->
+
+				{% comment %} notification starts {% endcomment %}
 				<div class="nav my-3 my-xl-0 px-4 flex-nowrap align-items-center">
-					<li class="nav-item ms-2 dropdown ">
-						<!-- Cart button -->
-						<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-							<i class="bi bi-cart3 fa-fw"></i>
-						</a>
-						<!-- badge -->
-						<span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1">2 
-							<span class="visually-hidden">اقلام</span>
-						</span>
-
-						<!-- Cart dropdown menu START -->
-						<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
-							<div class="card bg-transparent">
-								<div class="card-header bg-transparent border-bottom py-4">
-									<h5 class="m-0">سبد خرید شما</h5>
-								</div>
-								<div class="card-body p-0">
-
-									<!-- Cart item START -->
-									<div class="row p-3 g-2">
-										<!-- Image -->
-										<div class="col-3">
-											<img class="rounded-2" src='{% static "assets/images/logo_with_background.jpg" %}' alt="avatar">
-										</div>
-
-										<div class="col-9">
-											<!-- Title -->
-											<div class="d-flex justify-content-between">
-												<h6 class="m-0 fw-normal">دوره بازاریابی دیجیتال برای مبتدیان</h6>
-												<a href="#" class="small text-primary-hover"><i class="bi bi-x-lg"></i></a>
-											</div>
-											<!-- Select item -->
-											<form class="choices-sm pt-2 col-4">
-												<select class="form-select js-choice border-0 bg-transparent" data-search-enabled="false">
-													<option>1</option>
-													<option selected>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</form>
-										</div>
-									</div>
-									<!-- Cart item END -->
-
-									<!-- Divider -->
-									<hr class="m-0">
-
-									<!-- Cart item START -->
-									<div class="row p-3 g-2">
-										<!-- Image -->
-										<div class="col-3">
-											<img class="rounded-2" src='{% static "assets/images/logo_with_background.jpg" %}' alt="avatar">
-										</div>
-
-										<div class="col-9">
-											<!-- Title -->
-											<div class="d-flex justify-content-between">
-												<h6 class="m-0 fw-normal">آموزش مقدماتی کتابخانه Pygame</h6>
-												<a href="#" class="small text-primary-hover"><i class="bi bi-x-lg"></i></a>
-											</div>
-											<!-- Select item -->
-											<form class="choices-sm pt-2 col-4">
-												<select class="form-select js-choice border-0 bg-transparent" data-search-enabled="false">
-													<option selected>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</form>
-										</div>
-									</div>
-									<!-- Cart item END -->
-
-								</div>
-								<!-- Button -->
-								<div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
-									<a href="#" class="btn btn-sm btn-light mb-0">مشاهده سبد</a>
-									<a href="#" class="btn btn-sm btn-success mb-0">تسویه حساب</a>
-								</div>
-							</div>
-						</div>
-						<!-- Cart dropdown menu END -->
-					</li>
-					<!-- Add to cart END -->
 
 					<!-- Notification dropdown START -->
 					<li class="nav-item ms-2 ms-sm-3 dropdown d-none d-sm-block">
@@ -468,6 +386,12 @@ Footer END -->
 
 <!-- Template Functions -->
 <script src='{% static "en_assets/js/functions.js" %}'></script>
+
+
+{% block script %}
+	
+{% endblock script %}
+	
 
 </body>
 </html>
