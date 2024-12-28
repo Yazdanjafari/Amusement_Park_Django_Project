@@ -1,0 +1,254 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block body %}
+
+
+
+<!-- =======================
+Page Banner START -->
+<section class="py-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="bg-light p-4 text-center rounded-3">
+					<h1 class="m-0 fs-2">تسویه حساب</h1>
+					<!-- Breadcrumb -->
+					<div class="d-flex justify-content-center">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb breadcrumb-dots mb-0">
+								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="#">سبد خرید</a></li>
+								<li class="breadcrumb-item active" aria-current="page">تسویه حساب</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- =======================
+Page Banner END -->
+
+<!-- =======================
+Page content START -->
+<section class="pt-5">
+	<div class="container">
+	
+		<div class="row g-4 g-sm-5">
+			<!-- Main content START -->
+			<div class="col-xl-8 mb-4 mb-sm-0">
+
+				<!-- Personal info START -->
+				<div class="card card-body shadow p-4">
+
+					<!-- Payment method START -->
+					<div class="row g-3 mt-4">
+						<!-- Title -->
+						<h5 class="">روش های پرداخت :</h5>
+						<div class="col-12">
+							<div class="accordion accordion-circle" id="accordioncircle">
+
+								<!-- Card reader (Default) -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-card-reader">
+										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+											دستگاه کارتخوان
+										</button>
+									</h6>
+									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
+									</div>
+								</div>
+
+								<!-- Cash -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-cash">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+											نقدی
+										</button>
+									</h6>
+									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
+									</div>
+								</div>
+
+								<!-- Combined payment -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-combined">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+											ترکیبی
+										</button>
+									</h6>
+									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+										<!-- Accordion body -->
+										<div class="accordion-body">
+											<!-- Form START -->
+											<form class="row g-3">
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی</span></label>
+													<input type="text" class="form-control" aria-label="cash amount" placeholder="مبلغ نقدی را وارد کنید">
+												</div>
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان</span></label>
+													<input type="text" class="form-control" aria-label="card amount" placeholder="مبلغ کارتخوان را وارد کنید">
+												</div>
+											</form>
+											<!-- Form END -->
+										</div>
+									</div>
+								</div>
+								<!-- Credit or debit card END -->
+
+					<!-- Title -->
+					<h5 class="mb-0">اطلاعات مشتری (اختیاری)</h5>
+						
+					<!-- Form START -->
+					<form class="row g-3 mt-0">						
+
+						<div class="input-group mt-2">
+							<input class="form-control form-control" placeholder="شماره تماس">
+							<button type="button" class="btn btn-primary">اعمال</button>
+						</div>
+						
+						<!-- Name -->
+						<div class="col-md-6 bg-light-input">
+							<input type="text" class="form-control" id="yourName" placeholder="نام">
+						</div>
+						<!-- Lname -->
+						<div class="col-md-6 bg-light-input">
+							<input type="text" class="form-control" id="yourName" placeholder="نام خانوادگی">
+						</div>
+
+						<!-- State option -->
+						<div class="col-md-6 bg-light-input">
+							<select class="form-select js-choice" aria-label=".form-select-lg">
+								<option value="">استان</option>
+								<option value="مازندران ـ ساری">مازندران ـ ساری</option>
+								<option value="گیلان ـ رشت">گیلان ـ رشت</option>
+								<option value="تهران ـ تهران">تهران ـ تهران</option>
+								<option value="البرز ـ کرج">البرز ـ کرج</option>
+								<option value="آذربایجان شرقی ـ تبریز">آذربایجان شرقی ـ تبریز</option>
+								<option value="آذربایجان غربی ـ ارومیه">آذربایجان غربی ـ ارومیه</option>
+								<option value="اردبیل ـ اردبیل">اردبیل ـ اردبیل</option>
+								<option value="اصفهان ـ اصفهان">اصفهان ـ اصفهان</option>
+								<option value="البرز ـ کرج-تکراری">البرز ـ کرج</option>
+								<option value="ایلام ـ ایلام">ایلام ـ ایلام</option>
+								<option value="بوشهر ـ بوشهر">بوشهر ـ بوشهر</option>
+								<option value="چهارمحال و بختیاری ـ شهرکرد">چهارمحال و بختیاری ـ شهرکرد</option>
+								<option value="خراسان جنوبی ـ بیرجند">خراسان جنوبی ـ بیرجند</option>
+								<option value="خراسان رضوی ـ مشهد">خراسان رضوی ـ مشهد</option>
+								<option value="خراسان شمالی ـ بجنورد">خراسان شمالی ـ بجنورد</option>
+								<option value="خوزستان ـ اهواز">خوزستان ـ اهواز</option>
+								<option value="زنجان ـ زنجان">زنجان ـ زنجان</option>
+								<option value="سمنان ـ سمنان">سمنان ـ سمنان</option>
+								<option value="سیستان و بلوچستان ـ زاهدان">سیستان و بلوچستان ـ زاهدان</option>
+								<option value="فارس ـ شیراز">فارس ـ شیراز</option>
+								<option value="قزوین ـ قزوین">قزوین ـ قزوین</option>
+								<option value="قم ـ قم">قم ـ قم</option>
+								<option value="کردستان ـ سنندج">کردستان ـ سنندج</option>
+								<option value="کرمان ـ کرمان">کرمان ـ کرمان</option>
+								<option value="کرمانشاه ـ کرمانشاه">کرمانشاه ـ کرمانشاه</option>
+								<option value="کهگیلویه و بویراحمد ـ یاسوج">کهگیلویه و بویراحمد ـ یاسوج</option>
+								<option value="گلستان ـ گرگان">گلستان ـ گرگان</option>
+								<option value="لرستان ـ خرم‌آباد">لرستان ـ خرم‌آباد</option>
+								<option value="هرمزگان ـ بندرعباس">هرمزگان ـ بندرعباس</option>
+								<option value="همدان ـ همدان">همدان ـ همدان</option>
+								<option value="یزد ـ یزد">یزد ـ یزد</option>
+							</select>
+						</div>
+
+						<!-- opinion -->
+						<div class="col-md-6 bg-light-input">
+							<select class="form-select js-choice" aria-label=".form-select-lg">
+								<option value="">میزان رضایت</option>
+								<option value="5">⭐️⭐️⭐️⭐️⭐️</option>
+								<option value="4">⭐️⭐️⭐️⭐️</option>
+								<option value="3">⭐️⭐️⭐️</option>
+								<option value="2">⭐️⭐️</option>
+								<option value="1">⭐️</option>
+							</select>
+						</div>
+	
+
+						<!-- Birthday -->
+						<div class="col-md-4 bg-light-input">
+							<input type="text" class="form-control" id="mobileNumber" placeholder="روز تولد">
+						</div>
+						<div class="col-md-4 bg-light-input">
+							<input type="text" class="form-control" id="mobileNumber" placeholder="ماه تولد">
+						</div>
+						<div class="col-md-4 bg-light-input">
+							<input type="text" class="form-control" id="mobileNumber" placeholder="سال تولد">
+						</div>
+
+						<!-- Button -->
+						<div class="col-12 text-end">
+							<button type="submit" class="btn btn-primary mb-0" disabled>ذخیره</button>
+						</div>
+					</form> 
+					<!-- Form END -->
+
+
+
+
+
+
+								<!-- Net banking END -->
+							</div>
+						</div>
+					</div>
+					<!-- Payment method END -->
+				</div>
+				<!-- Personal info END -->
+			</div>
+			<!-- Main content END -->
+
+			<!-- Right sidebar START -->
+			<div class="col-lg-4">
+				<!-- Card total START -->
+				<div class="card card-body p-4 shadow">
+					<!-- Title -->
+					<h4 class="mb-3 fs-5 text-center">صورت حساب نهایی</h4>
+					<hr>
+
+					<!-- Price and detail -->
+					<ul class="list-group list-group-borderless mb-2">
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h6 fw-light mb-0">قیمت</span>
+							<span class="h6 fw-light mb-0 fw-bold">850,000 تومان</span>
+						</li>
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h6 fw-light mb-0">مالیات</span>
+							<span class="h6 fw-light mb-0 fw-bold">85,000 تومان</span>
+						</li>
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h6 fw-light mb-0">تخفیف</span>
+							<span class="h6 fw-light mb-0 fw-bold">250,000 تومان</span>
+						</li>
+						<br>
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h5 mb-0">قیمت نهایی</span>
+							<span class="text-danger h5">500,000 تومان</span>
+						</li>
+					</ul>
+					<hr>
+
+					<!-- Button -->
+					<div class="d-grid">
+						<a href="checkout.html" class="btn btn-lg btn-success">تسویه حساب</a>
+					</div>
+				</div>
+				<!-- Card total END -->
+			</div>
+			<!-- Right sidebar END -->
+
+		</div><!-- Row END -->
+	</div>
+</section>
+<!-- =======================
+Page content END -->
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+
+{% endblock body %}

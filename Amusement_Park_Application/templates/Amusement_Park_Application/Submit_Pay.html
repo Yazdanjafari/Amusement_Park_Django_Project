@@ -1,0 +1,160 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block body %}
+
+
+<!-- =======================
+Page Banner START -->
+<section class="py-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="bg-light p-4 text-center rounded-3">
+					<h1 class="m-0 fs-2">ثبت تراکنش</h1>
+					<!-- Breadcrumb -->
+					<div class="d-flex justify-content-center">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb breadcrumb-dots mb-0">
+								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="#">ثبت تراکنش</a></li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- =======================
+Page Banner END -->
+
+<!-- =======================
+Page content START -->
+<section class="pt-5">
+	<div class="container">
+	
+		<div class="row g-4 g-sm-5">
+			<!-- Main content START -->
+			<div class="col-xl-8 mb-4 mb-sm-0">
+
+				<!-- Personal info START -->
+				<div class="card card-body shadow p-4">
+
+					<!-- Payment method START -->
+					<div class="row g-3 mt-4">
+						<!-- Title -->
+						<h5 class="">روش های پرداخت :</h5>
+						<div class="col-12">
+							<div class="accordion accordion-circle" id="accordioncircle">
+
+								<!-- Card reader (Default) -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-card-reader">
+										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+											دستگاه کارتخوان
+										</button>
+									</h6>
+									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
+									</div>
+								</div>
+
+								<!-- Cash -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-cash">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+											نقدی
+										</button>
+									</h6>
+									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
+									</div>
+								</div>
+
+								<!-- Combined payment -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-combined">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+											ترکیبی
+										</button>
+									</h6>
+									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+										<!-- Accordion body -->
+										<div class="accordion-body">
+											<!-- Form START -->
+											<form class="row g-3">
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی</span></label>
+													<input type="text" class="form-control" aria-label="cash amount" placeholder="مبلغ نقدی را وارد کنید">
+												</div>
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان</span></label>
+													<input type="text" class="form-control" aria-label="card amount" placeholder="مبلغ کارتخوان را وارد کنید">
+												</div>
+											</form>
+											<!-- Form END -->
+										</div>
+									</div>
+								</div>
+								<!-- Credit or debit card END -->
+
+					<!-- Title -->
+					<h5 class="mb-0">ثبت تراکنش :</h5>
+						
+					<!-- Form START -->
+					<form class="row g-3 mt-0">						
+						
+
+                        <div class="col-md-12 bg-light-input">
+							<input type="number" class="form-control" id="yourName" placeholder="مبلغ تراکنش (ریال)" style="text-align: right;">
+						</div>
+
+
+                        <div class="col-md-12 bg-light-input">
+							<input type="number" class="form-control" id="yourName" placeholder="کد تراکنش به ریال" style="text-align: right;">
+						</div>
+                        
+
+                        <div class="col-md-12 bg-light-input">
+							<input type="box" class="form-control" id="yourName" placeholder="توضیحات">
+						</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- Payment method END -->
+				</div>
+				<!-- Personal info END -->
+			</div>
+			<!-- Main content END -->
+
+			<!-- Right sidebar START -->
+			<div class="col-lg-4">
+				<!-- Card total START -->
+				<div class="card card-body p-4 shadow">
+					<!-- Title -->
+					<h4 class="mb-3 fs-5 text-center">صورت حساب نهایی</h4>
+					<hr>
+
+					<!-- Price and detail -->
+					<ul class="list-group list-group-borderless mb-2">
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h5 mb-0">قیمت نهایی</span>
+							<span class="text-danger h5">500,000 تومان</span>
+						</li>
+					</ul>
+
+                    <!-- Button -->
+					<div class="d-grid">
+						<a href="checkout.html" class="btn btn-lg btn-success">تسویه حساب</a>
+					</div>
+				</div>
+				<!-- Card total END -->
+			</div>
+			<!-- Right sidebar END -->
+
+		</div><!-- Row END -->
+	</div>
+</section>
+<!-- =======================
+Page content END -->
+
+{% endblock body %}

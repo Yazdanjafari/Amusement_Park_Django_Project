@@ -1,0 +1,169 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block body %}
+
+
+<!-- =======================
+Page Banner START -->
+<section class="py-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="bg-light p-4 text-center rounded-3">
+					<h1 class="m-0 fs-2">تنظیمات</h1>
+					<!-- Breadcrumb -->
+					<div class="d-flex justify-content-center">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb breadcrumb-dots mb-0">
+								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="#">تنظیمات</a></li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- =======================
+Page Banner END -->
+
+
+
+<!-- =======================
+Page content START -->
+<section class="pt-5">
+	<div class="container-fluid px-4">
+		<div class="row g-4 g-sm-5">
+			<!-- Main content START -->
+			<div class="col-xl-8 mb-4 mb-sm-0 mx-auto">
+
+				<!-- Personal info START -->
+				<div class="card card-body shadow p-4">
+
+					<!-- Title -->
+					<h5 class="mb-0">تنظیمات :</h5>
+
+					<!-- Form START -->
+					<form class="row g-3 mt-3">
+
+                        <div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
+                            <label class="form-label mb-0">عملکرد به عنوان دستگاه کارتخوان :</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="deviceModeToggle" class="toggle-input">
+                                <label for="deviceModeToggle" class="toggle-label"></label>
+                            </div>
+                        </div>
+
+                        
+						<div class="col-md-12 bg-light-input">
+							<input type="text" class="form-control" id="firstName" placeholder="شماره سریال">
+						</div>
+
+
+						<div class="col-md-12 bg-light-input">
+							<input type="text" class="form-control" id="lastName" placeholder="شماره پذیرنده">
+						</div>
+
+
+						<div class="col-md-12 bg-light-input">
+							<input type="text" class="form-control" id="lastName" placeholder="شماره ترمینال">
+						</div>
+
+
+						<div class="col-md-12 bg-light-input">
+							<input type="text" class="form-control" id="lastName" placeholder="آدرس آی پی">
+						</div>
+
+
+						<div class="col-md-12 bg-light-input">
+							<input type="text" class="form-control" id="lastName" placeholder="شماره پورت">
+						</div>
+
+						<!-- Button -->
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button type="submit" class="btn btn-primary mb-0">ثبت</button>
+                        </div>
+
+					</form>
+					<!-- Form END -->
+				</div>
+				<!-- Personal info END -->
+			</div>
+			<!-- Main content END -->
+		</div><!-- Row END -->
+	</div>
+</section>
+<!-- =======================
+Page content END -->
+
+{% endblock body %}
+
+
+{% block style %}
+<style>
+	/* Ensure full-width layout consistency */
+	.container-fluid {
+		max-width: 1200px; /* Set a fixed width for larger screens */
+		margin: auto; /* Center the container horizontally */
+	}
+	
+	/* Adjust input fields for better alignment */
+	.bg-light-input input {
+		background-color: #f8f9fa; /* Light background for inputs */
+		padding: 10px;
+		border-radius: 5px;
+}
+
+/* Ensure proper directionality for the page */
+html[lang="fa"] body {
+	direction: rtl; /* Right-to-left for Persian */
+    text-align: right;
+}
+
+/* Ensure alignment for buttons and forms */
+.text-end {
+	text-align: right !important; /* Ensure consistent right alignment */
+}
+
+.toggle-switch {
+	position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+.toggle-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-label {
+	position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.toggle-label:before {
+	position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3.5px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+.toggle-input:checked + .toggle-label {
+	background-color: #4caf50;
+}
+.toggle-input:checked + .toggle-label:before {
+	transform: translateX(25px);
+}
+</style>
+{% endblock style %}

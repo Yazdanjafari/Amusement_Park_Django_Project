@@ -1,0 +1,258 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block body %}
+
+
+<!-- =======================
+Page Banner START -->
+<section class="py-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="bg-light p-4 text-center rounded-3">
+					<h1 class="m-0 fs-2">سبد خرید</h1>
+					<div class="d-flex justify-content-center">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb breadcrumb-dots mb-0">
+								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
+								<li class="breadcrumb-item active" aria-current="page">سبد خرید</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- =======================
+Page Banner END -->
+
+<!-- =======================
+Page content START -->
+<section class="pt-5">
+	<div class="container">
+	
+		<div class="row g-4 g-sm-5">
+			<!-- Main content START -->
+			<div class="col-lg-8 mb-4 mb-sm-0">
+				<div class="card card-body p-4 shadow">
+					<div class="table-responsive border-0 rounded-3">
+						<!-- Table START -->
+						<table class="table align-middle p-4 mb-0">
+							<!-- Table head -->
+							<!-- Table body START -->
+							<tbody class="border-top-0">
+								<!-- Table item -->
+								<tr>
+									<!-- Course item -->
+									<td>
+										<div class="d-lg-flex align-items-center">
+											<!-- Image -->
+											<div class="w-100px w-md-80px mb-2 mb-md-0">
+												<img src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
+											</div>
+											<!-- Title -->
+											<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
+												<a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+											</h6>
+										</div>
+									</td>
+
+									<!-- Amount item -->
+									<td class="text-center">
+										<h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
+									</td>
+									<!-- Action item -->
+									<td>
+										<div class="d-flex justify-content-between align-items-center">
+											<button class="btn btn-outline-warning btn-sm"><i class="fas fa-trash"></i></button>
+											<button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
+											<button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
+											<button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
+										</div>
+									</td>
+								</tr>
+
+								<!-- Table item -->
+								<tr>
+									<!-- Course item -->
+									<td>
+										<div class="d-lg-flex align-items-center">
+											<!-- Image -->
+											<div class="w-100px w-md-80px mb-2 mb-md-0">
+												<img src='{% static "assets/images/courses/4by3/10.jpg" %}' class="rounded" alt="">
+											</div>
+											<!-- Title -->
+											<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
+												<a href="#" style="font-size: 75%;">دوره جامع آموزش Bootstrap</a>
+											</h6>
+										</div>
+									</td>
+
+									<!-- Amount item -->
+									<td class="text-center">
+										<h5 class="text-success mb-0" style="font-size: 75%;">599,000 تومان</h5>
+									</td>
+									<!-- Action item -->
+									<td>
+										<div class="d-flex justify-content-between align-items-center">
+											<button class="btn btn-outline-warning btn-sm"><i class="fas fa-trash"></i></button>
+											<button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
+											<button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
+											<button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
+										</div>
+									</td>						
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+						<!-- Coupon input and button -->
+						<div class="row g-3 mt-2">
+							<div class="col-md-6">
+								<div class="input-group">
+									<input class="form-control" id="discount-code" placeholder="تخفیف با کد تخفیف :">
+								</div>
+								<small id="tip-code" class="form-text text-muted" style="display: none;"></small>
+							</div>
+							<!-- Update button -->
+							<div class="col-md-6 text-md-end">
+								<button class="btn btn-primary mb-0" id="btn-code" disabled>اعمال</button>
+							</div>
+						</div>
+
+						<!-- Coupon input and button -->
+						<div class="row g-3 mt-2">
+							<div class="col-md-6">
+								<div class="input-group">
+									<input class="form-control" id="discount-amount" placeholder="تخفیف با مبلغ :">
+								</div>
+								<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
+							</div>
+							<!-- Update button -->
+							<div class="col-md-6 text-md-end">
+								<button class="btn btn-primary mb-0" id="btn-amount" disabled>اعمال</button>
+							</div>
+						</div>
+
+						<!-- Coupon input and button -->
+						<div class="row g-3 mt-2">
+							<div class="col-md-6">
+								<div class="input-group">
+									<input class="form-control" id="discount-percent" placeholder="تخفیف با درصد :">
+								</div>
+								<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
+							</div>
+							<!-- Update button -->
+							<div class="col-md-6 text-md-end">
+								<button class="btn btn-primary mb-0" id="btn-percent" disabled>اعمال</button>
+							</div>
+						</div>	
+
+				</div>
+			</div>
+			<!-- Main content END -->
+
+			<!-- Right sidebar START -->
+			<div class="col-lg-4">
+				<!-- Card total START -->
+				<div class="card card-body p-4 shadow">
+					<!-- Title -->
+					<h4 class="mb-3 fs-5 text-center">صورت حساب نهایی</h4>
+					<hr>
+
+					<!-- Price and detail -->
+					<ul class="list-group list-group-borderless mb-2">
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h6 fw-light mb-0">قیمت</span>
+							<span class="h6 fw-light mb-0 fw-bold">850,000 تومان</span>
+						</li>
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h6 fw-light mb-0">مالیات</span>
+							<span class="h6 fw-light mb-0 fw-bold">85,000 تومان</span>
+						</li>
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h6 fw-light mb-0">تخفیف</span>
+							<span class="h6 fw-light mb-0 fw-bold">250,000 تومان</span>
+						</li>
+						<br>
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							<span class="h5 mb-0">قیمت نهایی</span>
+							<span class="text-danger h5">500,000 تومان</span>
+						</li>
+					</ul>
+					<hr>
+
+					<!-- Button -->
+					<div class="d-grid">
+						<a href="checkout.html" class="btn btn-lg btn-success">تسویه حساب</a>
+					</div>
+				</div>
+				<!-- Card total END -->
+			</div>
+			<!-- Right sidebar END -->
+
+		</div><!-- Row END -->
+	</div>
+</section>
+<!-- =======================
+Page content END -->
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+<script>
+    // Function to increment the counter
+    function increment(button) {
+        const counter = button.parentElement.querySelector('.counter');
+        let count = parseInt(counter.innerText, 10);
+        counter.innerText = count + 1;
+    }
+
+    // Function to decrement the counter
+    function decrement(button) {
+        const counter = button.parentElement.querySelector('.counter');
+        let count = parseInt(counter.innerText, 10);
+        if (count > 0) {
+            counter.innerText = count - 1;
+        }
+    }
+
+
+
+
+
+	
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            const buttonId = 'btn-' + this.id.split('-')[1];
+            const tipId = 'tip-' + this.id.split('-')[1];
+            const button = document.getElementById(buttonId);
+            const tip = document.getElementById(tipId);
+            
+            // Reset previous form if another form is being typed in
+            document.querySelectorAll('input').forEach(otherInput => {
+                if (otherInput !== this && otherInput.value.trim() !== '') {
+                    otherInput.value = '';
+                    document.getElementById('btn-' + otherInput.id.split('-')[1]).setAttribute('disabled', true);
+                    document.getElementById('tip-' + otherInput.id.split('-')[1]).style.display = 'none';
+                }
+            });
+
+            // Enable/Disable button and show tip
+            if (this.value.trim() !== '') {
+                button.removeAttribute('disabled');
+                tip.style.display = 'inline';
+                tip.textContent = this.getAttribute('data-tip');
+            } else {
+                button.setAttribute('disabled', true);
+                tip.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+
+
+{% endblock body %}

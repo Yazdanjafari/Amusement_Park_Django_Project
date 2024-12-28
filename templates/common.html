@@ -166,7 +166,7 @@
 	<nav class="navbar navbar-expand-xl">
 		<div class="container-fluid px-3 px-xl-5">
 			<!-- Logo START -->
-			<a class="navbar-brand" href="index.html">
+			<a class="navbar-brand" href="{% url 'Amusement_Park:Products' %}">
 				<img class="navbar-brand-item" src='{% static "assets/images/logo.png" %}' alt="logo">
 			</a>
 			<!-- Logo END -->
@@ -187,31 +187,30 @@
 				<ul class="navbar-nav navbar-nav-scroll me-auto">
 
 					<li class="nav-item dropdown" style="padding-top: 5px !important; padding-bottom: 5px !important;">
-						<a class="nav-link bg-primary bg-opacity-10 rounded-3 text-primary px-3 py-3 py-xl-0" href="#" id="categoryMenu" 
-						   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<a class="nav-link bg-primary bg-opacity-10 rounded-3 text-primary px-3 py-3 py-xl-0" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu">
 							<i class="bi bi-cart me-2"></i><span>سبد خرید</span>
 						</a>
 					</li>
 					
 					
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_main %}{% endblock active_main %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">صفحه اصلی</a>
+						<a class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu">صفحه اصلی</a>
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ثبت تراکنش</a>
+						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="{% url 'Amusement_Park:Submit_Pay' %}" id="demoMenu">ثبت تراکنش</a>
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">عودت وجه</a>
+						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu">عودت وجه</a>
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_scan %}{% endblock active_scan %}" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">اسکن بارکد</a>
+						<a class="nav-link {% block active_scan %}{% endblock active_scan %}" href="#" id="demoMenu">اسکن بارکد</a>
 					</li>				
 					
 					<li class="nav-item dropdown">
-						<a class="nav-link" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">پنل ادمین</a>
+						<a class="nav-link" href="/admin" id="demoMenu">پنل ادمین</a>
 					</li>					
 				
 				</ul>
@@ -224,7 +223,7 @@
 					<!-- Notification dropdown START -->
 					<li class="nav-item ms-2 ms-sm-3 dropdown d-none d-sm-block">
 						<!-- Notification button -->
-						<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+						<a class="btn btn-light btn-round mb-0" href="#" role="button" aria-expanded="false" data-bs-auto-close="outside">
 							<i class="bi bi-bell fa-fw"></i>
 						</a>
 						<!-- Notification dote -->
@@ -290,6 +289,11 @@
 					</li>
 					<li> <hr class="dropdown-divider"></li>
 					<!-- Links -->
+					<li>
+						<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:Setting' %}">
+							<i class="bi bi-gear fa-fw me-2"></i> تنظیمات
+						</a>
+					</li>
 					<li><a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}"><i class="bi bi-power fa-fw me-2"></i>خروج</a></li>
 					<li> <hr class="dropdown-divider"></li>
 					<!-- Dark mode options START -->
