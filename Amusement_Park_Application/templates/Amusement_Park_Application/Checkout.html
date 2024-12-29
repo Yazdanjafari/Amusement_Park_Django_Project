@@ -16,8 +16,8 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
-								<li class="breadcrumb-item"><a href="#">سبد خرید</a></li>
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Cart" %}">سبد خرید</a></li>
 								<li class="breadcrumb-item active" aria-current="page">تسویه حساب</li>
 							</ol>
 						</nav>
@@ -98,99 +98,44 @@ Page content START -->
 								</div>
 								<!-- Credit or debit card END -->
 
-					<!-- Title -->
-					<h5 class="mb-0">اطلاعات مشتری (اختیاری)</h5>
-						
-					<!-- Form START -->
-					<form class="row g-3 mt-0">						
+								<!-- Title -->
+								<h5 class="mb-0">اطلاعات مشتری (اختیاری)</h5>
+									
+								<!-- Form START -->
+								<form class="row g-3 mt-0">						
 
-						<div class="input-group mt-2">
-							<input class="form-control form-control" placeholder="شماره تماس">
-							<button type="button" class="btn btn-primary">اعمال</button>
-						</div>
-						
-						<!-- Name -->
-						<div class="col-md-6 bg-light-input">
-							<input type="text" class="form-control" id="yourName" placeholder="نام">
-						</div>
-						<!-- Lname -->
-						<div class="col-md-6 bg-light-input">
-							<input type="text" class="form-control" id="yourName" placeholder="نام خانوادگی">
-						</div>
+									<div class="input-group mt-2">
+										<input id="phoneInput" class="form-control" placeholder="شماره تماس" type="text">
+										<button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
+									</div>
+									
+									<!-- Name -->
+									<div class="col-md-6 bg-light-input">
+										<input type="text" class="form-control" id="yourName" placeholder="نام">
+									</div>
+									<!-- Lname -->
+									<div class="col-md-6 bg-light-input">
+										<input type="text" class="form-control" id="yourName" placeholder="نام خانوادگی">
+									</div>
+				
 
-						<!-- State option -->
-						<div class="col-md-6 bg-light-input">
-							<select class="form-select js-choice" aria-label=".form-select-lg">
-								<option value="">استان</option>
-								<option value="مازندران ـ ساری">مازندران ـ ساری</option>
-								<option value="گیلان ـ رشت">گیلان ـ رشت</option>
-								<option value="تهران ـ تهران">تهران ـ تهران</option>
-								<option value="البرز ـ کرج">البرز ـ کرج</option>
-								<option value="آذربایجان شرقی ـ تبریز">آذربایجان شرقی ـ تبریز</option>
-								<option value="آذربایجان غربی ـ ارومیه">آذربایجان غربی ـ ارومیه</option>
-								<option value="اردبیل ـ اردبیل">اردبیل ـ اردبیل</option>
-								<option value="اصفهان ـ اصفهان">اصفهان ـ اصفهان</option>
-								<option value="البرز ـ کرج-تکراری">البرز ـ کرج</option>
-								<option value="ایلام ـ ایلام">ایلام ـ ایلام</option>
-								<option value="بوشهر ـ بوشهر">بوشهر ـ بوشهر</option>
-								<option value="چهارمحال و بختیاری ـ شهرکرد">چهارمحال و بختیاری ـ شهرکرد</option>
-								<option value="خراسان جنوبی ـ بیرجند">خراسان جنوبی ـ بیرجند</option>
-								<option value="خراسان رضوی ـ مشهد">خراسان رضوی ـ مشهد</option>
-								<option value="خراسان شمالی ـ بجنورد">خراسان شمالی ـ بجنورد</option>
-								<option value="خوزستان ـ اهواز">خوزستان ـ اهواز</option>
-								<option value="زنجان ـ زنجان">زنجان ـ زنجان</option>
-								<option value="سمنان ـ سمنان">سمنان ـ سمنان</option>
-								<option value="سیستان و بلوچستان ـ زاهدان">سیستان و بلوچستان ـ زاهدان</option>
-								<option value="فارس ـ شیراز">فارس ـ شیراز</option>
-								<option value="قزوین ـ قزوین">قزوین ـ قزوین</option>
-								<option value="قم ـ قم">قم ـ قم</option>
-								<option value="کردستان ـ سنندج">کردستان ـ سنندج</option>
-								<option value="کرمان ـ کرمان">کرمان ـ کرمان</option>
-								<option value="کرمانشاه ـ کرمانشاه">کرمانشاه ـ کرمانشاه</option>
-								<option value="کهگیلویه و بویراحمد ـ یاسوج">کهگیلویه و بویراحمد ـ یاسوج</option>
-								<option value="گلستان ـ گرگان">گلستان ـ گرگان</option>
-								<option value="لرستان ـ خرم‌آباد">لرستان ـ خرم‌آباد</option>
-								<option value="هرمزگان ـ بندرعباس">هرمزگان ـ بندرعباس</option>
-								<option value="همدان ـ همدان">همدان ـ همدان</option>
-								<option value="یزد ـ یزد">یزد ـ یزد</option>
-							</select>
-						</div>
+									<!-- Birthday -->
+									<div class="col-md-4 bg-light-input">
+										<input type="text" class="form-control" id="mobileNumber" placeholder="روز تولد">
+									</div>
+									<div class="col-md-4 bg-light-input">
+										<input type="text" class="form-control" id="mobileNumber" placeholder="ماه تولد">
+									</div>
+									<div class="col-md-4 bg-light-input">
+										<input type="text" class="form-control" id="mobileNumber" placeholder="سال تولد">
+									</div>
 
-						<!-- opinion -->
-						<div class="col-md-6 bg-light-input">
-							<select class="form-select js-choice" aria-label=".form-select-lg">
-								<option value="">میزان رضایت</option>
-								<option value="5">⭐️⭐️⭐️⭐️⭐️</option>
-								<option value="4">⭐️⭐️⭐️⭐️</option>
-								<option value="3">⭐️⭐️⭐️</option>
-								<option value="2">⭐️⭐️</option>
-								<option value="1">⭐️</option>
-							</select>
-						</div>
-	
-
-						<!-- Birthday -->
-						<div class="col-md-4 bg-light-input">
-							<input type="text" class="form-control" id="mobileNumber" placeholder="روز تولد">
-						</div>
-						<div class="col-md-4 bg-light-input">
-							<input type="text" class="form-control" id="mobileNumber" placeholder="ماه تولد">
-						</div>
-						<div class="col-md-4 bg-light-input">
-							<input type="text" class="form-control" id="mobileNumber" placeholder="سال تولد">
-						</div>
-
-						<!-- Button -->
-						<div class="col-12 text-end">
-							<button type="submit" class="btn btn-primary mb-0" disabled>ذخیره</button>
-						</div>
-					</form> 
-					<!-- Form END -->
-
-
-
-
-
+									<!-- Button -->
+									<div class="col-12 text-end">
+										<button type="submit" class="btn btn-primary mb-0" disabled>ذخیره</button>
+									</div>
+								</form> 
+								<!-- Form END -->
 
 								<!-- Net banking END -->
 							</div>
@@ -234,7 +179,7 @@ Page content START -->
 
 					<!-- Button -->
 					<div class="d-grid">
-						<a href="checkout.html" class="btn btn-lg btn-success">تسویه حساب</a>
+						<a href="checkout.html" class="btn btn-lg btn-success">پرداخت</a>
 					</div>
 				</div>
 				<!-- Card total END -->
@@ -247,8 +192,26 @@ Page content START -->
 <!-- =======================
 Page content END -->
 
-</main>
-<!-- **************** MAIN CONTENT END **************** -->
 
 
 {% endblock body %}
+
+
+{% block script %}
+<script>
+	// Get the input field and button elements
+	const phoneInput = document.getElementById('phoneInput');
+	const applyButton = document.getElementById('applyButton');
+
+	// Add an event listener to the input field
+	phoneInput.addEventListener('input', function() {
+		// Check if the input is not empty and contains numbers only (for a valid phone number)
+		if (phoneInput.value.trim() !== '' && !isNaN(phoneInput.value)) {
+			applyButton.disabled = false;  // Enable the button if there's a number
+		} else {
+			applyButton.disabled = true;   // Disable the button if there's no valid number
+		}
+	});
+</script>
+{% endblock script %}
+		

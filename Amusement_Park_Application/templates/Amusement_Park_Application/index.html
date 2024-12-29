@@ -161,6 +161,61 @@ Instructor grid END -->
 {% endblock body %}
 
 
+{% block shortcut_header %}
+<li class="nav-item ms-2 dropdown ">
+	<!-- Cart button -->
+	<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+		<i class="bi bi-cart3 fa-fw"></i>
+	</a>
+	<!-- badge -->
+	<span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1">1
+		<span class="visually-hidden">اقلام</span>
+	</span>
+
+	<!-- Cart dropdown menu START -->
+	<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
+		<div class="card bg-transparent">
+			<div class="card-header bg-transparent border-bottom py-4">
+				<h5 class="m-0">سبد خرید شما :</h5>
+			</div>
+			<div class="card-body p-0">
+
+				<!-- Cart item START -->
+				<div class="row p-3 g-2">
+					<!-- Image -->
+					<div class="col-3">
+						<img class="rounded-2" src='{% static "assets/images/book/04.jpg" %}' alt="avatar">
+					</div>
+
+					<div class="col-9">
+						<!-- Title -->
+						<div class="d-flex justify-content-between">
+							<h6 class="m-0 fw-normal">دوره بازاریابی دیجیتال برای مبتدیان</h6>
+							<a href="#" class="small text-primary-hover"><i class="bi bi-x-lg"></i></a>
+						</div>
+						<!-- Select item -->
+						<br>
+						<p>تعداد :‌ 5</p>
+					</div>
+				</div>
+				<!-- Cart item END -->
+
+				<!-- Divider -->
+				<hr class="m-0">
+			</div>
+			<!-- Button -->
+			<div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
+				<a href="#" class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">حذف همه</a>
+				<a href="{% url "Amusement_Park:Cart" %}" class="btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
+				<a href="{% url "Amusement_Park:Checkout" %}" class="btn btn-sm btn-success mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">تسویه حساب</a>
+			</div>
+		</div>
+	</div>
+	<!-- Cart dropdown menu END -->
+</li>
+{% endblock shortcut_header %}
+
+
 {% block script %}
 <script>
     // Function to increment the counter

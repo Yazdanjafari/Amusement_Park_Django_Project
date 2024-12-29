@@ -14,7 +14,7 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
 								<li class="breadcrumb-item active" aria-current="page">سبد خرید</li>
 							</ol>
 						</nav>
@@ -185,7 +185,7 @@ Page content START -->
 
 					<!-- Button -->
 					<div class="d-grid">
-						<a href="checkout.html" class="btn btn-lg btn-success">تسویه حساب</a>
+						<a href='{% url "Amusement_Park:Checkout" %}' class="btn btn-lg btn-success">تسویه حساب</a>
 					</div>
 				</div>
 				<!-- Card total END -->

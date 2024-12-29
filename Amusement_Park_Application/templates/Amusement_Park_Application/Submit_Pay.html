@@ -1,7 +1,7 @@
 {% extends 'common.html' %}
 {% load static %}
+{% block active_buy_submit %}active{% endblock active_buy_submit %}
 {% block body %}
-
 
 <!-- =======================
 Page Banner START -->
@@ -10,13 +10,13 @@ Page Banner START -->
 		<div class="row">
 			<div class="col-12">
 				<div class="bg-light p-4 text-center rounded-3">
-					<h1 class="m-0 fs-2">ثبت تراکنش</h1>
+					<h1 class="m-0 fs-2">ثبت مجدد تراکنش</h1>
 					<!-- Breadcrumb -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
-								<li class="breadcrumb-item"><a href="#">ثبت تراکنش</a></li>
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
+								<li class="breadcrumb-item active" aria-current="page">ثبت مجدد تراکنش</a></li>
 							</ol>
 						</nav>
 					</div>
@@ -32,7 +32,6 @@ Page Banner END -->
 Page content START -->
 <section class="pt-5">
 	<div class="container">
-	
 		<div class="row g-4 g-sm-5">
 			<!-- Main content START -->
 			<div class="col-xl-8 mb-4 mb-sm-0">
@@ -40,10 +39,85 @@ Page content START -->
 				<!-- Personal info START -->
 				<div class="card card-body shadow p-4">
 
+					<!-- Title for transaction form -->
+					<h5 class="mb-0">ثبت مجدد تراکنش :</h5>
+						
+					<!-- Transaction form START -->
+					<div class="input-group mt-2">
+						<input id="ticketCodeInput" class="form-control" placeholder="کد رهگیری بلیت" type="text">
+						<button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
+					</div>
+					<!-- Transaction form END -->
+					<table class="table align-middle p-4 mb-0">
+						<!-- Table head -->
+						<br>
+						<hr>
+						<br>
+						<h5 class="">اطلاعات فاکتور ثبت شده :</h5>
+						<!-- Table body START -->
+						<tbody class="border-top-0">
+							<!-- Table item -->
+							<tr>
+								<!-- Course item -->
+								<td>
+									<div class="d-lg-flex align-items-center">
+										<!-- Image -->
+										<div class="w-100px w-md-80px mb-2 mb-md-0">
+											<img src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
+										</div>
+										<!-- Title -->
+										<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
+											<a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+										</h6>
+									</div>
+								</td>
+
+								<!-- Amount item -->
+								<td class="text-center">
+									<h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
+								</td>
+								<!-- Action item -->
+								<td>
+									<div class="d-flex justify-content-between align-items-center">
+										<button class="btn btn-outline-warning btn-sm disabled"><i class="fas fa-trash"></i></button>
+										<button class="btn btn-outline-danger btn-sm disabled" onclick="increment(this)">+</button>
+										<button class="btn btn-outline-primary btn-sm counter" disabled>1</button>
+										<button class="btn btn-outline-danger btn-sm disabled" onclick="decrement(this)">-</button>
+									</div>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+					<br>
+
+					<div class="row">
+						<div class="col-md-6 bg-light-input">
+							<label for="">* تاریخ ثبت فاکتور :</label>
+							<input type="text" class="form-control" id="yourName" readonly value="">
+						</div>
+						
+						<div class="col-md-6 bg-light-input">
+							<label for="">* شماره تماس :</label>
+							<input type="text" class="form-control" id="yourName" readonly value="">
+						</div>
+
+						<div class="col-md-6 bg-light-input">
+							<label for="">* نام :</label>
+							<input type="text" class="form-control" id="yourName" readonly value="">
+						</div>
+
+						<div class="col-md-6 bg-light-input">
+							<label for="">* نام خانوادگی :</label>
+							<input type="text" class="form-control" id="yourName" readonly value="">
+						</div>
+					</div>
+					<hr>
 					<!-- Payment method START -->
 					<div class="row g-3 mt-4">
 						<!-- Title -->
-						<h5 class="">روش های پرداخت :</h5>
+						<h5>روش های پرداخت :</h5>
 						<div class="col-12">
 							<div class="accordion accordion-circle" id="accordioncircle">
 
@@ -94,33 +168,12 @@ Page content START -->
 										</div>
 									</div>
 								</div>
-								<!-- Credit or debit card END -->
-
-					<!-- Title -->
-					<h5 class="mb-0">ثبت تراکنش :</h5>
-						
-					<!-- Form START -->
-					<form class="row g-3 mt-0">						
-						
-
-                        <div class="col-md-12 bg-light-input">
-							<input type="number" class="form-control" id="yourName" placeholder="مبلغ تراکنش (ریال)" style="text-align: right;">
-						</div>
-
-
-                        <div class="col-md-12 bg-light-input">
-							<input type="number" class="form-control" id="yourName" placeholder="کد تراکنش به ریال" style="text-align: right;">
-						</div>
-                        
-
-                        <div class="col-md-12 bg-light-input">
-							<input type="box" class="form-control" id="yourName" placeholder="توضیحات">
-						</div>
-
+								<!-- Combined payment END -->
 							</div>
 						</div>
 					</div>
 					<!-- Payment method END -->
+
 				</div>
 				<!-- Personal info END -->
 			</div>
@@ -142,7 +195,7 @@ Page content START -->
 						</li>
 					</ul>
 
-                    <!-- Button -->
+					<!-- Button -->
 					<div class="d-grid">
 						<a href="checkout.html" class="btn btn-lg btn-success">تسویه حساب</a>
 					</div>
@@ -157,4 +210,25 @@ Page content START -->
 <!-- =======================
 Page content END -->
 
+
 {% endblock body %}
+
+
+{% block script %}
+<script>
+	// Get the input field and button elements
+	const ticketCodeInput = document.getElementById('ticketCodeInput');
+	const applyButton = document.getElementById('applyButton');
+
+	// Add an event listener to the input field
+	ticketCodeInput.addEventListener('input', function() {
+		// Check if the input contains a number
+		if (ticketCodeInput.value.trim() !== '' && !isNaN(ticketCodeInput.value)) {
+			applyButton.disabled = false;  // Enable the button if there's a number
+		} else {
+			applyButton.disabled = true;   // Disable the button if there's no valid number
+		}
+	});
+</script>
+{% endblock script %}
+	

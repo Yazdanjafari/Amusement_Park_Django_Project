@@ -10,7 +10,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="author" content="">
-	<meta name="description" content="Eduport - قالب HTML دوره آنلاین و آموزش">
+	<meta name="description">
 
 	<!-- Dark mode -->
 	<script>
@@ -138,6 +138,18 @@
 			height: auto !important;
 		}		
 
+
+		html, body {
+			height: 100%;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+		}
+		footer {
+			margin-top: auto;
+		}
+		
+
 		</style>
 
 		
@@ -160,7 +172,7 @@
 
 <body>
 	<!-- Header START -->
-	<header class="navbar-light navbar-sticky header-static">
+<header class="navbar-light navbar-sticky header-static">
 {% if request.user.is_authenticated %}
 	<!-- Nav START -->
 	<nav class="navbar navbar-expand-xl">
@@ -198,7 +210,7 @@
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="{% url 'Amusement_Park:Submit_Pay' %}" id="demoMenu">ثبت تراکنش</a>
+						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="{% url 'Amusement_Park:Submit_Pay' %}" id="demoMenu">ثبت مجدد تراکنش</a>
 					</li>
 
 					<li class="nav-item dropdown">
@@ -206,7 +218,7 @@
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_scan %}{% endblock active_scan %}" href="#" id="demoMenu">اسکن بارکد</a>
+						<a class="nav-link" href="#" id="demoMenu">اسکن بارکد</a>
 					</li>				
 					
 					<li class="nav-item dropdown">
@@ -217,19 +229,20 @@
 				<!-- Nav Main menu END -->
 
 
-				{% comment %} notification starts {% endcomment %}
 				<div class="nav my-3 my-xl-0 px-4 flex-nowrap align-items-center">
 
+					
+					{% block shortcut_header %}
+						
+					{% endblock shortcut_header %}
+					
 					<!-- Notification dropdown START -->
 					<li class="nav-item ms-2 ms-sm-3 dropdown d-none d-sm-block">
-						<!-- Notification button -->
-						<a class="btn btn-light btn-round mb-0" href="#" role="button" aria-expanded="false" data-bs-auto-close="outside">
+						<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
 							<i class="bi bi-bell fa-fw"></i>
 						</a>
-						<!-- Notification dote -->
 						<span class="notif-badge animation-blink"></span>
 
-						<!-- Notification dropdown menu START -->
 						<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
 							<div class="card bg-transparent">
 								<div class="card-header bg-transparent border-bottom py-4 d-flex justify-content-between align-items-center">
@@ -238,65 +251,57 @@
 								</div>
 								<div class="card-body p-0">
 									<ul class="list-group list-unstyled list-group-flush">
-										<!-- Notif item -->
 										<li>
-						<a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
-						<div class="me-3">
-							<div class="avatar avatar-md">
-							<img class="avatar-img rounded-circle" src='{% static "assets/images/logo_with_background.jpg" %}' alt="avatar">
-							</div>
-						</div>
-						<div>
-							<h6 class="mb-1 fw-normal">به روز رسانی نسخه 2.3 انجام شد</h6>
-							<p class="small text-body m-0">با ویژگی های جدید آشنا شوید</p>
-							<small class="text-body">5 دقیقه پیش</small>
-						</div>
-						</a>
-					</li>
+											<a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
+												<div class="me-3">
+													<div class="avatar avatar-md">
+														<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+													</div>
+												</div>
+												<div>
+													<h6 class="mb-1 fw-normal">به روز رسانی نسخه 2.3 انجام شد</h6>
+													<p class="small text-body m-0">با ویژگی های جدید آشنا شوید</p>
+													<small class="text-body">5 دقیقه پیش</small>
+												</div>
+											</a>
+										</li>
 									</ul>
 								</div>
-								<!-- Button -->
-								<div class="card-footer bg-transparent border-0 py-3 text-center position-relative">
-									<a href="#" class="stretched-link">مشاهده تمام فعالیت ها</a>
+							</div>
+						</div>
+					</li>
+					<!-- Notification dropdown END -->
+
+				</div>
+
+				<!-- Profile dropdown START -->
+				<div class="dropdown ms-1 ms-lg-0">
+					<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
+						<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+					</a>
+					<ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
+						<li class="px-3 mb-3">
+							<div class="d-flex align-items-center">
+								<div class="avatar me-3">
+									<img class="avatar-img rounded-circle shadow" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+								</div>
+								<div>
+									<a class="h6" href="#">الهام حسینی</a>
+									<p class="small m-0">example@gmail.com</p>
 								</div>
 							</div>
-						</div>
-						<!-- Notification dropdown menu END -->
-					</li>
-				</div>
-				<!-- Notification dropdown END -->
-			</div>
-			<!-- Main navbar END -->
-
-			<!-- Profile START -->
-			<div class="dropdown ms-1 ms-lg-0">
-				<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-					<img class="avatar-img rounded-circle" src='{% static "assets/images/logo_with_background.jpg" %}' alt="avatar">
-				</a>
-				<ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
-					<!-- Profile info -->
-					<li class="px-3 mb-3">
-						<div class="d-flex align-items-center">
-							<!-- Avatar -->
-							<div class="avatar me-3">
-								<img class="avatar-img rounded-circle shadow" src='{% static "assets/images/logo_with_background.jpg" %}' alt="avatar">
-							</div>
-							<div>
-								<a class="h6" href="#">الهام حسینی</a>
-								<p class="small m-0">example@gmail.com</p>
-							</div>
-						</div>
-					</li>
-					<li> <hr class="dropdown-divider"></li>
-					<!-- Links -->
-					<li>
-						<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:Setting' %}">
-							<i class="bi bi-gear fa-fw me-2"></i> تنظیمات
-						</a>
-					</li>
-					<li><a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}"><i class="bi bi-power fa-fw me-2"></i>خروج</a></li>
-					<li> <hr class="dropdown-divider"></li>
-					<!-- Dark mode options START -->
+						</li>
+						<li><hr class="dropdown-divider"></li>
+						<li>
+							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:Setting' %}">
+								<i class="bi bi-gear fa-fw me-2"></i> تنظیمات
+							</a>
+						</li>
+						<li>
+							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}">
+								<i class="bi bi-gear fa-fw me-2"></i> خروج
+							</a>
+						</li>
 					<li>
 						<div class="bg-light dark-mode-switch theme-icon-active d-flex align-items-center p-1 rounded mt-2">
 							<button type="button" class="btn btn-sm mb-0" data-bs-theme-value="light">
@@ -320,9 +325,10 @@
 							</button>
 						</div>
 					</li> 
-					<!-- Dark mode options END-->
-				</ul>
-			</div>
+					</ul>
+				</div>
+				<!-- Profile dropdown END -->
+				</div>
 			<!-- Profile START -->
 		</div>
 	</nav>
@@ -344,31 +350,33 @@
 <!-- =======================
 Footer START -->
 <footer class="bg-dark p-3">
-	<div class="container">
-		<div class="row align-items-center">
-			<!-- Widget -->
-			<div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
-				<!-- Logo START -->
-				<a href="index.html"> <img class="h-40px" src='{% static "assets/images/logo.png" %}' alt="logo"> </a>
-			</div>
-			
-			<!-- Widget -->
-			<div class="col-md-4 mb-3 mb-md-0">
-				<div class="text-center text-white">
-					ایجاد شده توسط <a href="https://www.yazdanjafari.ir/" target="_blank" class="text-reset btn-link">یزدان جعفری</a>
-				</div>
-			</div>
-			<!-- Widget -->
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Logo Widget -->
+            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                <a href="{% url "Amusement_Park:Products" %}">
+                    <img class="h-40px" src='{% static "assets/images/logo.png" %}' alt="logo">
+                </a>
+            </div>
+            <!-- Created by Widget -->
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="text-center text-white">
+                    ایجاد شده توسط 
+                    <a href="https://www.yazdanjafari.ir/" target="_blank" class="text-reset btn-link">یزدان جعفری</a>
+                </div>
+            </div>
+            <!-- Version Widget -->
             <div class="col-md-4 mb-3 mb-md-0 text-md-start">
                 <div class="text-white" style="text-align: left;">
-                    ورژن :‌ 3.0.0
+                    ورژن: 3.0.0
                 </div>
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </footer>
 <!-- =======================
 Footer END -->
+
 
 
 
@@ -390,7 +398,6 @@ Footer END -->
 
 <!-- Template Functions -->
 <script src='{% static "en_assets/js/functions.js" %}'></script>
-
 
 {% block script %}
 	

@@ -1,5 +1,6 @@
 {% extends 'common.html' %}
 {% load static %}
+{% block active_refund %}active{% endblock active_refund %}
 {% block body %}
 
 <!-- =======================
@@ -13,7 +14,7 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="#">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
 								<li class="breadcrumb-item active" aria-current="page">عودت وجه</li>
 							</ol>
 						</nav>
@@ -38,10 +39,17 @@ Page content START -->
 					<div class="table-responsive border-0 rounded-3">
 						<!-- Table START -->
 						<table class="table align-middle p-4 mb-0">
-							<!-- Table head -->
+                            <!-- Transaction form START -->
+                            <div class="input-group mt-2">
+                                <input id="ticketCodeInput" class="form-control" placeholder="کد رهگیری بلیت" type="text">
+                                <button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
+                            </div>        
+                            <hr>   
+                            <!-- Table head -->
                             <h5 class="">خرید های ثبت شده :</h5>
 							<!-- Table body START -->
 							<tbody class="border-top-0">
+                     
 								<!-- Table item -->
 								<tr>
 									<!-- Course item -->
@@ -76,10 +84,6 @@ Page content START -->
 							</tbody>
 						</table>
 					</div>
-                    <br>
-                    <hr>
-                    <br>
-
 				</div>
 			</div>
 			<!-- Main content END -->

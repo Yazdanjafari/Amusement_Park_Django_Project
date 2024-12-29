@@ -62,7 +62,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی", null=True, blank=True)
 
     objects = MyUserManager()
-    verbose_name_plural = "آشپز ها"
 
     USERNAME_FIELD = 'username'
     
