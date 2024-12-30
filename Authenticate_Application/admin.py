@@ -1,67 +1,77 @@
-from django import forms
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
 
-from Authenticate_Application.models import MyUser
+User = get_user_model()  # Explicitly assign the custom User model to a variable
 
-admin.site.site_header = "پنل مدیریت وب اپلیکیشن شهربازی"
-admin.site.site_title = "پنل مدیریت وب اپلیکیشن شهربازی"
-
-class UserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Password confirmation", widget=forms.PasswordInput)
-
-    class Meta:
-        model = MyUser
-        fields = ['username', 'first_name', 'last_name', 'nationality_id', 'phone_number', 'duty', 'email', 'date_of_birth']
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
-            raise ValidationError("Passwords don't match")
-        return password2
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
+class CustomUserAdmin(UserAdmin):
+    list_display = ("username", "first_name", "last_name", "get_role", "is_active", "is_staff", )
 
 
-class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
+    fieldsets = (
+        (
+            'اطلاعات شخصی',  # Redefine the personal information group
+            {
+                'fields': (
+                    'username',
+                    'first_name',
+                    'last_name',
+                    'nationality_id',
+                    'phone_number',
+                    'date_of_birth',
+                    'email',
+                ),
+            },
+        ),
+        (
+            'نقش کاربری',  # Group heading for role information
+            {
+                'fields': (
+                    'role',
+                    'categories',
+                ),
+            },
+        ),
+        (
+            'Permissions',  # Include permissions if needed
+            {
+                'fields': (
+                    'is_staff',
+                    'is_active',
+                    'is_superuser',
+                    'groups',
+                    'user_permissions',
+                ),
+            },
+        ),
+        (
+            'Important dates',  # Group for important dates
+            {
+                'fields': (
+                    'last_login',
+                    'date_joined',
+                ),
+            },
+        ),
+    )
 
-    class Meta:
-        model = MyUser
-        fields = ['username', 'password', 'first_name', 'last_name', 'nationality_id', 'phone_number', 'duty', 'email', 'date_of_birth', 'is_active', 'is_staff', 'is_superuser', 'groups']  # Added 'groups' here
+    # Method to display role in list_display
+    def get_role(self, obj):
+        return obj.get_role_display()
 
+    get_role.short_description = 'Role'
 
-class UserAdmin(BaseUserAdmin):
-    form = UserChangeForm
-    add_form = UserCreationForm
+    # To access the `get_categories` method in list_display
+    def get_categories_display(self, obj):
+        return obj.get_categories()
 
-    list_display = ['username', 'first_name', 'last_name', 'nationality_id', 'phone_number', 'duty', 'email', 'date_of_birth', 'is_active', 'is_staff', 'is_superuser']
-    list_filter = ['is_staff', 'is_superuser', 'is_active']
-    
-    fieldsets = [
-        (None, {'fields': ['username', 'password']}), 
-        ('Personal info', {'fields': ['first_name', 'last_name', 'nationality_id', 'phone_number', 'duty', 'email', 'date_of_birth']}), 
-        ('Permissions', {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups']}), 
-    ]
-    
-    add_fieldsets = [
-        (None, {
-            'classes': ['wide'],
-            'fields': ['username', 'first_name', 'last_name', 'nationality_id', 'phone_number', 'email', 'date_of_birth', 'password1', 'password2', 'groups'],  # Added 'groups' here
-        }),
-    ]
-    
-    search_fields = ['username', 'email', 'first_name', 'last_name']
-    ordering = ['username']
-    filter_horizontal = ['groups']  
+    get_categories_display.short_description = 'Categories'  # Optional: set a custom column name in the admin
 
-admin.site.register(MyUser, UserAdmin)
+# Unregister the default User model only if it was registered previously
+try:
+    admin.site.unregister(User)
+except admin.sites.NotRegistered:
+    pass
+
+# Register the custom User model with the custom admin
+admin.site.register(User, CustomUserAdmin)

@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_jalali',
+    'import_export',
+    'rangefilter',
+    'treebeard',
     'Authenticate_Application',
     'Amusement_Park_Application',
 ]
@@ -124,7 +127,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-AUTH_USER_MODEL = 'Authenticate_Application.MyUser'
+AUTH_USER_MODEL = 'Authenticate_Application.User'
 
 MEDIA_URL = '/media/'
 

@@ -1,76 +1,101 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils import timezone
 from django_jalali.db import models as jmodels
 
 
-class MyUserManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        """
-        Creates and saves a User with the given username, password, and additional fields.
-        """
-        if not username:
-            raise ValueError("Users must have a username")
-        
-        user = self.model(username=username, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+class User(AbstractBaseUser, PermissionsMixin):
+    class UserRoleChoices(models.TextChoices):
+        NORMAL = 'normal', 'عادی'
+        SCANNER = 'scanner', 'اسکنر'
+        KIOSK = 'kiosk', 'کیوسک'
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        """
-        Creates and saves a superuser with the given username, password, and additional fields.
-        This version ensures that other fields like first_name, last_name, etc., are optional.
-        """
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        
-        # Optional fields, so they won't be required in the create_superuser command
-        extra_fields.setdefault('is_active', True)
-        
-        return self.create_user(username, password, **extra_fields)
+    username_validator = UnicodeUsernameValidator()
+
+    username = models.CharField(_("username"),max_length=150,unique=True,help_text=_("Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."),validators=[username_validator],
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+    first_name = models.CharField(_("first name"), max_length=150)
+    last_name = models.CharField(_("last name"), max_length=150)
+    nationality_id = models.CharField(max_length=10, unique=True, verbose_name="کد ملی/اتباع", null=True, blank=True)
+    phone_number = models.CharField(max_length=11, unique=True, verbose_name="شماره تلفن", null=True, blank=True)  
+    date_of_birth = jmodels.jDateField(null=True, blank=True, verbose_name="تاریخ تولد")      
+    email = models.EmailField(_("email address"), blank=True, null=True)
 
 
-class MyUserManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        if not username:
-            raise ValueError("Users must have a username")
-        
-        user = self.model(username=username, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can log into this admin site."),
+    )
+    is_active = models.BooleanField(
+        _("active"),
+        default=True,
+        help_text=_(
+            "Designates whether this user should be treated as active. "
+            "Unselect this instead of deleting accounts."
+        ),
+    )
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    update = models.DateTimeField(auto_now=True, verbose_name=_('زمان ویرایش'))
+    role_info = """
+    |عادی :‌ دسترسی به کل بخش های سایت|
+    |کیوسک :‌ این دسترسی برای فروش از طریق ماشین تیکت تعریف شده|
+    |اسکنر :‌ برای کارکنانی که وظیفه اسکن بارکد را دارند|
+    """
+    role = models.CharField(verbose_name='نقش کاربری', max_length=10, choices=UserRoleChoices.choices, default=UserRoleChoices.NORMAL, help_text=role_info)
+    categories = models.ManyToManyField('Amusement_Park_Application.Category', related_name='users', verbose_name='دسته بندی')
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        
-        return self.create_user(username, password, **extra_fields)
+    # Add custom related names to avoid clashes
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_groups',  # Unique related_name
+        verbose_name=_("groups"),
+        blank=True,
+        help_text=_(
+            "The groups this user belongs to. A user will get all permissions "
+            "granted to each of their groups."
+        ),
+        related_query_name="user",
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_permissions',  # Unique related_name
+        verbose_name=_("user permissions"),
+        blank=True,
+        help_text=_(
+            "Specific permissions for this user."
+        ),
+        related_query_name="user",
+    )
 
-class MyUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=255, unique=True, verbose_name="نام کاربری")
-    first_name = models.CharField(max_length=55, verbose_name="نام", null=True, blank=True)
-    last_name = models.CharField(max_length=55, verbose_name="نام خانوادگی", null=True, blank=True)
-    nationality_id = models.CharField(max_length=10, unique=True, verbose_name="کد ملی", null=True, blank=True)
-    phone_number = models.CharField(max_length=11, unique=True, verbose_name="شماره تلفن", null=True, blank=True)
-    duty = models.CharField(max_length=55, verbose_name="وظیفه", null=True, blank=True)
-    email = models.EmailField(unique=True, verbose_name="آدرس ایمیل", null=True, blank=True)
-    date_of_birth = jmodels.jDateField(null=True, blank=True, verbose_name="تاریخ تولد")
-    is_active = models.BooleanField(verbose_name="فعال", default=True)
-    is_staff = models.BooleanField(verbose_name="کارمند", default=True)
-    is_superuser = models.BooleanField(verbose_name="ادمین", default=False, help_text= "به این گزینه دقت کنید زیرا اگر بله را انتخاب کنید این کاربر میتواند به این صفحه دسترسی داشته باشد (نکته :‌ شما میتوانید گروه بندی کنید)")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد", null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی", null=True, blank=True)
+    objects = UserManager()
 
-    objects = MyUserManager()
+    USERNAME_FIELD = "username"
 
-    USERNAME_FIELD = 'username'
-    
+    class Meta:
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
+        ordering = ('-update',)
+
+    def clean(self):
+        super().clean()
+
+    def get_full_name(self):
+        """Return the first_name plus the last_name, with a space in between."""
+        full_name = "%s %s" % (self.first_name, self.last_name)
+        return full_name.strip()
+
+    def get_short_name(self):
+        """Return the short name for the user."""
+        return self.first_name
+
     def __str__(self):
-        return self.username
+        return f'{self.get_full_name()}'
 
     def get_categories(self):
         return "\n,".join([c.title for c in self.categories.all()])
-    
-    class Meta:
-        verbose_name_plural = "کاربر ها"
-    
