@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, ProductSaleReport, Ticket, Category, Costumer, Offer, SMS, Refund, RefundProduct, Notification
+from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification
 from django.db.models import Sum, Count
 from import_export.admin import ExportMixin
 from import_export import resources
@@ -7,7 +7,8 @@ from import_export.fields import Field
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
-
+from import_export import resources, fields
+from django.utils.translation import gettext_lazy as _
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
@@ -34,23 +35,16 @@ class TransactionResource(resources.ModelResource):
                   'create_at', 'user__last_name', 'user__username', 'j_create_at', 'has_tax', 'discount')
 
 
-class TransactionAdminClass(ExportMixin, admin.ModelAdmin):
-    resource_classes = [TransactionResource]
+class TransactionAdminClass(admin.ModelAdmin):
     list_display = ('id', 'is_success', 'type', 'price', 'discount', 'trans_id', 'date', 'desc', 'ticket', 'j_create_at', 'user')
-    list_filter = ('ticket__product', 'is_success', 'create_at', ("create_at"), 'user', 'type')
-    search_fields = ('ticket__product__title', 'id', 'desc')
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
+    list_filter = ('is_success', 'create_at', 'user', 'type')
+    search_fields = ('id', 'desc')
 
     def has_add_permission(self, request, obj=None):
         return False
 
     def changelist_view(self, request, extra_context=None):
-        queryset = self.get_export_queryset(request)
+        queryset = self.get_queryset(request)
         extra_context = extra_context or {}
 
         extra_context.update({
@@ -59,85 +53,92 @@ class TransactionAdminClass(ExportMixin, admin.ModelAdmin):
             'total_price_pc_pos': queryset.filter(type=Transaction.TransactionType.pc).aggregate(total_price_pc_pos=Sum('price'))['total_price_pc_pos'],
             'total_price_cash': queryset.filter(type=Transaction.TransactionType.cash).aggregate(total_price_cash=Sum('price'))['total_price_cash'],
         })
-        
+
         return super().changelist_view(request, extra_context=extra_context)
 
 
-class ProductSaleAdminClass(TransactionAdminClass):
+class ProductSaleAdminClass(admin.ModelAdmin):
     list_display = ('id', 'type', 'price', 'discount', 'trans_id', 'date', 'desc', 'ticket', 'j_create_at', 'user')
-    list_filter = ('ticket__product', 'create_at', ("create_at"), 'user', 'type', 'ticket__product__categories')
-    search_fields = ('ticket__product__title', 'id', 'desc')
+    list_filter = ('create_at', 'user', 'type')
+    search_fields = ('id', 'desc')
 
 
-class ReturnedSaleResource(resources.ModelResource):
-    j_create_at = Field(attribute='j_create_at', column_name='j_create_at')
+class ReturnedSaleAdmin(admin.ModelAdmin):
+    # Fields to be displayed in the admin list view
+    list_display = ('id', 'ticket', 'type', 'desc', 'user', 'j_create_at')
+    
+    # Add search capability to the admin
+    search_fields = ('ticket__tracking_code', 'type', 'desc', 'user__username')
+    
+    # Filter options in the admin panel
+    list_filter = ('type', 'user', 'create_at')
 
-    class Meta:
-        model = ReturnedSale
-        fields = ('type', 'product__title', 'qty', 'price', 'desc', 'create_at', 'user__last_name', 'user__username', 'j_create_at')
+    # Ordering of the list view
+    ordering = ('-create_at',)
+    
+    # Fields to display in the edit form
+    fieldsets = (
+        (None, {
+            'fields': ('ticket', 'type', 'desc', 'user')
+        }),
+        (_('Timestamps'), {
+            'fields': ('create_at',)
+        }),
+    )
 
+    # Making the 'create_at' field read-only
+    readonly_fields = ('create_at',)
 
-class ReturnedSaleAdminClass(ExportMixin, admin.ModelAdmin):
-    resource_classes = [ReturnedSaleResource]
-    list_display = ('product', 'type', 'qty', 'price', 'create_at', 'desc', 'j_create_at', 'user')
-    list_filter = ('product', 'create_at', 'user', 'type')
-    search_fields = ('product__title',)
-    autocomplete_fields = ['product']
-    readonly_fields = ('user',)
-
-    def save_model(self, request, obj, form, change):
-        obj.user = request.user
-        super().save_model(request, obj, form, change)
-
-
-class ProductSaleReportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'trans_id', 'date', 'desc', 'j_create_at', 'user')
-    list_filter = ('create_at', ("create_at"))
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def changelist_view(self, request, extra_context=None):
-        response = super().changelist_view(request, extra_context=extra_context)
-        try:
-            qs = response.context_data['cl'].queryset
-        except (AttributeError, KeyError):
-            return response
-
-        metrics = {
-            'sum_ticket_qty': Sum('ticket__qty'),
-            'total_transactions': Count('id'),
-            'total_sales': Sum('price'),
-        }
-
-        response.context_data['summary'] = list(
-            qs.values('ticket__product__title').annotate(**metrics).order_by('-total_sales')
-        )
-        response.context_data['summary_total'] = dict(qs.aggregate(**metrics))
-
-        return response
+    # Display 'create_at' with Jalali date format
+    def j_create_at(self, obj):
+        return obj.j_create_at()
+    j_create_at.short_description = _('Create Date')
 
 
+
+
+# TicketProduct Admin
+class TicketProductInline(admin.TabularInline):
+    model = TicketProduct
+    extra = 1
+    fields = ('product', 'quantity')
+
+
+# RefundProduct Admin (this is for managing RefundProducts directly if needed)
+class TicketProductAdmin(admin.ModelAdmin):
+    list_display = ('ticket', 'product', 'quantity')
+    list_filter = ('ticket', 'product')
+
+
+
+
+# Ticket Admin
 class TicketResource(resources.ModelResource):
-    j_create_at = Field(attribute='j_create_at', column_name='j_create_at')
+    j_create_at = fields.Field(attribute='j_create_at', column_name='j_create_at')
 
     class Meta:
         model = Ticket
-        fields = ('id', 'product__title', 'qty', 'is_scanned', 'desc', 'create_at', 'user__last_name', 'user__username', 'j_create_at')
+        fields = ('id', 'tracking_code', 'is_scanned', 'desc', 'is_tourist', 'user__last_name', 'user__username', 'j_create_at')
 
+    def dehydrate(self, ticket):
+        ticket_products = TicketProduct.objects.filter(ticket=ticket)
+        products = ', '.join([f"{tp.product.title} ({tp.quantity})" for tp in ticket_products])
+        return products
+
+    def dehydrate_j_create_at(self, ticket):
+        return ticket.j_create_at()
 
 class TicketAdminClass(ExportMixin, admin.ModelAdmin):
     resource_classes = [TicketResource]
-    list_display = ('id', 'product', 'qty', 'is_scanned', 'create_at', 'user')
-    list_filter = ('product', 'is_scanned', 'user', 'create_at')
+    list_display = ('id', 'get_products', 'is_scanned', 'create_at', 'user')
+    list_filter = ('is_scanned', 'user', 'create_at')
     search_fields = ('id',)
     readonly_fields = ('transaction', 'user', 'is_scanned')
+    inlines = [TicketProductInline]
+
+    def get_products(self, obj):
+        return ', '.join([f"{tp.product.title} ({tp.quantity})" for tp in obj.ticket_products.all()])
+    get_products.short_description = 'Products'
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -145,8 +146,8 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
 
 
 
-# Costumer Admin
-class CostumerAdmin(admin.ModelAdmin):
+# Customer Admin
+class CustomerAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name', 'phone', 'date_of_birth', 'first_purchase', 'last_purchase')
     search_fields = ('first_name', 'last_name', 'phone')
     list_filter = ('date_of_birth', 'first_purchase', 'last_purchase')
@@ -171,31 +172,6 @@ class SMSAdmin(admin.ModelAdmin):
     ordering = ('-set_up_time',)
 
 
-
-# RefundProduct Admin
-class RefundProductInline(admin.TabularInline):
-    model = RefundProduct
-    extra = 1
-    fields = ('product', 'quantity')
-
-# Refund Admin
-class RefundAdmin(admin.ModelAdmin):
-    list_display = ('refund_id', 'ticket_tracking_code', 'refund_date', 'customer_name', 'refund_price', 'transaction_type')
-    search_fields = ('customer_name', 'refund_id__id', 'ticket_tracking_code__tracking_code')
-    list_filter = ('transaction_type', 'refund_date')
-    inlines = [RefundProductInline]
-    ordering = ('-refund_date',)
-
-
-
-# RefundProduct Admin (this is for managing RefundProducts directly if needed)
-class RefundProductAdmin(admin.ModelAdmin):
-    list_display = ('refund', 'product', 'quantity')
-    search_fields = ('refund__customer_name', 'product__title')
-    list_filter = ('refund', 'product')
-    
-
-
 # Notification Admin
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('title', 'activate_time', 'activate', 'set_up_time')
@@ -212,12 +188,10 @@ admin.site.register(Product, ProductAdminClass)
 admin.site.register(TaxRate)
 admin.site.register(Transaction, TransactionAdminClass)
 admin.site.register(Sale, ProductSaleAdminClass)
-admin.site.register(ReturnedSale, ReturnedSaleAdminClass)
-admin.site.register(ProductSaleReport, ProductSaleReportAdmin)
+admin.site.register(ReturnedSale, ReturnedSaleAdmin)
 admin.site.register(Ticket, TicketAdminClass)
-admin.site.register(Costumer, CostumerAdmin)
+admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(SMS, SMSAdmin)
-admin.site.register(Refund, RefundAdmin)
-admin.site.register(RefundProduct, RefundProductAdmin)
 admin.site.register(Notification, NotificationAdmin)
+admin.site.register(TicketProduct, TicketProductAdmin)

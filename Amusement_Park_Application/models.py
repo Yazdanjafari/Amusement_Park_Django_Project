@@ -35,6 +35,22 @@ class Category(MP_Node):
         return "\n,".join([p.title for p in self.products.all()])
 
 
+class Customer(models.Model):
+    first_name = models.CharField(max_length=255, verbose_name='نام', null=True, blank=True)
+    last_name = models.CharField(max_length=255, verbose_name='نام خانوادگی', null=True, blank=True)
+    phone = models.CharField(max_length=11, verbose_name='شماره تلفن')
+    date_of_birth = jmodels.jDateField(verbose_name="تاریخ تولد", null=True, blank=True) 
+    first_purchase = models.DateTimeField(auto_now_add=True, verbose_name='اولین خرید')
+    last_purchase = models.DateTimeField(auto_now=True, verbose_name='آخرین خرید')
+
+    class Meta:
+        verbose_name = "مشتری"
+        verbose_name_plural = "مشتریان"
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
 # Product Model: Represents a product in the system.
 class Product(models.Model):
     title = models.CharField(max_length=512, verbose_name='نام محصول', unique=True)
@@ -114,6 +130,7 @@ class Transaction(models.Model):
         card = ('card', 'کارتی')
 
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    ticket = models.ForeignKey('Ticket', on_delete=models.SET_NULL, null=True, blank=True, related_name='transaction_obj', verbose_name='بلیت')
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.card)
     is_success = models.BooleanField('تراکنش موفق', default=False)
     price = models.PositiveBigIntegerField(verbose_name='مبلغ تراکنش')
@@ -124,7 +141,6 @@ class Transaction(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='sale', verbose_name='فروشنده')
     has_tax = models.BooleanField('با احتساب ارزش افزورده', default=False)
     discount = models.PositiveBigIntegerField(default=0, null=True, blank=True, verbose_name='مبلغ تخفیف')
-    ticket = models.ForeignKey('Ticket', on_delete=models.SET_NULL, null=True, blank=True, related_name='transaction_obj', verbose_name='بلیت')
 
     class Meta:
         verbose_name = "تراکنش"
@@ -158,49 +174,27 @@ class Sale(Transaction):
         return f'تراکنش شماره {self.id} | مبلغ {self.price} | ***'
 
 
-# ProductSaleReport Model: A proxy model for product sales reports.
-class ProductSaleReport(Transaction):
-    objects = SaleManager()
-
+class Offer (models.Model):
+    title = models.CharField(max_length=255, verbose_name='عنوان')
+    description = models.TextField(verbose_name='توضیحات', null=True, blank=True)
+    persent = models.PositiveIntegerField(verbose_name='درصد تخفیف')
+    code = models.CharField(max_length=50, verbose_name='کد تخفیف')
+    activate = models.BooleanField(default=True, verbose_name='فعال')
+    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    
     class Meta:
-        proxy = True
-        verbose_name = "گزارش فروش به تفکیک محصول"
-        verbose_name_plural = "گزارش فروش به تفکیک محصول"
-
+        verbose_name = "تخفیف"
+        verbose_name_plural = "تخفیف ها"
+        
     def __str__(self):
-        return f'{self.product}'
-
-
-# ReturnedSale Model: Represents a sale return transaction.
-class ReturnedSale(models.Model):
-    type = models.CharField(max_length=10, choices=Transaction.TransactionType.choices, verbose_name='نوع خرید')
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='return_sale', verbose_name='محصول')
-    qty = models.PositiveBigIntegerField(verbose_name='تعداد')
-    price = models.PositiveBigIntegerField(verbose_name='مبلغ تراکنش')
-    desc = models.CharField('توضیحات', max_length=128, null=True, blank=True)
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='return_sale', verbose_name='فروشنده', null=True, blank=True)
-
-    def j_create_at(self):
-        if self.create_at:
-            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
-            return jalali_date.strftime('%Y/%m/%d %H:%M')
-        return ''
-
-    class Meta:
-        verbose_name = "برگشت از فروش"
-        verbose_name_plural = "برگشت از فروش"
-
-    def __str__(self):
-        return f'برگشت از فروش {self.id}'
+        return f"{self.code} | {self.persent}%"
 
 
 # Ticket Model: Represents tickets related to transactions.
 class Ticket(models.Model):
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='ticket', verbose_name='محصول')
-    qty = models.PositiveBigIntegerField(verbose_name='تعداد')
     transaction = models.ManyToManyField(Transaction, related_name='tickets', verbose_name='تراکنش ها')
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='ticket', verbose_name='مشتری', null=True, blank=True)
     is_scanned = models.BooleanField('اسکن شده', default=False)
     desc = models.TextField('توضیحات', null=True, blank=True)
     is_tourist = models.BooleanField('بلیط توریستی', default=False)
@@ -210,6 +204,7 @@ class Ticket(models.Model):
     class Meta:
         verbose_name = 'بلیت'
         verbose_name_plural = 'بلیت ها'
+        
 
     def j_create_at(self):
         if self.create_at:
@@ -223,17 +218,16 @@ class Ticket(models.Model):
 
     # Calculate the total ticket price, including tax if applicable.
     def get_ticket_price(self):
-        ticket_price = self.product.price * self.qty
+        ticket_price = sum(tp.product.price * tp.quantity for tp in self.ticket_products.all())
         if self.is_tourist:
-            ticket_price = self.product.tourist_price * self.qty
+            ticket_price = sum(tp.product.tourist_price * tp.quantity for tp in self.ticket_products.all())
 
         tax_rate = TaxRate.objects.all().first().rate
-        if self.product.is_taxable:
+        if any(tp.product.is_taxable for tp in self.ticket_products.all()):
             ticket_price += int(ticket_price * tax_rate / 100)
         return custom_round_calculate(ticket_price)
 
-    def __str__(self):
-        return f'{self.product.title} | {self.qty} | id:{self.id}'
+
 
     # Custom validation for ticket price.
     def clean(self):
@@ -249,37 +243,43 @@ class Ticket(models.Model):
     def get_ticket_url(self):
         return f'/tickets/{self.id}/print_qr/'
 
+    def __str__(self):
+        return f'مشتری : {self.customer} | کد رهگیری بلیت: {self.id}'        
 
-class Costumer(models.Model):
-    first_name = models.CharField(max_length=255, verbose_name='نام', null=True, blank=True)
-    last_name = models.CharField(max_length=255, verbose_name='نام خانوادگی', null=True, blank=True)
-    phone = models.CharField(max_length=11, verbose_name='شماره تلفن')
-    date_of_birth = jmodels.jDateField(verbose_name="تاریخ تولد", null=True, blank=True) 
-    first_purchase = models.DateTimeField(auto_now_add=True, verbose_name='اولین خرید')
-    last_purchase = models.DateTimeField(auto_now=True, verbose_name='آخرین خرید')
+
+class TicketProduct(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='ticket_products', verbose_name='بلیت')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='ticket_products', verbose_name='محصول')
+    quantity = models.PositiveIntegerField(verbose_name='تعداد', default=1)
 
     class Meta:
-        verbose_name = "مشتری"
-        verbose_name_plural = "مشتریان"
+        verbose_name_plural = "محصولات بلیت"
 
     def __str__(self):
-        return f'{self.name} | {self.phone}'
+        return f"کد رهگیری بلیت : {self.ticket.id} | نام مشتری : {self.ticket.customer.first_name} {self.ticket.customer.last_name} | محصولات : {self.product.title} (*) تعداد : {self.quantity} (*) قیمت : {self.product.price} ریال"
     
+    
+# ReturnedSale Model: Represents a sale return transaction.
+class ReturnedSale(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.PROTECT, related_name='return_sale', verbose_name='بلیت')
+    type = models.CharField(max_length=10, choices=Transaction.TransactionType.choices, verbose_name='نوع عودت وجه')
+    desc = models.CharField('توضیحات', max_length=128, null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='return_sale', verbose_name='فروشنده', null=True, blank=True)
 
-class Offer (models.Model):
-    title = models.CharField(max_length=255, verbose_name='عنوان')
-    description = models.TextField(verbose_name='توضیحات', null=True, blank=True)
-    persent = models.PositiveIntegerField(verbose_name='درصد تخفیف')
-    code = models.CharField(max_length=50, verbose_name='کد تخفیف')
-    activate = models.BooleanField(default=True, verbose_name='فعال')
-    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
-    
+    def j_create_at(self):
+        if self.create_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''
+
     class Meta:
-        verbose_name = "تخفیف"
-        verbose_name_plural = "تخفیف ها"
-        
+        verbose_name = "عودت وجه"
+        verbose_name_plural = "عودت وجه"
+
     def __str__(self):
-        return f"{self.title} | {self.persent}%"
+        return f'عودت وجه {self.id}'    
+   
                         
 class SMS (models.Model):
     title = models.CharField(max_length=255, verbose_name='عنوان')
@@ -296,44 +296,6 @@ class SMS (models.Model):
         return f"{self.title} | {self.target}" 
     
     
-class Refund(models.Model):
-    class TransactionTypeChoise(models.TextChoices):
-        cash = 'cash', 'نقدی'
-        card = 'card', 'کارتی'
-        both = 'both', 'پوز'
-    
-    refund_id = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='refund', verbose_name='تراکنش')
-    ticket_tracking_code = models.ForeignKey(Ticket, on_delete=models.PROTECT, related_name='refund', verbose_name='کد رهگیری بلیت')
-    refund_date = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ عودت وجه')
-    customer_name = models.CharField(max_length=255, verbose_name='نام مشتری')
-    refund_price = models.PositiveBigIntegerField(verbose_name='مبلغ برگشتی')
-    transaction_type = models.CharField(max_length=255, choices=TransactionTypeChoise, verbose_name='نوع تراکش')
-
-    class Meta:
-        verbose_name = "عودت وجه"
-        verbose_name_plural = "عودت وجه ها"
-
-    def __str__(self):
-        return f"Refund {self.id} - {self.customer_name}"
-
-    def save(self, *args, **kwargs):
-        if not self.refund_price:
-            self.refund_price = sum(item.product.price * item.quantity for item in self.refund_products.all())
-        super().save(*args, **kwargs)
-
-class RefundProduct(models.Model):
-    refund = models.ForeignKey(Refund, on_delete=models.CASCADE, related_name='refund_products', verbose_name='عودت وجه')
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='refund_products', verbose_name='محصول')
-    quantity = models.PositiveIntegerField(verbose_name='تعداد')
-
-    class Meta:
-        verbose_name_plural = "محصولات عودت وجه داده شده"
-
-    def __str__(self):
-        return f"{self.product.title} - {self.quantity}"
-      
-        
-        
         
 class Notification(models.Model):
     class NotificationTimeChoise(models.TextChoices):
@@ -368,8 +330,8 @@ class Notification(models.Model):
         else:
             expiration_time = timedelta(0)
 
-        # If the current time exceeds the expiration time, set activate to False
-        if timezone.now() > self.set_up_time + expiration_time:
+        # Check if set_up_time is not None before performing the comparison
+        if self.set_up_time and timezone.now() > self.set_up_time + expiration_time:
             self.activate = False
 
         super().save(*args, **kwargs)
