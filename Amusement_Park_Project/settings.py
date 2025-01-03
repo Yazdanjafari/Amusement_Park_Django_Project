@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_jalali',
     'import_export',
-    'rangefilter',
     'treebeard',
     'Authenticate_Application',
     'Amusement_Park_Application',

@@ -1,10 +1,9 @@
 from django.contrib import admin
-from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, ProductSaleReport, Ticket, Category
+from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, ProductSaleReport, Ticket, Category, Costumer, Offer, SMS, Refund, RefundProduct, Notification
 from django.db.models import Sum, Count
 from import_export.admin import ExportMixin
 from import_export import resources
 from import_export.fields import Field
-from rangefilter.filters import DateRangeFilter
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
@@ -38,7 +37,7 @@ class TransactionResource(resources.ModelResource):
 class TransactionAdminClass(ExportMixin, admin.ModelAdmin):
     resource_classes = [TransactionResource]
     list_display = ('id', 'is_success', 'type', 'price', 'discount', 'trans_id', 'date', 'desc', 'ticket', 'j_create_at', 'user')
-    list_filter = ('ticket__product', 'is_success', 'create_at', ("create_at", DateRangeFilter), 'user', 'type')
+    list_filter = ('ticket__product', 'is_success', 'create_at', ("create_at"), 'user', 'type')
     search_fields = ('ticket__product__title', 'id', 'desc')
 
     def has_delete_permission(self, request, obj=None):
@@ -66,7 +65,7 @@ class TransactionAdminClass(ExportMixin, admin.ModelAdmin):
 
 class ProductSaleAdminClass(TransactionAdminClass):
     list_display = ('id', 'type', 'price', 'discount', 'trans_id', 'date', 'desc', 'ticket', 'j_create_at', 'user')
-    list_filter = ('ticket__product', 'create_at', ("create_at", DateRangeFilter), 'user', 'type', 'ticket__product__categories')
+    list_filter = ('ticket__product', 'create_at', ("create_at"), 'user', 'type', 'ticket__product__categories')
     search_fields = ('ticket__product__title', 'id', 'desc')
 
 
@@ -93,7 +92,7 @@ class ReturnedSaleAdminClass(ExportMixin, admin.ModelAdmin):
 
 class ProductSaleReportAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'trans_id', 'date', 'desc', 'j_create_at', 'user')
-    list_filter = ('create_at', ("create_at", DateRangeFilter))
+    list_filter = ('create_at', ("create_at"))
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -145,6 +144,69 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+
+# Costumer Admin
+class CostumerAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'phone', 'date_of_birth', 'first_purchase', 'last_purchase')
+    search_fields = ('first_name', 'last_name', 'phone')
+    list_filter = ('date_of_birth', 'first_purchase', 'last_purchase')
+    ordering = ('-last_purchase',)
+
+
+
+# Offer Admin
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ('title', 'persent', 'code', 'activate', 'set_up_time')
+    search_fields = ('title', 'code')
+    list_filter = ('activate', 'set_up_time')
+    ordering = ('-set_up_time',)
+
+
+
+# SMS Admin
+class SMSAdmin(admin.ModelAdmin):
+    list_display = ('title', 'target', 'activate', 'set_up_time')
+    search_fields = ('title', 'target')
+    list_filter = ('activate', 'set_up_time')
+    ordering = ('-set_up_time',)
+
+
+
+# RefundProduct Admin
+class RefundProductInline(admin.TabularInline):
+    model = RefundProduct
+    extra = 1
+    fields = ('product', 'quantity')
+
+# Refund Admin
+class RefundAdmin(admin.ModelAdmin):
+    list_display = ('refund_id', 'ticket_tracking_code', 'refund_date', 'customer_name', 'refund_price', 'transaction_type')
+    search_fields = ('customer_name', 'refund_id__id', 'ticket_tracking_code__tracking_code')
+    list_filter = ('transaction_type', 'refund_date')
+    inlines = [RefundProductInline]
+    ordering = ('-refund_date',)
+
+
+
+# RefundProduct Admin (this is for managing RefundProducts directly if needed)
+class RefundProductAdmin(admin.ModelAdmin):
+    list_display = ('refund', 'product', 'quantity')
+    search_fields = ('refund__customer_name', 'product__title')
+    list_filter = ('refund', 'product')
+    
+
+
+# Notification Admin
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'activate_time', 'activate', 'set_up_time')
+    search_fields = ('title', 'activate_time')
+    list_filter = ('activate', 'set_up_time')
+    ordering = ('-set_up_time',)
+
+
+
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdminClass)
 admin.site.register(TaxRate)
@@ -153,3 +215,9 @@ admin.site.register(Sale, ProductSaleAdminClass)
 admin.site.register(ReturnedSale, ReturnedSaleAdminClass)
 admin.site.register(ProductSaleReport, ProductSaleReportAdmin)
 admin.site.register(Ticket, TicketAdminClass)
+admin.site.register(Costumer, CostumerAdmin)
+admin.site.register(Offer, OfferAdmin)
+admin.site.register(SMS, SMSAdmin)
+admin.site.register(Refund, RefundAdmin)
+admin.site.register(RefundProduct, RefundProductAdmin)
+admin.site.register(Notification, NotificationAdmin)
