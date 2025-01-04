@@ -13,6 +13,8 @@ from treebeard.mp_tree import MP_Node
 from django_jalali.db import models as jmodels
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Category Model: Represents product categories, inheriting from MP_Node for tree structure.
 class Category(MP_Node):
@@ -56,7 +58,7 @@ class Product(models.Model):
     title = models.CharField(max_length=512, verbose_name='نام محصول', unique=True)
     price = models.PositiveBigIntegerField(verbose_name='قیمت')
     tourist_price = models.PositiveBigIntegerField(default=0, verbose_name='قیمت توریستی')
-    image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='سایز 800*800')
+    image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')
     is_active = models.BooleanField(default=True, verbose_name='وضعیت فعال')
     is_taxable = models.BooleanField(default=False, verbose_name='مشمول مالیات بر ارزش افزوده')
     order_metric = models.PositiveIntegerField(editable=False, default=0)
@@ -120,6 +122,25 @@ class TaxRate(models.Model):
             if not created:
                 obj.set_cache()
         return cache.get(cls.__name__)
+    
+    
+    
+class Offer (models.Model): 
+    title = models.CharField(max_length=255, verbose_name='عنوان')
+    description = models.TextField(verbose_name='توضیحات', null=True, blank=True)
+    persent = models.PositiveIntegerField(verbose_name='درصد تخفیف')
+    code = models.CharField(max_length=50, verbose_name='کد تخفیف')
+    activate = models.BooleanField(default=True, verbose_name='فعال')
+    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    
+    class Meta:
+        verbose_name = "تخفیف"
+        verbose_name_plural = "تخفیف ها"
+        
+    def __str__(self):
+        return f"{self.code}"
+    
+        
 
 
 # Transaction Model: Stores transaction details.
@@ -129,18 +150,20 @@ class Transaction(models.Model):
         cash = ('cash', 'نقدی')
         card = ('card', 'کارتی')
 
+    id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش")
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='transactions', verbose_name='فروشنده')
     ticket = models.ForeignKey('Ticket', on_delete=models.SET_NULL, null=True, blank=True, related_name='transaction_obj', verbose_name='بلیت')
-    type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.card)
-    is_success = models.BooleanField('تراکنش موفق', default=False)
-    price = models.PositiveBigIntegerField(verbose_name='مبلغ تراکنش')
-    trans_id = models.CharField(max_length=128, verbose_name='شماره تراکنش', null=True, blank=True)
-    date = models.CharField(max_length=128, verbose_name='زمان تراکنش', null=True, blank=True)
+    type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)
+    is_success = models.BooleanField('تراکنش موفق', default=True)
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت تراکنش')
+    offer = models.ForeignKey('Offer', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name='کد تخفیف')
+    has_tax = models.BooleanField('با احتساب مالیات بر ارزش افزورده', default=True)
+    product_prices = models.PositiveBigIntegerField(verbose_name='مجموع مبلغ محصولات')
+    tax = models.PositiveBigIntegerField(verbose_name='مبلغ مالیات', null=True, blank=True)
+    discount = models.PositiveBigIntegerField(verbose_name='مبلغ تخفیف', default=0, null=True, blank=True)
+    price = models.PositiveBigIntegerField(verbose_name='قیمت نهایی')
     desc = models.TextField('توضیحات', null=True, blank=True)
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='sale', verbose_name='فروشنده')
-    has_tax = models.BooleanField('با احتساب ارزش افزورده', default=False)
-    discount = models.PositiveBigIntegerField(default=0, null=True, blank=True, verbose_name='مبلغ تخفیف')
 
     class Meta:
         verbose_name = "تراکنش"
@@ -153,7 +176,7 @@ class Transaction(models.Model):
         return ''
 
     def __str__(self):
-        return f'تراکنش شماره {self.id} | مبلغ {self.price} | ***'
+        return f'تراکنش شماره {self.id}'
 
 
 # Sale Model: A proxy model for successful transactions.
@@ -173,21 +196,6 @@ class Sale(Transaction):
     def __str__(self):
         return f'تراکنش شماره {self.id} | مبلغ {self.price} | ***'
 
-
-class Offer (models.Model):
-    title = models.CharField(max_length=255, verbose_name='عنوان')
-    description = models.TextField(verbose_name='توضیحات', null=True, blank=True)
-    persent = models.PositiveIntegerField(verbose_name='درصد تخفیف')
-    code = models.CharField(max_length=50, verbose_name='کد تخفیف')
-    activate = models.BooleanField(default=True, verbose_name='فعال')
-    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
-    
-    class Meta:
-        verbose_name = "تخفیف"
-        verbose_name_plural = "تخفیف ها"
-        
-    def __str__(self):
-        return f"{self.code} | {self.persent}%"
 
 
 # Ticket Model: Represents tickets related to transactions.
@@ -261,11 +269,25 @@ class TicketProduct(models.Model):
     
 # ReturnedSale Model: Represents a sale return transaction.
 class ReturnedSale(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.PROTECT, related_name='return_sale', verbose_name='بلیت')
-    type = models.CharField(max_length=10, choices=Transaction.TransactionType.choices, verbose_name='نوع عودت وجه')
+    class FoundType(models.TextChoices):
+        cash = ('نقد', 'نقد')
+        send_money_by_card_number = ('کارت به کارت', 'کارت به کارت')
+        send_money_by_sheba_number = ('انتقال با شماره شبا', 'انتقال با شماره شبا')    
+    
+    ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='return_sale', verbose_name='بلیت')
+    type = models.CharField(max_length=55, choices=FoundType.choices, verbose_name='نوع عودت وجه', default=FoundType.cash)
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='returned_sales', verbose_name='فروشنده', null=True, blank=True)
+    is_success = models.BooleanField('تراکنش موفق', default=True)
     desc = models.CharField('توضیحات', max_length=128, null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='return_sale', verbose_name='فروشنده', null=True, blank=True)
+    source_card_holder_name = models.CharField(verbose_name='نام صاحب کارت مبدا', max_length=128, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
+    destination_card_holder_name = models.CharField(verbose_name='نام صاحب کارت مقصد', max_length=128, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید")
+    source_card_number = models.CharField(verbose_name='شماره کارت مبدا', max_length=16, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
+    destination_card_number = models.CharField(verbose_name='شماره کارت مقصد', max_length=16, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
+    source_sheba_number = models.CharField(verbose_name='شماره شبا مبدا', max_length=24, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
+    destination_sheba_number = models.CharField(verbose_name='شماره شبا مقصد', max_length=24, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
+
+
 
     def j_create_at(self):
         if self.create_at:
@@ -317,6 +339,12 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.title}"
 
+    def j_create_at(self):
+        if self.create_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''      
+      
     def save(self, *args, **kwargs):
         # Determine the expiration time based on the selected activate_time
         if self.activate_time == '24 ساعت':
@@ -335,3 +363,90 @@ class Notification(models.Model):
             self.activate = False
 
         super().save(*args, **kwargs)
+        
+        
+        
+        
+class RerecordingTransaction(models.Model):
+    class TransactionType(models.TextChoices):
+        pc = ('pc', 'pc pos')
+        cash = ('cash', 'نقدی')
+        card = ('card', 'کارتی')
+
+    rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش') 
+    type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)    
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='rerecording_transactions', verbose_name='فروشنده', null=True, blank=True)  
+    is_success = models.BooleanField('تراکنش موفق', default=True)
+    desc = models.TextField('توضیحات', null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
+    
+    class Meta:
+        verbose_name = "تراکنش مجدد"
+        verbose_name_plural = "تراکنش های مجدد"
+        
+    def __str__(self):
+        return f"کد تراکنش فعلی :{self.id} | کد تراکنش مادر : {self.rerecording_transaction}"  
+    
+    def j_create_at(self):
+        if self.create_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''    
+    
+
+class SuccessfulTransactionLog(models.Model):
+    class TransactionKind(models.TextChoices):
+        TRANSACTION = 'فروش', 'فروش'
+        RERECORDING = 'فروش مجدد', 'فروش مجدد'
+        RETURNED_SALE = 'عودت وجه', 'عودت وجه'
+
+    id = models.AutoField(primary_key=True, verbose_name="کد رهگیری تراکنش")
+    kind = models.CharField(max_length=30, choices=TransactionKind.choices, verbose_name="نوع تراکنش")
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='successful_sales', verbose_name='فروشنده', null=True, blank=True)
+    desc = models.TextField('توضیحات', null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
+
+    class Meta:
+        verbose_name = "ثبت تراکنش موفق"
+        verbose_name_plural = "ثبت تراکنش های موفق"
+
+    def __str__(self):
+        return f"کد رهگیری تراکنش: {self.id} | نوع تراکنش: {self.kind}"
+    
+    def j_create_at(self):
+        if self.create_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''          
+    
+
+# Signal handlers to create SuccessfulTransactionLog entries
+@receiver(post_save, sender=Sale)
+def create_successful_transaction_log(sender, instance, created, **kwargs):
+    if created and instance.is_success:  # Check if the transaction was successful
+        SuccessfulTransactionLog.objects.create(
+            kind=SuccessfulTransactionLog.TransactionKind.TRANSACTION,
+            user=instance.user,  # Ensure you assign the user correctly
+            desc=instance.desc,  # Add description from the original transaction, if needed
+            create_at=instance.create_at  # Add the creation time from the original transaction
+        )
+
+@receiver(post_save, sender=RerecordingTransaction)
+def create_successful_rerecording_log(sender, instance, created, **kwargs):
+    if created and instance.is_success:  # Check if the rerecording transaction was successful
+        SuccessfulTransactionLog.objects.create(
+            kind=SuccessfulTransactionLog.TransactionKind.RERECORDING,
+            user=instance.user,  # Assign the correct user
+            desc=instance.desc,  # Add description from the original rerecording transaction
+            create_at=instance.create_at  # Add the creation time from the original rerecording transaction
+        )
+
+@receiver(post_save, sender=ReturnedSale)
+def create_successful_returned_sale_log(sender, instance, created, **kwargs):
+    if created and instance.is_success:  # Check if the returned sale was successful
+        SuccessfulTransactionLog.objects.create(
+            kind=SuccessfulTransactionLog.TransactionKind.RETURNED_SALE,
+            user=instance.user,  # Assign the correct user
+            desc=instance.desc,  # Add description from the original returned sale
+            create_at=instance.create_at  # Add the creation time from the original returned sale
+        )

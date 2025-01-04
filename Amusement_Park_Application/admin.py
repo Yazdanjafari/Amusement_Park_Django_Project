@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification
+from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction
 from django.db.models import Sum, Count
 from import_export.admin import ExportMixin
 from import_export import resources
@@ -9,6 +9,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
+from .models import SuccessfulTransactionLog
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
@@ -31,12 +32,12 @@ class TransactionResource(resources.ModelResource):
 
     class Meta:
         model = Transaction
-        fields = ('id', 'type', 'is_success', 'ticket__product__title', 'price', 'trans_id', 'date', 'desc',
+        fields = ('id', 'type', 'is_success', 'ticket__product__title', 'price', 'tracking_code', 'date', 'desc',
                   'create_at', 'user__last_name', 'user__username', 'j_create_at', 'has_tax', 'discount')
 
 
 class TransactionAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'is_success', 'type', 'price', 'discount', 'trans_id', 'date', 'desc', 'ticket', 'j_create_at', 'user')
+    list_display = ('id', 'is_success', 'type', 'user', 'ticket', 'product_prices', 'tax', 'discount', 'price', 'j_create_at')
     list_filter = ('is_success', 'create_at', 'user', 'type')
     search_fields = ('id', 'desc')
 
@@ -58,7 +59,7 @@ class TransactionAdminClass(admin.ModelAdmin):
 
 
 class ProductSaleAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'type', 'price', 'discount', 'trans_id', 'date', 'desc', 'ticket', 'j_create_at', 'user')
+    list_display = ('id', 'is_success', 'type', 'user', 'ticket', 'product_prices', 'tax', 'discount', 'price', 'j_create_at')
     list_filter = ('create_at', 'user', 'type')
     search_fields = ('id', 'desc')
 
@@ -181,6 +182,26 @@ class NotificationAdmin(admin.ModelAdmin):
 
 
 
+class RerecordingTransactionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
+    list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
+    search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
+    ordering = ('-create_at',)  # Default ordering by creation date, most recent first
+    readonly_fields = ('create_at',)  # Make the creation date field read-only
+
+    fieldsets = (
+        (None, {
+            'fields': ('rerecording_transaction', 'type', 'is_success', 'desc', 'create_at')
+        }),
+    )
+
+
+@admin.register(SuccessfulTransactionLog)
+class SuccessfulTransactionLogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'kind', 'user', 'j_create_at')
+    list_filter = ('kind', 'create_at', 'user')
+    search_fields = ('id', 'user__username', 'desc')
+    ordering = ('-create_at',)
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -195,3 +216,9 @@ admin.site.register(Offer, OfferAdmin)
 admin.site.register(SMS, SMSAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(TicketProduct, TicketProductAdmin)
+admin.site.register(RerecordingTransaction, RerecordingTransactionAdmin)
+
+
+
+
+
