@@ -15,6 +15,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.db.models import Sum
 
 # Category Model: Represents product categories, inheriting from MP_Node for tree structure.
 class Category(MP_Node):
@@ -57,10 +58,9 @@ class Customer(models.Model):
 class Product(models.Model):
     title = models.CharField(max_length=512, verbose_name='نام محصول', unique=True)
     price = models.PositiveBigIntegerField(verbose_name='قیمت')
-    tourist_price = models.PositiveBigIntegerField(default=0, verbose_name='قیمت توریستی')
     image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')
     is_active = models.BooleanField(default=True, verbose_name='وضعیت فعال')
-    is_taxable = models.BooleanField(default=False, verbose_name='مشمول مالیات بر ارزش افزوده')
+    is_taxable = models.BooleanField(default=True, verbose_name='مشمول مالیات بر ارزش افزوده')
     order_metric = models.PositiveIntegerField(editable=False, default=0)
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=' زمان ایجاد')
@@ -93,7 +93,7 @@ class Product(models.Model):
 
 # TaxRate Model: Stores VAT tax rates.
 class TaxRate(models.Model):
-    rate = models.DecimalField(max_digits=4, decimal_places=2, default=9)
+    rate = models.DecimalField(max_digits=4, decimal_places=2, default=10)
 
     class Meta:
         verbose_name = "نرخ مالیات بر ارزش افزوده"
@@ -152,18 +152,19 @@ class Transaction(models.Model):
 
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش")
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='transactions', verbose_name='فروشنده')
-    ticket = models.ForeignKey('Ticket', on_delete=models.SET_NULL, null=True, blank=True, related_name='transaction_obj', verbose_name='بلیت')
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
+    ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='transaction_obj', verbose_name='بلیت')
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)
     is_success = models.BooleanField('تراکنش موفق', default=True)
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت تراکنش')
-    offer = models.ForeignKey('Offer', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name='کد تخفیف')
     has_tax = models.BooleanField('با احتساب مالیات بر ارزش افزورده', default=True)
-    product_prices = models.PositiveBigIntegerField(verbose_name='مجموع مبلغ محصولات')
+    offer = models.ForeignKey('Offer', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name='کد تخفیف')
+    manual_discount = models.PositiveIntegerField(verbose_name='تخفیف دستی', default=0, null=True, blank=True)
+    product_prices = models.IntegerField(verbose_name='مجموع مبلغ محصولات')
     tax = models.PositiveBigIntegerField(verbose_name='مبلغ مالیات', null=True, blank=True)
-    discount = models.PositiveBigIntegerField(verbose_name='مبلغ تخفیف', default=0, null=True, blank=True)
-    price = models.PositiveBigIntegerField(verbose_name='قیمت نهایی')
+    discount = models.PositiveBigIntegerField(verbose_name='مبلغ تخفیف',  null=True, blank=True)
+    price = models.PositiveBigIntegerField(verbose_name='قیمت نهایی',  null=True, blank=True,)
     desc = models.TextField('توضیحات', null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت تراکنش')
 
     class Meta:
         verbose_name = "فروش"
@@ -177,24 +178,44 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f'{self.id}'
+    
+    
+    def calculate_product_prices(self):
+        total_price = 0
+        # Iterate over the related ticket_products to sum the price
+        for ticket in self.ticket.ticket_products.all():
+            total_price += ticket.product.price * ticket.quantity
+        return total_price
 
+    def save(self, *args, **kwargs):
+        self.product_prices = self.product_prices or 0
+        self.discount = self.discount or 0
+        self.tax = self.tax or 0        
+        
+        # Calculate and update the product_prices field before saving
+        if self.ticket:
+            self.product_prices = self.calculate_product_prices()
 
-# Sale Model: A proxy model for successful transactions.
-class SaleManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_success=True)
+        # Apply discount calculation
+        if self.offer:
+            # Apply the discount from the offer (percentage discount)
+            offer_discount = self.product_prices * self.offer.persent / 100
+        else:
+            offer_discount = 0
 
+        # Calculate the total discount: Offer discount + manual discount
+        self.discount = offer_discount + self.manual_discount
 
-class Sale(Transaction):
-    objects = SaleManager()
+        # Apply tax if 'has_tax' is True
+        if self.has_tax:
+            tax_rate = TaxRate.objects.first().rate  # Assuming there is only one tax rate
+            self.tax = int(self.product_prices * tax_rate / 100)
 
-    class Meta:
-        proxy = True
-        verbose_name = "فروش های موفق"
-        verbose_name_plural = "فروش های موفق"
+        # Calculate final price (product price - discount + tax)
+        self.price = self.product_prices - self.discount + self.tax
 
-    def __str__(self):
-        return f'{self.id}'
+        super().save(*args, **kwargs)
+
 
 
 
@@ -205,8 +226,7 @@ class Ticket(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='ticket', verbose_name='مشتری', null=True, blank=True)
     is_scanned = models.BooleanField('اسکن شده', default=False)
     desc = models.TextField('توضیحات', null=True, blank=True)
-    is_tourist = models.BooleanField('بلیط توریستی', default=False)
-    user = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.PROTECT, related_name='ticket', verbose_name='فروشنده')
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='ticket', verbose_name='فروشنده')
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
 
     class Meta:
@@ -223,29 +243,6 @@ class Ticket(models.Model):
     # Calculate the total price of related transactions.
     def get_total_transactions(self):
         return sum([t.price for t in self.transaction.all()])
-
-    # Calculate the total ticket price, including tax if applicable.
-    def get_ticket_price(self):
-        ticket_price = sum(tp.product.price * tp.quantity for tp in self.ticket_products.all())
-        if self.is_tourist:
-            ticket_price = sum(tp.product.tourist_price * tp.quantity for tp in self.ticket_products.all())
-
-        tax_rate = TaxRate.objects.all().first().rate
-        if any(tp.product.is_taxable for tp in self.ticket_products.all()):
-            ticket_price += int(ticket_price * tax_rate / 100)
-        return custom_round_calculate(ticket_price)
-
-
-
-    # Custom validation for ticket price.
-    def clean(self):
-        if self.id is None:
-            return
-        ticket_price = self.get_ticket_price()
-        total_transactions = self.get_total_transactions()
-
-        if total_transactions < ticket_price:
-            raise ValidationError(f'مبلغ بلیت از تراکنش های انجام شده {ticket_price - total_transactions} ریال بیشتر است.')
 
     # URL to print the ticket QR code.
     def get_ticket_url(self):
@@ -266,18 +263,34 @@ class TicketProduct(models.Model):
     def __str__(self):
         return f"کد رهگیری بلیت : {self.ticket.id} | نام مشتری : {self.ticket.customer.first_name} {self.ticket.customer.last_name} | محصولات : {self.product.title} (*) تعداد : {self.quantity} (*) قیمت : {self.product.price} ریال"
     
+    def get_total_price(self):
+        return self.product.price * self.quantity    
     
-# ReturnedSale Model: Represents a sale return transaction.
-class ReturnedSale(models.Model):
+    
+@receiver(post_save, sender=TicketProduct)
+@receiver(post_delete, sender=TicketProduct)
+def update_transaction_product_prices(sender, instance, **kwargs):
+    for transaction in instance.ticket.transaction.all():
+        # Calculate the total price for all ticket products related to the ticket
+        total_price = sum(tp.product.price * tp.quantity for tp in instance.ticket.ticket_products.all())
+        transaction.product_prices = total_price
+        transaction.save()
+    
+    
+    
+    
+# ReturnedTransaction Model: Represents a transaction return transaction.
+class ReturnedTransaction(models.Model):
     class FoundType(models.TextChoices):
         cash = ('نقد', 'نقد')
         send_money_by_card_number = ('کارت به کارت', 'کارت به کارت')
         send_money_by_sheba_number = ('انتقال با شماره شبا', 'انتقال با شماره شبا')    
     
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری عودت وجه")
-    sale = models.ForeignKey('Sale', on_delete=models.PROTECT, related_name='return_sale', verbose_name='کد رهگیری فروش')
+    tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    transaction = models.ForeignKey('Transaction', on_delete=models.PROTECT, related_name='return_transaction', verbose_name='کد رهگیری فروش')
     type = models.CharField(max_length=55, choices=FoundType.choices, verbose_name='نوع عودت وجه', default=FoundType.cash)
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='returned_sales', verbose_name='فروشنده', null=True, blank=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
     is_success = models.BooleanField('تراکنش موفق', default=True)
     desc = models.CharField('توضیحات', max_length=128, null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
@@ -377,7 +390,7 @@ class RerecordingTransaction(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش مجدد")
     rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش مادر') 
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)    
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='rerecording_transactions', verbose_name='فروشنده', null=True, blank=True)  
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')  
     is_success = models.BooleanField('تراکنش موفق', default=True)
     desc = models.TextField('توضیحات', null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
@@ -396,85 +409,3 @@ class RerecordingTransaction(models.Model):
         return ''    
     
 
-class SuccessfulTransactionLog(models.Model):
-    class TransactionKind(models.TextChoices):
-        TRANSACTION = 'فروش', 'فروش'
-        RERECORDING = 'فروش مجدد', 'فروش مجدد'
-        RETURNED_SALE = 'عودت وجه', 'عودت وجه'
-
-    id = models.AutoField(primary_key=True, verbose_name="کد رهگیری تراکنش")
-    kind = models.CharField(max_length=30, choices=TransactionKind.choices, verbose_name="نوع تراکنش")
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='successful_sales', verbose_name='فروشنده', null=True, blank=True)
-    desc = models.TextField('توضیحات', null=True, blank=True)
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
-    
-    sale = models.ForeignKey('Sale', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد رهگیری فروش')
-    rerecording = models.ForeignKey('RerecordingTransaction', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد رهگیری فروش مجدد')
-    returned_sale = models.ForeignKey('ReturnedSale', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد رهگیری عودت وجه')    
-    
-
-    class Meta:
-        verbose_name = "تراکنش ها"
-        verbose_name_plural = "تراکنش ها"
-
-    def __str__(self):
-        return f"کد رهگیری تراکنش: {self.id} | نوع تراکنش: {self.kind}"
-    
-    def j_create_at(self):
-        if self.create_at:
-            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
-            return jalali_date.strftime('%Y/%m/%d %H:%M')
-        return ''          
-    
-
-# Signal handlers to create, update, and delete SuccessfulTransactionLog entries
-@receiver(post_save, sender=Transaction)
-def create_or_update_successful_transaction_log(sender, instance, created, **kwargs):
-    if instance.is_success:
-        log, created = SuccessfulTransactionLog.objects.update_or_create(
-            sale=instance,
-            defaults={
-                'kind': SuccessfulTransactionLog.TransactionKind.TRANSACTION,
-                'user': instance.user,
-                'desc': instance.desc,
-                'create_at': instance.create_at,
-            }
-        )
-
-@receiver(post_delete, sender=Transaction)
-def delete_successful_transaction_log(sender, instance, **kwargs):
-    SuccessfulTransactionLog.objects.filter(sale=instance).delete()
-
-@receiver(post_save, sender=RerecordingTransaction)
-def create_or_update_successful_rerecording_log(sender, instance, created, **kwargs):
-    if instance.is_success:
-        log, created = SuccessfulTransactionLog.objects.update_or_create(
-            rerecording=instance,
-            defaults={
-                'kind': SuccessfulTransactionLog.TransactionKind.RERECORDING,
-                'user': instance.user,
-                'desc': instance.desc,
-                'create_at': instance.create_at,
-            }
-        )
-
-@receiver(post_delete, sender=RerecordingTransaction)
-def delete_successful_rerecording_log(sender, instance, **kwargs):
-    SuccessfulTransactionLog.objects.filter(rerecording=instance).delete()
-
-@receiver(post_save, sender=ReturnedSale)
-def create_or_update_successful_returned_sale_log(sender, instance, created, **kwargs):
-    if instance.is_success:
-        log, created = SuccessfulTransactionLog.objects.update_or_create(
-            returned_sale=instance,
-            defaults={
-                'kind': SuccessfulTransactionLog.TransactionKind.RETURNED_SALE,
-                'user': instance.user,
-                'desc': instance.desc,
-                'create_at': instance.create_at,
-            }
-        )
-
-@receiver(post_delete, sender=ReturnedSale)
-def delete_successful_returned_sale_log(sender, instance, **kwargs):
-    SuccessfulTransactionLog.objects.filter(returned_sale=instance).delete()

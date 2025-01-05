@@ -1,0 +1,58 @@
+{% extends "admin/change_list.html" %}
+{% load humanize %}
+
+
+
+
+{% block result_list %}
+<div class="results">
+    <table>
+        
+    <thead>
+      <tr>
+        <th>
+          <div class="text">
+            <a href="#">نام محصول</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#" title='احتمال وجود خطا در محاسبات'> تعداد بلیط* </a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">تعداد فروش</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">جمع کل فروش - ریال</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr >
+        <td> {{ row.ticket__product__title| default:'تراکنش فاقد بلیت' }} </td>
+        <td> {{ row.sum_ticket_qty | intcomma }} </td>
+        <td> {{ row.total_transactions | intcomma }} </td>
+        <td> {{ row.total_sales | default:0 |intcomma:False }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    
+    <tr style="font-weight:bold; border-top:4px solid #DDDDDD;">
+        <td> مجموع </td>
+        <td> {{ summary_total.sum_ticket_qty | intcomma:False }} </td>
+        <td> {{ summary_total.total_transactions | intcomma:False }} </td>
+        <td> {{ summary_total.total_sales | default:0|intcomma:False }} </td>
+    </tr>
+
+  </table>
+</div>
+{% endblock %}
+
+
+{% block pagination %}{% endblock %}

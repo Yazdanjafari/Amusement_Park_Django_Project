@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Product, Sale, TaxRate, Transaction, ReturnedSale, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction
-from django.db.models import Sum, Count
+from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction
+from django.db.models import Sum
 from import_export.admin import ExportMixin
 from import_export import resources
 from import_export.fields import Field
@@ -9,7 +9,9 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
-from .models import SuccessfulTransactionLog
+from django.db.models.signals import post_save, m2m_changed
+from django.dispatch import receiver
+
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
@@ -21,7 +23,7 @@ class CategoryAdmin(TreeAdmin):
 
 
 class ProductAdminClass(admin.ModelAdmin):
-    list_display = ('title', 'price', 'tourist_price', 'is_active', 'update')
+    list_display = ('title', 'price', 'is_active', 'is_taxable')
     list_filter = ('title', 'price', 'created')
     search_fields = ('title',)
 
@@ -34,66 +36,6 @@ class TransactionResource(resources.ModelResource):
         model = Transaction
         fields = ('id', 'type', 'is_success', 'ticket__product__title', 'price', 'tracking_code', 'date', 'desc',
                   'create_at', 'user__last_name', 'user__username', 'j_create_at', 'has_tax', 'discount')
-
-
-class TransactionAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'is_success', 'type', 'user', 'ticket', 'product_prices', 'tax', 'discount', 'price', 'j_create_at')
-    list_filter = ('is_success', 'create_at', 'user', 'type')
-    search_fields = ('id', 'desc')
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def changelist_view(self, request, extra_context=None):
-        queryset = self.get_queryset(request)
-        extra_context = extra_context or {}
-
-        extra_context.update({
-            'total_price': queryset.aggregate(total_price=Sum('price'))['total_price'],
-            'total_price_android_pos': queryset.filter(type=Transaction.TransactionType.card).aggregate(total_price_android_pos=Sum('price'))['total_price_android_pos'],
-            'total_price_pc_pos': queryset.filter(type=Transaction.TransactionType.pc).aggregate(total_price_pc_pos=Sum('price'))['total_price_pc_pos'],
-            'total_price_cash': queryset.filter(type=Transaction.TransactionType.cash).aggregate(total_price_cash=Sum('price'))['total_price_cash'],
-        })
-
-        return super().changelist_view(request, extra_context=extra_context)
-
-
-class ProductSaleAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'is_success', 'type', 'user', 'ticket', 'product_prices', 'tax', 'discount', 'price', 'j_create_at')
-    list_filter = ('create_at', 'user', 'type')
-    search_fields = ('id', 'desc')
-
-
-class ReturnedSaleAdmin(admin.ModelAdmin):
-    # Fields to be displayed in the admin list view
-    list_display = ('id', 'sale', 'type', 'desc', 'user', 'j_create_at')
-    
-    # Add search capability to the admin
-    search_fields = ('sale__tracking_code', 'type', 'desc', 'user__username')
-    
-    # Filter options in the admin panel
-    list_filter = ('type', 'user', 'create_at')
-
-    # Ordering of the list view
-    ordering = ('-create_at',)
-    
-    # Fields to display in the edit form
-    fieldsets = (
-        (None, {
-            'fields': ('sale', 'type', 'desc', 'user')
-        }),
-        (_('Timestamps'), {
-            'fields': ('create_at',)
-        }),
-    )
-
-    # Making the 'create_at' field read-only
-    readonly_fields = ('create_at',)
-
-    # Display 'create_at' with Jalali date format
-    def j_create_at(self, obj):
-        return obj.j_create_at()
-    j_create_at.short_description = _('Create Date')
 
 
 
@@ -119,7 +61,7 @@ class TicketResource(resources.ModelResource):
 
     class Meta:
         model = Ticket
-        fields = ('id', 'tracking_code', 'is_scanned', 'desc', 'is_tourist', 'user__last_name', 'user__username', 'j_create_at')
+        fields = ('id', 'tracking_code', 'is_scanned', 'desc', 'user__last_name', 'user__username', 'j_create_at')
 
     def dehydrate(self, ticket):
         ticket_products = TicketProduct.objects.filter(ticket=ticket)
@@ -144,6 +86,16 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.user = request.user
         super().save_model(request, obj, form, change)
+
+        # Recalculate product_prices for related transactions
+        total_price = obj.ticket_products.aggregate(
+            total=Sum('product__price', field="product__price * quantity")
+        )['total'] or 0
+
+        for transaction in obj.transaction.all():
+            transaction.product_prices = total_price
+            transaction.save()
+
 
 
 
@@ -182,56 +134,112 @@ class NotificationAdmin(admin.ModelAdmin):
 
 
 
-class RerecordingTransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
-    list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
-    search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
-    ordering = ('-create_at',)  # Default ordering by creation date, most recent first
-    readonly_fields = ('create_at',)  # Make the creation date field read-only
+# _____________________________________________ MAIN SELLING SYSTEM _____________________________________________ #
 
-    fieldsets = (
-        (None, {
-            'fields': ('rerecording_transaction', 'type', 'is_success', 'desc', 'create_at')
-        }),
-    )
-
-
-class RerecordingTransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
-    list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
-    search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
-    ordering = ('-create_at',)  # Default ordering by creation date, most recent first
-    readonly_fields = ('create_at',)  # Make the creation date field read-only
-
-    fieldsets = (
-        (None, {
-            'fields': ('rerecording_transaction', 'type', 'is_success', 'desc', 'create_at')
-        }),
-    )
-
-@admin.register(SuccessfulTransactionLog)
-class SuccessfulTransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'kind', 'user', 'j_create_at', 'sale', 'rerecording', 'returned_sale')
-    list_filter = ('kind', 'create_at', 'user')
-    search_fields = ('id', 'user__username', 'desc')
+class TransactionAdminClass(admin.ModelAdmin):
+    list_display = ('id', 'is_success', 'product_prices', 'tax', 'discount', 'price', 'type', 'user', 'ticket', 'j_create_at')
+    list_filter = ('is_success', 'create_at', 'user', 'type')
+    search_fields = ('id', 'desc')
     ordering = ('-create_at',)
+    readonly_fields = ('create_at', 'tracking_code', 'product_prices', 'price', 'tax', 'discount', 'price')
 
-    def has_add_permission(self, request):
-        return False
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'ticket', 'type', 'is_success', 'has_tax', 'offer', 'manual_discount', 'desc')
+        }),
+        ('اتوماتیک', {
+            'fields': ('tracking_code', 'product_prices', 'tax', 'discount', 'price', 'create_at')
+        }),
+    )
 
-    def has_change_permission(self, request, obj=None):
-        return False
+    def changelist_view(self, request, extra_context=None):
+        # Filter the queryset for `is_success=True`
+        queryset = self.get_queryset(request).filter(is_success=True)
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+        # Calculate totals for product prices, price, tax, discount
+        totals = queryset.aggregate(
+            total_product_prices=Sum('product_prices'),
+            total_price=Sum('price'),
+            total_tax=Sum('tax'),
+            total_discount=Sum('discount')
+        )
+
+        # Calculate totals for sales from each payment method
+        total_pc_sales = queryset.filter(type='pc').aggregate(total_pc=Sum('price'))['total_pc'] or 0
+        total_cash_sales = queryset.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
+        total_card_sales = queryset.filter(type='card').aggregate(total_card=Sum('price'))['total_card'] or 0
+
+        # Add all totals to extra_context
+        extra_context = extra_context or {}
+        extra_context.update({
+            'total_product_prices': totals['total_product_prices'] or 0,
+            'total_price': totals['total_price'] or 0,
+            'total_tax': totals['total_tax'] or 0,
+            'total_discount': totals['total_discount'] or 0,
+            'total_pc_sales': total_pc_sales,
+            'total_cash_sales': total_cash_sales,
+            'total_card_sales': total_card_sales,
+        })
+
+        return super().changelist_view(request, extra_context=extra_context)
 
 
+
+class RerecordingTransactionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
+    list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
+    search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
+    ordering = ('-create_at',)  # Default ordering by creation date, most recent first
+    readonly_fields = ('create_at',)  # Make the creation date field read-only
+
+    fieldsets = (
+        (None, {
+            'fields': ('rerecording_transaction', 'type', 'is_success', 'desc', 'create_at')
+        }),
+    )
+
+
+
+class ReturnedTransactionAdmin(admin.ModelAdmin):
+    # Fields to be displayed in the admin list view
+    list_display = ('id', 'transaction', 'type', 'desc', 'user', 'j_create_at')
+    
+    # Add search capability to the admin
+    search_fields = ('transaction__tracking_code', 'type', 'desc', 'user__username')
+    
+    # Filter options in the admin panel
+    list_filter = ('type', 'user', 'create_at')
+
+    # Ordering of the list view
+    ordering = ('-create_at',)
+    
+    # Fields to display in the edit form
+    fieldsets = (
+        (None, {
+            'fields': ('transaction', 'type', 'desc', 'user')
+        }),
+        (_('Timestamps'), {
+            'fields': ('create_at',)
+        }),
+    )
+
+    # Making the 'create_at' field read-only
+    readonly_fields = ('create_at',)
+
+    # Display 'create_at' with Jalali date format
+    def j_create_at(self, obj):
+        return obj.j_create_at()
+    j_create_at.short_description = _('Create Date')
+
+
+
+
+# _____________________________________________ Registery _____________________________________________ #
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdminClass)
 admin.site.register(TaxRate)
 admin.site.register(Transaction, TransactionAdminClass)
-admin.site.register(Sale, ProductSaleAdminClass)
-admin.site.register(ReturnedSale, ReturnedSaleAdmin)
+admin.site.register(ReturnedTransaction, ReturnedTransactionAdmin)
 admin.site.register(Ticket, TicketAdminClass)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Offer, OfferAdmin)

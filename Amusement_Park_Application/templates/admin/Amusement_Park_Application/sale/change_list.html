@@ -1,0 +1,17 @@
+{% extends "admin/import_export/change_list_export.html" %}
+{% load humanize %}
+
+
+
+{% block result_list %}
+    {{ block.super }}
+    <div>
+        <hr>
+        <br/>
+        <p>جمع کل فروش های پوز اندرویدی: {{ total_price_android_pos|intcomma:False|default_if_none:"0" }}</p>
+        <p>جمع کل فروش های پی سی پوز: {{ total_price_pc_pos|intcomma:False|default_if_none:"0" }}</p>
+        <p>جمع کل فروش ها نقدی: {{ total_price_cash|intcomma:False|default_if_none:"0" }}</p>
+        <br/>
+        <p>جمع کل فروش ها: {{ total_price|intcomma:False|default_if_none:"0" }}</p>
+    </div>
+{% endblock %}
