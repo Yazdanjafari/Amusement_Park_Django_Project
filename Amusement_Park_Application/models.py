@@ -13,7 +13,7 @@ from treebeard.mp_tree import MP_Node
 from django_jalali.db import models as jmodels
 from datetime import timedelta
 from django.utils import timezone
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 # Category Model: Represents product categories, inheriting from MP_Node for tree structure.
@@ -166,8 +166,8 @@ class Transaction(models.Model):
     desc = models.TextField('توضیحات', null=True, blank=True)
 
     class Meta:
-        verbose_name = "تراکنش"
-        verbose_name_plural = "تراکنش ها"
+        verbose_name = "فروش"
+        verbose_name_plural = "فروش ها"
 
     def j_create_at(self):
         if self.create_at:
@@ -176,7 +176,7 @@ class Transaction(models.Model):
         return ''
 
     def __str__(self):
-        return f'تراکنش شماره {self.id}'
+        return f'{self.id}'
 
 
 # Sale Model: A proxy model for successful transactions.
@@ -190,11 +190,11 @@ class Sale(Transaction):
 
     class Meta:
         proxy = True
-        verbose_name = "فروش"
-        verbose_name_plural = "فروش"
+        verbose_name = "فروش های موفق"
+        verbose_name_plural = "فروش های موفق"
 
     def __str__(self):
-        return f'تراکنش شماره {self.id} | مبلغ {self.price} | ***'
+        return f'{self.id}'
 
 
 
@@ -274,7 +274,8 @@ class ReturnedSale(models.Model):
         send_money_by_card_number = ('کارت به کارت', 'کارت به کارت')
         send_money_by_sheba_number = ('انتقال با شماره شبا', 'انتقال با شماره شبا')    
     
-    ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='return_sale', verbose_name='بلیت')
+    id = models.AutoField(primary_key=True, verbose_name="کد رهگیری عودت وجه")
+    sale = models.ForeignKey('Sale', on_delete=models.PROTECT, related_name='return_sale', verbose_name='کد رهگیری فروش')
     type = models.CharField(max_length=55, choices=FoundType.choices, verbose_name='نوع عودت وجه', default=FoundType.cash)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='returned_sales', verbose_name='فروشنده', null=True, blank=True)
     is_success = models.BooleanField('تراکنش موفق', default=True)
@@ -300,7 +301,7 @@ class ReturnedSale(models.Model):
         verbose_name_plural = "عودت وجه"
 
     def __str__(self):
-        return f'عودت وجه {self.id}'    
+        return f'{self.id}'    
    
                         
 class SMS (models.Model):
@@ -373,7 +374,8 @@ class RerecordingTransaction(models.Model):
         cash = ('cash', 'نقدی')
         card = ('card', 'کارتی')
 
-    rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش') 
+    id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش مجدد")
+    rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش مادر') 
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)    
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='rerecording_transactions', verbose_name='فروشنده', null=True, blank=True)  
     is_success = models.BooleanField('تراکنش موفق', default=True)
@@ -381,11 +383,11 @@ class RerecordingTransaction(models.Model):
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
     
     class Meta:
-        verbose_name = "تراکنش مجدد"
-        verbose_name_plural = "تراکنش های مجدد"
+        verbose_name = "فروش مجدد"
+        verbose_name_plural = "فروش های مجدد"
         
     def __str__(self):
-        return f"کد تراکنش فعلی :{self.id} | کد تراکنش مادر : {self.rerecording_transaction}"  
+        return f"{self.id}"  
     
     def j_create_at(self):
         if self.create_at:
@@ -405,10 +407,15 @@ class SuccessfulTransactionLog(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='successful_sales', verbose_name='فروشنده', null=True, blank=True)
     desc = models.TextField('توضیحات', null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
+    
+    sale = models.ForeignKey('Sale', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد رهگیری فروش')
+    rerecording = models.ForeignKey('RerecordingTransaction', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد رهگیری فروش مجدد')
+    returned_sale = models.ForeignKey('ReturnedSale', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد رهگیری عودت وجه')    
+    
 
     class Meta:
-        verbose_name = "ثبت تراکنش موفق"
-        verbose_name_plural = "ثبت تراکنش های موفق"
+        verbose_name = "تراکنش ها"
+        verbose_name_plural = "تراکنش ها"
 
     def __str__(self):
         return f"کد رهگیری تراکنش: {self.id} | نوع تراکنش: {self.kind}"
@@ -420,33 +427,54 @@ class SuccessfulTransactionLog(models.Model):
         return ''          
     
 
-# Signal handlers to create SuccessfulTransactionLog entries
-@receiver(post_save, sender=Sale)
-def create_successful_transaction_log(sender, instance, created, **kwargs):
-    if created and instance.is_success:  # Check if the transaction was successful
-        SuccessfulTransactionLog.objects.create(
-            kind=SuccessfulTransactionLog.TransactionKind.TRANSACTION,
-            user=instance.user,  # Ensure you assign the user correctly
-            desc=instance.desc,  # Add description from the original transaction, if needed
-            create_at=instance.create_at  # Add the creation time from the original transaction
+# Signal handlers to create, update, and delete SuccessfulTransactionLog entries
+@receiver(post_save, sender=Transaction)
+def create_or_update_successful_transaction_log(sender, instance, created, **kwargs):
+    if instance.is_success:
+        log, created = SuccessfulTransactionLog.objects.update_or_create(
+            sale=instance,
+            defaults={
+                'kind': SuccessfulTransactionLog.TransactionKind.TRANSACTION,
+                'user': instance.user,
+                'desc': instance.desc,
+                'create_at': instance.create_at,
+            }
         )
+
+@receiver(post_delete, sender=Transaction)
+def delete_successful_transaction_log(sender, instance, **kwargs):
+    SuccessfulTransactionLog.objects.filter(sale=instance).delete()
 
 @receiver(post_save, sender=RerecordingTransaction)
-def create_successful_rerecording_log(sender, instance, created, **kwargs):
-    if created and instance.is_success:  # Check if the rerecording transaction was successful
-        SuccessfulTransactionLog.objects.create(
-            kind=SuccessfulTransactionLog.TransactionKind.RERECORDING,
-            user=instance.user,  # Assign the correct user
-            desc=instance.desc,  # Add description from the original rerecording transaction
-            create_at=instance.create_at  # Add the creation time from the original rerecording transaction
+def create_or_update_successful_rerecording_log(sender, instance, created, **kwargs):
+    if instance.is_success:
+        log, created = SuccessfulTransactionLog.objects.update_or_create(
+            rerecording=instance,
+            defaults={
+                'kind': SuccessfulTransactionLog.TransactionKind.RERECORDING,
+                'user': instance.user,
+                'desc': instance.desc,
+                'create_at': instance.create_at,
+            }
         )
 
+@receiver(post_delete, sender=RerecordingTransaction)
+def delete_successful_rerecording_log(sender, instance, **kwargs):
+    SuccessfulTransactionLog.objects.filter(rerecording=instance).delete()
+
 @receiver(post_save, sender=ReturnedSale)
-def create_successful_returned_sale_log(sender, instance, created, **kwargs):
-    if created and instance.is_success:  # Check if the returned sale was successful
-        SuccessfulTransactionLog.objects.create(
-            kind=SuccessfulTransactionLog.TransactionKind.RETURNED_SALE,
-            user=instance.user,  # Assign the correct user
-            desc=instance.desc,  # Add description from the original returned sale
-            create_at=instance.create_at  # Add the creation time from the original returned sale
+def create_or_update_successful_returned_sale_log(sender, instance, created, **kwargs):
+    if instance.is_success:
+        log, created = SuccessfulTransactionLog.objects.update_or_create(
+            returned_sale=instance,
+            defaults={
+                'kind': SuccessfulTransactionLog.TransactionKind.RETURNED_SALE,
+                'user': instance.user,
+                'desc': instance.desc,
+                'create_at': instance.create_at,
+            }
         )
+
+@receiver(post_delete, sender=ReturnedSale)
+def delete_successful_returned_sale_log(sender, instance, **kwargs):
+    SuccessfulTransactionLog.objects.filter(returned_sale=instance).delete()

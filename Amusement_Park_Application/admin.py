@@ -66,10 +66,10 @@ class ProductSaleAdminClass(admin.ModelAdmin):
 
 class ReturnedSaleAdmin(admin.ModelAdmin):
     # Fields to be displayed in the admin list view
-    list_display = ('id', 'ticket', 'type', 'desc', 'user', 'j_create_at')
+    list_display = ('id', 'sale', 'type', 'desc', 'user', 'j_create_at')
     
     # Add search capability to the admin
-    search_fields = ('ticket__tracking_code', 'type', 'desc', 'user__username')
+    search_fields = ('sale__tracking_code', 'type', 'desc', 'user__username')
     
     # Filter options in the admin panel
     list_filter = ('type', 'user', 'create_at')
@@ -80,7 +80,7 @@ class ReturnedSaleAdmin(admin.ModelAdmin):
     # Fields to display in the edit form
     fieldsets = (
         (None, {
-            'fields': ('ticket', 'type', 'desc', 'user')
+            'fields': ('sale', 'type', 'desc', 'user')
         }),
         (_('Timestamps'), {
             'fields': ('create_at',)
@@ -196,12 +196,34 @@ class RerecordingTransactionAdmin(admin.ModelAdmin):
     )
 
 
+class RerecordingTransactionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
+    list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
+    search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
+    ordering = ('-create_at',)  # Default ordering by creation date, most recent first
+    readonly_fields = ('create_at',)  # Make the creation date field read-only
+
+    fieldsets = (
+        (None, {
+            'fields': ('rerecording_transaction', 'type', 'is_success', 'desc', 'create_at')
+        }),
+    )
+
 @admin.register(SuccessfulTransactionLog)
 class SuccessfulTransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'kind', 'user', 'j_create_at')
+    list_display = ('id', 'kind', 'user', 'j_create_at', 'sale', 'rerecording', 'returned_sale')
     list_filter = ('kind', 'create_at', 'user')
     search_fields = ('id', 'user__username', 'desc')
     ordering = ('-create_at',)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(Category, CategoryAdmin)
