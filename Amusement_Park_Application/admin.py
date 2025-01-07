@@ -9,9 +9,6 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
-from django.db.models.signals import post_save, m2m_changed
-from django.dispatch import receiver
-
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
@@ -184,7 +181,11 @@ class TransactionAdminClass(admin.ModelAdmin):
         return super().changelist_view(request, extra_context=extra_context)
 
 
+    def has_delete_permission(self, request, obj = ...):
+        return False
 
+
+# _____________________________________________ ReturnedTransaction _____________________________________________ #
 class RerecordingTransactionAdmin(admin.ModelAdmin):
     list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
     list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
@@ -194,16 +195,19 @@ class RerecordingTransactionAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('rerecording_transaction', 'type', 'is_success', 'desc', 'create_at')
+            'fields': ('rerecording_transaction', 'type', 'desc', 'is_success', 'create_at')
         }),
     )
 
+    def has_delete_permission(self, request, obj = ...):
+        return False
 
 
+# _____________________________________________ ReturnedTransaction _____________________________________________ #
 class ReturnedTransactionAdmin(admin.ModelAdmin):
     # Fields to be displayed in the admin list view
     list_display = ('id', 'transaction', 'type', 'desc', 'user', 'j_create_at')
-    
+
     # Add search capability to the admin
     search_fields = ('transaction__tracking_code', 'type', 'desc', 'user__username')
     
@@ -216,7 +220,10 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
     # Fields to display in the edit form
     fieldsets = (
         (None, {
-            'fields': ('transaction', 'type', 'desc', 'user')
+            'fields': ('transaction', 'type', 'user', 'is_success', 'desc')
+        }),
+        ("نوع عودت وجه", {
+            'fields': ('source_card_holder_name', 'destination_card_holder_name', 'source_card_number', 'destination_card_number', 'source_sheba_number', 'destination_sheba_number')
         }),
         (_('Timestamps'), {
             'fields': ('create_at',)
@@ -228,8 +235,11 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
 
     # Display 'create_at' with Jalali date format
     def j_create_at(self, obj):
-        return obj.j_create_at()
+        # Assuming you have a method in your model that formats the date to Jalali
+        return obj.j_create_at()  # Ensure this method exists in your model
     j_create_at.short_description = _('Create Date')
+    
+
 
 
 

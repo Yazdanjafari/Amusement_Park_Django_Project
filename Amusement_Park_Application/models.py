@@ -16,6 +16,8 @@ from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import Sum
+from django.db.models import Q
+
 
 # Category Model: Represents product categories, inheriting from MP_Node for tree structure.
 class Category(MP_Node):
@@ -96,8 +98,8 @@ class TaxRate(models.Model):
     rate = models.DecimalField(max_digits=4, decimal_places=2, default=10)
 
     class Meta:
-        verbose_name = "نرخ مالیات بر ارزش افزوده"
-        verbose_name_plural = "نرخ مالیات بر ارزش افزوده"
+        verbose_name = "مالیات"
+        verbose_name_plural = "مالیات"
 
     def __str__(self):
         return str(self.rate)
@@ -107,21 +109,26 @@ class TaxRate(models.Model):
         cache.set(self.__class__.__name__, self)
 
     def save(self, *args, **kwargs):
-        self.pk = 1  # Ensures only one instance of this model exists.
+        # Ensures only one instance of this model exists by setting pk to 1.
+        if not self.pk:  # If the object doesn't exist yet, it will be created
+            self.pk = 1
         super().save(*args, **kwargs)
         self.set_cache()
 
     def delete(self, *args, **kwargs):
-        pass  # Prevent deletion of the tax rate.
+        # Prevent deletion of the tax rate.
+        raise Exception("TaxRate cannot be deleted.")
 
     # Load tax rate from cache, or fetch from database.
     @classmethod
     def load(cls):
-        if cache.get(cls.__name__) is None:
-            obj, created = cls.objects.get_or_create(pk=1)
+        # Attempt to load the tax rate from the cache
+        tax_rate = cache.get(cls.__name__)
+        if tax_rate is None:
+            tax_rate, created = cls.objects.get_or_create(pk=1)
             if not created:
-                obj.set_cache()
-        return cache.get(cls.__name__)
+                tax_rate.set_cache()
+        return tax_rate
     
     
     
@@ -155,7 +162,7 @@ class Transaction(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
     ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='transaction_obj', verbose_name='بلیت')
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)
-    is_success = models.BooleanField('تراکنش موفق', default=True)
+    is_success = models.BooleanField('تراکنش موفق', default=True, help_text='این فیلد را نیازی نیست حذف کنید فقط تیک این فیلد را بردارید')
     has_tax = models.BooleanField('با احتساب مالیات بر ارزش افزورده', default=True)
     offer = models.ForeignKey('Offer', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name='کد تخفیف')
     manual_discount = models.PositiveIntegerField(verbose_name='تخفیف دستی', default=0, null=True, blank=True)
@@ -187,11 +194,20 @@ class Transaction(models.Model):
             total_price += ticket.product.price * ticket.quantity
         return total_price
 
+
+    def clean(self):
+        # Ensure the ticket has not been sold already.
+        if self.ticket.transaction_obj.exists():
+            raise ValidationError("این بلیت قبلا به فروش رسیده و برای به فروش رساندن مجددا آن باید از طریق ثبت مجدد تراکنش (فروش های مجدد) این کار را انجام دهید")
+
     def save(self, *args, **kwargs):
+        # Run custom validation before saving the transaction
+        self.clean()
+        
         self.product_prices = self.product_prices or 0
         self.discount = self.discount or 0
         self.tax = self.tax or 0        
-        
+
         # Calculate and update the product_prices field before saving
         if self.ticket:
             self.product_prices = self.calculate_product_prices()
@@ -291,8 +307,7 @@ class ReturnedTransaction(models.Model):
     transaction = models.ForeignKey('Transaction', on_delete=models.PROTECT, related_name='return_transaction', verbose_name='کد رهگیری فروش')
     type = models.CharField(max_length=55, choices=FoundType.choices, verbose_name='نوع عودت وجه', default=FoundType.cash)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
-    is_success = models.BooleanField('تراکنش موفق', default=True)
-    desc = models.CharField('توضیحات', max_length=128, null=True, blank=True)
+    desc = models.TextField('توضیحات', null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
     source_card_holder_name = models.CharField(verbose_name='نام صاحب کارت مبدا', max_length=128, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
     destination_card_holder_name = models.CharField(verbose_name='نام صاحب کارت مقصد', max_length=128, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید")
@@ -301,7 +316,9 @@ class ReturnedTransaction(models.Model):
     source_sheba_number = models.CharField(verbose_name='شماره شبا مبدا', max_length=24, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
     destination_sheba_number = models.CharField(verbose_name='شماره شبا مقصد', max_length=24, null=True, blank=True, help_text="درصورتی که نوع عودت وجه را از طریق شماره کارت یا شماره شبا انتخاب کرده اید این فیلد را پر کنید") 
 
-
+    class Meta:
+        verbose_name = "عودت وجه"
+        verbose_name_plural = "عودت وجه"
 
     def j_create_at(self):
         if self.create_at:
@@ -309,24 +326,67 @@ class ReturnedTransaction(models.Model):
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
 
-    class Meta:
-        verbose_name = "عودت وجه"
-        verbose_name_plural = "عودت وجه"
 
     def __str__(self):
-        return f'{self.id}'    
+        return f'{self.id}'      
    
+    def save(self, *args, **kwargs):
+        # Ensure the Transaction exists and is valid for a refund
+        if not self.transaction.is_success:
+            raise ValueError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
+
+        # Check if this Transaction has already been refunded
+        if ReturnedTransaction.objects.filter(transaction=self.transaction).exists():
+            raise ValueError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
+
+        # Perform the refund logic
+        self.transaction.is_success = False
+        self.transaction.save()
+
+        super().save(*args, **kwargs)
                         
-class SMS (models.Model):
+    def clean(self):
+        if not self.transaction.is_success:
+            raise ValidationError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
+        return super().clean()
+    
+  
+                            
+                        
+                        
+class SMS(models.Model):
+    # انتخاب‌های مربوط به دسته‌بندی‌ها
+    TARGET_CHOICES = (
+        ('کل مشتری ها', 'کل مشتری ها'),
+        ('تولد ها', 'تولد ها'),
+        ('مشتری های توریست', 'مشتری های توریست'),
+        ('دهه هشتادی ها', 'دهه هشتادی ها'),
+        ('دهه هفتادی ها', 'دهه هفتادی ها'),
+        ('شماره های 0912', 'شماره های 0912'),
+        ('تاپ تن مشتری های پرخرید', 'تاپ تن مشتری های پرخرید'),
+        ('۱۰۰ مشتری پرخرید اول', '۱۰۰ مشتری پرخرید اول'),
+        ('خرید اول', 'خرید اول'),
+        ('خرید دهم', 'خرید دهم'),
+        ('خرید صدم', 'خرید صدم'),
+        ('سال نو', 'سال نو'),
+        ('یلدا', 'یلدا'),
+        ('تولد ها (پیام به آنهایی که تولدشان امروزه)', 'تولد ها (پیام به آنهایی که تولدشان امروزه)'),
+        ('سیزده بدر', 'سیزده بدر'),
+        ('آغاز تابستان', 'آغاز تابستان'),
+        ('آغاز پاییز', 'آغاز پاییز'),
+        ('آغاز زمستان', 'آغاز زمستان'),
+        ('روز زن و مادر', 'روز زن و مادر'),
+    )
+
     title = models.CharField(max_length=255, verbose_name='عنوان')
-    description = models.TextField(verbose_name='توضیحات', help_text="این متن در پیامک برای مشتری ارسال می شود")    
-    target = models.CharField(max_length=55, verbose_name="جامعه هدف", null=True, blank=True)
+    description = models.TextField(verbose_name='توضیحات', help_text="این متن در پیامک برای مشتری ارسال می شود")
+    target = models.CharField(max_length=55, choices=TARGET_CHOICES, verbose_name="جامعه هدف", null=True, blank=True)
     activate = models.BooleanField(default=True, verbose_name='فعال')
     set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
     class Meta:
         verbose_name = "پنل پیامکی"
-        verbose_name_plural = "پنل پیامکی"    
+        verbose_name_plural = "پنل پیامکی"
         
     def __str__(self):
         return f"{self.title} | {self.target}" 
@@ -373,14 +433,17 @@ class Notification(models.Model):
             expiration_time = timedelta(0)
 
         # Check if set_up_time is not None before performing the comparison
-        if self.set_up_time and timezone.now() > self.set_up_time + expiration_time:
-            self.activate = False
+        if self.set_up_time:
+            current_time = timezone.now()
+            # Ensure comparison with timezone-aware datetime
+            if current_time > self.set_up_time + expiration_time:
+                self.activate = False
 
         super().save(*args, **kwargs)
         
-        
-        
-        
+
+    
+
 class RerecordingTransaction(models.Model):
     class TransactionType(models.TextChoices):
         pc = ('pc', 'pc pos')
@@ -388,24 +451,64 @@ class RerecordingTransaction(models.Model):
         card = ('card', 'کارتی')
 
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش مجدد")
-    rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش مادر') 
-    type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)    
-    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')  
-    is_success = models.BooleanField('تراکنش موفق', default=True)
+    rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش') 
+    type = models.CharField(max_length=10, choices=Transaction.TransactionType.choices, verbose_name='نوع تراکنش', default=Transaction.TransactionType.pc)    
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='rerecording_transactions', verbose_name='فروشنده', null=True, blank=True)  
+    is_success = models.BooleanField('تراکنش موفق', default=True, help_text='این فیلد را نیازی نیست حذف کنید فقط تیک این فیلد را بردارید')
     desc = models.TextField('توضیحات', null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
-    
+
     class Meta:
         verbose_name = "فروش مجدد"
         verbose_name_plural = "فروش های مجدد"
-        
+
+    def clean(self):
+        if self.rerecording_transaction and not self.rerecording_transaction.is_success:
+            raise ValidationError("سیستم قادر به ثبت فروش مجدد برای تراکنش ناموفق نیست")
+
+    def save(self, *args, **kwargs):
+        # Ensure the parent transaction is successful
+        if self.rerecording_transaction and not self.rerecording_transaction.is_success:
+            raise ValidationError("سیستم قادر به ثبت فروش مجدد برای تراکنش ناموفق نیست")
+
+        # Update the is_success field of the parent Transaction if needed
+        if self.is_success != self.rerecording_transaction.is_success:
+            self.rerecording_transaction.is_success = self.is_success
+            self.rerecording_transaction.save()
+
+        # Create a new Transaction based on this RerecordingTransaction
+        if not self.pk:  # Only create a new transaction on the first save
+            new_transaction = Transaction(
+                user=self.user or self.rerecording_transaction.user,
+                ticket=self.rerecording_transaction.ticket,
+                type=self.type,
+                is_success=self.is_success,
+                has_tax=self.rerecording_transaction.has_tax,
+                offer=self.rerecording_transaction.offer,
+                manual_discount=self.rerecording_transaction.manual_discount,
+                product_prices=self.rerecording_transaction.product_prices,
+                tax=self.rerecording_transaction.tax,
+                discount=self.rerecording_transaction.discount,
+                price=self.rerecording_transaction.price,
+                desc=self.desc or self.rerecording_transaction.desc,
+                create_at=timezone.now(),
+            )
+            new_transaction.save()
+
+            # Link this RerecordingTransaction to the newly created transaction
+            self.rerecording_transaction = new_transaction
+
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
-        return f"{self.id}"  
-    
+        return f"{self.id}"
+
     def j_create_at(self):
         if self.create_at:
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
-        return ''    
+        return ''
     
-
+    
+    
