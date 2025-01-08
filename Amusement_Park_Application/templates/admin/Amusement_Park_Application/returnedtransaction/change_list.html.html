@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="totals">
+        <h3>مجموع قیمت عودت وجه شده: {{ total_refund }}</h3>
+        <h3>مجموع قیمت عودت وجه شده نقد: {{ cash_total }}</h3>
+        <h3>مجموع قیمت عودت وجه شده کارت به کارت: {{ card_total }}</h3>
+        <h3>مجموع قیمت عودت وجه شده انتقال با شماره شبا: {{ sheba_total }}</h3>
+    </div>
+{% endblock %}

@@ -54,13 +54,27 @@ class Customer(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+    
+    @property
+    def j_first_purchase(self):
+        if self.first_purchase:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.first_purchase.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''
+    
+    @property
+    def j_last_purchase(self):
+        if self.last_purchase:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.last_purchase.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''
 
 
 # Product Model: Represents a product in the system.
 class Product(models.Model):
     title = models.CharField(max_length=512, verbose_name='نام محصول', unique=True)
     price = models.PositiveBigIntegerField(verbose_name='قیمت')
-    image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')
+    image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')    
     is_active = models.BooleanField(default=True, verbose_name='وضعیت فعال')
     is_taxable = models.BooleanField(default=True, verbose_name='مشمول مالیات بر ارزش افزوده')
     order_metric = models.PositiveIntegerField(editable=False, default=0)
@@ -91,6 +105,16 @@ class Product(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.update.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
+    
+    def save(self, *args, **kwargs):
+        # Check if the instance already exists and if the image is being updated
+        if self.pk:  
+            old_instance = Product.objects.get(pk=self.pk)
+            if old_instance.image != self.image:
+                # If the image is different, delete the old one
+                if old_instance.image:
+                    old_instance.image.delete(save=False)
+        super(Product, self).save(*args, **kwargs)    
 
 
 # TaxRate Model: Stores VAT tax rates.
@@ -138,7 +162,7 @@ class Offer (models.Model):
     persent = models.PositiveIntegerField(verbose_name='درصد تخفیف')
     code = models.CharField(max_length=50, verbose_name='کد تخفیف')
     activate = models.BooleanField(default=True, verbose_name='فعال')
-    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
     class Meta:
         verbose_name = "تخفیف"
@@ -147,6 +171,11 @@ class Offer (models.Model):
     def __str__(self):
         return f"{self.code}"
     
+    def j_create_at(self):
+        if self.create_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''    
         
 
 
@@ -196,8 +225,8 @@ class Transaction(models.Model):
 
 
     def clean(self):
-        # Ensure the ticket has not been sold already.
-        if self.ticket.transaction_obj.exists():
+        # Ensure the ticket has not been sold already unless it's a valid resell.
+        if self.ticket.transaction_obj.exclude(id=self.id).exists():
             raise ValidationError("این بلیت قبلا به فروش رسیده و برای به فروش رساندن مجددا آن باید از طریق ثبت مجدد تراکنش (فروش های مجدد) این کار را انجام دهید")
 
     def save(self, *args, **kwargs):
@@ -214,21 +243,14 @@ class Transaction(models.Model):
 
         # Apply discount calculation
         if self.offer:
-            # Apply the discount from the offer (percentage discount)
-            offer_discount = self.product_prices * self.offer.persent / 100
-        else:
-            offer_discount = 0
+            self.discount += self.offer.discount
 
-        # Calculate the total discount: Offer discount + manual discount
-        self.discount = offer_discount + self.manual_discount
-
-        # Apply tax if 'has_tax' is True
+        # Calculate tax if applicable
         if self.has_tax:
-            tax_rate = TaxRate.objects.first().rate  # Assuming there is only one tax rate
-            self.tax = int(self.product_prices * tax_rate / 100)
+            self.tax = self.product_prices * 10.00
 
-        # Calculate final price (product price - discount + tax)
-        self.price = self.product_prices - self.discount + self.tax
+        # Calculate final price
+        self.price = self.product_prices + self.tax - self.discount
 
         super().save(*args, **kwargs)
 
@@ -326,33 +348,30 @@ class ReturnedTransaction(models.Model):
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
 
-
     def __str__(self):
         return f'{self.id}'      
    
     def save(self, *args, **kwargs):
         # Ensure the Transaction exists and is valid for a refund
         if not self.transaction.is_success:
-            raise ValueError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
+            raise ValidationError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
 
         # Check if this Transaction has already been refunded
         if ReturnedTransaction.objects.filter(transaction=self.transaction).exists():
-            raise ValueError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
+            raise ValidationError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
 
         # Perform the refund logic
         self.transaction.is_success = False
         self.transaction.save()
 
         super().save(*args, **kwargs)
-                        
+
     def clean(self):
         if not self.transaction.is_success:
             raise ValidationError("این تراکنش ناموفق بوده یا قبلا عودت وجه داده شده")
         return super().clean()
     
-  
-                            
-                        
+
                         
 class SMS(models.Model):
     # انتخاب‌های مربوط به دسته‌بندی‌ها
@@ -375,14 +394,13 @@ class SMS(models.Model):
         ('آغاز تابستان', 'آغاز تابستان'),
         ('آغاز پاییز', 'آغاز پاییز'),
         ('آغاز زمستان', 'آغاز زمستان'),
-        ('روز زن و مادر', 'روز زن و مادر'),
     )
 
     title = models.CharField(max_length=255, verbose_name='عنوان')
     description = models.TextField(verbose_name='توضیحات', help_text="این متن در پیامک برای مشتری ارسال می شود")
     target = models.CharField(max_length=55, choices=TARGET_CHOICES, verbose_name="جامعه هدف", null=True, blank=True)
     activate = models.BooleanField(default=True, verbose_name='فعال')
-    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
     class Meta:
         verbose_name = "پنل پیامکی"
@@ -404,7 +422,7 @@ class Notification(models.Model):
     description = models.TextField(verbose_name='توضیحات')
     activate_time = models.CharField(max_length=255, choices=NotificationTimeChoise.choices, verbose_name='اعتبار')
     activate = models.BooleanField(default=True, verbose_name='فعال')
-    set_up_time = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
     class Meta:
         verbose_name = "اعلان"
@@ -432,11 +450,11 @@ class Notification(models.Model):
         else:
             expiration_time = timedelta(0)
 
-        # Check if set_up_time is not None before performing the comparison
-        if self.set_up_time:
+        # Check if create_at is not None before performing the comparison
+        if self.create_at:
             current_time = timezone.now()
             # Ensure comparison with timezone-aware datetime
-            if current_time > self.set_up_time + expiration_time:
+            if current_time > self.create_at + expiration_time:
                 self.activate = False
 
         super().save(*args, **kwargs)

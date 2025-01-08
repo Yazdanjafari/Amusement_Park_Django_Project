@@ -9,7 +9,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
-
+from django.db.models import Sum, F, Case, When, IntegerField
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
 
@@ -20,9 +20,14 @@ class CategoryAdmin(TreeAdmin):
 
 
 class ProductAdminClass(admin.ModelAdmin):
-    list_display = ('title', 'price', 'is_active', 'is_taxable')
+    list_display = ('title', 'formatted_price', 'is_active', 'is_taxable')
     list_filter = ('title', 'price', 'created')
     search_fields = ('title',)
+    
+    def formatted_price(self, obj):
+        return '{:,}'.format(obj.price)  # Format the price with commas
+    formatted_price.admin_order_field = 'price'  # Allow sorting by price
+    formatted_price.short_description = 'قیمت'  # Set a custom label for the column    
 
 
 class TransactionResource(resources.ModelResource):
@@ -48,6 +53,12 @@ class TicketProductInline(admin.TabularInline):
 class TicketProductAdmin(admin.ModelAdmin):
     list_display = ('ticket', 'product', 'quantity')
     list_filter = ('ticket', 'product')
+    
+    def has_change_permission(self, request, obj = ...):
+        return False
+    
+    def has_delete_permission(self, request, obj = ...):
+        return False
 
 
 
@@ -98,43 +109,63 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
 
 # Customer Admin
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'phone', 'date_of_birth', 'first_purchase', 'last_purchase')
+    list_display = ('first_name', 'last_name', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
     search_fields = ('first_name', 'last_name', 'phone')
     list_filter = ('date_of_birth', 'first_purchase', 'last_purchase')
     ordering = ('-last_purchase',)
+    
+    def j_first_purchase(self, obj):
+        return obj.j_first_purchase
+    j_first_purchase.short_description = 'تاریخ اولین خرید'
 
-
-
+    def j_last_purchase(self, obj):
+        return obj.j_last_purchase
+    j_last_purchase.short_description = 'تاریخ آخرین خرید'
+    
 # Offer Admin
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ('title', 'persent', 'code', 'activate', 'set_up_time')
-    search_fields = ('title', 'code')
-    list_filter = ('activate', 'set_up_time')
-    ordering = ('-set_up_time',)
+    list_display = ('title', 'code', 'persent', 'activate', 'j_create_at')
+    search_fields = ('code', 'persent')
+    list_filter = ('activate', 'create_at')
+    ordering = ('-create_at',)
+
+    def j_create_at(self, obj):
+        return obj.j_create_at()
+    j_create_at.short_description = 'تاریخ ایجاد'
 
 
 
 # SMS Admin
 class SMSAdmin(admin.ModelAdmin):
-    list_display = ('title', 'target', 'activate', 'set_up_time')
+    list_display = ('title', 'target', 'activate', 'j_create_at')
     search_fields = ('title', 'target')
-    list_filter = ('activate', 'set_up_time')
-    ordering = ('-set_up_time',)
+    list_filter = ('activate', 'create_at')
+    ordering = ('-create_at',)
+
+    def j_create_at(self, obj):
+        return obj.j_create_at()
+    j_create_at.short_description = 'تاریخ ایجاد'
+
 
 
 # Notification Admin
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'activate_time', 'activate', 'set_up_time')
+    list_display = ('title', 'activate_time', 'activate', 'j_create_at')
     search_fields = ('title', 'activate_time')
-    list_filter = ('activate', 'set_up_time')
-    ordering = ('-set_up_time',)
+    list_filter = ('activate', 'create_at')
+    ordering = ('-create_at',)
+    
+    def j_create_at(self, obj):
+        # Assuming you have a method in your model that formats the date to Jalali
+        return obj.j_create_at()  # Ensure this method exists in your model
+    j_create_at.short_description = _('Create Date')    
 
 
 
 # _____________________________________________ MAIN SELLING SYSTEM _____________________________________________ #
 
 class TransactionAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'is_success', 'product_prices', 'tax', 'discount', 'price', 'type', 'user', 'ticket', 'j_create_at')
+    list_display = ('id', 'is_success', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'user', 'ticket', 'j_create_at')
     list_filter = ('is_success', 'create_at', 'user', 'type')
     search_fields = ('id', 'desc')
     ordering = ('-create_at',)
@@ -148,6 +179,36 @@ class TransactionAdminClass(admin.ModelAdmin):
             'fields': ('tracking_code', 'product_prices', 'tax', 'discount', 'price', 'create_at')
         }),
     )
+
+
+    def save_model(self, request, obj, form, change):
+        # Automatically set 'is_success' when needed, or use form logic to manage this.
+        if obj.ticket.transaction_obj.exists() and not obj.is_success:
+            obj.is_success = False  # Example: you might want to set it as False initially
+        super().save_model(request, obj, form, change)
+
+
+    def formatted_product_prices(self, obj):
+        return '{:,}'.format(obj.product_prices)  # Format the product_prices with commas
+    formatted_product_prices.admin_order_field = 'product_prices'  # Allow sorting by product_prices
+    formatted_product_prices.short_description = 'مجموع مبلغ محصولات'  # Set a custom label for the column
+
+    def formatted_tax(self, obj):
+        return '{:,}'.format(obj.tax)  # Format the tax with commas
+    formatted_tax.admin_order_field = 'tax'  # Allow sorting by tax
+    formatted_tax.short_description = 'مبلغ مالیات'  # Set a custom label for the column
+
+    def formatted_discount(self, obj):
+        return '{:,}'.format(obj.discount)  # Format the discount with commas
+    formatted_discount.admin_order_field = 'discount'  # Allow sorting by discount
+    formatted_discount.short_description = 'مبلغ تخفیف'  # Set a custom label for the column
+
+    def formatted_price(self, obj):
+        return '{:,}'.format(obj.price)  # Format the price with commas
+    formatted_price.admin_order_field = 'price'  # Allow sorting by price
+    formatted_price.short_description = 'قیمت نهایی'  # Set a custom label for the column
+
+
 
     def changelist_view(self, request, extra_context=None):
         # Filter the queryset for `is_success=True`
@@ -220,7 +281,7 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
     # Fields to display in the edit form
     fieldsets = (
         (None, {
-            'fields': ('transaction', 'type', 'user', 'is_success', 'desc')
+            'fields': ('transaction', 'type', 'user', 'desc')
         }),
         ("نوع عودت وجه", {
             'fields': ('source_card_holder_name', 'destination_card_holder_name', 'source_card_number', 'destination_card_number', 'source_sheba_number', 'destination_sheba_number')
@@ -240,7 +301,36 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
     j_create_at.short_description = _('Create Date')
     
 
+    # Method to calculate totals
+    def get_totals(self):
+        # Calculate totals for different refund types
+        cash_total = ReturnedTransaction.objects.filter(
+            type=ReturnedTransaction.FoundType.cash
+        ).aggregate(Sum('transaction__price'))['transaction__price__sum'] or 0
+        
+        card_total = ReturnedTransaction.objects.filter(
+            type=ReturnedTransaction.FoundType.send_money_by_card_number
+        ).aggregate(Sum('transaction__price'))['transaction__price__sum'] or 0
+        
+        sheba_total = ReturnedTransaction.objects.filter(
+            type=ReturnedTransaction.FoundType.send_money_by_sheba_number
+        ).aggregate(Sum('transaction__price'))['transaction__price__sum'] or 0
+        
+        total_refund = cash_total + card_total + sheba_total
+        
+        return {
+            'total_refund': total_refund,
+            'cash_total': cash_total,
+            'card_total': card_total,
+            'sheba_total': sheba_total
+        }
 
+    def changelist_view(self, request, extra_context=None):
+        totals = self.get_totals()
+        extra_context = extra_context or {}
+        extra_context.update(totals)
+        
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 
