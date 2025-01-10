@@ -9,7 +9,9 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum, F, Case, When, IntegerField
+from django.db.models import Sum, Count, F
+from django.shortcuts import render
+
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
 
@@ -263,14 +265,13 @@ class RerecordingTransactionAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj = ...):
         return False
 
-
 # _____________________________________________ ReturnedTransaction _____________________________________________ #
 class ReturnedTransactionAdmin(admin.ModelAdmin):
     # Fields to be displayed in the admin list view
     list_display = ('id', 'transaction', 'type', 'desc', 'user', 'j_create_at')
 
     # Add search capability to the admin
-    search_fields = ('transaction__tracking_code', 'type', 'desc', 'user__username')
+    search_fields = ('transaction__tracking_code', 'type', 'desc')
     
     # Filter options in the admin panel
     list_filter = ('type', 'user', 'create_at')
@@ -299,38 +300,17 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
         # Assuming you have a method in your model that formats the date to Jalali
         return obj.j_create_at()  # Ensure this method exists in your model
     j_create_at.short_description = _('Create Date')
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     
 
-    # Method to calculate totals
-    def get_totals(self):
-        # Calculate totals for different refund types
-        cash_total = ReturnedTransaction.objects.filter(
-            type=ReturnedTransaction.FoundType.cash
-        ).aggregate(Sum('transaction__price'))['transaction__price__sum'] or 0
-        
-        card_total = ReturnedTransaction.objects.filter(
-            type=ReturnedTransaction.FoundType.send_money_by_card_number
-        ).aggregate(Sum('transaction__price'))['transaction__price__sum'] or 0
-        
-        sheba_total = ReturnedTransaction.objects.filter(
-            type=ReturnedTransaction.FoundType.send_money_by_sheba_number
-        ).aggregate(Sum('transaction__price'))['transaction__price__sum'] or 0
-        
-        total_refund = cash_total + card_total + sheba_total
-        
-        return {
-            'total_refund': total_refund,
-            'cash_total': cash_total,
-            'card_total': card_total,
-            'sheba_total': sheba_total
-        }
 
-    def changelist_view(self, request, extra_context=None):
-        totals = self.get_totals()
-        extra_context = extra_context or {}
-        extra_context.update(totals)
-        
-        return super().changelist_view(request, extra_context=extra_context)
+
+
+
+
 
 
 
@@ -347,8 +327,6 @@ admin.site.register(SMS, SMSAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(TicketProduct, TicketProductAdmin)
 admin.site.register(RerecordingTransaction, RerecordingTransactionAdmin)
-
-
 
 
 

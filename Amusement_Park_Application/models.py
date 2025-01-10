@@ -15,7 +15,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.db.models import Q
 
 
@@ -215,19 +215,12 @@ class Transaction(models.Model):
     def __str__(self):
         return f'{self.id}'
     
-    
     def calculate_product_prices(self):
         total_price = 0
         # Iterate over the related ticket_products to sum the price
         for ticket in self.ticket.ticket_products.all():
             total_price += ticket.product.price * ticket.quantity
         return total_price
-
-
-    def clean(self):
-        # Ensure the ticket has not been sold already unless it's a valid resell.
-        if self.ticket.transaction_obj.exclude(id=self.id).exists():
-            raise ValidationError("این بلیت قبلا به فروش رسیده و برای به فروش رساندن مجددا آن باید از طریق ثبت مجدد تراکنش (فروش های مجدد) این کار را انجام دهید")
 
     def save(self, *args, **kwargs):
         # Run custom validation before saving the transaction
@@ -245,9 +238,10 @@ class Transaction(models.Model):
         if self.offer:
             self.discount += self.offer.discount
 
-        # Calculate tax if applicable
+
         if self.has_tax:
-            self.tax = self.product_prices * 10.00
+            tax_rate = TaxRate.objects.first().rate  # Assuming there is only one tax rate
+            self.tax = int(self.product_prices * tax_rate / 100)
 
         # Calculate final price
         self.price = self.product_prices + self.tax - self.discount
@@ -527,6 +521,5 @@ class RerecordingTransaction(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
-    
     
     
