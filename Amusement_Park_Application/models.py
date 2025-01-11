@@ -523,3 +523,20 @@ class RerecordingTransaction(models.Model):
         return ''
     
     
+    
+class SaleManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_success=True)    
+    
+    
+class ProductSaleReport(Transaction):
+
+    objects = SaleManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "گزارش فروش به تفکیک محصول"          
+        verbose_name_plural = "گزارش فروش به تفکیک محصول"     
+
+    def __str__(self) -> str:
+        return f'{self.product}'    

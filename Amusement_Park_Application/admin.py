@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction
+from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport
 from django.db.models import Sum
 from import_export.admin import ExportMixin
 from import_export import resources
@@ -111,7 +111,7 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
 
 # Customer Admin
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
+    list_display = ('id', 'first_name', 'last_name', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
     search_fields = ('first_name', 'last_name', 'phone')
     list_filter = ('date_of_birth', 'first_purchase', 'last_purchase')
     ordering = ('-last_purchase',)
@@ -306,11 +306,55 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
 
     
 
+class ProductSaleReportAdmin(admin.ModelAdmin):
+    # Ensure the list_filter is properly set
+    list_filter = ('create_at',)
 
+    def has_delete_permission(self, request, obj=None):
+        return False
 
+    def has_change_permission(self, request, obj=None):
+        return False
 
+    def has_add_permission(self, request, obj=None):
+        return False
 
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
 
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        metrics = {
+            'sum_ticket_qty': Sum('ticket__ticket_products__quantity'),  # Adjust path for quantity
+            'total_transactions': Count('id'),
+            # 'total_sales' will calculate quantity * price
+            'total_sales': Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+        }
+
+        summary_data = (
+            TicketProduct.objects
+            .select_related('product', 'ticket')  # Join both ticket and product
+            .values('product__title', 'ticket')  # Fetch the product title and related ticket data
+            .annotate(
+                sum_ticket_qty=Sum('quantity'),
+                total_transactions=Count('ticket'),
+                # Calculate total sales correctly by multiplying quantity and product price
+                total_sales=Sum(F('quantity') * F('product__price')),
+            )
+        )
+
+        # Add the summary data to the context
+        response.context_data['summary'] = summary_data
+
+        # Add total summary metrics to the context
+        response.context_data['summary_total'] = dict(
+            qs.aggregate(**metrics)
+        )
+
+        return response
 
 
 
@@ -327,6 +371,6 @@ admin.site.register(SMS, SMSAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(TicketProduct, TicketProductAdmin)
 admin.site.register(RerecordingTransaction, RerecordingTransactionAdmin)
-
+admin.site.register(ProductSaleReport, ProductSaleReportAdmin)
 
 

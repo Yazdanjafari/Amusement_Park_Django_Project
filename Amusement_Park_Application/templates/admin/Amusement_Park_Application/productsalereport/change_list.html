@@ -35,7 +35,7 @@
     <tbody>
       {% for row in summary %}
       <tr >
-        <td> {{ row.ticket__product__title| default:'تراکنش فاقد بلیت' }} </td>
+        <td> {{ row.product__title | default:'تراکنش فاقد بلیت' }} </td>
         <td> {{ row.sum_ticket_qty | intcomma }} </td>
         <td> {{ row.total_transactions | intcomma }} </td>
         <td> {{ row.total_sales | default:0 |intcomma:False }} </td>
