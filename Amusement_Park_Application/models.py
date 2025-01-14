@@ -43,7 +43,7 @@ class Category(MP_Node):
 class Customer(models.Model):
     first_name = models.CharField(max_length=255, verbose_name='نام', null=True, blank=True)
     last_name = models.CharField(max_length=255, verbose_name='نام خانوادگی', null=True, blank=True)
-    phone = models.CharField(max_length=11, verbose_name='شماره تلفن')
+    phone = models.CharField(max_length=11, verbose_name='شماره تلفن', unique=True)
     date_of_birth = jmodels.jDateField(verbose_name="تاریخ تولد", null=True, blank=True) 
     first_purchase = models.DateTimeField(auto_now_add=True, verbose_name='اولین خرید')
     last_purchase = models.DateTimeField(auto_now=True, verbose_name='آخرین خرید')
@@ -191,7 +191,7 @@ class Transaction(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
     ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='transaction_obj', verbose_name='بلیت')
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)
-    is_success = models.BooleanField('تراکنش موفق', default=True, help_text='این فیلد را نیازی نیست حذف کنید فقط تیک این فیلد را بردارید')
+    is_success = models.BooleanField('تراکنش موفق', default=True, help_text='این فروش را نیازی نیست حذف کنید فقط تیک این فیلد را بردارید')
     has_tax = models.BooleanField('با احتساب مالیات بر ارزش افزورده', default=True)
     offer = models.ForeignKey('Offer', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name='کد تخفیف')
     manual_discount = models.PositiveIntegerField(verbose_name='تخفیف دستی', default=0, null=True, blank=True)
@@ -236,15 +236,21 @@ class Transaction(models.Model):
 
         # Apply discount calculation
         if self.offer:
-            self.discount += self.offer.discount
+            # Apply the discount from the offer (percentage discount)
+            offer_discount = self.product_prices * self.offer.persent / 100
+        else:
+            offer_discount = 0
 
+        # Calculate the total discount: Offer discount + manual discount
+        self.discount = offer_discount + self.manual_discount
 
+        # Apply tax if 'has_tax' is True
         if self.has_tax:
             tax_rate = TaxRate.objects.first().rate  # Assuming there is only one tax rate
             self.tax = int(self.product_prices * tax_rate / 100)
 
-        # Calculate final price
-        self.price = self.product_prices + self.tax - self.discount
+        # Calculate final price (product price - discount + tax)
+        self.price = self.product_prices - self.discount + self.tax
 
         super().save(*args, **kwargs)
 
@@ -394,7 +400,7 @@ class SMS(models.Model):
     description = models.TextField(verbose_name='توضیحات', help_text="این متن در پیامک برای مشتری ارسال می شود")
     target = models.CharField(max_length=55, choices=TARGET_CHOICES, verbose_name="جامعه هدف", null=True, blank=True)
     activate = models.BooleanField(default=True, verbose_name='فعال')
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    j_create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
     class Meta:
         verbose_name = "پنل پیامکی"
@@ -540,3 +546,19 @@ class ProductSaleReport(Transaction):
 
     def __str__(self) -> str:
         return f'{self.product}'    
+    
+    
+    
+class SellerSaleReport(Transaction):
+    class Meta:
+        proxy = True
+        verbose_name = "گزارش فروش به تفکیک صندوق داران"
+        verbose_name_plural = "گزارش فروش به تفکیک صندوق داران"
+
+
+class CustomerPurchaseReport(Transaction):
+    class Meta:
+        proxy = True
+        verbose_name = "گزارش فروش به تفکیک مشتریان"
+        verbose_name_plural = "گزارش فروش به تفکیک مشتریان"
+    

@@ -5,6 +5,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 from django_jalali.db import models as jmodels
 
+
 # Define the custom User model extending AbstractBaseUser and PermissionsMixin
 class User(AbstractBaseUser, PermissionsMixin):
 
@@ -132,3 +133,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Method to return categories associated with the user as a string
     def get_categories(self):
         return "\n,".join([c.title for c in self.categories.all()])
+
+
+
+

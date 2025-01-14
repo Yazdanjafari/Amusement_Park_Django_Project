@@ -1,0 +1,25 @@
+{% extends "admin/change_list.html" %}
+
+{% load humanize %}
+
+{% block result_list %}
+{{ block.super }}
+<br>
+
+<table class="totals">
+  <tfoot>
+    <tr><td colspan="3"><b>محاسبه فروش ها بر حسب فروش و حسابداری :</b><td>✅</td></tr>
+    <tr><td colspan="3"><b>مجموع قیمت محصولات : </b><td>{{ total_product_price|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+    <tr><td colspan="3"><b>مجموع مالیات ها : </b><td>{{ total_tax|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+    <tr><td colspan="3"><b>مجموع تخفیف ها : </b><td>{{ total_discount|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+    <tr><td colspan="3"><b>قیمت محصولات + قیمت مالیات - قیمت تخفیف ها = </b><td>{{ total_final_price|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+    <tr><td colspan="3"><b>محاسبه فروش ها بر حسب نوع فروش :</b><td>✅</td></tr>
+    <tr><td colspan="3"><b>مجموع عودت وجه های نقدی  : </b><td>{{ total_cash_sales|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+    <tr><td colspan="3"><b>مجموع عودت وجه های انتقال داده شده با شماره کارت : </b><td>{{ total_card_sales|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+    <tr><td colspan="3"><b>مجموع عودت وجه های انتقال داده شده با شماره شبا : </b><td>{{ total_pc_sales|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+  </tfoot>
+</table>
+{% block results %}
+{{ block.super }}
+{% endblock %}
+{% endblock %}

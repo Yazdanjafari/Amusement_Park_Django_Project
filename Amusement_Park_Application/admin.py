@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport
+from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
 from django.db.models import Sum
 from import_export.admin import ExportMixin
 from import_export import resources
@@ -9,8 +9,8 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum, Count, F
-from django.shortcuts import render
+from django.db.models import F, Sum, Count, Q
+from django.contrib.auth import get_user_model
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
@@ -106,6 +106,8 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
             transaction.product_prices = total_price
             transaction.save()
 
+    def has_delete_permission(self, request, obj = ...):
+        return False
 
 
 
@@ -141,8 +143,8 @@ class OfferAdmin(admin.ModelAdmin):
 class SMSAdmin(admin.ModelAdmin):
     list_display = ('title', 'target', 'activate', 'j_create_at')
     search_fields = ('title', 'target')
-    list_filter = ('activate', 'create_at')
-    ordering = ('-create_at',)
+    list_filter = ('activate', 'j_create_at')
+    ordering = ('-j_create_at',)
 
     def j_create_at(self, obj):
         return obj.j_create_at()
@@ -160,7 +162,7 @@ class NotificationAdmin(admin.ModelAdmin):
     def j_create_at(self, obj):
         # Assuming you have a method in your model that formats the date to Jalali
         return obj.j_create_at()  # Ensure this method exists in your model
-    j_create_at.short_description = _('Create Date')    
+    j_create_at.short_description = _('تاریخ ایجاد')    
 
 
 
@@ -299,12 +301,69 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
     def j_create_at(self, obj):
         # Assuming you have a method in your model that formats the date to Jalali
         return obj.j_create_at()  # Ensure this method exists in your model
-    j_create_at.short_description = _('Create Date')
+    j_create_at.short_description = _('تاریخ ایجاد')
 
     def has_delete_permission(self, request, obj=None):
         return False
 
+
+    # Add formatted display for refund prices
+    def formatted_product_price(self, obj):
+        return '{:,}'.format(obj.transaction.product_prices)  # Assuming the 'ReturnedTransaction' is linked to 'Transaction'
+    formatted_product_price.short_description = _('Refund Product Price')
+
+    def formatted_tax(self, obj):
+        return '{:,}'.format(obj.transaction.tax)  # Link to the tax from the related transaction
+    formatted_tax.short_description = _('Refund Tax')
+
+    def formatted_discount(self, obj):
+        return '{:,}'.format(obj.transaction.discount)  # Link to the discount from the related transaction
+    formatted_discount.short_description = _('Refund Discount')
+
+    def formatted_final_price(self, obj):
+        return '{:,}'.format(obj.transaction.price)  # Link to the final price from the related transaction
+    formatted_final_price.short_description = _('Final Refund Price')
+
+    def changelist_view(self, request, extra_context=None):
+        # Filter the queryset for valid refunds
+        queryset = self.get_queryset(request)
+
+        # Calculate totals for refunded product prices, taxes, discounts, and final price
+        totals = queryset.aggregate(
+            total_product_price=Sum('transaction__product_prices'),
+            total_tax=Sum('transaction__tax'),
+            total_discount=Sum('transaction__discount'),
+            total_final_price=Sum('transaction__price'),
+            total_cash_sales=Sum(
+                'transaction__price',
+                filter=Q(type=ReturnedTransaction.FoundType.cash)
+            ),
+            total_card_sales=Sum(
+                'transaction__price',
+                filter=Q(type=ReturnedTransaction.FoundType.send_money_by_card_number)
+            ),
+            total_pc_sales=Sum(
+                'transaction__price',
+                filter=Q(type=ReturnedTransaction.FoundType.send_money_by_sheba_number)
+            )
+        )
+
+        # Add totals to extra_context
+        extra_context = extra_context or {}
+        extra_context.update({
+            'total_product_price': totals['total_product_price'] or 0,
+            'total_tax': totals['total_tax'] or 0,
+            'total_discount': totals['total_discount'] or 0,
+            'total_final_price': totals['total_final_price'] or 0,
+            'total_cash_sales': totals['total_cash_sales'] or 0,
+            'total_card_sales': totals['total_card_sales'] or 0,
+            'total_pc_sales': totals['total_pc_sales'] or 0,
+        })
+
+        return super().changelist_view(request, extra_context=extra_context)
+
     
+
 
 class ProductSaleReportAdmin(admin.ModelAdmin):
     # Ensure the list_filter is properly set
@@ -327,34 +386,167 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
         except (AttributeError, KeyError):
             return response
 
+        # Define metrics for sales, including unsuccessful transactions
         metrics = {
-            'sum_ticket_qty': Sum('ticket__ticket_products__quantity'),  # Adjust path for quantity
             'total_transactions': Count('id'),
-            # 'total_sales' will calculate quantity * price
             'total_sales': Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+            'total_tickets': Sum('ticket__ticket_products__quantity'),
         }
 
+        # Annotating with aggregated data for both successful and unsuccessful transactions
         summary_data = (
             TicketProduct.objects
-            .select_related('product', 'ticket')  # Join both ticket and product
-            .values('product__title', 'ticket')  # Fetch the product title and related ticket data
+            .select_related('product', 'ticket')
+            .values('product__title')
             .annotate(
-                sum_ticket_qty=Sum('quantity'),
                 total_transactions=Count('ticket'),
-                # Calculate total sales correctly by multiplying quantity and product price
                 total_sales=Sum(F('quantity') * F('product__price')),
+                total_tickets=Sum('quantity'),
             )
         )
 
-        # Add the summary data to the context
+        # Add the summary data to the response context
         response.context_data['summary'] = summary_data
 
-        # Add total summary metrics to the context
+        # Add the total summary metrics to the context (including ticket count)
         response.context_data['summary_total'] = dict(
             qs.aggregate(**metrics)
         )
 
         return response
+
+
+
+
+
+class SellerSaleReportAdmin(admin.ModelAdmin):
+    list_filter = ('create_at',)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        # Define metrics for sales by users
+        metrics = {
+            'total_sales': Count('id'),  # Use Count for total sales (count of transactions)
+            'total_revenue': Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+            'total_products_sold': Sum('ticket__ticket_products__quantity'),
+        }
+
+        # Aggregated data for seller reports (Ensure is_success=True)
+        seller_data = (
+            Transaction.objects
+            .filter(is_success=True)  # Make sure only successful transactions are considered
+            .values('user__first_name', 'user__last_name', 'user__id')  # Access first name, last name, and user id
+            .annotate(
+                total_sales=Count('id'),  # Count the number of transactions (sales)
+                total_revenue=Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+                total_products_sold=Sum('ticket__ticket_products__quantity'),
+            )
+        )
+
+        # Add user data to the context (first name, last name)
+        for row in seller_data:
+            row['user'] = get_user_model().objects.get(id=row['user__id'])
+
+        response.context_data['summary'] = seller_data
+
+        # Recalculate summary_total dynamically based on the latest transaction data
+        summary_total = (
+            Transaction.objects
+            .filter(is_success=True)  # Ensure we're only looking at successful transactions
+            .aggregate(
+                total_sales=Count('id'),  # Count the number of transactions (sales)
+                total_revenue=Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+                total_products_sold=Sum('ticket__ticket_products__quantity'),
+            )
+        )
+
+        # Ensure that summary_total is not left as an outdated result
+        response.context_data['summary_total'] = summary_total
+
+        return response
+
+
+
+
+
+# Customer Purchase Report Admin
+class CustomerPurchaseReportAdmin(admin.ModelAdmin):
+    list_filter = ('create_at',)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        # Define metrics for purchases by customers
+        metrics = {
+            'total_purchases': Count('id'),  # Use Count for total purchases (count of transactions)
+            'total_spent': Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+            'total_products_purchased': Sum('ticket__ticket_products__quantity'),
+        }
+
+        # Aggregated data for customer purchase reports (Ensure is_success=True)
+        customer_data = (
+            Transaction.objects
+            .filter(is_success=True)  # Only successful transactions are considered
+            .values('ticket__customer__first_name', 'ticket__customer__last_name', 'ticket__customer__id')  # Access customer details
+            .annotate(
+                total_purchases=Count('id'),  # Count the number of transactions (purchases)
+                total_spent=Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+                total_products_purchased=Sum('ticket__ticket_products__quantity'),
+            )
+        )
+
+        # Add customer data to the context
+        for row in customer_data:
+            row['customer'] = get_user_model().objects.get(id=row['ticket__customer__id'])
+
+        response.context_data['summary'] = customer_data
+
+        # Recalculate summary_total dynamically based on the latest transaction data
+        summary_total = (
+            Transaction.objects
+            .filter(is_success=True)  # Ensure we're only looking at successful transactions
+            .aggregate(
+                total_purchases=Count('id'),  # Count the number of transactions (purchases)
+                total_spent=Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
+                total_products_purchased=Sum('ticket__ticket_products__quantity'),
+            )
+        )
+
+        # Ensure that summary_total is not left as an outdated result
+        response.context_data['summary_total'] = summary_total
+
+        return response
+
+
 
 
 
@@ -372,5 +564,7 @@ admin.site.register(Notification, NotificationAdmin)
 admin.site.register(TicketProduct, TicketProductAdmin)
 admin.site.register(RerecordingTransaction, RerecordingTransactionAdmin)
 admin.site.register(ProductSaleReport, ProductSaleReportAdmin)
+admin.site.register(SellerSaleReport, SellerSaleReportAdmin)
+admin.site.register(CustomerPurchaseReport, CustomerPurchaseReportAdmin)
 
 
