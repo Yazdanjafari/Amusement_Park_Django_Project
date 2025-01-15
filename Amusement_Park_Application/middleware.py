@@ -1,6 +1,7 @@
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 from user_agents import parse
+from django.http import Http404
 
 class MobileAccessMiddleware:
     """
@@ -37,3 +38,19 @@ class MobileAccessMiddleware:
                     return HttpResponseRedirect(reverse(self.error_page))
 
         return self.get_response(request)
+
+
+
+
+class AdminAccessMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Check if the user is trying to access the admin panel
+        if request.path.startswith('/admin/'):
+            if not request.user.is_superuser:
+                raise Http404("Page not found")
+        
+        response = self.get_response(request)
+        return response

@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
+from django.core.exceptions import ValidationError
 
 User = get_user_model()  # Explicitly assign the custom User model to a variable
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ("username", "first_name", "last_name", "get_role", "is_active", "is_staff", )
+    list_display = ("username", "first_name", "last_name", "get_role", "is_active", "is_staff", "is_superuser" )
 
 
     fieldsets = (
@@ -28,6 +29,9 @@ class CustomUserAdmin(UserAdmin):
             {
                 'fields': (
                     'role',
+                    'is_active',
+                    'is_staff',
+                    'is_superuser',
                     'categories',
                 ),
             },
@@ -36,9 +40,6 @@ class CustomUserAdmin(UserAdmin):
             'Permissions',  # Include permissions if needed
             {
                 'fields': (
-                    'is_staff',
-                    'is_active',
-                    'is_superuser',
                     'groups',
                     'user_permissions',
                 ),
@@ -59,7 +60,7 @@ class CustomUserAdmin(UserAdmin):
     def get_role(self, obj):
         return obj.get_role_display()
 
-    get_role.short_description = 'Role'
+    get_role.short_description = 'نوع دسترسی کاربر'
 
     # To access the `get_categories` method in list_display
     def get_categories_display(self, obj):

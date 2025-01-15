@@ -6,12 +6,13 @@ from django.utils import timezone
 from django_jalali.db import models as jmodels
 
 
+
 # Define the custom User model extending AbstractBaseUser and PermissionsMixin
 class User(AbstractBaseUser, PermissionsMixin):
 
     # Enum for user roles with custom Persian choices
     class UserRoleChoices(models.TextChoices):
-        NORMAL = 'normal', 'عادی'
+        NORMAL = 'normal', 'دسترسی آزاد'
         SCANNER = 'scanner', 'اسکنر'
         KIOSK = 'kiosk', 'کیوسک'
 
@@ -39,20 +40,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_("email address"), blank=True, null=True)
 
     # User status fields
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
     is_active = models.BooleanField(
-        _("active"),
+        verbose_name="فعال",  # Direct string for verbose name
         default=True,
-        help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
-        ),
+        help_text="بجای حذف کاربر کافی است تیک این فیلد را بردارید تا این کاربر دیگر هیچ نوع دسترسی ای به وب اپلیکیشن نداشته باشد .",
     )
-
+    
+    is_staff = models.BooleanField(
+        verbose_name="کارمند",  # Direct string for verbose name
+        default=False,
+        help_text="این فیلد نشان می‌دهد که آیا کاربر باید به عنوان کارمند فعالیت کند (اخطار : به کاربران کیوسک و اسکنر این دسترسی پیشنهاد نمیشود)",  # Direct string for help text
+    )
+    
+    is_superuser = models.BooleanField(
+        verbose_name="ادمین",  # Direct string for verbose name
+        default=False,
+        help_text="این فیلد نشان می‌دهد که آیا کاربر دسترسی کامل به تمامی بخش هارا دارد یا خیر.",
+    )
+    
     # Tracking fields for user creation and updates
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     update = models.DateTimeField(auto_now=True, verbose_name=_('زمان ویرایش'))

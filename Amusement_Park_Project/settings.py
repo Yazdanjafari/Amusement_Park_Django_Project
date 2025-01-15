@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-9q42gp(pw2)-^7qm(6kt7szqiw!ncsdp9_z#d*!=bsh5e=l%8a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ['*']
+
+
+LOGIN_URL = '/'
 
 
 # Application definition
@@ -56,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'Amusement_Park_Application.middleware.MobileAccessMiddleware',
+    'Amusement_Park_Application.middleware.AdminAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'Amusement_Park_Project.urls'
@@ -71,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Amusement_Park_Application.context_processors.products',
             ],
         },
     },

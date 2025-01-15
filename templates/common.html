@@ -213,17 +213,23 @@
 						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="{% url 'Amusement_Park:Submit_Pay' %}" id="demoMenu">ثبت مجدد تراکنش</a>
 					</li>
 
+					{% if request.user.is_superuser or request.user.is_staff %}
 					<li class="nav-item dropdown">
 						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu">عودت وجه</a>
 					</li>
-
+					{% endif %}
+					
+					{% if request.user.is_superuser or request.user.is_staff %}
 					<li class="nav-item dropdown">
 						<a class="nav-link" href="#" id="demoMenu">اسکن بارکد</a>
 					</li>				
+					{% endif %}
 					
-					<li class="nav-item dropdown">
-						<a class="nav-link" href="/admin" id="demoMenu">پنل ادمین</a>
-					</li>					
+					{% if request.user.is_superuser %}
+						<li class="nav-item dropdown">
+							<a class="nav-link" href="/admin" id="demoMenu">پنل ادمین</a>
+						</li>			
+					{% endif %}		
 				
 				</ul>
 				<!-- Nav Main menu END -->
@@ -236,70 +242,79 @@
 						
 					{% endblock shortcut_header %}
 					
-					<!-- Notification dropdown START -->
-					<li class="nav-item ms-2 ms-sm-3 dropdown d-none d-sm-block">
-						<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-							<i class="bi bi-bell fa-fw"></i>
-						</a>
-						<span class="notif-badge animation-blink"></span>
-
-						<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
-							<div class="card bg-transparent">
-								<div class="card-header bg-transparent border-bottom py-4 d-flex justify-content-between align-items-center">
-									<h6 class="m-0">پیام ها <span class="badge bg-danger bg-opacity-10 text-danger ms-2">2 پیام جدید</span></h6>
-									<a class="small" href="#">حذف همه</a>
-								</div>
-								<div class="card-body p-0">
-									<ul class="list-group list-unstyled list-group-flush">
-										<li>
-											<a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
-												<div class="me-3">
-													<div class="avatar avatar-md">
-														<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+					
+					{% if request.user.is_superuser or request.user.is_staff %}
+						<!-- Notification dropdown START -->
+						<li class="nav-item ms-2 ms-sm-3 dropdown d-none d-sm-block">
+							<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+								<i class="bi bi-bell fa-fw"></i>
+							</a>
+							<span class="notif-badge animation-blink"></span>
+							
+							<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
+								<div class="card bg-transparent">
+									<div class="card-header bg-transparent border-bottom py-4 d-flex justify-content-between align-items-center">
+										<h6 class="m-0">پیام ها <span class="badge bg-danger bg-opacity-10 text-danger ms-2">2 پیام جدید</span></h6>
+									</div>
+									<div class="card-body p-0">
+										{% for i in Notification_views %}
+										<ul class="list-group list-unstyled list-group-flush">
+											<li>
+												<a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
+													<div class="me-3">
+														<div class="avatar avatar-md">
+															<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+														</div>
 													</div>
-												</div>
-												<div>
-													<h6 class="mb-1 fw-normal">به روز رسانی نسخه 2.3 انجام شد</h6>
-													<p class="small text-body m-0">با ویژگی های جدید آشنا شوید</p>
-													<small class="text-body">5 دقیقه پیش</small>
-												</div>
-											</a>
-										</li>
-									</ul>
+													<div>
+														<h6 class="mb-1 fw-normal">{{ i.title }}</h6>
+														<p class="small text-body m-0">{{ i.description }}</p>
+														<small class="text-body">{{i.create_at}}</small>
+													</div>
+												</a>
+											</li>
+										</ul>
+										{% endfor %}
+										
+									</div>
 								</div>
 							</div>
-						</div>
-					</li>
-					<!-- Notification dropdown END -->
+						</li>
+						<!-- Notification dropdown END -->
+					{% endif %}
 
 				</div>
 
 				<!-- Profile dropdown START -->
 				<div class="dropdown ms-1 ms-lg-0">
 					<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-						<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+						<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo.jpg' %}" alt="avatar">
 					</a>
 					<ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
 						<li class="px-3 mb-3">
 							<div class="d-flex align-items-center">
 								<div class="avatar me-3">
-									<img class="avatar-img rounded-circle shadow" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
+									<img class="avatar-img rounded-circle shadow" src="{% static 'assets/images/logo.jpg' %}" alt="avatar">
 								</div>
 								<div>
-									<a class="h6" href="#">الهام حسینی</a>
-									<p class="small m-0">example@gmail.com</p>
+									{% if request.user.is_authenticated %}
+									<a class="h6">{{ request.user.first_name }} {{ request.user.last_name }}</a>
+									<p class="small m-0">{{ request.user.username }}@</p>
+									{% endif %}
 								</div>
 							</div>
 						</li>
 						<li><hr class="dropdown-divider"></li>
+						{% if request.user.is_superuser or request.user.is_staff %}
 						<li>
 							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:Setting' %}">
 								<i class="bi bi-gear fa-fw me-2"></i> تنظیمات
 							</a>
 						</li>
+						{% endif %}
 						<li>
 							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}">
-								<i class="bi bi-gear fa-fw me-2"></i> خروج
+								<i class="bi bi-box-arrow-right fa-fw me-2"></i> خروج
 							</a>
 						</li>
 					<li>
@@ -349,31 +364,33 @@
 
 <!-- =======================
 Footer START -->
-<footer class="bg-dark p-3">
-    <div class="container">
-        <div class="row align-items-center">
-            <!-- Logo Widget -->
-            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
-                <a href="{% url "Amusement_Park:Products" %}">
-                    <img class="h-40px" src='{% static "assets/images/logo.png" %}' alt="logo">
-                </a>
-            </div>
-            <!-- Created by Widget -->
-            <div class="col-md-4 mb-3 mb-md-0">
-                <div class="text-center text-white">
-                    ایجاد شده توسط 
-                    <a href="https://www.yazdanjafari.ir/" target="_blank" class="text-reset btn-link">یزدان جعفری</a>
-                </div>
-            </div>
-            <!-- Version Widget -->
-            <div class="col-md-4 mb-3 mb-md-0 text-md-start">
-                <div class="text-white" style="text-align: left;">
-                    ورژن: 3.0.0
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
+{% if request.user.is_superuser or request.user.is_staff %}
+	<footer class="bg-dark p-3">
+		<div class="container">
+			<div class="row align-items-center">
+				<!-- Logo Widget -->
+				<div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+					<a href="{% url "Amusement_Park:Products" %}">
+						<img class="h-40px" src='{% static "assets/images/logo.png" %}' alt="logo">
+					</a>
+				</div>
+				<!-- Created by Widget -->
+				<div class="col-md-4 mb-3 mb-md-0">
+					<div class="text-center text-white">
+						ایجاد شده توسط 
+						<a href="https://www.yazdanjafari.ir/" target="_blank" class="text-reset btn-link">یزدان جعفری</a>
+					</div>
+				</div>
+				<!-- Version Widget -->
+				<div class="col-md-4 mb-3 mb-md-0 text-md-start">
+					<div class="text-white" style="text-align: left;">
+						ورژن: 3.0.0
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+{% endif %}
 <!-- =======================
 Footer END -->
 
