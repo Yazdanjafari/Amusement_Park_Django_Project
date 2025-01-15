@@ -76,7 +76,7 @@ class Product(models.Model):
     price = models.PositiveBigIntegerField(verbose_name='قیمت')
     image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')    
     is_active = models.BooleanField(default=True, verbose_name='وضعیت فعال')
-    is_taxable = models.BooleanField(default=True, verbose_name='مشمول مالیات بر ارزش افزوده')
+    is_taxable = models.BooleanField(editable=False, default=True, verbose_name='مشمول مالیات بر ارزش افزوده')
     order_metric = models.PositiveIntegerField(editable=False, default=0)
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=' زمان ایجاد')
@@ -235,7 +235,7 @@ class Transaction(models.Model):
             self.product_prices = self.calculate_product_prices()
 
         # Apply discount calculation
-        if self.offer:
+        if self.offer and self.offer.activate:
             # Apply the discount from the offer (percentage discount)
             offer_discount = self.product_prices * self.offer.persent / 100
         else:
@@ -248,6 +248,8 @@ class Transaction(models.Model):
         if self.has_tax:
             tax_rate = TaxRate.objects.first().rate  # Assuming there is only one tax rate
             self.tax = int(self.product_prices * tax_rate / 100)
+        else:
+            self.tax = 0  # Ensure tax is zero when has_tax is False
 
         # Calculate final price (product price - discount + tax)
         self.price = self.product_prices - self.discount + self.tax

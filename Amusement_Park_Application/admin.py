@@ -507,41 +507,43 @@ class CustomerPurchaseReportAdmin(admin.ModelAdmin):
 
         # Define metrics for purchases by customers
         metrics = {
-            'total_purchases': Count('id'),  # Use Count for total purchases (count of transactions)
+            'total_purchases': Count('id'),
             'total_spent': Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
             'total_products_purchased': Sum('ticket__ticket_products__quantity'),
         }
 
-        # Aggregated data for customer purchase reports (Ensure is_success=True)
+        # Aggregated data for customer purchase reports
         customer_data = (
             Transaction.objects
             .filter(is_success=True)  # Only successful transactions are considered
-            .values('ticket__customer__first_name', 'ticket__customer__last_name', 'ticket__customer__id')  # Access customer details
+            .values('ticket__customer__first_name', 'ticket__customer__last_name', 'ticket__customer__id')
             .annotate(
-                total_purchases=Count('id'),  # Count the number of transactions (purchases)
+                total_purchases=Count('id'),
                 total_spent=Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
                 total_products_purchased=Sum('ticket__ticket_products__quantity'),
             )
         )
 
-        # Add customer data to the context
+        # Add customer data to the context, handling missing users
         for row in customer_data:
-            row['customer'] = get_user_model().objects.get(id=row['ticket__customer__id'])
+            try:
+                row['customer'] = get_user_model().objects.get(id=row['ticket__customer__id'])
+            except get_user_model().DoesNotExist:
+                row['customer'] = None  # Or set to a placeholder value, e.g., "Unknown Customer"
 
         response.context_data['summary'] = customer_data
 
         # Recalculate summary_total dynamically based on the latest transaction data
         summary_total = (
             Transaction.objects
-            .filter(is_success=True)  # Ensure we're only looking at successful transactions
+            .filter(is_success=True)
             .aggregate(
-                total_purchases=Count('id'),  # Count the number of transactions (purchases)
+                total_purchases=Count('id'),
                 total_spent=Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
                 total_products_purchased=Sum('ticket__ticket_products__quantity'),
             )
         )
 
-        # Ensure that summary_total is not left as an outdated result
         response.context_data['summary_total'] = summary_total
 
         return response
