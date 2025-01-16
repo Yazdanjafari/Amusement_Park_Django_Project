@@ -12,5 +12,7 @@ urlpatterns = [
     path("Refund", views.refund, name= "Refund"),
     path("Setting", views.setting, name= "Setting"),
     path("Submit_Pay", views.submit_pay, name= "Submit_Pay"),
+    path("scanner", views.scanner, name= "Scanner"),
+    path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
 ]
 

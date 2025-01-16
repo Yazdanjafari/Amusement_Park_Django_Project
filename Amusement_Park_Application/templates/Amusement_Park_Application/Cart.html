@@ -121,33 +121,35 @@ Page content START -->
 							</div>
 						</div>
 
+						{% if request.user.is_superuser or request.user.is_staff %}
 						<!-- Coupon input and button -->
-						<div class="row g-3 mt-2">
-							<div class="col-md-6">
-								<div class="input-group">
-									<input class="form-control" id="discount-amount" placeholder="تخفیف با مبلغ :">
+							<div class="row g-3 mt-2">
+								<div class="col-md-6">
+									<div class="input-group">
+										<input class="form-control" id="discount-amount" placeholder="تخفیف با مبلغ :">
+									</div>
+									<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
 								</div>
-								<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
+								<!-- Update button -->
+								<div class="col-md-6 text-md-end">
+									<button class="btn btn-primary mb-0" id="btn-amount" disabled>اعمال</button>
+								</div>
 							</div>
-							<!-- Update button -->
-							<div class="col-md-6 text-md-end">
-								<button class="btn btn-primary mb-0" id="btn-amount" disabled>اعمال</button>
-							</div>
-						</div>
 
-						<!-- Coupon input and button -->
-						<div class="row g-3 mt-2">
-							<div class="col-md-6">
-								<div class="input-group">
-									<input class="form-control" id="discount-percent" placeholder="تخفیف با درصد :">
+							<!-- Coupon input and button -->
+							<div class="row g-3 mt-2">
+								<div class="col-md-6">
+									<div class="input-group">
+										<input class="form-control" id="discount-percent" placeholder="تخفیف با درصد :">
+									</div>
+									<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
 								</div>
-								<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
-							</div>
-							<!-- Update button -->
-							<div class="col-md-6 text-md-end">
-								<button class="btn btn-primary mb-0" id="btn-percent" disabled>اعمال</button>
-							</div>
-						</div>	
+								<!-- Update button -->
+								<div class="col-md-6 text-md-end">
+									<button class="btn btn-primary mb-0" id="btn-percent" disabled>اعمال</button>
+								</div>
+							</div>	
+						{% endif %}
 
 				</div>
 			</div>

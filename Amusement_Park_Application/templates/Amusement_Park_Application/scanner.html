@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اسکن کیو آر کد</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #reader {
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>اسکن کیو آر کد</h1>
+    <p>لطفاً کیو آر کد خود را در جلوی دوربین قرار دهید.</p>
+
+    <!-- محلی برای اسکن -->
+    <div id="reader"></div>
+
+    <!-- نمایش نتیجه -->
+    <p id="result"></p>
+
+    <script>
+        // تنظیمات اسکنر
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`;
+
+            // ارسال درخواست AJAX به سرور
+            fetch('/verify_qr_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: JSON.stringify({ qr_code: decodedText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('کیو آر کد معتبر است!');
+                } else {
+                    alert('این کیو آر کد قبلاً استفاده شده است!');
+                }
+            })
+            .catch(error => {
+                console.error('خطا در ارسال درخواست:', error);
+            });
+        };
+
+        const qrCodeErrorCallback = (errorMessage) => {
+            console.log(`خطا در اسکن: ${errorMessage}`);
+        };
+
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" }, // استفاده از دوربین اصلی دستگاه
+            {
+                fps: 10, // تعداد فریم در ثانیه
+                qrbox: { width: 250, height: 250 } // اندازه باکس اسکن
+            },
+            qrCodeSuccessCallback,
+            qrCodeErrorCallback
+        ).catch(err => {
+            console.error(`خطا در شروع اسکنر: ${err}`);
+        });
+
+        // دریافت CSRF Token
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [key, value] = cookie.trim().split('=');
+                if (key === 'csrftoken') {
+                    return value;
+                }
+            }
+            return '';
+        }
+    </script>
+
+    <!-- دکمه خروج -->
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'Authenticate:Logout' %}">
+            <button style="padding: 10px 20px; font-size: 16px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                خروج
+            </button>
+        </a>
+    </div>
+</body>
+</html>

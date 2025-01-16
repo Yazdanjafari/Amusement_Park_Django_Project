@@ -62,7 +62,7 @@ Instructor grid START -->
 {% block shortcut_header %}
 <li class="nav-item ms-2 dropdown ">
 	<!-- Cart button -->
-	<a class="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+	<a class="btn btn-light btn-round mb-0 text-success" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
 		<i class="bi bi-cart3 fa-fw"></i>
 	</a>
 	<!-- badge -->
@@ -103,7 +103,7 @@ Instructor grid START -->
 			</div>
 			<!-- Button -->
 			<div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
-				<a href="#" class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">حذف همه</a>
+				<a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">حذف همه</a>
 				<a href="{% url "Amusement_Park:Cart" %}" class="btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
 				<a href="{% url "Amusement_Park:Checkout" %}" class="btn btn-sm btn-success mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">تسویه حساب</a>
 			</div>
@@ -111,10 +111,19 @@ Instructor grid START -->
 	</div>
 	<!-- Cart dropdown menu END -->
 </li>
+
+
+<li class="nav-item ms-2 ">
+	<!-- Cart button -->
+	<a class="btn btn-light btn-round mb-0 ms-2" href="#" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
+		<i class="bi bi-trash fa-fw text-danger"></i>
+	</a>
+</li>
 {% endblock shortcut_header %}
 
 
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Function to increment the counter
     function increment(button) {
@@ -132,10 +141,59 @@ Instructor grid START -->
         }
     }
 
-    // Function to reset the counter when cart button is clicked
-    function resetCounter(button) {
-        const counter = button.parentElement.querySelector('.counter');
-        counter.innerText = 0;
+    // Function to reset the counter and change the button state
+	function resetCounter(button) {
+		const parent = button.parentElement;
+		const counter = parent.querySelector('.counter');
+		const resetButton = parent.querySelector('.btn-outline-success');
+		const productTitle = parent.closest('.card-body').querySelector('.card-title a').innerText;
+	
+		// Get the current counter value
+		const count = parseInt(counter.innerText, 10);
+	
+		// If the counter is 0, do nothing
+		if (count === 0) {
+			return;
+		}
+	
+		// Change the cart button to active state
+		resetButton.classList.remove('btn-outline-success');
+		resetButton.classList.add('btn-success');
+	
+		// Disable all other buttons except for the reset button
+		parent.querySelectorAll('button').forEach(btn => {
+			if (!btn.classList.contains('btn-success')) {
+				btn.disabled = true;
+			}
+		});
+	
+		// Show SweetAlert notification
+		Swal.fire({
+			title: 'محصول به سبد خرید اضافه شد!',
+			text: `${count} عدد از محصول ${productTitle} به سبد خرید اضافه شد`,
+			icon: 'success',
+			confirmButtonText: 'باشه'
+		});
+	}
+
+    // Function to reset everything to its initial state
+    function clearAll() {
+        const allButtons = document.querySelectorAll('.d-flex .btn');
+        const counters = document.querySelectorAll('.counter');
+
+        // Reset all cart buttons to default
+        allButtons.forEach(button => {
+            button.disabled = false;
+            if (button.classList.contains('btn-success')) {
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-success');
+            }
+        });
+
+        // Reset all counters to 0
+        counters.forEach(counter => {
+            counter.innerText = '0';
+        });
     }
 </script>
 {% endblock script %}

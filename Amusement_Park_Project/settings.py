@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'Amusement_Park_Application.middleware.MobileAccessMiddleware',
     'Amusement_Park_Application.middleware.AdminAccessMiddleware',
+    'Amusement_Park_Application.middleware.RoleBasedAccessMiddleware',
+    'Amusement_Park_Application.middleware.KioskBasedAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'Amusement_Park_Project.urls'

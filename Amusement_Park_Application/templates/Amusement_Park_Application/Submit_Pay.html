@@ -132,42 +132,45 @@ Page content START -->
 									</div>
 								</div>
 
-								<!-- Cash -->
-								<div class="accordion-item mb-3">
-									<h6 class="accordion-header" id="heading-cash">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											نقدی
-										</button>
-									</h6>
-									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
-									</div>
-								</div>
-
-								<!-- Combined payment -->
-								<div class="accordion-item mb-3">
-									<h6 class="accordion-header" id="heading-combined">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-											ترکیبی
-										</button>
-									</h6>
-									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
-										<!-- Accordion body -->
-										<div class="accordion-body">
-											<!-- Form START -->
-											<form class="row g-3">
-												<div class="col-6">
-													<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی</span></label>
-													<input type="text" class="form-control" aria-label="cash amount" placeholder="مبلغ نقدی را وارد کنید">
-												</div>
-												<div class="col-6">
-													<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان</span></label>
-													<input type="text" class="form-control" aria-label="card amount" placeholder="مبلغ کارتخوان را وارد کنید">
-												</div>
-											</form>
-											<!-- Form END -->
+								{% if request.user.is_superuser or request.user.is_staff %}
+									<!-- Cash -->
+									<div class="accordion-item mb-3">
+										<h6 class="accordion-header" id="heading-cash">
+											<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+												نقدی
+											</button>
+										</h6>
+										<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
 										</div>
 									</div>
-								</div>
+
+									<!-- Combined payment -->
+									<div class="accordion-item mb-3">
+										<h6 class="accordion-header" id="heading-combined">
+											<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+												ترکیبی
+											</button>
+										</h6>
+										<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+											<!-- Accordion body -->
+											<div class="accordion-body">
+												<!-- Form START -->
+												<form class="row g-3">
+													<div class="col-6">
+														<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی</span></label>
+														<input type="text" class="form-control" aria-label="cash amount" placeholder="مبلغ نقدی را وارد کنید">
+													</div>
+													<div class="col-6">
+														<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان</span></label>
+														<input type="text" class="form-control" aria-label="card amount" placeholder="مبلغ کارتخوان را وارد کنید">
+													</div>
+												</form>
+												<!-- Form END -->
+											</div>
+										</div>
+									</div>
+								{% endif %}
+
 								<!-- Combined payment END -->
 							</div>
 						</div>

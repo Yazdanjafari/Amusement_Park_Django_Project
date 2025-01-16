@@ -2,22 +2,25 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 def sign_in(request):
-    if request.user.is_authenticated:  # Check if the user is already logged in
-        return redirect('Amusement_Park:Products')  # Redirect to the Products page if logged in
+    if request.user.is_authenticated:
+        if request.user.role == 'scanner':
+            return redirect('Amusement_Park:Scanner')  # Redirect scanner users
+        return redirect('Amusement_Park:Products')  # Redirect other users
 
-    error_message = None  # Initialize error message
-    if request.method == "POST":  # Only handle POST requests
+    error_message = None
+    if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:  # If credentials are correct
-            login(request, user)  # Log the user in
-            return redirect('Amusement_Park:Products')  # Redirect to the Products page
+        if user is not None:
+            login(request, user)
+            if user.role == 'scanner':
+                return redirect('Amusement_Park:Scanner')  # Redirect scanner users
+            return redirect('Amusement_Park:Products')  # Redirect other users
         else:
-            error_message = "نام کاربری یا رمز عبور شما اشتباه است"  # Set error message for invalid credentials
+            error_message = "نام کاربری یا رمز عبور شما اشتباه است"
 
-    # Pass the error message to the template
     return render(request, "Authenticate_Application/sign-in.html", {'error_message': error_message})
 
 def logout_show(request):

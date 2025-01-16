@@ -1,13 +1,10 @@
-from collections.abc import Iterable
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 import jdatetime
 import uuid
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from .utils import custom_round_calculate
 from .managers import CategoryQuerySet, ProductModelManager
 from treebeard.mp_tree import MP_Node
 from django_jalali.db import models as jmodels
@@ -15,8 +12,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.db.models import Sum, Count
-from django.db.models import Q
 
 
 # Category Model: Represents product categories, inheriting from MP_Node for tree structure.
@@ -415,6 +410,7 @@ class SMS(models.Model):
         
 class Notification(models.Model):
     class NotificationTimeChoise(models.TextChoices):
+        hour = '1 ساعت', '1 ساعت'
         day = '24 ساعت', '24 ساعت'
         two_days = '48 ساعت', '48 ساعت'
         week = 'یک هفته', 'یک هفته'
@@ -441,7 +437,9 @@ class Notification(models.Model):
       
     def save(self, *args, **kwargs):
         # Determine the expiration time based on the selected activate_time
-        if self.activate_time == '24 ساعت':
+        if self.activate_time == '1 ساعت':
+            expiration_time = timedelta(hours=1)
+        elif self.activate_time == '24 ساعت':
             expiration_time = timedelta(hours=24)
         elif self.activate_time == '48 ساعت':
             expiration_time = timedelta(hours=48)
@@ -452,15 +450,14 @@ class Notification(models.Model):
         else:
             expiration_time = timedelta(0)
 
-        # Check if create_at is not None before performing the comparison
-        if self.create_at:
+        # Ensure create_at is timezone-aware before performing comparison
+        if self.create_at and timezone.is_aware(self.create_at):
             current_time = timezone.now()
-            # Ensure comparison with timezone-aware datetime
+            # Check if the expiration time has passed and set 'activate' to False
             if current_time > self.create_at + expiration_time:
                 self.activate = False
 
         super().save(*args, **kwargs)
-        
 
     
 

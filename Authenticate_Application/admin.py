@@ -8,6 +8,19 @@ User = get_user_model()  # Explicitly assign the custom User model to a variable
 class CustomUserAdmin(UserAdmin):
     list_display = ("username", "first_name", "last_name", "get_role", "is_active", "is_staff", "is_superuser" )
 
+    # Overriding the save_model to enforce validation
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.clean()  # Run the clean method
+        except ValidationError as e:
+            # Raise validation error to admin interface
+            form.add_error(None, e)
+            return
+        super().save_model(request, obj, form, change)
+
+    fieldsets = (
+        # Your existing fieldsets remain unchanged
+    )    
 
     fieldsets = (
         (
@@ -37,7 +50,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         (
-            'Permissions',  # Include permissions if needed
+            'اجازه ها',  # Include permissions if needed
             {
                 'fields': (
                     'groups',
@@ -46,7 +59,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         (
-            'Important dates',  # Group for important dates
+            'تاریخ ها',  # Group for important dates
             {
                 'fields': (
                     'last_login',
@@ -65,7 +78,7 @@ class CustomUserAdmin(UserAdmin):
     # To access the `get_categories` method in list_display
     def get_categories_display(self, obj):
         return obj.get_categories()
-
+    
     get_categories_display.short_description = 'Categories'  # Optional: set a custom column name in the admin
 
 # Unregister the default User model only if it was registered previously

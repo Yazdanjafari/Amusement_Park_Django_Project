@@ -221,7 +221,7 @@
 					
 					{% if request.user.is_superuser or request.user.is_staff %}
 					<li class="nav-item dropdown">
-						<a class="nav-link" href="#" id="demoMenu">اسکن بارکد</a>
+						<a class="nav-link" href="{% url 'Amusement_Park:Scanner' %}" id="demoMenu">اسکن بارکد</a>
 					</li>				
 					{% endif %}
 					
@@ -254,28 +254,29 @@
 							<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
 								<div class="card bg-transparent">
 									<div class="card-header bg-transparent border-bottom py-4 d-flex justify-content-between align-items-center">
-										<h6 class="m-0">پیام ها <span class="badge bg-danger bg-opacity-10 text-danger ms-2">2 پیام جدید</span></h6>
+										<h6 class="m-0">پیام ها :</h6>
 									</div>
 									<div class="card-body p-0">
 										{% for i in Notification_views %}
-										<ul class="list-group list-unstyled list-group-flush">
-											<li>
-												<a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
-													<div class="me-3">
-														<div class="avatar avatar-md">
-															<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo_with_background.jpg' %}" alt="avatar">
-														</div>
-													</div>
-													<div>
-														<h6 class="mb-1 fw-normal">{{ i.title }}</h6>
-														<p class="small text-body m-0">{{ i.description }}</p>
-														<small class="text-body">{{i.create_at}}</small>
-													</div>
-												</a>
-											</li>
-										</ul>
+											{% if i.activate == True %}
+												<ul class="list-group list-unstyled list-group-flush">
+													<li>
+														<a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
+															<div class="me-3">
+																<div class="avatar avatar-md">
+																	<img class="avatar-img rounded-circle" src="{% static 'assets/images/logo.jpg' %}" alt="avatar">
+																</div>
+															</div>
+															<div>
+																<h6 class="mb-1 fw-normal">{{ i.title }}</h6>
+																<p class="small text-body m-0">{{ i.description }}</p>
+																<small class="text-body">{{i.create_at}}</small>
+															</div>
+														</a>
+													</li>
+												</ul>
+											{% endif %}
 										{% endfor %}
-										
 									</div>
 								</div>
 							</div>

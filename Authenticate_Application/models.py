@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 from django_jalali.db import models as jmodels
-
+from django.core.exceptions import ValidationError
 
 
 # Define the custom User model extending AbstractBaseUser and PermissionsMixin
@@ -48,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     is_staff = models.BooleanField(
         verbose_name="کارمند",  # Direct string for verbose name
-        default=False,
+        default=True,
         help_text="این فیلد نشان می‌دهد که آیا کاربر باید به عنوان کارمند فعالیت کند (اخطار : به کاربران کیوسک و اسکنر این دسترسی پیشنهاد نمیشود)",  # Direct string for help text
     )
     
@@ -119,6 +119,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Clean method to override the default validation (if needed)
     def clean(self):
         super().clean()
+        # Check for UserRoleChoices.NORMAL role
+        if self.role == self.UserRoleChoices.NORMAL and not (self.is_staff or self.is_superuser):
+            raise ValidationError("یک کاربر با دسترسی آزاد باید به پنل کارمند یا ادمین دسترسی داشته باشد.")
+        
+        # Check for UserRoleChoices.SCANNER and UserRoleChoices.KIOSK roles
+        if self.role in [self.UserRoleChoices.SCANNER, self.UserRoleChoices.KIOSK] and (self.is_staff or self.is_superuser):
+            raise ValidationError("یک کاربر اسکنر یا کیوسک نمیتواند به عنوان ادمین یا کارمند فعالیت کند (به دلیل مسائل امنیتی).")
 
     # Method to get the full name of the user (first + last name)
     def get_full_name(self):
