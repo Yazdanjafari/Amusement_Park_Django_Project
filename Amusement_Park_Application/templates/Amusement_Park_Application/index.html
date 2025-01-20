@@ -15,7 +15,7 @@ Instructor grid START -->
             <!-- Card item START -->
             {% for i in Product_Views %}
                 <div class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="card p-2 shadow h-100">
+                    <div class="card p-2 shadow h-100" data-product-id="{{ i.id }}">
                         <div class="card-image-scale rounded-3 position-relative">
                             <!-- Card Image -->
                             <img src="{{ i.image.url }}" class="card-img" alt="">
@@ -58,7 +58,7 @@ Instructor grid END -->
 
 {% block shortcut_header %}
 <li class="nav-item ms-2 dropdown ">
-    <a class="btn btn-light btn-round mb-0 text-success" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+    <a class="btn btn-light btn-round mb-0 text-success" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
         <i class="bi bi-cart3 fa-fw"></i>
     </a>
     <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1" id="cart-badge">0</span>
@@ -85,7 +85,7 @@ Instructor grid END -->
 
 <li class="nav-item ms-2 ">
 	<!-- Cart button -->
-	<a class="btn btn-light btn-round mb-0 ms-2" href="#" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
+	<a class="btn btn-light btn-round mb-0 ms-2" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
 		<i class="bi bi-trash fa-fw text-danger"></i>
 	</a>
 </li>
@@ -146,47 +146,74 @@ Instructor grid END -->
 		});
 	}
 
-    // Function to reset everything to its initial state
-    function clearAll() {
-        const allButtons = document.querySelectorAll('.d-flex .btn');
-        const counters = document.querySelectorAll('.counter');
-
-        // Reset all cart buttons to default
-        allButtons.forEach(button => {
-            button.disabled = false;
-            if (button.classList.contains('btn-success')) {
-                button.classList.remove('btn-success');
-                button.classList.add('btn-outline-success');
-            }
-        });
-
-        // Reset all counters to 0
-        counters.forEach(counter => {
-            counter.innerText = '0';
-        });
-    }
-
 
 	function addToCart(productId) {
+		const parent = document.querySelector(`[data-product-id="${productId}"]`);
+		const counter = parent.querySelector('.counter');
+		const quantity = parseInt(counter.innerText, 10);
+	
+		if (quantity === 0) {
+			Swal.fire({
+				title: 'خطا',
+				text: 'لطفاً تعداد را مشخص کنید.',
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			return;
+		}
+	
 		const data = {
 			'product_id': productId,
-			'quantity': 1
+			'quantity': quantity
 		};
+	
 		fetch("{% url 'Amusement_Park:add_to_cart' %}", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"X-CSRFToken": getCookie('csrftoken')
+				"X-CSRFToken": getCookie("csrftoken")
 			},
-			body: JSON.stringify(data),
+			body: JSON.stringify(data)
 		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.status === 'success') {
-				updateCart(data.cart_items);
-			}
-		});
+			.then(response => response.json())
+			.then(data => {
+				if (data.status === 'success') {
+					updateCartDropdown(data.cart_items);
+					resetCounter(parent);
+				} else {
+					Swal.fire({
+						title: 'خطا',
+						text: 'مشکلی در افزودن به سبد خرید وجود دارد.',
+						icon: 'error',
+						confirmButtonText: 'باشه'
+					});
+				}
+			});
 	}
+
+
+
+	function updateCartDropdown(cartItems) {
+		const cartContent = cartItems.map(item => `
+			<div class="row p-3 g-2" id="cart-item-${item.product.id}">
+				<div class="col-3">
+					<img class="rounded-2" src="${item.product.image_url}" alt="avatar">
+				</div>
+				<div class="col-9">
+					<div class="d-flex justify-content-between">
+						<h6 class="m-0 fw-normal">${item.product.title}</h6>
+					</div><br>
+					<p>تعداد : ${item.quantity}</p>
+				</div>
+			</div>
+			<hr class="m-0">
+		`).join('');
+	
+		document.getElementById('cart-items').innerHTML = cartContent;
+		document.getElementById('cart-badge').innerText = cartItems.length;
+	}
+	
+
 	
 	function updateCart(cartItems) {
 		const cartBadge = document.getElementById('cart-badge');

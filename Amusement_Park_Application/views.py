@@ -32,22 +32,19 @@ def add_to_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         product_id = data.get('product_id')
-        quantity = data.get('quantity')
+        quantity = data.get('quantity', 1)  # Default to 1 if quantity is missing
 
-        # Get the cart from session
         cart = request.session.get('cart', [])
 
         # Check if the product is already in the cart
         existing_item = next((item for item in cart if item['product_id'] == product_id), None)
         if existing_item:
-            existing_item['quantity'] += quantity  # Update quantity if the product is already in the cart
+            existing_item['quantity'] = quantity  # Update to the provided quantity
         else:
-            cart.append({'product_id': product_id, 'quantity': quantity})  # Add new item to cart
+            cart.append({'product_id': product_id, 'quantity': quantity})
 
-        # Save the cart back to session
         request.session['cart'] = cart
 
-        # Fetch the cart items to return the updated list
         cart_items = []
         for item in cart:
             product = get_object_or_404(Product, id=item['product_id'])
