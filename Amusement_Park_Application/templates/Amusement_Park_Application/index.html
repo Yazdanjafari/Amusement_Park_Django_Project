@@ -7,109 +7,79 @@
 <!-- =======================
 Instructor grid START -->
 <section>
-	<div class="container">
+    <div class="container">
 
-		<!-- Instructor grid -->
-		<div class="row g-4">
+        <!-- Instructor grid -->
+        <div class="row g-4">
 
-			<!-- Card item START -->
-			{% for i in Product_Views %}
-
-				<div class="col-sm-6 col-lg-4 col-xl-3">
-					<div class="card p-2 shadow h-100">
-						<div class="card-image-scale rounded-3 position-relative">
-							<!-- Card Image -->
-							<img src="{{ i.image.url }}" class="card-img" alt="">
-							<!-- Overlay -->
-							<div class="card-img-overlay d-flex flex-column p-2 z-index-1">
-								<div>
-									<span class="badge text-bg-dark">
-										<i class="bi bi-currency-dollar text-warning me-2"></i>{{ i.price|intcomma:False }} ریال
-									</span>
-								</div>
-							</div>
-						</div>
-						
-						<!-- Card body -->
-						<div class="card-body px-2">
-							<!-- Title -->
-							<h5 class="card-title">
-								<a>{{ i.title }}</a>
-							</h5>
-							<hr>
-							<!-- Buttons -->
-							<div class="d-flex justify-content-between align-items-center">
-								<button class="btn btn-outline-success btn-sm" onclick="resetCounter(this)"><i class="bi bi-cart"></i></button>
-								<button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
-								<button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
-								<button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-			{% endfor %}
-			<!-- Card item END -->
-
-		</div>
-	</div>
+            <!-- Card item START -->
+            {% for i in Product_Views %}
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="card p-2 shadow h-100">
+                        <div class="card-image-scale rounded-3 position-relative">
+                            <!-- Card Image -->
+                            <img src="{{ i.image.url }}" class="card-img" alt="">
+                            <!-- Overlay -->
+                            <div class="card-img-overlay d-flex flex-column p-2 z-index-1">
+                                <div>
+                                    <span class="badge text-bg-dark">
+                                        <i class="bi bi-currency-dollar text-warning me-2"></i>{{ i.price|intcomma:False }} ریال
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card body -->
+                        <div class="card-body px-2">
+                            <!-- Title -->
+                            <h5 class="card-title">
+                                <a>{{ i.title }}</a>
+                            </h5>
+                            <hr>
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-outline-success btn-sm" onclick="addToCart({{ i.id }}); resetCounter(this)"><i class="bi bi-cart"></i>
+                                <button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
+                                <button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
+                                <button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <!-- Card item END -->
+        </div>
+    </div>
 </section>
 <!-- =======================
-	Instructor grid END -->
+Instructor grid END -->
 {% endblock body %}
 
 
 {% block shortcut_header %}
 <li class="nav-item ms-2 dropdown ">
-	<!-- Cart button -->
-	<a class="btn btn-light btn-round mb-0 text-success" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-		<i class="bi bi-cart3 fa-fw"></i>
-	</a>
-	<!-- badge -->
-	<span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1">1
-		<span class="visually-hidden">اقلام</span>
-	</span>
+    <a class="btn btn-light btn-round mb-0 text-success" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+        <i class="bi bi-cart3 fa-fw"></i>
+    </a>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1" id="cart-badge">0</span>
 
-	<!-- Cart dropdown menu START -->
-	<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
-		<div class="card bg-transparent">
-			<div class="card-header bg-transparent border-bottom py-4">
-				<h5 class="m-0">سبد خرید شما :</h5>
-			</div>
-			<div class="card-body p-0">
-
-				<!-- Cart item START -->
-				<div class="row p-3 g-2">
-					<!-- Image -->
-					<div class="col-3">
-						<img class="rounded-2" src='{% static "assets/images/book/04.jpg" %}' alt="avatar">
-					</div>
-
-					<div class="col-9">
-						<!-- Title -->
-						<div class="d-flex justify-content-between">
-							<h6 class="m-0 fw-normal">دوره بازاریابی دیجیتال برای مبتدیان</h6>
-							<a href="#" class="small text-primary-hover"><i class="bi bi-x-lg"></i></a>
-						</div>
-						<!-- Select item -->
-						<br>
-						<p>تعداد :‌ 5</p>
-					</div>
-				</div>
-				<!-- Cart item END -->
-
-				<!-- Divider -->
-				<hr class="m-0">
-			</div>
-			<!-- Button -->
-			<div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
-				<a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">حذف همه</a>
-				<a href="{% url "Amusement_Park:Cart" %}" class="btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
-				<a href="{% url "Amusement_Park:Checkout" %}" class="btn btn-sm btn-success mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">تسویه حساب</a>
-			</div>
-		</div>
-	</div>
-	<!-- Cart dropdown menu END -->
+    <!-- Cart dropdown menu START -->
+    <div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0" id="cart-dropdown">
+        <div class="card bg-transparent">
+            <div class="card-header bg-transparent border-bottom py-4">
+                <h5 class="m-0">سبد خرید شما :</h5>
+            </div>
+            <div class="card-body p-0" id="cart-items" style="max-height: 300px; overflow-y: auto;">
+                <!-- Cart items will be populated here -->
+            </div>
+            <div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
+                <a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">حذف همه</a>
+                <a href="{% url 'Amusement_Park:Cart' %}" class="btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
+                <a href="{% url 'Amusement_Park:Checkout' %}" class="btn btn-sm btn-success mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">تسویه حساب</a>
+            </div>
+        </div>
+    </div>
+    <!-- Cart dropdown menu END -->
 </li>
 
 
@@ -195,6 +165,113 @@ Instructor grid START -->
             counter.innerText = '0';
         });
     }
+
+
+	function addToCart(productId) {
+		const data = {
+			'product_id': productId,
+			'quantity': 1
+		};
+		fetch("{% url 'Amusement_Park:add_to_cart' %}", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFToken": getCookie('csrftoken')
+			},
+			body: JSON.stringify(data),
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.status === 'success') {
+				updateCart(data.cart_items);
+			}
+		});
+	}
+	
+	function updateCart(cartItems) {
+		const cartBadge = document.getElementById('cart-badge');
+		const cartDropdown = document.getElementById('cart-items');
+		const cartCount = cartItems.length;
+		let cartContent = '';
+		
+		cartItems.forEach(item => {
+			cartContent += `
+				<div class="row p-3 g-2" id="cart-item-${item.product.id}">
+					<div class="col-3">
+						<img class="rounded-2" src="${item.product.image_url}" alt="avatar">
+					</div>
+					<div class="col-9">
+						<div class="d-flex justify-content-between">
+							<h6 class="m-0 fw-normal">${item.product.title}</h6>
+						</div><br>
+						<p>تعداد :‌ ${item.quantity}</p>
+					</div>
+				</div>
+				<hr class="m-0">
+			`;
+		});
+	
+		cartBadge.innerText = cartCount;
+		cartDropdown.innerHTML = cartContent;
+	}
+	
+
+	function clearAll() {
+		fetch("{% url 'Amusement_Park:cancle_cart' %}", {
+			method: "POST",
+			headers: {
+				"X-CSRFToken": getCookie('csrftoken')
+			}
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.status === 'success') {
+				document.getElementById('cart-items').innerHTML = '';
+				document.getElementById('cart-badge').innerText = '0';
+			}
+		});
+	
+		const allButtons = document.querySelectorAll('.d-flex .btn');
+		const counters = document.querySelectorAll('.counter');
+	
+		// Reset all cart buttons to default
+		allButtons.forEach(button => {
+			button.disabled = false; // Enable the buttons
+			if (button.classList.contains('btn-success')) {
+				button.classList.remove('btn-success');
+				button.classList.add('btn-outline-success');
+			}
+		});
+	
+		// Reset all counters to 0
+		counters.forEach(counter => {
+			counter.innerText = '0'; // Set all counters to 0
+		});
+	}
+	
+	// Call the function when the page loads (after refresh)
+	window.onload = clearAll;
+	
+	
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+	
+
+
+
+
 </script>
 {% endblock script %}
 	
