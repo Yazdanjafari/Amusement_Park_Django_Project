@@ -284,7 +284,7 @@ class Ticket(models.Model):
         return f'/tickets/{self.id}/print_qr/'
 
     def __str__(self):
-        return f'مشتری : {self.customer} | کد رهگیری بلیت: {self.id}'        
+        return f'کد رهگیری بلیت: {self.id}'        
 
 
 class TicketProduct(models.Model):
@@ -296,7 +296,7 @@ class TicketProduct(models.Model):
         verbose_name_plural = "محصولات بلیت"
 
     def __str__(self):
-        return f"کد رهگیری بلیت : {self.ticket.id} | نام مشتری : {self.ticket.customer.first_name} {self.ticket.customer.last_name} | محصولات : {self.product.title} (*) تعداد : {self.quantity} (*) قیمت : {self.product.price} ریال"
+        return f"کد رهگیری بلیت : {self.ticket.id} | محصولات : {self.product.title} (*) تعداد : {self.quantity} (*) قیمت : {self.product.price} ریال"
     
     def get_total_price(self):
         return self.product.price * self.quantity    

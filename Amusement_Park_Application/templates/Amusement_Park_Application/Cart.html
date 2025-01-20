@@ -1,10 +1,12 @@
 {% extends 'common.html' %}
 {% load static %}
+{% load humanize %}
 {% block body %}
 
 
 <!-- =======================
 Page Banner START -->
+<br><br>
 <section class="py-0">
 	<div class="container">
 		<div class="row">
@@ -42,67 +44,37 @@ Page content START -->
 							<!-- Table head -->
 							<!-- Table body START -->
 							<tbody class="border-top-0">
+
+
 								<!-- Table item -->
-								<tr>
-									<!-- Course item -->
+								{% for item in cart_items %}
+								<tr data-ticket-product-id="{{ item.product.id }}">
 									<td>
 										<div class="d-lg-flex align-items-center">
-											<!-- Image -->
 											<div class="w-100px w-md-80px mb-2 mb-md-0">
-												<img src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
+												<img src="{{ item.product.image.url }}" class="rounded" alt="">
 											</div>
-											<!-- Title -->
-											<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
-												<a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+											<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">
+												<a style="font-size: 75%;">{{ item.product.title }}</a>
 											</h6>
 										</div>
 									</td>
-
-									<!-- Amount item -->
 									<td class="text-center">
-										<h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
+										<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma }} تومان</h5>
 									</td>
-									<!-- Action item -->
 									<td>
 										<div class="d-flex justify-content-between align-items-center">
-											<button class="btn btn-outline-warning btn-sm"><i class="fas fa-trash"></i></button>
+											<button class="btn btn-outline-warning btn-sm" onclick="removeItem(this, {{ item.product.id }})"><i class="fas fa-trash"></i></button>
 											<button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
-											<button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
+											<button class="btn btn-outline-primary btn-sm counter" disabled data-product-id="{{ item.product.id }}">{{ item.quantity }}</button>
 											<button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
 										</div>
 									</td>
 								</tr>
-
+								{% endfor %}
 								<!-- Table item -->
-								<tr>
-									<!-- Course item -->
-									<td>
-										<div class="d-lg-flex align-items-center">
-											<!-- Image -->
-											<div class="w-100px w-md-80px mb-2 mb-md-0">
-												<img src='{% static "assets/images/courses/4by3/10.jpg" %}' class="rounded" alt="">
-											</div>
-											<!-- Title -->
-											<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
-												<a href="#" style="font-size: 75%;">دوره جامع آموزش Bootstrap</a>
-											</h6>
-										</div>
-									</td>
 
-									<!-- Amount item -->
-									<td class="text-center">
-										<h5 class="text-success mb-0" style="font-size: 75%;">599,000 تومان</h5>
-									</td>
-									<!-- Action item -->
-									<td>
-										<div class="d-flex justify-content-between align-items-center">
-											<button class="btn btn-outline-warning btn-sm"><i class="fas fa-trash"></i></button>
-											<button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
-											<button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
-											<button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
-										</div>
-									</td>						
-								</tr>
+								
 							</tbody>
 						</table>
 					</div>
@@ -167,10 +139,10 @@ Page content START -->
 					<ul class="list-group list-group-borderless mb-2">
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							<span class="h6 fw-light mb-0">قیمت</span>
-							<span class="h6 fw-light mb-0 fw-bold">850,000 تومان</span>
+							<span class="h6 fw-light mb-0 fw-bold" id="item-total-{{ item.product.id }}">{{ ticket_product.get_total_price }} تومان</span> <!-- Dynamic price -->
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">مالیات</span>
+							<span class="h6 fw-light mb-0">مالیات (% {{ get_TaxRate.rate }})</span>
 							<span class="h6 fw-light mb-0 fw-bold">85,000 تومان</span>
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
@@ -199,14 +171,15 @@ Page content START -->
 </section>
 <!-- =======================
 Page content END -->
+{% endblock body %}
 
-</main>
-<!-- **************** MAIN CONTENT END **************** -->
 
+
+{% block script %}
 <script>
-    // Function to increment the counter
+	// Function to increment the counter
     function increment(button) {
-        const counter = button.parentElement.querySelector('.counter');
+		const counter = button.parentElement.querySelector('.counter');
         let count = parseInt(counter.innerText, 10);
         counter.innerText = count + 1;
     }
@@ -216,34 +189,29 @@ Page content END -->
         const counter = button.parentElement.querySelector('.counter');
         let count = parseInt(counter.innerText, 10);
         if (count > 0) {
-            counter.innerText = count - 1;
+			counter.innerText = count - 1;
         }
     }
 
-
-
-
-
-	
     document.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', function() {
-            const buttonId = 'btn-' + this.id.split('-')[1];
+			const buttonId = 'btn-' + this.id.split('-')[1];
             const tipId = 'tip-' + this.id.split('-')[1];
             const button = document.getElementById(buttonId);
             const tip = document.getElementById(tipId);
             
             // Reset previous form if another form is being typed in
             document.querySelectorAll('input').forEach(otherInput => {
-                if (otherInput !== this && otherInput.value.trim() !== '') {
-                    otherInput.value = '';
+				if (otherInput !== this && otherInput.value.trim() !== '') {
+					otherInput.value = '';
                     document.getElementById('btn-' + otherInput.id.split('-')[1]).setAttribute('disabled', true);
                     document.getElementById('tip-' + otherInput.id.split('-')[1]).style.display = 'none';
                 }
             });
-
+			
             // Enable/Disable button and show tip
             if (this.value.trim() !== '') {
-                button.removeAttribute('disabled');
+				button.removeAttribute('disabled');
                 tip.style.display = 'inline';
                 tip.textContent = this.getAttribute('data-tip');
             } else {
@@ -252,9 +220,49 @@ Page content END -->
             }
         });
     });
+	
+	
+	// Check if the page is being loaded for the first time
+	if (performance.navigation.type === 1) {
+		window.location.href = "{% url 'Amusement_Park:Products' %}";
+	}
+
+	// Function to handle item removal from the cart
+	function removeItem(button, productId) {
+		// Remove the item row from the table
+		const row = button.closest('tr');
+		row.remove();
+
+		// Send AJAX request to delete the item from the session
+		fetch("{% url 'Amusement_Park:remove_item_from_cart' %}", {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': '{{ csrf_token }}',
+			},
+			body: JSON.stringify({ 'product_id': productId })
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				console.log('Item removed successfully');
+				if (data.cart_empty) {
+					// Redirect to the products page if the cart is empty
+					window.location.href = "{% url 'Amusement_Park:Products' %}";
+				}
+			} else {
+				console.log('Failed to remove item');
+			}
+		})
+		.catch(error => {
+			console.log('Error:', error);
+		});
+	}
+
+
 </script>
+{% endblock script %}
 
 
 
 
-{% endblock body %}

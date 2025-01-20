@@ -58,7 +58,7 @@ Instructor grid END -->
 
 {% block shortcut_header %}
 <li class="nav-item ms-2 dropdown ">
-    <a class="btn btn-light btn-round mb-0 text-success" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+    <a class="btn btn-light btn-round mb-0 text-success" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
         <i class="bi bi-cart3 fa-fw"></i>
     </a>
     <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1" id="cart-badge">0</span>
@@ -85,7 +85,7 @@ Instructor grid END -->
 
 <li class="nav-item ms-2 ">
 	<!-- Cart button -->
-	<a class="btn btn-light btn-round mb-0 ms-2" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
+	<a class="btn btn-light btn-round mb-0 ms-2" href="#" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
 		<i class="bi bi-trash fa-fw text-danger"></i>
 	</a>
 </li>
@@ -146,6 +146,26 @@ Instructor grid END -->
 		});
 	}
 
+    // Function to reset everything to its initial state
+    function clearAll() {
+        const allButtons = document.querySelectorAll('.d-flex .btn');
+        const counters = document.querySelectorAll('.counter');
+
+        // Reset all cart buttons to default
+        allButtons.forEach(button => {
+            button.disabled = false;
+            if (button.classList.contains('btn-success')) {
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-success');
+            }
+        });
+
+        // Reset all counters to 0
+        counters.forEach(counter => {
+            counter.innerText = '0';
+        });
+    }
+
 
 	function addToCart(productId) {
 		const parent = document.querySelector(`[data-product-id="${productId}"]`);
@@ -190,8 +210,6 @@ Instructor grid END -->
 				}
 			});
 	}
-
-
 
 	function updateCartDropdown(cartItems) {
 		const cartContent = cartItems.map(item => `

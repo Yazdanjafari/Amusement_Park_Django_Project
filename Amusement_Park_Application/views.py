@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 import json
 
-# --------------------------------------------- products --------------------------------------------- #
+# --------------------------------------------- index.html page --------------------------------------------- #
 
 def products(request):
     Product_Views = Product.objects.all()  # Ensure data is returned here
@@ -68,10 +68,78 @@ def cancle_cart(request):
         return JsonResponse({'status': 'success', 'message': 'Cart emptied'})  
 
 
-# ---------------------------------------------   --------------------------------------------- #
+# --------------------------------------------- Cart.html Page --------------------------------------------- #
 @login_required
 def cart(request):
-    return render(request, "Amusement_Park_Application/Cart.html")
+    get_TaxRate = TaxRate.objects.first()
+    cart = request.session.get('cart', [])
+    cart_items = []
+
+    for item in cart:
+        product = get_object_or_404(Product, id=item['product_id'])
+        cart_items.append({
+            'product': product,
+            'quantity': item['quantity'],
+        })
+
+    return render(request, "Amusement_Park_Application/Cart.html", {
+        'cart_items': cart_items,
+        'get_TaxRate': get_TaxRate,
+    })
+
+@login_required
+def remove_item_from_cart(request):
+    if request.method == 'POST':
+        # Parse the incoming JSON data
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('product_id')
+            
+            # Get the current cart from the session
+            cart = request.session.get('cart', [])
+            
+            # Remove the product with the specified product_id
+            cart = [item for item in cart if item['product_id'] != product_id]
+            
+            # Update the session with the new cart
+            request.session['cart'] = cart
+            
+            # Check if the cart is empty
+            cart_empty = len(cart) == 0
+            
+            return JsonResponse({
+                'success': True,
+                'cart_empty': cart_empty,
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
+    
+    return JsonResponse({'success': False}, status=400)
+
+
+@csrf_exempt
+def update_item_quantity(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+        new_quantity = data.get('quantity')
+
+        # Get the current cart from session
+        cart = request.session.get('cart', [])
+
+        # Find the item in the cart and update its quantity
+        for item in cart:
+            if item['product_id'] == product_id:
+                item['quantity'] = new_quantity
+                break
+
+        # Update the session with the new cart
+        request.session['cart'] = cart
+
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False}, status=400)
+
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
