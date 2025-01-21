@@ -274,8 +274,20 @@ Page content END -->
 		window.location.href = "{% url 'Amusement_Park:Products' %}";
 	}
 
+	let isDiscountApplied = false;
+
 	// Function to handle item removal from the cart
 	function removeItem(button, productId) {
+		if (isDiscountApplied) {
+			Swal.fire({
+				title: 'خطا!',
+				text: 'برنامه پس از اعمال تخفیف قادر به حذف کردن محصولی از سبد خرید نیست.',
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			return;
+		}
+
 		// Remove the item row from the table
 		const row = button.closest('tr');
 		row.remove();
@@ -344,6 +356,8 @@ Page content END -->
 			icon: 'success',
 			confirmButtonText: 'باشه'
 		});
+		    // Set discount applied flag
+    			isDiscountApplied = true;
 	}
 
 	// Add event listener to the discount button
@@ -392,6 +406,8 @@ Page content END -->
 			icon: 'success',
 			confirmButtonText: 'باشه'
 		});
+		    // Set discount applied flag
+    			isDiscountApplied = true;
 	}
 
 	// Add event listener to the percentage discount button
@@ -443,6 +459,8 @@ Page content END -->
 					icon: 'success',
 					confirmButtonText: 'باشه'
 				});
+				    // Set discount applied flag
+    			isDiscountApplied = true;
 			} else {
 				// Show error notification
 				Swal.fire({
