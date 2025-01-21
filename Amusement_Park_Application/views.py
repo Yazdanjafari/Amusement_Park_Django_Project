@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 import json
+from decimal import Decimal
 
 # --------------------------------------------- index.html page --------------------------------------------- #
 
@@ -143,15 +144,22 @@ def update_item_quantity(request):
 
 @login_required
 def calculate_total_price(request):
+    get_TaxRate = TaxRate.objects.first().rate  # Assuming get_TaxRate is already a Decimal
     if request.method == 'GET':
         cart = request.session.get('cart', [])
-        total_price = 0
+        total_price = Decimal(0)  # Initialize total_price as Decimal
 
         for item in cart:
             product = get_object_or_404(Product, id=item['product_id'])
-            total_price += product.price * item['quantity']
+            total_price += Decimal(product.price) * Decimal(item['quantity'])  # Convert to Decimal
 
-        return JsonResponse({'total_price': total_price})
+        total_tax = (total_price / Decimal(100)) * get_TaxRate  # Ensure all operands are Decimal
+        tax = int(total_tax)  # Convert tax to integer
+        
+        return JsonResponse({
+            'total_price': int(total_price),  # Convert to int (number)
+            'tax': tax,  # Return tax as integer
+        })
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
