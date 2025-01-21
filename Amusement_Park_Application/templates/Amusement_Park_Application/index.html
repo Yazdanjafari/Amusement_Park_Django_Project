@@ -74,7 +74,7 @@ Instructor grid END -->
             </div>
             <div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
                 <a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">حذف همه</a>
-                <a href="{% url 'Amusement_Park:Cart' %}" class="btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
+                <a id="cartLink" href="{% url 'Amusement_Park:Cart' %}" class="btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
                 <a href="{% url 'Amusement_Park:Checkout' %}" class="btn btn-sm btn-success mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">تسویه حساب</a>
             </div>
         </div>
@@ -313,8 +313,6 @@ Instructor grid END -->
 		return cookieValue;
 	}
 	
-
-
 
 
 </script>

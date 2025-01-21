@@ -147,7 +147,7 @@ Page content START -->
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							<span class="h6 fw-light mb-0">تخفیف</span>
-							<span class="h6 fw-light mb-0 fw-bold">250,000 ریال</span>
+							<span class="h6 fw-light mb-0 fw-bold"  id="discount-display">0 ریال</span>
 						</li>
 						<br>
 						<li class="list-group-item px-0 d-flex justify-content-between">
@@ -176,6 +176,8 @@ Page content END -->
 
 
 {% block script %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Function to increment the counter
     function increment(button) {
@@ -304,6 +306,58 @@ Page content END -->
 		});
 	}
 
+	// Function to apply discount
+	function applyDiscount() {
+		const discountInput = document.getElementById('discount-amount');
+		const discountValue = parseFloat(discountInput.value);  // Convert input to number
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
+		const maxDiscount = totalPrice + taxAmount;  // Calculate maximum allowed discount
+
+		if (isNaN(discountValue) || discountValue <= 0) {
+			Swal.fire({
+				title: 'خطا!',
+				text: 'لطفاً یک مقدار معتبر برای تخفیف وارد کنید.',
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			return;
+		}
+
+		if (discountValue > maxDiscount) {
+			Swal.fire({
+				title: 'خطا!',
+				text: `حداکثر مقدار تخفیف قابل اعمال ${maxDiscount.toLocaleString()} ریال است.`,
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			return;
+		}
+
+		// Update discount display
+		document.getElementById('discount-display').innerText = discountValue.toLocaleString() + ' ریال';
+
+		// Show success notification
+		Swal.fire({
+			title: 'تخفیف اعمال شد!',
+			text: `تخفیف ${discountValue.toLocaleString()} ریال با موفقیت اعمال شد.`,
+			icon: 'success',
+			confirmButtonText: 'باشه'
+		});
+	}
+
+	// Add event listener to the discount button
+	document.getElementById('btn-amount').addEventListener('click', applyDiscount);
+
+	// Enable/disable discount button based on input
+	document.getElementById('discount-amount').addEventListener('input', function() {
+		const discountButton = document.getElementById('btn-amount');
+		if (this.value.trim() !== '') {
+			discountButton.removeAttribute('disabled');
+		} else {
+			discountButton.setAttribute('disabled', true);
+		}
+	});
 
 </script>
 {% endblock script %}
