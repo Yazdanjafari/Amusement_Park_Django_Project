@@ -139,7 +139,7 @@ Page content START -->
 					<ul class="list-group list-group-borderless mb-2">
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							<span class="h6 fw-light mb-0">قیمت</span>
-							<span class="h6 fw-light mb-0 fw-bold" id="item-total-{{ item.product.id }}">{{ ticket_product.get_total_price }} تومان</span> <!-- Dynamic price -->
+							<span class="h6 fw-light mb-0 fw-bold" id="item-total-price"> تومان</span> <!-- Dynamic price -->
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							<span class="h6 fw-light mb-0">مالیات (% {{ get_TaxRate.rate }})</span>
@@ -177,11 +177,12 @@ Page content END -->
 
 {% block script %}
 <script>
-	// Function to increment the counter
+    // Function to increment the counter
     function increment(button) {
-		const counter = button.parentElement.querySelector('.counter');
+        const counter = button.parentElement.querySelector('.counter');
         let count = parseInt(counter.innerText, 10);
         counter.innerText = count + 1;
+        updateTotalPrice(counter.dataset.productId, count + 1);
     }
 
     // Function to decrement the counter
@@ -189,9 +190,49 @@ Page content END -->
         const counter = button.parentElement.querySelector('.counter');
         let count = parseInt(counter.innerText, 10);
         if (count > 0) {
-			counter.innerText = count - 1;
+            counter.innerText = count - 1;
+            updateTotalPrice(counter.dataset.productId, count - 1);
         }
     }
+
+    // Function to update the total price via AJAX
+    function updateTotalPrice(productId, newQuantity) {
+        fetch("{% url 'Amusement_Park:update_item_quantity' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({
+                'product_id': productId,
+                'quantity': newQuantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchTotalPrice();
+            }
+        })
+        .catch(error => {
+            console.log('Error:', error);
+        });
+    }
+
+    // Function to fetch and display the total price
+    function fetchTotalPrice() {
+        fetch("{% url 'Amusement_Park:calculate_total_price' %}")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('item-total-price').innerText = data.total_price.toLocaleString() + ' تومان';
+        })
+        .catch(error => {
+            console.log('Error:', error);
+        });
+    }
+
+    // Fetch the total price when the page loads
+    document.addEventListener('DOMContentLoaded', fetchTotalPrice);
 
     document.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', function() {
@@ -262,7 +303,6 @@ Page content END -->
 
 </script>
 {% endblock script %}
-
 
 
 

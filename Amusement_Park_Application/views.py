@@ -141,6 +141,18 @@ def update_item_quantity(request):
     return JsonResponse({'success': False}, status=400)
 
 
+@login_required
+def calculate_total_price(request):
+    if request.method == 'GET':
+        cart = request.session.get('cart', [])
+        total_price = 0
+
+        for item in cart:
+            product = get_object_or_404(Product, id=item['product_id'])
+            total_price += product.price * item['quantity']
+
+        return JsonResponse({'total_price': total_price})
+
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
 def checkout(request):
@@ -181,4 +193,3 @@ def scanner(request):
     if request.user.role == 'kiosk':
         raise Http404("Page not found")  # User with KIOSK role gets a 404 error
     return render(request, "Amusement_Park_Application/scanner.html")
-
