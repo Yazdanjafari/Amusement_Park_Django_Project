@@ -64,7 +64,7 @@ Page content START -->
 									</td>
 									<td>
 										<div class="d-flex justify-content-between align-items-center">
-											<button class="btn btn-outline-warning btn-sm" onclick="removeItem(this, {{ item.product.id }})"><i class="fas fa-trash"></i></button>
+											<button class="btn btn-success btn-sm" disabled><i class="bi bi-cart"></i></button>
 											<button class="btn btn-outline-danger btn-sm" disabled onclick="increment(this)">+</button>
 											<button class="btn btn-outline-primary btn-sm counter" disabled data-product-id="{{ item.product.id }}">{{ item.quantity }}</button>
 											<button class="btn btn-outline-danger btn-sm" disabled onclick="decrement(this)">-</button>
@@ -278,48 +278,6 @@ Page content END -->
 	}
 
 	let isDiscountApplied = false;
-
-	// Function to handle item removal from the cart
-	function removeItem(button, productId) {
-		if (isDiscountApplied) {
-			Swal.fire({
-				title: 'خطا!',
-				text: 'برنامه پس از اعمال تخفیف قادر به حذف کردن محصولی از سبد خرید نیست.',
-				icon: 'error',
-				confirmButtonText: 'باشه'
-			});
-			return;
-		}
-
-		// Remove the item row from the table
-		const row = button.closest('tr');
-		row.remove();
-
-		// Send AJAX request to delete the item from the session
-		fetch("{% url 'Amusement_Park:remove_item_from_cart' %}", {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': '{{ csrf_token }}',
-			},
-			body: JSON.stringify({ 'product_id': productId })
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success) {
-				console.log('Item removed successfully');
-				if (data.cart_empty) {
-					// Redirect to the products page if the cart is empty
-					window.location.href = "{% url 'Amusement_Park:Products' %}";
-				}
-			} else {
-				console.log('Failed to remove item');
-			}
-		})
-		.catch(error => {
-			console.log('Error:', error);
-		});
-	}
 
 	// Function to apply discount
 	function applyDiscount() {

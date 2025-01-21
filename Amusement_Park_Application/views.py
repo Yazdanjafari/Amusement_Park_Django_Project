@@ -88,35 +88,6 @@ def cart(request):
         'get_TaxRate': get_TaxRate,
     })
 
-@login_required
-def remove_item_from_cart(request):
-    if request.method == 'POST':
-        # Parse the incoming JSON data
-        try:
-            data = json.loads(request.body)
-            product_id = data.get('product_id')
-            
-            # Get the current cart from the session
-            cart = request.session.get('cart', [])
-            
-            # Remove the product with the specified product_id
-            cart = [item for item in cart if item['product_id'] != product_id]
-            
-            # Update the session with the new cart
-            request.session['cart'] = cart
-            
-            # Check if the cart is empty
-            cart_empty = len(cart) == 0
-            
-            return JsonResponse({
-                'success': True,
-                'cart_empty': cart_empty,
-            })
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
-    
-    return JsonResponse({'success': False}, status=400)
-
 
 @csrf_exempt
 def update_item_quantity(request):
