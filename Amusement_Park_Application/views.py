@@ -160,6 +160,25 @@ def calculate_total_price(request):
             'total_price': int(total_price),  # Convert to int (number)
             'tax': tax,  # Return tax as integer
         })
+        
+        
+@login_required
+def check_discount_code(request):
+    if request.method == 'GET':
+        discount_code = request.GET.get('code', '').strip().lower()  # Get and normalize the discount code
+        offer = Offer.objects.filter(code=discount_code, activate=True).first()  # Check if the code exists and is active
+
+        if offer:
+            return JsonResponse({
+                'success': True,
+                'percent': offer.persent,
+                'message': f'کد تخفیف {offer.code} با موفقیت اعمال شد.',
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'کد تخفیف وارد شده معتبر نیست.',
+            })        
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required

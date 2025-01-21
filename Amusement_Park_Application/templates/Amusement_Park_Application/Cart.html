@@ -408,6 +408,75 @@ Page content END -->
 	});
 
 
+	// Function to apply discount code
+	function applyDiscountCode() {
+		const discountCodeInput = document.getElementById('discount-code');
+		const discountCode = discountCodeInput.value.trim().toLowerCase();  // Normalize the input
+
+		if (!discountCode) {
+			Swal.fire({
+				title: 'خطا!',
+				text: 'لطفاً یک کد تخفیف وارد کنید.',
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			return;
+		}
+
+		// Fetch discount code details from the server
+		fetch(`{% url 'Amusement_Park:check_discount_code' %}?code=${discountCode}`)
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
+				const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
+				const totalAmount = totalPrice + taxAmount;  // Calculate total amount (price + tax)
+				const discountAmount = (totalAmount / 100) * data.percent;  // Calculate discount amount
+
+				// Update discount display
+				document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
+
+				// Show success notification
+				Swal.fire({
+					title: 'تخفیف اعمال شد!',
+					text: data.message,
+					icon: 'success',
+					confirmButtonText: 'باشه'
+				});
+			} else {
+				// Show error notification
+				Swal.fire({
+					title: 'خطا!',
+					text: data.message,
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+			}
+		})
+		.catch(error => {
+			console.log('Error:', error);
+		});
+	}
+
+	// Add event listener to the discount code button
+	document.getElementById('btn-code').addEventListener('click', applyDiscountCode);
+
+	// Enable/disable discount code button based on input
+	document.getElementById('discount-code').addEventListener('input', function() {
+		const discountCodeButton = document.getElementById('btn-code');
+		if (this.value.trim() !== '') {
+			discountCodeButton.removeAttribute('disabled');
+		} else {
+			discountCodeButton.setAttribute('disabled', true);
+		}
+	});
+
+	// Restrict input to lowercase English letters
+	document.getElementById('discount-code').addEventListener('input', function() {
+		this.value = this.value.toLowerCase().replace(/[^a-z]/g, '');
+	});	
+
+
 </script>
 {% endblock script %}
 

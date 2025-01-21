@@ -11,6 +11,7 @@ urlpatterns = [
     path('remove-item-from-cart/', views.remove_item_from_cart, name='remove_item_from_cart'),
     path('update_item_quantity/', views.update_item_quantity, name='update_item_quantity'),
     path('calculate-total-price/', views.calculate_total_price, name='calculate_total_price'), 
+    path('check-discount-code/', views.check_discount_code, name='check_discount_code'),
     path("Empty-cart", views.empty_cart, name= "Empty-cart"),
     path("Checkout", views.checkout, name= "Checkout"),
     path("Mobile_Error", views.mobile_error, name= "Mobile_Error"),

@@ -155,7 +155,7 @@ class Offer (models.Model):
     title = models.CharField(max_length=255, verbose_name='عنوان')
     description = models.TextField(verbose_name='توضیحات', null=True, blank=True)
     persent = models.PositiveIntegerField(verbose_name='درصد تخفیف')
-    code = models.CharField(max_length=50, verbose_name='کد تخفیف')
+    code = models.CharField(max_length=50, verbose_name='کد تخفیف', help_text="نکته مهم : تمام حروف ها باید انگلیسی و کوچک باشد")
     activate = models.BooleanField(default=True, verbose_name='فعال')
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
