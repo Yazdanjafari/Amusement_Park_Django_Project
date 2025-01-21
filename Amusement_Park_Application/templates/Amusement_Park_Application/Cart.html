@@ -120,7 +120,7 @@ Page content START -->
 								<div class="col-md-6 text-md-end">
 									<button class="btn btn-primary mb-0" id="btn-percent" disabled>اعمال</button>
 								</div>
-							</div>	
+							</div>
 						{% endif %}
 
 				</div>
@@ -132,7 +132,7 @@ Page content START -->
 				<!-- Card total START -->
 				<div class="card card-body p-4 shadow">
 					<!-- Title -->
-					<h4 class="mb-3 fs-5 text-center">صورت حساب نهایی</h4>
+					<h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
 					<hr>
 
 					<!-- Price and detail -->
@@ -358,6 +358,55 @@ Page content END -->
 			discountButton.setAttribute('disabled', true);
 		}
 	});
+
+
+	// Function to apply percentage discount
+	function applyPercentageDiscount() {
+		const discountPercentInput = document.getElementById('discount-percent');
+		const discountPercentValue = parseFloat(discountPercentInput.value);  // Convert input to number
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
+		const totalAmount = totalPrice + taxAmount;  // Calculate total amount (price + tax)
+
+		// Validate input
+		if (isNaN(discountPercentValue) || discountPercentValue < 1 || discountPercentValue > 100) {
+			Swal.fire({
+				title: 'خطا!',
+				text: 'لطفاً یک درصد معتبر بین ۱ تا ۱۰۰ وارد کنید.',
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			return;
+		}
+
+		// Calculate discount amount
+		const discountAmount = (totalAmount / 100) * discountPercentValue;
+
+		// Update discount display
+		document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
+
+		// Show success notification
+		Swal.fire({
+			title: 'تخفیف اعمال شد!',
+			text: `تخفیف ${discountPercentValue}% (${discountAmount.toLocaleString()} ریال) با موفقیت اعمال شد.`,
+			icon: 'success',
+			confirmButtonText: 'باشه'
+		});
+	}
+
+	// Add event listener to the percentage discount button
+	document.getElementById('btn-percent').addEventListener('click', applyPercentageDiscount);
+
+	// Enable/disable percentage discount button based on input
+	document.getElementById('discount-percent').addEventListener('input', function() {
+		const discountPercentButton = document.getElementById('btn-percent');
+		if (this.value.trim() !== '') {
+			discountPercentButton.removeAttribute('disabled');
+		} else {
+			discountPercentButton.setAttribute('disabled', true);
+		}
+	});
+
 
 </script>
 {% endblock script %}
