@@ -152,7 +152,7 @@ Page content START -->
 						<br>
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							<span class="h5 mb-0">قیمت نهایی</span>
-							<span class="text-danger h5">500,000 ریال</span>
+							<span class="text-danger h5" id="final-price">0 ریال</span>
 						</li>
 					</ul>
 					<hr>
@@ -229,8 +229,11 @@ Page content END -->
 			// Update total price
 			document.getElementById('item-total-price').innerText = data.total_price.toLocaleString() + ' ریال';
 	
-			document.getElementById('tax-amount').innerText = data.tax.toLocaleString() + ' ریال';
 			// Update tax amount
+			document.getElementById('tax-amount').innerText = data.tax.toLocaleString() + ' ریال';
+
+			// Update final price
+			updateFinalPrice();
 		})
 		.catch(error => {
 			console.log('Error:', error);
@@ -358,6 +361,7 @@ Page content END -->
 		});
 		    // Set discount applied flag
     			isDiscountApplied = true;
+				updateFinalPrice();
 	}
 
 	// Add event listener to the discount button
@@ -408,6 +412,7 @@ Page content END -->
 		});
 		    // Set discount applied flag
     			isDiscountApplied = true;
+				updateFinalPrice();
 	}
 
 	// Add event listener to the percentage discount button
@@ -461,6 +466,7 @@ Page content END -->
 				});
 				    // Set discount applied flag
     			isDiscountApplied = true;
+				updateFinalPrice();
 			} else {
 				// Show error notification
 				Swal.fire({
@@ -494,6 +500,24 @@ Page content END -->
 		this.value = this.value.toLowerCase().replace(/[^a-z]/g, '');
 	});	
 
+
+	// Function to update the final price
+	function updateFinalPrice() {
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
+		const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));  // Get discount amount
+
+		// Calculate final price
+		const finalPrice = totalPrice + taxAmount - discountAmount;
+
+		// Update final price display
+		document.getElementById('final-price').innerText = finalPrice.toLocaleString() + ' ریال';
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		fetchTotalPrice();
+		updateFinalPrice();  // Update final price on page load
+	});
 
 </script>
 {% endblock script %}
