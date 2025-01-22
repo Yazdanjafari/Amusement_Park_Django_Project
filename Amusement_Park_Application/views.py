@@ -153,11 +153,6 @@ def check_discount_code(request):
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
-def checkout(request):
-    return render(request, "Amusement_Park_Application/Checkout.html")
-
-# ---------------------------------------------   --------------------------------------------- #
-@login_required
 def empty_cart(request):
     return render(request, "Amusement_Park_Application/Empty-cart.html")
 
