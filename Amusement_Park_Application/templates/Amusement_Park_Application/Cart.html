@@ -4,50 +4,51 @@
 
 
 {% block style %}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<style>
 		.form-label {
-			display: block; /* نمایش label به صورت بلوکی */
-			font-size: 14px; /* اندازه فونت */
-			font-weight: 600; /* ضخامت فونت */
-			color: #2c3e50; /* رنگ متن */
-			margin-bottom: 8px; /* فاصله از فیلد input */
+			display: block;
+			font-size: 14px;
+			font-weight: 600;
+			color: #2c3e50;
+			margin-bottom: 8px;
 		}
 		
 		.bg-light-input {
-			margin-bottom: 16px; /* فاصله بین فیلدها */
+			margin-bottom: 16px;
 		}
 		
 		.form-control {
-			width: 100%; /* عرض کامل */
-			padding: 10px; /* فاصله داخلی */
-			font-size: 14px; /* اندازه فونت */
-			border: 1px solid #ced4da; /* حاشیه */
-			border-radius: 6px; /* لبه‌های گرد */
-			transition: border-color 0.3s ease; /* انیمیشن تغییر رنگ حاشیه */
+			width: 100%;
+			padding: 10px;
+			font-size: 14px;
+			border: 1px solid #ced4da;
+			border-radius: 6px;
+			transition: border-color 0.3s ease;
 		}
 		
 		.form-control:focus {
-			border-color: #80bdff; /* تغییر رنگ حاشیه هنگام فوکوس */
-			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* سایه هنگام فوکوس */
-			outline: none; /* حذف outline پیش‌فرض */
+			border-color: #80bdff;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+			outline: none;
 		}
-
+		
 		select.form-control {
-			appearance: none; /* حذف فلش پیش‌فرض */
-			background-color: #f8f9fa; /* رنگ پس‌زمینه */
-			border: 1px solid #ced4da; /* حاشیه */
-			border-radius: 6px; /* لبه‌های گرد */
-			padding: 8px 12px; /* فاصله داخلی */
-			font-size: 14px; /* اندازه فونت */
-			cursor: pointer; /* تغییر شکل نشانگر ماوس */
-			width: 100%; /* عرض کامل */
+			appearance: none;
+			background-color: #f8f9fa;
+			border: 1px solid #ced4da;
+			border-radius: 6px;
+			padding: 8px 12px;
+			font-size: 14px;
+			cursor: pointer;
+			width: 100%;
 		}
 		
 		select.form-control:focus {
-			border-color: #80bdff; /* تغییر رنگ حاشیه هنگام فوکوس */
-			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* سایه هنگام فوکوس */
-			outline: none; /* حذف outline پیش‌فرض */
-		}		
+			border-color: #80bdff;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+			outline: none;
+		}
 	</style>
 {% endblock style %}
 	
@@ -132,36 +133,37 @@ Page content START -->
 					<h5 class="mb-0">اطلاعات مشتری (اختیاری) :</h5>
 					<br>
 					<label class="discount-label">با پر کردن این فرم از تخفیف های هیجان انگیز با بهره مند شوید !</label>
-					<form class="row g-3 mt-0">
+					<form class="row g-3 mt-0" method="POST" action="{% url 'Amusement_Park:save_customer' %}">
+						{% csrf_token %}
 
 						<div class="input-group mt-2">
-							<input id="phoneInput" name="phone" class="form-control" placeholder="شماره تماس (مثال : 09120000000)" type="text" maxlength="11" minlength="11">
+							<input id="phoneInput" name="phone" class="form-control" placeholder="شماره تماس (مثال : 09120000000)" type="text" maxlength="11" minlength="11" required>
 							<button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
 						</div>
 					
 						<div class="col-md-6 bg-light-input">
 							<label for="firstName" class="form-label">نام :</label>
-							<input type="text" id="firstName" name="firstName" class="form-control">
+							<input type="text" id="firstName" name="firstName" class="form-control" disabled>
 						</div>
 						
 						<div class="col-md-6 bg-light-input">
 							<label for="lastName" class="form-label">نام خانوادگی :</label>
-							<input type="text" id="lastName" name="lastName" class="form-control">
+							<input type="text" id="lastName" name="lastName" class="form-control" disabled>
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
 							<label for="birthDay" class="form-label">روز تولد :</label>
-							<select id="birthDay" name="birthDay" class="form-control">
+							<select id="birthDay" name="birthDay" class="form-control" disabled>
 								<option value="" disabled selected></option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
+								<option value="01">1</option>
+								<option value="02">2</option>
+								<option value="03">3</option>
+								<option value="04">4</option>
+								<option value="05">5</option>
+								<option value="06">6</option>
+								<option value="07">7</option>
+								<option value="08">8</option>
+								<option value="09">9</option>
 								<option value="10">10</option>
 								<option value="11">11</option>
 								<option value="12">12</option>
@@ -189,17 +191,17 @@ Page content START -->
 						
 						<div class="col-md-4 bg-light-input">
 							<label for="birthMonth" class="form-label">ماه تولد :</label>
-							<select id="birthMonth" name="birthMonth" class="form-control">
+							<select id="birthMonth" name="birthMonth" class="form-control" disabled>
 								<option value="" disabled selected></option> <!-- Placeholder -->
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
+								<option value="01">1</option>
+								<option value="02">2</option>
+								<option value="03">3</option>
+								<option value="04">4</option>
+								<option value="05">5</option>
+								<option value="06">6</option>
+								<option value="07">7</option>
+								<option value="08">8</option>
+								<option value="09">9</option>
 								<option value="10">10</option>
 								<option value="11">11</option>
 								<option value="12">12</option>
@@ -208,7 +210,7 @@ Page content START -->
 						
 						<div class="col-md-4 bg-light-input">
 							<label for="birthYear" class="form-label">سال تولد :</label>
-							<select id="birthYear" name="birthYear" class="form-control">
+							<select id="birthYear" name="birthYear" class="form-control" disabled>
 								<option value="" disabled selected></option>
 								<option value="1395">1395</option>
 								<option value="1394">1394</option>
@@ -299,10 +301,16 @@ Page content START -->
 							</select>
 						</div>
 					
-						<div class="col-12 text-end p-0">
+						<div class="col-12 text-end p-0 position-relative">
 							<button type="submit" class="btn btn-primary w-100 mb-0" disabled>ذخیره</button>
-						</div>
+							<br>
+							<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
+								<i class="fas fa-exclamation-triangle"></i> لطفا اطلاعات را با دقت وارد کنید زیرا پس از ذخیره امکان تغییر آن وجود ندارد.
+							</small>
+							<br>
+						</div>					
 					</form>
+					<br>
 					<!-- Form END -->
 
 					<!-- Coupon input and button -->
@@ -801,6 +809,139 @@ Page content END -->
             birthDay.value = 30;
         }
     });	
+
+
+	document.getElementById('applyButton').addEventListener('click', function () {
+		const phoneInput = document.getElementById('phoneInput');
+		const phone = phoneInput.value;
+	
+		fetch(`/Amusement_Park/search-customer/?phone=${phone}`)
+			.then(response => response.json())
+			.then(data => {
+				if (data.exists) {
+					document.getElementById('firstName').value = data.first_name || '';
+					document.getElementById('lastName').value = data.last_name || '';
+	
+					if (data.date_of_birth) {
+						const dateParts = data.date_of_birth.split('-');
+						document.getElementById('birthYear').value = dateParts[0];
+						document.getElementById('birthMonth').value = dateParts[1];
+						document.getElementById('birthDay').value = dateParts[2];
+					}
+	
+					document.getElementById('firstName').setAttribute('disabled', true);
+					document.getElementById('lastName').setAttribute('disabled', true);
+					document.getElementById('birthYear').setAttribute('disabled', true);
+					document.getElementById('birthMonth').setAttribute('disabled', true);
+					document.getElementById('birthDay').setAttribute('disabled', true);
+					document.querySelector('button[type="submit"]').setAttribute('disabled', true);
+	
+					phoneInput.setAttribute('disabled', true);
+					document.getElementById('applyButton').setAttribute('disabled', true);
+	
+					Swal.fire({
+						icon: 'info',
+						title: 'کاربر با موفقیت یافت شد',
+						text: 'خوش حال هستیم که ما شریک شادی شما هستیم.',
+					});
+				} else {
+					document.getElementById('firstName').removeAttribute('disabled');
+					document.getElementById('lastName').removeAttribute('disabled');
+					document.getElementById('birthYear').removeAttribute('disabled');
+					document.getElementById('birthMonth').removeAttribute('disabled');
+					document.getElementById('birthDay').removeAttribute('disabled');
+					document.querySelector('button[type="submit"]').removeAttribute('disabled');
+	
+					phoneInput.setAttribute('disabled', true);
+					document.getElementById('applyButton').setAttribute('disabled', true);
+	
+					Swal.fire({
+						icon: 'success',
+						title: 'کاربر جدید',
+						text: 'لطفاً اطلاعات خود را وارد کنید.',
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				Swal.fire({
+					icon: 'error',
+					title: 'خطا',
+					text: 'مشکلی در ارتباط با سرور به وجود آمد.',
+				});
+			});
+	});
+	
+	document.getElementById('phoneInput').addEventListener('input', function () {
+		const phone = this.value;
+		const applyButton = document.getElementById('applyButton');
+	
+		if (phone.length === 11 && phone.startsWith('09')) {
+			applyButton.removeAttribute('disabled');
+		} else {
+			applyButton.setAttribute('disabled', true);
+		}
+	});
+	
+	document.querySelector('form').addEventListener('submit', function (e) {
+		e.preventDefault(); 
+	
+		const formData = new FormData(this);
+	
+		if (document.getElementById('phoneInput').disabled) {
+			formData.append('phone', document.getElementById('phoneInput').value);
+		}
+	
+		const birthYear = formData.get('birthYear');
+		const birthMonth = formData.get('birthMonth');
+		const birthDay = formData.get('birthDay');
+		const date_of_birth = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+	
+		formData.append('date_of_birth', date_of_birth);
+	
+		for (let [key, value] of formData.entries()) {
+			console.log(key, value);
+		}
+	
+		fetch(this.action, {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				document.getElementById('firstName').setAttribute('disabled', true);
+				document.getElementById('lastName').setAttribute('disabled', true);
+				document.getElementById('birthYear').setAttribute('disabled', true);
+				document.getElementById('birthMonth').setAttribute('disabled', true);
+				document.getElementById('birthDay').setAttribute('disabled', true);
+				document.querySelector('button[type="submit"]').setAttribute('disabled', true);
+	
+				Swal.fire({
+					icon: 'success',
+					title: 'موفقیت‌آمیز',
+					text: data.message || 'اطلاعات کاربر با موفقیت ذخیره شد.',
+				});
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'خطا',
+					text: data.message || 'مشکلی در ذخیره اطلاعات به وجود آمد.',
+				});
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			Swal.fire({
+				icon: 'error',
+				title: 'خطا',
+				text: 'مشکلی در ارتباط با سرور به وجود آمد.',
+			});
+		});
+	});
 
 
 </script>

@@ -17,4 +17,6 @@ urlpatterns = [
     path("Setting", views.setting, name= "Setting"),
     path("Submit_Pay", views.submit_pay, name= "Submit_Pay"),
     path("scanner", views.scanner, name= "Scanner"),
+    path('search-customer/', views.search_customer_by_phone, name='search_customer_by_phone'),
+    path('save_customer/', views.save_customer, name='save_customer'),
 ]

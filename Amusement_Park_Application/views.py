@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 import json
 from decimal import Decimal
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # --------------------------------------------- index.html page --------------------------------------------- #
 
@@ -150,6 +151,65 @@ def check_discount_code(request):
                 'success': False,
                 'message': 'کد تخفیف وارد شده معتبر نیست.',
             })        
+            
+            
+@login_required
+def search_customer_by_phone(request):
+    phone = request.GET.get('phone')
+    try:
+        customer = Customer.objects.get(phone=phone)
+        data = {
+            'exists': True,
+            'first_name': customer.first_name,
+            'last_name': customer.last_name,
+            'date_of_birth': customer.date_of_birth.strftime('%Y-%m-%d') if customer.date_of_birth else None,
+        }
+    except Customer.DoesNotExist:
+        data = {
+            'exists': False,
+        }
+    return JsonResponse(data)
+
+@csrf_exempt
+def save_customer(request):
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+        if not phone:
+            return JsonResponse({'success': False, 'message': 'شماره تلفن نمی‌تواند خالی باشد.'})
+
+        first_name = request.POST.get('firstName')
+        last_name = request.POST.get('lastName')
+        birth_year = request.POST.get('birthYear')
+        birth_month = request.POST.get('birthMonth')
+        birth_day = request.POST.get('birthDay')
+
+        if Customer.objects.filter(phone=phone).exists():
+            return JsonResponse({'success': False, 'message': 'اطلاعات قابل تغییر نیست.'})
+
+        try:
+            date_of_birth = f"{birth_year}-{birth_month}-{birth_day}"
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': 'فرمت تاریخ تولد نامعتبر است.'})
+
+        try:
+            customer = Customer(
+                phone=phone,
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth,
+                first_purchase=timezone.now(),
+                last_purchase=timezone.now(),
+            )
+            customer.full_clean()
+            customer.save()
+            return JsonResponse({'success': True, 'message': 'اطلاعات کاربر با موفقیت ذخیره شد.'})
+        except ValidationError as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'مشکلی در ذخیره اطلاعات به وجود آمد: {str(e)}'})
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
+ 
+            
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
