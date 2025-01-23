@@ -15,6 +15,8 @@ from django.core.exceptions import ValidationError
 
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
+admin.site.site_title = "پنل مدیریت"
+admin.site.index_title = "پنل مدیریت"
 
 
 class CategoryAdmin(TreeAdmin):
@@ -181,6 +183,9 @@ class TransactionAdminClass(admin.ModelAdmin):
         (None, {
             'fields': ('user', 'ticket', 'type', 'is_success', 'has_tax', 'offer', 'manual_discount', 'desc')
         }),
+        ('فروش ترکیبی', {
+            'fields': ('mix_pc', 'mix_cash')
+        }),
         ('اتوماتیک', {
             'fields': ('tracking_code', 'product_prices', 'tax', 'discount', 'price', 'create_at')
         }),
@@ -233,7 +238,7 @@ class TransactionAdminClass(admin.ModelAdmin):
         # Calculate totals for sales from each payment method
         total_pc_sales = queryset.filter(type='pc').aggregate(total_pc=Sum('price'))['total_pc'] or 0
         total_cash_sales = queryset.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
-        total_card_sales = queryset.filter(type='card').aggregate(total_card=Sum('price'))['total_card'] or 0
+        total_mix_sales = queryset.filter(type='mix').aggregate(total_mix=Sum('price'))['total_mix'] or 0
 
         # Add all totals to extra_context
         extra_context = extra_context or {}
@@ -244,7 +249,7 @@ class TransactionAdminClass(admin.ModelAdmin):
             'total_discount': totals['total_discount'] or 0,
             'total_pc_sales': total_pc_sales,
             'total_cash_sales': total_cash_sales,
-            'total_card_sales': total_card_sales,
+            'total_mix_sales': total_mix_sales,
         })
 
         return super().changelist_view(request, extra_context=extra_context)

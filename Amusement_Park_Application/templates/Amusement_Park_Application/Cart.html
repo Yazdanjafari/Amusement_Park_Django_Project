@@ -396,20 +396,27 @@ Page content START -->
 									</button>
 								</h6>
 								<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
-									<!-- Accordion body -->
 									<div class="accordion-body">
-										<!-- Form START -->
 										<form class="row g-3">
 											<div class="col-6">
-												<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی</span></label>
-												<input type="text" class="form-control" aria-label="cash amount" placeholder="مبلغ نقدی را وارد کنید">
+												<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
+												<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
 											</div>
 											<div class="col-6">
-												<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان</span></label>
-												<input type="text" class="form-control" aria-label="card amount" placeholder="مبلغ کارتخوان را وارد کنید">
+												<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+												<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
 											</div>
 										</form>
-										<!-- Form END -->
+										<br>
+										<div class="row">
+											<div class="col-6">
+												<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+											</div>
+											<div class="col-6">
+												<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+											</div>
+										</div>
+										<br>
 									</div>
 								</div>
 							</div>
@@ -456,7 +463,7 @@ Page content START -->
 
 					<!-- Button -->
 					<div class="d-grid">
-						<a href='' class="btn btn-lg btn-success">پرداخت</a>
+						<a href='' id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
 						<a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
 					</div>
 				</div>
@@ -943,6 +950,164 @@ Page content END -->
 		});
 	});
 
+
+
+	document.addEventListener('DOMContentLoaded', function() {
+		const cashInput = document.getElementById('cash-amount');
+		const cardInput = document.getElementById('card-amount');
+		const applyButton = document.getElementById('apply-button');
+		const resetButton = document.getElementById('reset-button');
+		const finalPriceElement = document.getElementById('final-price');
+		const payButton = document.getElementById('pay-button'); // دکمه پرداخت با آیدی
+	
+		function updateFinalPrice() {
+			const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
+			const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
+			const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));
+	
+			const finalPrice = totalPrice + taxAmount - discountAmount;
+			finalPriceElement.innerText = finalPrice.toLocaleString() + ' ریال';
+			return finalPrice;
+		}
+	
+		function resetCombinedFields() {
+			cashInput.value = '';
+			cardInput.value = '';
+			cashInput.disabled = false;
+			cardInput.disabled = false;
+			applyButton.disabled = true;
+			resetButton.disabled = true;
+		}
+	
+		function validateInput(input, finalPrice) {
+			const value = parseFloat(input.value.replace(/,/g, '')) || 0;
+			if (value > finalPrice) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'مقدار وارد شده نمی‌تواند بیشتر از قیمت نهایی باشد.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				input.value = '';
+				applyButton.disabled = true;
+				return false;
+			}
+			return true;
+		}
+	
+		function disableOtherInput(currentInput, otherInput, finalPrice) {
+			if (currentInput.value.trim() !== '') {
+				if (validateInput(currentInput, finalPrice)) {
+					otherInput.disabled = true;
+					applyButton.disabled = false;
+				}
+			} else {
+				otherInput.disabled = false;
+				applyButton.disabled = true;
+			}
+		}
+	
+		cashInput.addEventListener('input', function() {
+			const finalPrice = updateFinalPrice();
+			disableOtherInput(cashInput, cardInput, finalPrice);
+		});
+	
+		cardInput.addEventListener('input', function() {
+			const finalPrice = updateFinalPrice();
+			disableOtherInput(cardInput, cashInput, finalPrice);
+		});
+	
+		applyButton.addEventListener('click', function() {
+			const finalPrice = updateFinalPrice();
+			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
+			const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+	
+			if (cashAmount > 0) {
+				if (cashAmount > finalPrice) {
+					Swal.fire({
+						title: 'خطا',
+						text: 'مقدار نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.',
+						icon: 'error',
+						confirmButtonText: 'باشه'
+					});
+					return;
+				}
+				cardInput.value = (finalPrice - cashAmount).toLocaleString();
+			} else if (cardAmount > 0) {
+				if (cardAmount > finalPrice) {
+					Swal.fire({
+						title: 'خطا',
+						text: 'مقدار کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.',
+						icon: 'error',
+						confirmButtonText: 'باشه'
+					});
+					return;
+				}
+				cashInput.value = (finalPrice - cardAmount).toLocaleString();
+			}
+	
+			cashInput.disabled = true;
+			cardInput.disabled = true;
+	
+			applyButton.disabled = true;
+			resetButton.disabled = false;
+		});
+	
+		resetButton.addEventListener('click', function() {
+			resetCombinedFields();
+		});
+	
+		payButton.addEventListener('click', function(event) {
+			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
+			const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+	
+			const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
+	
+			if (isCombinedPayment) {
+				if (cashAmount === 0 && cardAmount === 0) {
+					event.preventDefault(); // جلوگیری از ارسال فرم
+					Swal.fire({
+						title: 'خطا',
+						text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
+						icon: 'error',
+						confirmButtonText: 'باشه'
+					});
+				} else if (cashInput.disabled === false || cardInput.disabled === false) {
+					event.preventDefault(); // جلوگیری از ارسال فرم
+					Swal.fire({
+						title: 'خطا',
+						text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
+						icon: 'error',
+						confirmButtonText: 'باشه'
+					});
+				}
+			}
+		});
+	
+		const observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.attributeName === 'innerText' && mutation.target.id === 'final-price') {
+					resetCombinedFields();
+				}
+			});
+		});
+	
+		observer.observe(finalPriceElement, {
+			attributes: true
+		});
+	
+		document.querySelectorAll('.discount-input').forEach(input => {
+			input.addEventListener('input', function() {
+				resetCombinedFields();
+			});
+		});
+	
+		document.querySelectorAll('#btn-code, #btn-amount, #btn-percent').forEach(button => {
+			button.addEventListener('click', function() {
+				resetCombinedFields();
+			});
+		});
+	});
 
 </script>
 {% endblock script %}

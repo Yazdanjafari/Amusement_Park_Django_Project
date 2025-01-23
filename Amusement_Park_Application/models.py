@@ -177,20 +177,22 @@ class Offer (models.Model):
 # Transaction Model: Stores transaction details.
 class Transaction(models.Model):
     class TransactionType(models.TextChoices):
-        pc = ('pc', 'pc pos')
+        pc = ('pc', 'دستگاه کارتخوان')
         cash = ('cash', 'نقدی')
-        card = ('card', 'کارتی')
+        mix = ('mix', 'ترکیبی')
 
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش")
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
     ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='transaction_obj', verbose_name='بلیت')
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)
+    mix_pc = models.PositiveBigIntegerField(verbose_name='مقدار قیمت پرداخت شده با دستگاه کارتخوان',  null=True, blank=True, help_text="در صورتی که نوع فروش ترکیبی باشد این فیلد به صورت اتوماتیک دریافت میشود")
+    mix_cash = models.PositiveBigIntegerField(verbose_name='مقدار قیمت پرداخت شده نقدی',  null=True, blank=True, help_text="در صورتی که نوع فروش ترکیبی باشد این فیلد به صورت اتوماتیک دریافت میشود")
     is_success = models.BooleanField('تراکنش موفق', default=True, help_text='این فروش را نیازی نیست حذف کنید فقط تیک این فیلد را بردارید')
     has_tax = models.BooleanField('با احتساب مالیات بر ارزش افزورده', default=True)
     offer = models.ForeignKey('Offer', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name='کد تخفیف')
     manual_discount = models.PositiveIntegerField(verbose_name='تخفیف دستی', default=0, null=True, blank=True)
-    product_prices = models.IntegerField(verbose_name='مجموع مبلغ محصولات')
+    product_prices = models.PositiveBigIntegerField(verbose_name='مجموع مبلغ محصولات')
     tax = models.PositiveBigIntegerField(verbose_name='مبلغ مالیات', null=True, blank=True)
     discount = models.PositiveBigIntegerField(verbose_name='مبلغ تخفیف',  null=True, blank=True)
     price = models.PositiveBigIntegerField(verbose_name='قیمت نهایی',  null=True, blank=True,)
