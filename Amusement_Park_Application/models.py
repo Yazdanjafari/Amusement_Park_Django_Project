@@ -229,16 +229,6 @@ class Transaction(models.Model):
         if self.ticket:
             self.product_prices = self.calculate_product_prices()
 
-        # Apply discount calculation
-        if self.offer and self.offer.activate:
-            # Apply the discount from the offer (percentage discount)
-            offer_discount = self.product_prices * self.offer.persent / 100
-        else:
-            offer_discount = 0
-
-        # Calculate the total discount: Offer discount + manual discount
-        self.discount = offer_discount + self.manual_discount
-
         # Apply tax if 'has_tax' is True
         if self.has_tax:
             tax_rate = TaxRate.objects.first().rate  # Assuming there is only one tax rate
@@ -246,8 +236,24 @@ class Transaction(models.Model):
         else:
             self.tax = 0  # Ensure tax is zero when has_tax is False
 
-        # Calculate final price (product price - discount + tax)
-        self.price = self.product_prices - self.discount + self.tax
+        # Calculate total amount before discount
+        total_amount = self.product_prices + self.tax
+
+        # Apply discount calculation
+        if self.offer and self.offer.activate:
+            offer_discount = total_amount * self.offer.persent / 100
+        else:
+            offer_discount = 0
+
+        # Calculate the total discount: Offer discount + manual discount
+        self.discount = offer_discount + (self.manual_discount or 0)
+
+        # Validate discount
+        if self.discount > total_amount:
+            raise ValidationError("مجموع تخفیف نمی‌تواند بیشتر از مجموع قیمت محصولات و مالیات باشد.")
+
+        # Calculate final price (product price + tax - discount)
+        self.price = total_amount - self.discount
 
         super().save(*args, **kwargs)
 

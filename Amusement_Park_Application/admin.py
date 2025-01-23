@@ -11,6 +11,8 @@ from import_export import resources, fields
 from django.utils.translation import gettext_lazy as _
 from django.db.models import F, Sum, Count, Q
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 
@@ -186,9 +188,11 @@ class TransactionAdminClass(admin.ModelAdmin):
 
 
     def save_model(self, request, obj, form, change):
-        # Automatically set 'is_success' when needed, or use form logic to manage this.
-        if obj.ticket.transaction_obj.exists() and not obj.is_success:
-            obj.is_success = False  # Example: you might want to set it as False initially
+        try:
+            obj.save()
+        except ValidationError as e:
+            form.add_error(None, e.message)
+            return
         super().save_model(request, obj, form, change)
 
 
