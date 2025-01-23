@@ -70,6 +70,12 @@ def cancle_cart(request):
         return JsonResponse({'status': 'success', 'message': 'Cart emptied'})  
 
 
+def check_cart(request):
+    cart = request.session.get('cart', [])
+    cart_empty = len(cart) == 0
+    return JsonResponse({'cart_empty': cart_empty})
+
+
 # --------------------------------------------- Cart.html Page --------------------------------------------- #
 @login_required
 def cart(request):
@@ -84,9 +90,12 @@ def cart(request):
             'quantity': item['quantity'],
         })
 
+    cart_empty = len(cart_items) == 0
+
     return render(request, "Amusement_Park_Application/Cart.html", {
         'cart_items': cart_items,
         'get_TaxRate': get_TaxRate,
+        'cart_empty': cart_empty,
     })
 
 
@@ -209,12 +218,7 @@ def save_customer(request):
             return JsonResponse({'success': False, 'message': f'مشکلی در ذخیره اطلاعات به وجود آمد: {str(e)}'})
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
  
-            
-
-# ---------------------------------------------   --------------------------------------------- #
-@login_required
-def empty_cart(request):
-    return render(request, "Amusement_Park_Application/Empty-cart.html")
+    
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required

@@ -199,23 +199,23 @@
 				<ul class="navbar-nav navbar-nav-scroll me-auto">
 
 					<li class="nav-item dropdown" style="padding-top: 5px !important; padding-bottom: 5px !important;">
-						<a class="nav-link bg-primary bg-opacity-10 rounded-3 text-primary px-3 py-3 py-xl-0" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu">
+						<a class="nav-link bg-primary bg-opacity-10 rounded-3 text-primary px-3 py-3 py-xl-0 cart-link" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu" {% block disabled_cart %}{% endblock disabled_cart %}>
 							<i class="bi bi-cart me-2"></i><span>سبد خرید</span>
 						</a>
 					</li>
 					
 					
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu">صفحه اصلی</a>
+						<a class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>صفحه اصلی</a>
 					</li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="{% url 'Amusement_Park:Submit_Pay' %}" id="demoMenu">ثبت مجدد تراکنش</a>
+						<a class="nav-link {% block active_buy_submit %}{% endblock active_buy_submit %}" href="{% url 'Amusement_Park:Submit_Pay' %}" id="demoMenu" {% block disabled_buy_submit %}{% endblock disabled_buy_submit %}>ثبت مجدد تراکنش</a>
 					</li>
 
 					{% if request.user.is_superuser or request.user.is_staff %}
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu">عودت وجه</a>
+						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu" {% block disabled_refund %}{% endblock disabled_refund %}>عودت وجه</a>
 					</li>
 					{% endif %}
 					
