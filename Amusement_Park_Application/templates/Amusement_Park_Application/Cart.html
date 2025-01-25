@@ -133,7 +133,7 @@ Page content START -->
 					<h5 class="mb-0">اطلاعات مشتری (اختیاری) :</h5>
 					<br>
 					<label class="discount-label">با پر کردن این فرم از تخفیف های هیجان انگیز با بهره مند شوید !</label>
-					<form class="row g-3 mt-0" method="POST" action="{% url 'Amusement_Park:save_customer' %}">
+					<form class="row g-3 mt-0" method="POST" action="{% url 'Amusement_Park:save_customer' %}" id="customer-form">
 						{% csrf_token %}
 
 						<div class="input-group mt-2">
@@ -1059,9 +1059,9 @@ Page content END -->
 		payButton.addEventListener('click', function(event) {
 			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
 			const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
-	
+		
 			const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
-	
+		
 			if (isCombinedPayment) {
 				if (cashAmount === 0 && cardAmount === 0) {
 					event.preventDefault(); 
@@ -1071,6 +1071,7 @@ Page content END -->
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
+					return; // جلوگیری از ادامه اجرای کد
 				} else if (cashInput.disabled === false || cardInput.disabled === false) {
 					event.preventDefault(); 
 					Swal.fire({
@@ -1079,8 +1080,12 @@ Page content END -->
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
+					return; // جلوگیری از ادامه اجرای کد
 				}
 			}
+		
+			// اگر خطایی وجود نداشت، درخواست به سرور ارسال شود
+			document.getElementById('pay-button').click(); // اجرای کد پرداخت
 		});
 	
 		const observer = new MutationObserver(function(mutations) {
@@ -1109,19 +1114,43 @@ Page content END -->
 	});
 
 
-
-
+	
 	document.getElementById('pay-button').addEventListener('click', function (e) {
 		e.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
 	
+		const cashAmount = parseFloat(document.getElementById('cash-amount').value.replace(/,/g, '')) || 0;
+		const cardAmount = parseFloat(document.getElementById('card-amount').value.replace(/,/g, '')) || 0;
+	
+		const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
+	
+		if (isCombinedPayment) {
+			if (cashAmount === 0 && cardAmount === 0) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				return; // جلوگیری از ارسال درخواست به سرور
+			} else if (document.getElementById('cash-amount').disabled === false || document.getElementById('card-amount').disabled === false) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				return; // جلوگیری از ارسال درخواست به سرور
+			}
+		}
+	
 		// جمع‌آوری داده‌های مشتری
 		const customerData = {
-			phone: document.getElementById('phoneInput').value,
-			firstName: document.getElementById('firstName').value,
-			lastName: document.getElementById('lastName').value,
-			birthYear: document.getElementById('birthYear').value,
-			birthMonth: document.getElementById('birthMonth').value,
-			birthDay: document.getElementById('birthDay').value,
+			phone: document.getElementById('phoneInput').value || null,
+			firstName: document.getElementById('firstName').value || null,
+			lastName: document.getElementById('lastName').value || null,
+			birthYear: document.getElementById('birthYear').value || null,
+			birthMonth: document.getElementById('birthMonth').value || null,
+			birthDay: document.getElementById('birthDay').value || null,
 		};
 	
 		// جمع‌آوری داده‌های سبد خرید
@@ -1134,9 +1163,9 @@ Page content END -->
 	
 		// جمع‌آوری داده‌های تراکنش
 		const transactionData = {
-			type: document.querySelector('.accordion-button.collapsed') ? 'cash' : 'pc', // نوع تراکنش
+			type: getTransactionType(), // تشخیص نوع تراکنش
 			discount_code: document.getElementById('discount-code').value || null, // ارسال null اگر مقدار خالی باشد
-			discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")),
+			discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
 			mix_pc: document.getElementById('card-amount') ? parseFloat(document.getElementById('card-amount').value) : null,
 			mix_cash: document.getElementById('cash-amount') ? parseFloat(document.getElementById('cash-amount').value) : null,
 		};
@@ -1167,8 +1196,10 @@ Page content END -->
 					title: 'موفقیت آمیز',
 					text: 'پرداخت با موفقیت انجام شد.',
 					confirmButtonText: 'باشه'
-				}).then(() => {
-					window.location.href = '{% url "Amusement_Park:Products" %}'; // انتقال به صفحه محصولات
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location.href = '{% url "Amusement_Park:Products" %}'; // انتقال به صفحه محصولات
+					}
 				});
 			} else {
 				Swal.fire({
@@ -1189,7 +1220,23 @@ Page content END -->
 			});
 		});
 	});
-
+	
+	// تابع جدید برای تشخیص نوع تراکنش
+	function getTransactionType() {
+		const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
+		const isCashOpen = document.getElementById('collapse-cash').classList.contains('show');
+		const isCombinedOpen = document.getElementById('collapse-combined').classList.contains('show');
+	
+		if (isCardReaderOpen) {
+			return 'pc'; // دستگاه کارتخوان
+		} else if (isCashOpen) {
+			return 'cash'; // نقدی
+		} else if (isCombinedOpen) {
+			return 'mix'; // ترکیبی
+		} else {
+			return 'pc'; // پیش‌فرض دستگاه کارتخوان
+		}
+	}
 
 
 	document.getElementById('btn-code').addEventListener('click', function () {
