@@ -300,6 +300,15 @@ def submit_pay(request):
             cart_items = data.get('cart_items')
             transaction_data = data.get('transaction_data')
 
+            # بررسی نوع تراکنش
+            transaction_type = transaction_data.get('type', 'pc')
+            mix_pc = transaction_data.get('mix_pc')
+            mix_cash = transaction_data.get('mix_cash')
+
+            # اگر نوع تراکنش ترکیبی است، مطمئن شویم که مقادیر mix_pc و mix_cash پر شده‌اند
+            if transaction_type == 'mix' and (mix_pc is None or mix_cash is None):
+                return JsonResponse({'success': False, 'message': 'برای تراکنش ترکیبی، مقادیر نقدی و کارتخوان باید پر شوند.'})
+
             # ثبت اطلاعات مشتری (اگر وجود داشته باشد)
             customer = None
             if customer_data:
@@ -351,12 +360,13 @@ def submit_pay(request):
 
             final_price -= discount_amount
 
+            # ثبت اطلاعات تراکنش
             transaction = Transaction.objects.create(
                 user=request.user,
                 ticket=ticket,
-                type=transaction_data.get('type', 'pc'),
-                mix_pc=transaction_data.get('mix_pc'),
-                mix_cash=transaction_data.get('mix_cash'),
+                type=transaction_type,
+                mix_pc=mix_pc,
+                mix_cash=mix_cash,
                 offer=offer,  # استفاده از offer که مقداردهی شده است
                 manual_discount=discount_amount,
                 product_prices=total_price,
@@ -372,6 +382,7 @@ def submit_pay(request):
             return JsonResponse({'success': False, 'message': f'خطا در پرداخت: {str(e)}'})
 
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
+
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
