@@ -1140,14 +1140,21 @@ Page content END -->
 		}
 	
 		// جمع‌آوری داده‌های مشتری
-		const customerData = {
-			phone: document.getElementById('phoneInput').value || null,
-			firstName: document.getElementById('firstName').value || null,
-			lastName: document.getElementById('lastName').value || null,
-			birthYear: document.getElementById('birthYear').value || null,
-			birthMonth: document.getElementById('birthMonth').value || null,
-			birthDay: document.getElementById('birthDay').value || null,
-		};
+		const phone = document.getElementById('phoneInput').value;
+		const firstName = document.getElementById('firstName').value;
+		const lastName = document.getElementById('lastName').value;
+		const birthYear = document.getElementById('birthYear').value;
+		const birthMonth = document.getElementById('birthMonth').value;
+		const birthDay = document.getElementById('birthDay').value;
+	
+		const customerData = phone ? {
+			phone: phone,
+			firstName: firstName || null,
+			lastName: lastName || null,
+			birthYear: birthYear || null,
+			birthMonth: birthMonth || null,
+			birthDay: birthDay || null,
+		} : null;
 	
 		// جمع‌آوری داده‌های سبد خرید
 		const cartItems = [];
@@ -1247,33 +1254,6 @@ Page content END -->
 				const discountAmount = (parseFloat(document.getElementById('item-total-price').innerText.replace(/[^0-9.-]+/g, "")) / 100) * data.percent;
 				document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
 				updateFinalPrice(); // تابعی برای به‌روزرسانی قیمت نهایی
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			alert('خطا در ارتباط با سرور.');
-		});
-	});
-
-
-	document.getElementById('customer-form').addEventListener('submit', function (e) {
-		e.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
-	
-		const formData = new FormData(this);
-	
-		fetch('{% url "Amusement_Park:save_customer" %}', {
-			method: 'POST',
-			body: formData,
-			headers: {
-				'X-CSRFToken': '{{ csrf_token }}', // اضافه کردن توکن CSRF
-			},
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success) {
-				alert('اطلاعات مشتری با موفقیت ذخیره شد.');
-			} else {
-				alert('خطا در ذخیره اطلاعات: ' + data.message);
 			}
 		})
 		.catch(error => {

@@ -69,7 +69,7 @@ def add_to_cart(request):
 def cancle_cart(request):
     if request.method == 'POST':
         request.session['cart'] = []  # Clear the cart
-        return JsonResponse({'status': 'success', 'message': 'Cart emptied'})  
+        return JsonResponse({'status': 'success',})  
 
 
 def check_cart(request):
@@ -186,7 +186,7 @@ def save_customer(request):
     if request.method == 'POST':
         phone = request.POST.get('phone')
         if not phone:
-            return JsonResponse({'success': False, 'message': 'شماره تلفن نمی‌تواند خالی باشد.'})
+            return JsonResponse({'success': False,})
 
         first_name = request.POST.get('firstName')
         last_name = request.POST.get('lastName')
@@ -197,7 +197,7 @@ def save_customer(request):
         try:
             date_of_birth = f"{birth_year}-{birth_month}-{birth_day}"
         except Exception as e:
-            return JsonResponse({'success': False, 'message': 'فرمت تاریخ تولد نامعتبر است.'})
+            return JsonResponse({'success': False,})
 
         customer, created = Customer.objects.get_or_create(
             phone=phone,
@@ -300,21 +300,23 @@ def submit_pay(request):
             cart_items = data.get('cart_items')
             transaction_data = data.get('transaction_data')
 
-            # ثبت اطلاعات مشتری
-            customer, created = Customer.objects.get_or_create(
-                phone=customer_data['phone'],
-                defaults={
-                    'first_name': customer_data.get('firstName', ''),
-                    'last_name': customer_data.get('lastName', ''),
-                    'date_of_birth': f"{customer_data.get('birthYear')}-{customer_data.get('birthMonth')}-{customer_data.get('birthDay')}",
-                    'first_purchase': timezone.now(),
-                    'last_purchase': timezone.now(),
-                }
-            )
+            # ثبت اطلاعات مشتری (اگر وجود داشته باشد)
+            customer = None
+            if customer_data:
+                customer, created = Customer.objects.get_or_create(
+                    phone=customer_data['phone'],
+                    defaults={
+                        'first_name': customer_data.get('firstName', ''),
+                        'last_name': customer_data.get('lastName', ''),
+                        'date_of_birth': f"{customer_data.get('birthYear')}-{customer_data.get('birthMonth')}-{customer_data.get('birthDay')}",
+                        'first_purchase': timezone.now(),
+                        'last_purchase': timezone.now(),
+                    }
+                )
 
             # ثبت اطلاعات بلیت
             ticket = Ticket.objects.create(
-                customer=customer,
+                customer=customer,  # ممکن است null باشد
                 user=request.user,
                 is_scanned=False,
                 desc='توضیحات بلیت'
@@ -349,7 +351,6 @@ def submit_pay(request):
 
             final_price -= discount_amount
 
-            # ثبت اطلاعات تراکنش
             transaction = Transaction.objects.create(
                 user=request.user,
                 ticket=ticket,
@@ -361,7 +362,7 @@ def submit_pay(request):
                 product_prices=total_price,
                 tax=tax,
                 price=final_price,
-                desc='توضیحات تراکنش'
+                desc=None
             )
 
             return JsonResponse({'success': True, 'message': 'پرداخت با موفقیت انجام شد.'})

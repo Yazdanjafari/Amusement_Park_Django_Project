@@ -87,7 +87,7 @@ class TicketResource(resources.ModelResource):
 
 class TicketAdminClass(ExportMixin, admin.ModelAdmin):
     resource_classes = [TicketResource]
-    list_display = ('id', 'get_products', 'is_scanned', 'create_at', 'user')
+    list_display = ('id', 'get_products', 'is_scanned', 'create_at', 'user', 'customer')
     list_filter = ('is_scanned', 'user', 'create_at')
     search_fields = ('id',)
     readonly_fields = ('transaction', 'user', 'is_scanned')
