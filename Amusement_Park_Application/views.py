@@ -301,22 +301,16 @@ def submit_pay(request):
             transaction_data = data.get('transaction_data')
 
             # ثبت اطلاعات مشتری
-            customer = None
-            if customer_data and customer_data.get('phone'):
-                date_of_birth = None
-                if customer_data.get('birthYear') and customer_data.get('birthMonth') and customer_data.get('birthDay'):
-                    date_of_birth = f"{customer_data.get('birthYear')}-{customer_data.get('birthMonth')}-{customer_data.get('birthDay')}"
-
-                customer, created = Customer.objects.get_or_create(
-                    phone=customer_data['phone'],
-                    defaults={
-                        'first_name': customer_data.get('firstName', ''),
-                        'last_name': customer_data.get('lastName', ''),
-                        'date_of_birth': date_of_birth,
-                        'first_purchase': timezone.now(),
-                        'last_purchase': timezone.now(),
-                    }
-                )
+            customer, created = Customer.objects.get_or_create(
+                phone=customer_data['phone'],
+                defaults={
+                    'first_name': customer_data.get('firstName', ''),
+                    'last_name': customer_data.get('lastName', ''),
+                    'date_of_birth': f"{customer_data.get('birthYear')}-{customer_data.get('birthMonth')}-{customer_data.get('birthDay')}",
+                    'first_purchase': timezone.now(),
+                    'last_purchase': timezone.now(),
+                }
+            )
 
             # ثبت اطلاعات بلیت
             ticket = Ticket.objects.create(

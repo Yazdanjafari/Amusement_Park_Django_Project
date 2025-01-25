@@ -1059,9 +1059,9 @@ Page content END -->
 		payButton.addEventListener('click', function(event) {
 			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
 			const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
-		
+	
 			const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
-		
+	
 			if (isCombinedPayment) {
 				if (cashAmount === 0 && cardAmount === 0) {
 					event.preventDefault(); 
@@ -1071,7 +1071,6 @@ Page content END -->
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
-					return; // جلوگیری از ادامه اجرای کد
 				} else if (cashInput.disabled === false || cardInput.disabled === false) {
 					event.preventDefault(); 
 					Swal.fire({
@@ -1080,12 +1079,8 @@ Page content END -->
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
-					return; // جلوگیری از ادامه اجرای کد
 				}
 			}
-		
-			// اگر خطایی وجود نداشت، درخواست به سرور ارسال شود
-			document.getElementById('pay-button').click(); // اجرای کد پرداخت
 		});
 	
 		const observer = new MutationObserver(function(mutations) {
@@ -1114,7 +1109,8 @@ Page content END -->
 	});
 
 
-	
+
+
 	document.getElementById('pay-button').addEventListener('click', function (e) {
 		e.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
 	
@@ -1239,6 +1235,8 @@ Page content END -->
 	}
 
 
+
+
 	document.getElementById('btn-code').addEventListener('click', function () {
 		const discountCode = document.getElementById('discount-code').value;
 	
@@ -1283,6 +1281,9 @@ Page content END -->
 			alert('خطا در ارتباط با سرور.');
 		});
 	});
+
+
+	
 
 
 </script>
