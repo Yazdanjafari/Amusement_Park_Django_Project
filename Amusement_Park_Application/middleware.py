@@ -15,7 +15,6 @@ class MobileAccessMiddleware:
         self.mobile_restricted_pages = [
             'Amusement_Park:Products',
             'Amusement_Park:Cart',
-            'Amusement_Park:Empty-cart',
             'Amusement_Park:Refund',
             'Amusement_Park:Setting',
             'Amusement_Park:Submit_Pay',

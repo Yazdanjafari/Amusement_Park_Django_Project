@@ -323,7 +323,6 @@ Page content START -->
 							</div>
 							<small id="tip-code" class="form-text text-muted" style="display: none;"></small>
 						</div>
-						<!-- Update button -->
 						<div class="col-md-6 text-md-end">
 							<button class="btn btn-primary mb-0" id="btn-code" disabled>اعمال</button>
 						</div>
@@ -1065,7 +1064,7 @@ Page content END -->
 	
 			if (isCombinedPayment) {
 				if (cashAmount === 0 && cardAmount === 0) {
-					event.preventDefault(); // جلوگیری از ارسال فرم
+					event.preventDefault(); 
 					Swal.fire({
 						title: 'خطا',
 						text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
@@ -1073,7 +1072,7 @@ Page content END -->
 						confirmButtonText: 'باشه'
 					});
 				} else if (cashInput.disabled === false || cardInput.disabled === false) {
-					event.preventDefault(); // جلوگیری از ارسال فرم
+					event.preventDefault(); 
 					Swal.fire({
 						title: 'خطا',
 						text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
@@ -1108,6 +1107,136 @@ Page content END -->
 			});
 		});
 	});
+
+
+
+
+	document.getElementById('pay-button').addEventListener('click', function (e) {
+		e.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
+	
+		// جمع‌آوری داده‌های مشتری
+		const customerData = {
+			phone: document.getElementById('phoneInput').value,
+			firstName: document.getElementById('firstName').value,
+			lastName: document.getElementById('lastName').value,
+			birthYear: document.getElementById('birthYear').value,
+			birthMonth: document.getElementById('birthMonth').value,
+			birthDay: document.getElementById('birthDay').value,
+		};
+	
+		// جمع‌آوری داده‌های سبد خرید
+		const cartItems = [];
+		document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
+			const productId = item.getAttribute('data-ticket-product-id');
+			const quantity = item.querySelector('.counter').innerText;
+			cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
+		});
+	
+		// جمع‌آوری داده‌های تراکنش
+		const transactionData = {
+			type: document.querySelector('.accordion-button.collapsed') ? 'cash' : 'pc', // نوع تراکنش
+			discount_code: document.getElementById('discount-code').value || null, // ارسال null اگر مقدار خالی باشد
+			discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")),
+			mix_pc: document.getElementById('card-amount') ? parseFloat(document.getElementById('card-amount').value) : null,
+			mix_cash: document.getElementById('cash-amount') ? parseFloat(document.getElementById('cash-amount').value) : null,
+		};
+	
+		// ارسال داده‌ها به سرور
+		fetch('{% url "Amusement_Park:submit_pay" %}', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': '{{ csrf_token }}', // اضافه کردن توکن CSRF
+			},
+			body: JSON.stringify({
+				customer_data: customerData,
+				cart_items: cartItems,
+				transaction_data: transactionData,
+			}),
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('خطا در ارتباط با سرور.');
+			}
+			return response.json();
+		})
+		.then(data => {
+			if (data.success) {
+				Swal.fire({
+					icon: 'success',
+					title: 'موفقیت آمیز',
+					text: 'پرداخت با موفقیت انجام شد.',
+					confirmButtonText: 'باشه'
+				}).then(() => {
+					window.location.href = '{% url "Amusement_Park:Products" %}'; // انتقال به صفحه محصولات
+				});
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'خطا در پرداخت',
+					text: 'خطا در پرداخت: ' + data.message,
+					confirmButtonText: 'باشه'
+				});
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			Swal.fire({
+				icon: 'error',
+				title: 'خطا در ارتباط با سرور',
+				text: 'خطا در ارتباط با سرور.',
+				confirmButtonText: 'باشه'
+			});
+		});
+	});
+
+
+
+	document.getElementById('btn-code').addEventListener('click', function () {
+		const discountCode = document.getElementById('discount-code').value;
+	
+		fetch(`{% url 'Amusement_Park:check_discount_code' %}?code=${discountCode}`)
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				const discountAmount = (parseFloat(document.getElementById('item-total-price').innerText.replace(/[^0-9.-]+/g, "")) / 100) * data.percent;
+				document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
+				updateFinalPrice(); // تابعی برای به‌روزرسانی قیمت نهایی
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('خطا در ارتباط با سرور.');
+		});
+	});
+
+
+	document.getElementById('customer-form').addEventListener('submit', function (e) {
+		e.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
+	
+		const formData = new FormData(this);
+	
+		fetch('{% url "Amusement_Park:save_customer" %}', {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'X-CSRFToken': '{{ csrf_token }}', // اضافه کردن توکن CSRF
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				alert('اطلاعات مشتری با موفقیت ذخیره شد.');
+			} else {
+				alert('خطا در ذخیره اطلاعات: ' + data.message);
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('خطا در ارتباط با سرور.');
+		});
+	});
+
 
 </script>
 {% endblock script %}

@@ -293,6 +293,17 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f'کد رهگیری بلیت: {self.id}'        
+    
+    def total_price(self):
+        return sum(item.product.price * item.quantity for item in self.ticket_products.all())
+
+    def calculate_tax(self):
+        tax_rate = TaxRate.objects.first().rate  # نرخ مالیات
+        return int(self.total_price() * tax_rate / 100)
+
+    def calculate_final_price(self):
+        return self.total_price() + self.calculate_tax()    
+    
 
 
 class TicketProduct(models.Model):

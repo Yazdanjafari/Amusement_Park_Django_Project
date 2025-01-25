@@ -7,7 +7,9 @@ from django.shortcuts import get_object_or_404
 import json
 from decimal import Decimal
 from django.utils import timezone
-from django.core.exceptions import ValidationError
+import logging
+
+logger = logging.getLogger(__name__)
 
 # --------------------------------------------- index.html page --------------------------------------------- #
 
@@ -192,33 +194,183 @@ def save_customer(request):
         birth_month = request.POST.get('birthMonth')
         birth_day = request.POST.get('birthDay')
 
-        if Customer.objects.filter(phone=phone).exists():
-            return JsonResponse({'success': False, 'message': 'اطلاعات قابل تغییر نیست.'})
-
         try:
             date_of_birth = f"{birth_year}-{birth_month}-{birth_day}"
         except Exception as e:
             return JsonResponse({'success': False, 'message': 'فرمت تاریخ تولد نامعتبر است.'})
 
-        try:
-            customer = Customer(
-                phone=phone,
-                first_name=first_name,
-                last_name=last_name,
-                date_of_birth=date_of_birth,
-                first_purchase=timezone.now(),
-                last_purchase=timezone.now(),
-            )
-            customer.full_clean()
+        customer, created = Customer.objects.get_or_create(
+            phone=phone,
+            defaults={
+                'first_name': first_name,
+                'last_name': last_name,
+                'date_of_birth': date_of_birth,
+                'first_purchase': timezone.now(),
+                'last_purchase': timezone.now(),
+            }
+        )
+
+        if not created:
+            customer.last_purchase = timezone.now()
             customer.save()
-            return JsonResponse({'success': True, 'message': 'اطلاعات کاربر با موفقیت ذخیره شد.'})
-        except ValidationError as e:
-            return JsonResponse({'success': False, 'message': str(e)})
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': f'مشکلی در ذخیره اطلاعات به وجود آمد: {str(e)}'})
+
+        return JsonResponse({'success': True, 'message': 'اطلاعات کاربر با موفقیت ذخیره شد.', 'customer_id': customer.id})
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
  
     
+    
+@csrf_exempt
+def create_ticket(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        customer_id = data.get('customer_id')
+        cart_items = data.get('cart_items')
+
+        try:
+            customer = Customer.objects.get(id=customer_id)
+        except Customer.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'مشتری یافت نشد.'})
+
+        ticket = Ticket.objects.create(
+            customer=customer,
+            user=request.user,
+            is_scanned=False,
+            desc='توضیحات بلیت'
+        )
+
+        for item in cart_items:
+            product = Product.objects.get(id=item['product_id'])
+            TicketProduct.objects.create(
+                ticket=ticket,
+                product=product,
+                quantity=item['quantity']
+            )
+
+        return JsonResponse({'success': True, 'message': 'بلیت با موفقیت ایجاد شد.', 'ticket_id': ticket.id})
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})    
+    
+
+@csrf_exempt
+def create_transaction(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        ticket_id = data.get('ticket_id')
+        transaction_type = data.get('transaction_type')
+        discount_code = data.get('discount_code')
+        discount_amount = data.get('discount_amount')
+        mix_pc = data.get('mix_pc')
+        mix_cash = data.get('mix_cash')
+
+        try:
+            ticket = Ticket.objects.get(id=ticket_id)
+        except Ticket.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'بلیت یافت نشد.'})
+
+        offer = None
+        if discount_code:
+            offer = Offer.objects.filter(code=discount_code, activate=True).first()
+
+        transaction = Transaction.objects.create(
+            user=request.user,
+            ticket=ticket,
+            type=transaction_type,
+            mix_pc=mix_pc,
+            mix_cash=mix_cash,
+            offer=offer,
+            discount=discount_amount,
+            product_prices=ticket.total_price(),
+            tax=ticket.calculate_tax(),
+            price=ticket.calculate_final_price(),
+            desc='توضیحات تراکنش'
+        )
+
+        return JsonResponse({'success': True, 'message': 'تراکنش با موفقیت ایجاد شد.', 'transaction_id': transaction.id})
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
+
+
+@csrf_exempt
+def submit_pay(request):
+    if request.method == 'POST':
+        try:
+            # دریافت داده‌های ارسال شده از طریق AJAX
+            data = json.loads(request.body)
+            logger.info(f"Received data: {data}")  # لاگ داده‌های دریافتی
+
+            customer_data = data.get('customer_data')
+            cart_items = data.get('cart_items')
+            transaction_data = data.get('transaction_data')
+
+            # ثبت اطلاعات مشتری
+            customer, created = Customer.objects.get_or_create(
+                phone=customer_data['phone'],
+                defaults={
+                    'first_name': customer_data.get('firstName', ''),
+                    'last_name': customer_data.get('lastName', ''),
+                    'date_of_birth': f"{customer_data.get('birthYear')}-{customer_data.get('birthMonth')}-{customer_data.get('birthDay')}",
+                    'first_purchase': timezone.now(),
+                    'last_purchase': timezone.now(),
+                }
+            )
+
+            # ثبت اطلاعات بلیت
+            ticket = Ticket.objects.create(
+                customer=customer,
+                user=request.user,
+                is_scanned=False,
+                desc='توضیحات بلیت'
+            )
+
+            # ثبت محصولات بلیت
+            for item in cart_items:
+                product = Product.objects.get(id=item['product_id'])
+                TicketProduct.objects.create(
+                    ticket=ticket,
+                    product=product,
+                    quantity=item['quantity']
+                )
+
+            # محاسبه قیمت کل محصولات
+            total_price = sum(item.product.price * item.quantity for item in ticket.ticket_products.all())
+
+            # محاسبه مالیات
+            tax_rate = TaxRate.objects.first().rate  # نرخ مالیات
+            tax = int(total_price * tax_rate / 100)
+
+            # محاسبه قیمت نهایی
+            final_price = total_price + tax
+
+            # اعمال تخفیف
+            discount_amount = transaction_data.get('discount_amount', 0)
+            offer = None  # مقدار پیش‌فرض برای offer
+            if transaction_data.get('discount_code'):
+                offer = Offer.objects.filter(code=transaction_data['discount_code'], activate=True).first()
+                if offer:
+                    discount_amount += int(final_price * offer.persent / 100)
+
+            final_price -= discount_amount
+
+            # ثبت اطلاعات تراکنش
+            transaction = Transaction.objects.create(
+                user=request.user,
+                ticket=ticket,
+                type=transaction_data.get('type', 'pc'),
+                mix_pc=transaction_data.get('mix_pc'),
+                mix_cash=transaction_data.get('mix_cash'),
+                offer=offer,  # استفاده از offer که مقداردهی شده است
+                manual_discount=discount_amount,
+                product_prices=total_price,
+                tax=tax,
+                price=final_price,
+                desc='توضیحات تراکنش'
+            )
+
+            return JsonResponse({'success': True, 'message': 'پرداخت با موفقیت انجام شد.'})
+
+        except Exception as e:
+            logger.error(f"Error in submit_pay: {str(e)}")  # لاگ خطا
+            return JsonResponse({'success': False, 'message': f'خطا در پرداخت: {str(e)}'})
+
+    return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
@@ -241,7 +393,7 @@ def setting(request):
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
-def submit_pay(request):
+def retransaction(request):
     return render(request, "Amusement_Park_Application/Submit_Pay.html")
 
 # ---------------------------------------------   --------------------------------------------- #

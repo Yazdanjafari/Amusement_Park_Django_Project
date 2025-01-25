@@ -15,8 +15,9 @@ urlpatterns = [
     path("Mobile_Error", views.mobile_error, name= "Mobile_Error"),
     path("Refund", views.refund, name= "Refund"),
     path("Setting", views.setting, name= "Setting"),
-    path("Submit_Pay", views.submit_pay, name= "Submit_Pay"),
+    path("retransaction", views.retransaction, name= "retransaction"),
     path("scanner", views.scanner, name= "Scanner"),
     path('search-customer/', views.search_customer_by_phone, name='search_customer_by_phone'),
     path('save_customer/', views.save_customer, name='save_customer'),
+    path("submit_pay", views.submit_pay, name="submit_pay"),
 ]
