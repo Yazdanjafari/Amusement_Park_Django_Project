@@ -84,7 +84,7 @@ class TicketResource(resources.ModelResource):
 
     def dehydrate_j_create_at(self, ticket):
         return ticket.j_create_at()
-
+ 
 class TicketAdminClass(ExportMixin, admin.ModelAdmin):
     resource_classes = [TicketResource]
     list_display = ('id', 'get_products', 'is_scanned', 'create_at', 'user', 'customer')

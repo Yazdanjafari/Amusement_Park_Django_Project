@@ -109,7 +109,7 @@ Page content START -->
 											</div>
 										</td>
 										<td class="text-center">
-											<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma }} ریال</h5>
+											<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma:False|default_if_none:"0" }} ریال</h5>
 										</td>
 										<td>
 											<div class="d-flex justify-content-between align-items-center">
@@ -360,69 +360,71 @@ Page content START -->
 
 					<!-- Title -->
 					<hr>
-					<h5 class="">روش های پرداخت :</h5>
-					<div class="col-12">
-						<div class="accordion accordion-circle" id="accordioncircle">
+					<div class="card card-body p-4 shadow">
+						<h5 class="">روش های پرداخت :</h5>
+						<div class="col-12">
+							<div class="accordion accordion-circle" id="accordioncircle">
 
-							<!-- Card reader (Default) -->
-							<div class="accordion-item mb-3">
-								<h6 class="accordion-header" id="heading-card-reader">
-									<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-										دستگاه کارتخوان
-									</button>
-								</h6>
-								<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
-								</div>
-							</div>
-
-							{% if request.user.is_superuser or request.user.is_staff %}
-							<!-- Cash -->
-							<div class="accordion-item mb-3">
-								<h6 class="accordion-header" id="heading-cash">
-									<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-										نقدی
-									</button>
-								</h6>
-								<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
-								</div>
-							</div>
-
-							<!-- Combined payment -->
-							<div class="accordion-item mb-3">
-								<h6 class="accordion-header" id="heading-combined">
-									<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-										ترکیبی
-									</button>
-								</h6>
-								<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
-									<div class="accordion-body">
-										<form class="row g-3">
-											<div class="col-6">
-												<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
-												<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
-											</div>
-											<div class="col-6">
-												<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-												<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
-											</div>
-										</form>
-										<br>
-										<div class="row">
-											<div class="col-6">
-												<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
-											</div>
-											<div class="col-6">
-												<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
-											</div>
-										</div>
-										<br>
+								<!-- Card reader (Default) -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-card-reader">
+										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+											دستگاه کارتخوان
+										</button>
+									</h6>
+									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
 									</div>
 								</div>
-							</div>
-							{% endif %}
-							<!-- Credit or debit card END -->
 
-							<!-- Net banking END -->
+								{% if request.user.is_superuser or request.user.is_staff %}
+								<!-- Cash -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-cash">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+											نقدی
+										</button>
+									</h6>
+									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
+									</div>
+								</div>
+
+								<!-- Combined payment -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-combined">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+											ترکیبی
+										</button>
+									</h6>
+									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+										<div class="accordion-body">
+											<form class="row g-3">
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
+												</div>
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
+												</div>
+											</form>
+											<br>
+											<div class="row">
+												<div class="col-6">
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+												</div>
+												<div class="col-6">
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+												</div>
+											</div>
+											<br>
+										</div>
+									</div>
+								</div>
+								{% endif %}
+								<!-- Credit or debit card END -->
+
+								<!-- Net banking END -->
+							</div>
 						</div>
 					</div>
 					<!-- Payment method END -->
@@ -1112,7 +1114,7 @@ Page content END -->
 
 
 	document.getElementById('pay-button').addEventListener('click', function (e) {
-		e.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
+		e.preventDefault(); 
 	
 		const cashAmount = parseFloat(document.getElementById('cash-amount').value.replace(/,/g, '')) || 0;
 		const cardAmount = parseFloat(document.getElementById('card-amount').value.replace(/,/g, '')) || 0;
@@ -1120,7 +1122,7 @@ Page content END -->
 		const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
 		const isCashPayment = document.getElementById('collapse-cash').classList.contains('show');
 	
-		// بررسی فروش نقدی
+
 		if (isCashPayment) {
 			Swal.fire({
 				title: 'تأیید فروش نقدی',
@@ -1131,12 +1133,12 @@ Page content END -->
 				cancelButtonText: 'خیر'
 			}).then((result) => {
 				if (result.isConfirmed) {
-					// اگر کاربر "بله" را انتخاب کرد، ادامه فرآیند پرداخت
+					
 					proceedWithPayment();
 				}
 			});
 		} else {
-			// اگر فروش نقدی نبود، مستقیماً ادامه فرآیند پرداخت
+			
 			proceedWithPayment();
 		}
 	
@@ -1149,7 +1151,7 @@ Page content END -->
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
-					return; // جلوگیری از ارسال درخواست به سرور
+					return; 
 				} else if (document.getElementById('cash-amount').disabled === false || document.getElementById('card-amount').disabled === false) {
 					Swal.fire({
 						title: 'خطا',
@@ -1157,11 +1159,10 @@ Page content END -->
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
-					return; // جلوگیری از ارسال درخواست به سرور
+					return; 
 				}
 			}
 	
-			// جمع‌آوری داده‌های مشتری
 			const phone = document.getElementById('phoneInput').value;
 			const firstName = document.getElementById('firstName').value;
 			const lastName = document.getElementById('lastName').value;
@@ -1178,7 +1179,6 @@ Page content END -->
 				birthDay: birthDay || null,
 			} : null;
 	
-			// جمع‌آوری داده‌های سبد خرید
 			const cartItems = [];
 			document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
 				const productId = item.getAttribute('data-ticket-product-id');
@@ -1186,21 +1186,19 @@ Page content END -->
 				cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
 			});
 	
-			// جمع‌آوری داده‌های تراکنش
 			const transactionData = {
-				type: getTransactionType(), // تشخیص نوع تراکنش
-				discount_code: document.getElementById('discount-code').value || null, // ارسال null اگر مقدار خالی باشد
+				type: getTransactionType(), 
+				discount_code: document.getElementById('discount-code').value || null, 
 				discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
 				mix_pc: document.getElementById('card-amount') ? parseFloat(document.getElementById('card-amount').value.replace(/,/g, '')) : null,
 				mix_cash: document.getElementById('cash-amount') ? parseFloat(document.getElementById('cash-amount').value.replace(/,/g, '')) : null,
 			};
 	
-			// ارسال داده‌ها به سرور
 			fetch('{% url "Amusement_Park:submit_pay" %}', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-CSRFToken': '{{ csrf_token }}', // اضافه کردن توکن CSRF
+					'X-CSRFToken': '{{ csrf_token }}', 
 				},
 				body: JSON.stringify({
 					customer_data: customerData,
@@ -1223,7 +1221,7 @@ Page content END -->
 						confirmButtonText: 'باشه'
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.location.href = '{% url "Amusement_Park:Products" %}'; // انتقال به صفحه محصولات
+							window.location.href = '{% url "Amusement_Park:Products" %}'; 
 						}
 					});
 				} else {
@@ -1247,20 +1245,19 @@ Page content END -->
 		}
 	});
 	
-	// تابع جدید برای تشخیص نوع تراکنش
 	function getTransactionType() {
 		const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
 		const isCashOpen = document.getElementById('collapse-cash').classList.contains('show');
 		const isCombinedOpen = document.getElementById('collapse-combined').classList.contains('show');
 	
 		if (isCardReaderOpen) {
-			return 'pc'; // دستگاه کارتخوان
+			return 'pc'; 
 		} else if (isCashOpen) {
-			return 'cash'; // نقدی
+			return 'cash'; 
 		} else if (isCombinedOpen) {
-			return 'mix'; // ترکیبی
+			return 'mix';
 		} else {
-			return 'pc'; // پیش‌فرض دستگاه کارتخوان
+			return 'pc'; 
 		}
 	}
 
@@ -1276,7 +1273,7 @@ Page content END -->
 			if (data.success) {
 				const discountAmount = (parseFloat(document.getElementById('item-total-price').innerText.replace(/[^0-9.-]+/g, "")) / 100) * data.percent;
 				document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
-				updateFinalPrice(); // تابعی برای به‌روزرسانی قیمت نهایی
+				updateFinalPrice(); 
 			}
 		})
 		.catch(error => {

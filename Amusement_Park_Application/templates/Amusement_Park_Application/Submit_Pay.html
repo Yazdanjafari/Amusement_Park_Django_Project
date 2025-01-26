@@ -1,10 +1,59 @@
 {% extends 'common.html' %}
 {% load static %}
 {% block active_buy_retransaction %}active{% endblock active_buy_retransaction %}
-{% block body %}
-
-<!-- =======================
+{% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+		.form-label {
+			display: block;
+			font-size: 14px;
+			font-weight: 600;
+			color: #2c3e50;
+			margin-bottom: 8px;
+		}
+		
+		.bg-light-input {
+			margin-bottom: 16px;
+		}
+		
+		.form-control {
+			width: 100%;
+			padding: 10px;
+			font-size: 14px;
+			border: 1px solid #ced4da;
+			border-radius: 6px;
+			transition: border-color 0.3s ease;
+		}
+		
+		.form-control:focus {
+			border-color: #80bdff;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+			outline: none;
+		}
+		
+		select.form-control {
+			appearance: none;
+			background-color: #f8f9fa;
+			border: 1px solid #ced4da;
+			border-radius: 6px;
+			padding: 8px 12px;
+			font-size: 14px;
+			cursor: pointer;
+			width: 100%;
+		}
+		
+		select.form-control:focus {
+			border-color: #80bdff;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+			outline: none;
+		}
+	</style>
+	{% endblock style %}
+	{% block body %}
+	
+	<!-- =======================
 Page Banner START -->
+<br><br>
 <section class="py-0">
 	<div class="container">
 		<div class="row">
@@ -31,184 +80,178 @@ Page Banner END -->
 <!-- =======================
 Page content START -->
 <section class="pt-5">
-	<div class="container">
-		<div class="row g-4 g-sm-5">
-			<!-- Main content START -->
-			<div class="col-xl-8 mb-4 mb-sm-0">
+    <div class="container">
+        <div class="row g-4 g-sm-5">
+            <!-- Main content START -->
+            <div class="col-12 mb-4 mb-sm-0">
+                <!-- Personal info START -->
+                <div class="card card-body shadow p-4">
+                    <!-- Title for transaction form -->
+                    <h5 class="mb-0">ثبت مجدد تراکنش :</h5>
+                    <!-- Transaction form START -->
+                    <form id="retransactionForm">
+                        {% csrf_token %}
+                        <div class="input-group mt-2">
+                            <input id="ticketCodeInput" name="transaction_id" class="form-control" placeholder="کد رهگیری فروش" type="text">
+                            <button id="applyButton" type="button" class="btn btn-primary">اعمال</button>
+                        </div>
+                    </form>
+				</div>
+			</div>								
 
+
+			<div id="transactionDetails" class="col-xl-8 mb-4 mb-sm-0" style="display: none;">
 				<!-- Personal info START -->
-				<div class="card card-body shadow p-4">
-
-					<!-- Title for transaction form -->
-					<h5 class="mb-0">ثبت مجدد تراکنش :</h5>
-						
-					<!-- Transaction form START -->
-					<div class="input-group mt-2">
-						<input id="ticketCodeInput" class="form-control" placeholder="کد رهگیری فروش" type="text">
-						<button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
-					</div>
-					<!-- Transaction form END -->
-					<table class="table align-middle p-4 mb-0">
-						<!-- Table head -->
-						<br>
-						<hr>
-						<br>
-						<h5 class="">اطلاعات فاکتور ثبت شده :</h5>
-						<!-- Table body START -->
-						<tbody class="border-top-0">
-							<!-- Table item -->
-							<tr>
-								<!-- Course item -->
-								<td>
-									<div class="d-lg-flex align-items-center">
-										<!-- Image -->
-										<div class="w-100px w-md-80px mb-2 mb-md-0">
-											<img src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
-										</div>
-										<!-- Title -->
-										<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
-											<a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
-										</h6>
-									</div>
-								</td>
-
-								<!-- Amount item -->
-								<td class="text-center">
-									<h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
-								</td>
-								<!-- Action item -->
-								<td>
-									<div class="d-flex justify-content-between align-items-center">
-										<button class="btn btn-outline-warning btn-sm disabled"><i class="fas fa-trash"></i></button>
-										<button class="btn btn-outline-danger btn-sm disabled" onclick="increment(this)">+</button>
-										<button class="btn btn-outline-primary btn-sm counter" disabled>1</button>
-										<button class="btn btn-outline-danger btn-sm disabled" onclick="decrement(this)">-</button>
-									</div>
-								</td>
-							</tr>
-
-						</tbody>
-					</table>
-
-					<br>
-
-					<div class="row">
-						<div class="col-md-6 bg-light-input">
-							<label for="">* تاریخ ثبت فاکتور :</label>
-							<input type="text" class="form-control" id="yourName" readonly value="">
-						</div>
-						
+				<div class="card card-body shadow p-4">					
+                    <!-- Transaction form END -->
+                    <table class="table align-middle p-4 mb-0">
+                        <h5 class="">اطلاعات فاکتور ثبت شده :</h5>
+                        <tbody class="border-top-0">
+                            <tr>
+                                <td>
+                                    <div class="d-lg-flex align-items-center">
+                                        <div class="w-100px w-md-80px mb-2 mb-md-0">
+                                            <img id="productImage" src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
+                                        </div>
+                                        <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
+                                            <a id="productName" href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+                                        </h6>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <h5 id="productPrice" class="text-success mb-0" style="font-size: 75%;">0 ریال</h5>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button class="btn btn-success btn-sm disabled"><i class="bi bi-cart"></i></button>
+                                        <button class="btn btn-outline-danger btn-sm disabled">+</button>
+                                        <button id="productQuantity" class="btn btn-outline-primary btn-sm counter" disabled>1</button>
+                                        <button class="btn btn-outline-danger btn-sm disabled">-</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6 bg-light-input">
+                            <label for="">* تاریخ ثبت فاکتور :</label>
+                            <input id="createAt" type="text" class="form-control" readonly value="">
+                        </div>
 						<div class="col-md-6 bg-light-input">
 							<label for="">* شماره تماس :</label>
-							<input type="text" class="form-control" id="yourName" readonly value="">
+							<input id="userPhone" type="text" class="form-control" readonly value="">
 						</div>
-
 						<div class="col-md-6 bg-light-input">
 							<label for="">* نام :</label>
-							<input type="text" class="form-control" id="yourName" readonly value="">
+							<input id="userFirstName" type="text" class="form-control" readonly value="">
 						</div>
-
 						<div class="col-md-6 bg-light-input">
 							<label for="">* نام خانوادگی :</label>
-							<input type="text" class="form-control" id="yourName" readonly value="">
+							<input id="userLastName" type="text" class="form-control" readonly value="">
 						</div>
-					</div>
-					<hr>
-					<!-- Payment method START -->
-					<div class="row g-3 mt-4">
-						<!-- Title -->
-						<h5>روش های پرداخت :</h5>
-						<div class="col-12">
-							<div class="accordion accordion-circle" id="accordioncircle">
-
-								<!-- Card reader (Default) -->
-								<div class="accordion-item mb-3">
-									<h6 class="accordion-header" id="heading-card-reader">
-										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-											دستگاه کارتخوان
-										</button>
-									</h6>
-									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
-									</div>
-								</div>
-
-								{% if request.user.is_superuser or request.user.is_staff %}
-									<!-- Cash -->
-									<div class="accordion-item mb-3">
-										<h6 class="accordion-header" id="heading-cash">
-											<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-												نقدی
-											</button>
-										</h6>
-										<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
-										</div>
-									</div>
-
-									<!-- Combined payment -->
-									<div class="accordion-item mb-3">
-										<h6 class="accordion-header" id="heading-combined">
-											<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-												ترکیبی
-											</button>
-										</h6>
-										<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
-											<!-- Accordion body -->
-											<div class="accordion-body">
-												<!-- Form START -->
-												<form class="row g-3">
-													<div class="col-6">
-														<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی</span></label>
-														<input type="text" class="form-control" aria-label="cash amount" placeholder="مبلغ نقدی را وارد کنید">
-													</div>
-													<div class="col-6">
-														<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان</span></label>
-														<input type="text" class="form-control" aria-label="card amount" placeholder="مبلغ کارتخوان را وارد کنید">
-													</div>
-												</form>
-												<!-- Form END -->
-											</div>
-										</div>
-									</div>
-								{% endif %}
-
-								<!-- Combined payment END -->
-							</div>
-						</div>
-					</div>
-					<!-- Payment method END -->
-
-				</div>
-				<!-- Personal info END -->
-			</div>
-			<!-- Main content END -->
-
-			<!-- Right sidebar START -->
-			<div class="col-lg-4">
-				<!-- Card total START -->
-				<div class="card card-body p-4 shadow">
-					<!-- Title -->
-					<h4 class="mb-3 fs-5 text-center">صورت حساب نهایی</h4>
-					<hr>
-
-					<!-- Price and detail -->
-					<ul class="list-group list-group-borderless mb-2">
-						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h5 mb-0">قیمت نهایی</span>
-							<span class="text-danger h5">500,000 تومان</span>
-						</li>
-					</ul>
-
-					<!-- Button -->
-					<div class="d-grid">
-						<a href="" class="btn btn-lg btn-success">تسویه حساب</a>
-					</div>
-				</div>
-				<!-- Card total END -->
-			</div>
-			<!-- Right sidebar END -->
-
-		</div><!-- Row END -->
-	</div>
+                    </div>
+                    <hr>
+                    <!-- Payment method START -->
+                    <div class="card card-body p-4 shadow">
+                        <h5 class="">روش های پرداخت :</h5>
+                        <div class="col-12">
+                            <div class="accordion accordion-circle" id="accordioncircle">
+                                <div class="accordion-item mb-3">
+                                    <h6 class="accordion-header" id="heading-card-reader">
+                                        <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+                                            دستگاه کارتخوان
+                                        </button>
+                                    </h6>
+                                    <div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
+                                    </div>
+                                </div>
+                                {% if request.user.is_superuser or request.user.is_staff %}
+                                <div class="accordion-item mb-3">
+                                    <h6 class="accordion-header" id="heading-cash">
+                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+                                            نقدی
+                                        </button>
+                                    </h6>
+                                    <div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
+                                    </div>
+                                </div>
+                                <div class="accordion-item mb-3">
+                                    <h6 class="accordion-header" id="heading-combined">
+                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+                                            ترکیبی
+                                        </button>
+                                    </h6>
+                                    <div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+                                        <div class="accordion-body">
+                                            <form class="row g-3">
+                                                <div class="col-6">
+                                                    <label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
+                                                    <input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+                                                    <input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
+                                                </div>
+                                            </form>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+                                                </div>
+                                                <div class="col-6">
+                                                    <button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Payment method END -->
+                </div>
+                <!-- Personal info END -->
+            </div>
+            <!-- Main content END -->
+            <!-- Right sidebar START -->
+            <div id="rightSidebar" class="col-lg-4" style="display: none;">
+                <!-- Card total START -->
+                <div class="card card-body p-4 shadow">
+                    <h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
+                    <hr>
+                    <ul class="list-group list-group-borderless mb-2">
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">قیمت</span>
+                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">مالیات (% 10)</span>
+                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">تخفیف</span>
+                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <br>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h5 mb-0">قیمت نهایی</span>
+                            <span id="finalPrice" class="text-danger h5">0 ریال</span>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="d-grid">
+                        <a href='' id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
+                        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
+                    </div>
+                </div>
+                <!-- Card total END -->
+            </div>
+            <!-- Right sidebar END -->
+        </div><!-- Row END -->
+    </div>
 </section>
 <!-- =======================
 Page content END -->
@@ -218,20 +261,112 @@ Page content END -->
 
 
 {% block script %}
-<script>
-	// Get the input field and button elements
-	const ticketCodeInput = document.getElementById('ticketCodeInput');
-	const applyButton = document.getElementById('applyButton');
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	// Add an event listener to the input field
-	ticketCodeInput.addEventListener('input', function() {
-		// Check if the input contains a number
-		if (ticketCodeInput.value.trim() !== '' && !isNaN(ticketCodeInput.value)) {
-			applyButton.disabled = false;  // Enable the button if there's a number
-		} else {
-			applyButton.disabled = true;   // Disable the button if there's no valid number
+<script>
+	function maskPhoneNumber(phone) {
+		if (phone.length === 11) {
+			return phone.slice(8) + ' **** ' + phone.slice(0, 4);
 		}
-	});
+		return phone; // اگر شماره تلفن ۱۱ رقمی نبود، بدون تغییر برگردانید
+	}
+
+
+	
+    document.getElementById('applyButton').addEventListener('click', function() {
+        const transactionId = document.getElementById('ticketCodeInput').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+        fetch('{% url "Amusement_Park:retransaction" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken
+            },
+            body: `transaction_id=${transactionId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: data.message,
+                    confirmButtonText: 'باشه'
+                });
+            } else {
+                const transaction = data.data;
+                const tbody = document.querySelector('tbody');
+                tbody.innerHTML = ''; // پاک کردن محتوای قبلی
+    
+                // ایجاد ردیف‌های جدید برای هر محصول
+                transaction.products.forEach(product => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div class="d-lg-flex align-items-center">
+                                <div class="w-100px w-md-80px mb-2 mb-md-0">
+                                    <img src="${product.image}" class="rounded" alt="">
+                                </div>
+                                <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
+                                    <a href="#" style="font-size: 75%;">${product.title}</a>
+                                </h6>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.price).toLocaleString()} تومان</h5>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-success btn-sm disabled"><i class="bi bi-cart"></i></button>
+                                <button class="btn btn-outline-danger btn-sm disabled">+</button>
+                                <button class="btn btn-outline-primary btn-sm counter" disabled>${product.quantity}</button>
+                                <button class="btn btn-outline-danger btn-sm disabled">-</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+    
+                document.getElementById('createAt').value = transaction.create_at;
+                document.getElementById('userPhone').value = transaction.customer.phone;
+                document.getElementById('userFirstName').value = transaction.customer.first_name;
+                document.getElementById('userLastName').value = transaction.customer.last_name;
+                document.getElementById('totalPrice').textContent = parseInt(transaction.product_prices).toLocaleString() + ' ریال';
+                document.getElementById('totalTax').textContent = parseInt(transaction.tax).toLocaleString() + ' ریال';
+                document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + ' ریال';
+                document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + ' ریال';
+    
+                // نمایش بخش اطلاعات تراکنش
+                document.getElementById('transactionDetails').style.display = 'block';
+    
+                // نمایش بخش Right sidebar
+                document.getElementById('rightSidebar').style.display = 'block';
+    
+                // غیرفعال کردن دکمه "اعمال"
+                document.getElementById('applyButton').disabled = true;
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفقیت',
+                    text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
+                    confirmButtonText: 'باشه'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                confirmButtonText: 'باشه'
+            });
+        });
+    });
+
+
 </script>
 {% endblock script %}
 	

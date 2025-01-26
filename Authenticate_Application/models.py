@@ -9,7 +9,6 @@ from django.core.exceptions import ValidationError
 
 # Define the custom User model extending AbstractBaseUser and PermissionsMixin
 class User(AbstractBaseUser, PermissionsMixin):
-
     # Enum for user roles with custom Persian choices
     class UserRoleChoices(models.TextChoices):
         NORMAL = 'normal', 'دسترسی آزاد'

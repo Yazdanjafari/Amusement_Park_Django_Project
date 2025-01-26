@@ -1,12 +1,24 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
 
 User = get_user_model()  # Explicitly assign the custom User model to a variable
 
+class CustomUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = User
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User
+
 class CustomUserAdmin(UserAdmin):
-    list_display = ("username", "first_name", "last_name", "get_role", "is_active", "is_staff", "is_superuser" )
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
+
+    list_display = ("username", "first_name", "last_name", "get_role", "is_active", "is_staff", "is_superuser")
 
     # Overriding the save_model to enforce validation
     def save_model(self, request, obj, form, change):
@@ -19,15 +31,19 @@ class CustomUserAdmin(UserAdmin):
         super().save_model(request, obj, form, change)
 
     fieldsets = (
-        # Your existing fieldsets remain unchanged
-    )    
-
-    fieldsets = (
+        (
+            'اطلاعات امنیتی',  # Redefine the personal information group
+            {
+                'fields': (
+                    'username',
+                    'password', 
+                ),
+            },
+        ),
         (
             'اطلاعات شخصی',  # Redefine the personal information group
             {
                 'fields': (
-                    'username',
                     'first_name',
                     'last_name',
                     'nationality_id',
@@ -65,6 +81,16 @@ class CustomUserAdmin(UserAdmin):
                     'last_login',
                     'date_joined',
                 ),
+            },
+        ),
+    )
+
+    add_fieldsets = (
+        (
+            None,
+            {
+                'classes': ('wide',),
+                'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser'),
             },
         ),
     )

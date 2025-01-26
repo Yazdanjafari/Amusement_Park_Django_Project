@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 import json
 from decimal import Decimal
 from django.utils import timezone
+from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -292,24 +293,20 @@ def create_transaction(request):
 def submit_pay(request):
     if request.method == 'POST':
         try:
-            # دریافت داده‌های ارسال شده از طریق AJAX
             data = json.loads(request.body)
-            logger.info(f"Received data: {data}")  # لاگ داده‌های دریافتی
+            logger.info(f"Received data: {data}")
 
             customer_data = data.get('customer_data')
             cart_items = data.get('cart_items')
             transaction_data = data.get('transaction_data')
 
-            # بررسی نوع تراکنش
             transaction_type = transaction_data.get('type', 'pc')
             mix_pc = transaction_data.get('mix_pc')
             mix_cash = transaction_data.get('mix_cash')
 
-            # اگر نوع تراکنش ترکیبی است، مطمئن شویم که مقادیر mix_pc و mix_cash پر شده‌اند
             if transaction_type == 'mix' and (mix_pc is None or mix_cash is None):
                 return JsonResponse({'success': False, 'message': 'برای تراکنش ترکیبی، مقادیر نقدی و کارتخوان باید پر شوند.'})
 
-            # ثبت اطلاعات مشتری (اگر وجود داشته باشد)
             customer = None
             if customer_data:
                 customer, created = Customer.objects.get_or_create(
@@ -323,15 +320,13 @@ def submit_pay(request):
                     }
                 )
 
-            # ثبت اطلاعات بلیت
             ticket = Ticket.objects.create(
-                customer=customer,  # ممکن است null باشد
+                customer=customer, 
                 user=request.user,
                 is_scanned=False,
                 desc='توضیحات بلیت'
             )
 
-            # ثبت محصولات بلیت
             for item in cart_items:
                 product = Product.objects.get(id=item['product_id'])
                 TicketProduct.objects.create(
@@ -340,19 +335,15 @@ def submit_pay(request):
                     quantity=item['quantity']
                 )
 
-            # محاسبه قیمت کل محصولات
             total_price = sum(item.product.price * item.quantity for item in ticket.ticket_products.all())
 
-            # محاسبه مالیات
-            tax_rate = TaxRate.objects.first().rate  # نرخ مالیات
+            tax_rate = TaxRate.objects.first().rate  
             tax = int(total_price * tax_rate / 100)
 
-            # محاسبه قیمت نهایی
             final_price = total_price + tax
 
-            # اعمال تخفیف
             discount_amount = transaction_data.get('discount_amount', 0)
-            offer = None  # مقدار پیش‌فرض برای offer
+            offer = None 
             if transaction_data.get('discount_code'):
                 offer = Offer.objects.filter(code=transaction_data['discount_code'], activate=True).first()
                 if offer:
@@ -360,14 +351,13 @@ def submit_pay(request):
 
             final_price -= discount_amount
 
-            # ثبت اطلاعات تراکنش
             transaction = Transaction.objects.create(
                 user=request.user,
                 ticket=ticket,
                 type=transaction_type,
                 mix_pc=mix_pc,
                 mix_cash=mix_cash,
-                offer=offer,  # استفاده از offer که مقداردهی شده است
+                offer=offer, 
                 manual_discount=discount_amount,
                 product_prices=total_price,
                 tax=tax,
@@ -378,7 +368,7 @@ def submit_pay(request):
             return JsonResponse({'success': True, 'message': 'پرداخت با موفقیت انجام شد.'})
 
         except Exception as e:
-            logger.error(f"Error in submit_pay: {str(e)}")  # لاگ خطا
+            logger.error(f"Error in submit_pay: {str(e)}")  
             return JsonResponse({'success': False, 'message': f'خطا در پرداخت: {str(e)}'})
 
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
@@ -403,9 +393,57 @@ def setting(request):
         raise Http404("Page not found")  # User with KIOSK role gets a 404 error
     return render(request, "Amusement_Park_Application/setting.html")
 
-# ---------------------------------------------   --------------------------------------------- #
+# --------------------------------------------- retransaction page (Submit_pay.html) --------------------------------------------- #
+
 @login_required
 def retransaction(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        transaction_id = request.POST.get('transaction_id')
+        try:
+            transaction = Transaction.objects.get(id=transaction_id)
+            now = timezone.now()
+            time_difference = now - transaction.create_at
+
+            if time_difference > timedelta(hours=24):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'سیستم قادر نیست این تراکنش را مجددا ثبت کند زیرا این تراکنش بیشتر از یک روز پیش ثبت شده و ممکن است تخفیف ها ، مالیات و قیمت های آن زمان و الان متفاوت باشد'
+                })
+            else:
+                ticket_products = TicketProduct.objects.filter(ticket=transaction.ticket)
+                customer = transaction.ticket.customer
+
+                products = []
+                for ticket_product in ticket_products:
+                    products.append({
+                        'image': ticket_product.product.image.url,
+                        'title': ticket_product.product.title,
+                        'quantity': ticket_product.quantity,
+                        'price': ticket_product.product.price
+                    })
+
+                return JsonResponse({
+                    'status': 'success',
+                    'data': {
+                        'id': transaction.id,
+                        'create_at': transaction.create_at.strftime('%Y-%m-%d %H:%M:%S'),
+                        'product_prices': transaction.product_prices,
+                        'tax': transaction.tax,
+                        'discount': transaction.discount,
+                        'price': transaction.price,
+                        'customer': {
+                            'first_name': customer.first_name if customer else 'N/A',
+                            'last_name': customer.last_name if customer else 'N/A',
+                            'phone': customer.phone if customer else 'N/A'
+                        },
+                        'products': products  # ارسال لیست محصولات
+                    }
+                })
+        except Transaction.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'خریدی با این کد پیگیری یافت نشد'
+            })
     return render(request, "Amusement_Park_Application/Submit_Pay.html")
 
 # ---------------------------------------------   --------------------------------------------- #
