@@ -261,8 +261,6 @@ Page content END -->
 
 
 {% block script %}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
 	function maskPhoneNumber(phone) {
 		if (phone.length === 11) {
@@ -366,6 +364,97 @@ Page content END -->
         });
     });
 
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const cashInput = document.getElementById('cash-amount');
+        const cardInput = document.getElementById('card-amount');
+        const applyButton = document.getElementById('apply-button');
+        const resetButton = document.getElementById('reset-button');
+        const finalPriceElement = document.getElementById('finalPrice');
+    
+        // تابع برای تبدیل مبلغ به عدد
+        function parseAmount(amount) {
+            return parseFloat(amount.replace(/,/g, '')) || 0;
+        }
+    
+        // تابع برای فرمت کردن مبلغ به صورت رشته‌ای با جداکننده هزارگان
+        function formatAmount(amount) {
+            return amount.toLocaleString() + ' ریال';
+        }
+    
+        // تابع برای به‌روزرسانی دکمه‌ها
+        function updateButtons() {
+            const cashValue = cashInput.value.trim();
+            const cardValue = cardInput.value.trim();
+    
+            // اگر یکی از فیلدها پر باشد، دکمه اعمال فعال شود
+            if (cashValue || cardValue) {
+                applyButton.disabled = false;
+            } else {
+                applyButton.disabled = true;
+            }
+    
+            // اگر دکمه اعمال زده شده باشد، دکمه تلاش مجدد فعال شود
+            if (cashInput.disabled && cardInput.disabled) {
+                resetButton.disabled = false;
+            } else {
+                resetButton.disabled = true;
+            }
+        }
+    
+        // اعمال مقادیر و محاسبه مبلغ باقی‌مانده
+        applyButton.addEventListener('click', function() {
+            const finalPrice = parseAmount(finalPriceElement.innerText); // دریافت مبلغ نهایی
+            const cashValue = parseAmount(cashInput.value); // دریافت مبلغ نقدی
+            const cardValue = parseAmount(cardInput.value); // دریافت مبلغ کارتخوان
+    
+            // اگر هر دو فیلد خالی باشند
+            if (cashValue === 0 && cardValue === 0) {
+                alert('لطفاً حداقل یکی از فیلدها را پر کنید.');
+                return;
+            }
+    
+            // اگر مبلغ نقدی وارد شده باشد
+            if (cashValue > 0) {
+                if (cashValue > finalPrice) {
+                    alert('مبلغ نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.');
+                    return;
+                }
+                cardInput.value = formatAmount(finalPrice - cashValue); // محاسبه مبلغ کارتخوان
+            }
+    
+            // اگر مبلغ کارتخوان وارد شده باشد
+            if (cardValue > 0) {
+                if (cardValue > finalPrice) {
+                    alert('مبلغ کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.');
+                    return;
+                }
+                cashInput.value = formatAmount(finalPrice - cardValue); // محاسبه مبلغ نقدی
+            }
+    
+            // غیرفعال کردن فیلدها پس از اعمال
+            cashInput.disabled = true;
+            cardInput.disabled = true;
+            applyButton.disabled = true;
+            resetButton.disabled = false;
+        });
+    
+        // بازنشانی فرم
+        resetButton.addEventListener('click', function() {
+            cashInput.value = '';
+            cardInput.value = '';
+            cashInput.disabled = false;
+            cardInput.disabled = false;
+            applyButton.disabled = true;
+            resetButton.disabled = true;
+        });
+    
+        // بررسی تغییرات در فیلدهای نقدی و کارتخوان
+        cashInput.addEventListener('input', updateButtons);
+        cardInput.addEventListener('input', updateButtons);
+    });
+    
 
 </script>
 {% endblock script %}

@@ -366,5 +366,99 @@ Page content END -->
         }
     });
 
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.cart-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch("{% url 'Amusement_Park:check_cart' %}", {
+                    method: "GET",
+                    headers: {
+                        "X-CSRFToken": getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cart_empty) {
+                        Swal.fire({
+                            title: 'سبد خرید شما خالی است!',
+                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+                            icon: 'warning',
+                            confirmButtonText: 'باشه'
+                        });
+                    } else {
+                        window.location.href = "{% url 'Amusement_Park:Cart' %}";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });    
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.cart-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch("{% url 'Amusement_Park:check_cart' %}", {
+                    method: "GET",
+                    headers: {
+                        "X-CSRFToken": getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cart_empty) {
+                        Swal.fire({
+                            title: 'سبد خرید شما خالی است!',
+                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+                            icon: 'warning',
+                            confirmButtonText: 'باشه'
+                        });
+                    } else {
+                        window.location.href = "{% url 'Amusement_Park:Cart' %}";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+
+
 </script>
 {% endblock script %}
