@@ -266,7 +266,7 @@ Page content END -->
 		if (phone.length === 11) {
 			return phone.slice(8) + ' **** ' + phone.slice(0, 4);
 		}
-		return phone; // اگر شماره تلفن ۱۱ رقمی نبود، بدون تغییر برگردانید
+		return phone;
 	}
 
 
@@ -328,7 +328,7 @@ Page content END -->
                 });
     
                 document.getElementById('createAt').value = transaction.create_at;
-                document.getElementById('userPhone').value = transaction.customer.phone;
+                document.getElementById('userPhone').value = maskPhoneNumber(transaction.customer.phone);
                 document.getElementById('userFirstName').value = transaction.customer.first_name;
                 document.getElementById('userLastName').value = transaction.customer.last_name;
                 document.getElementById('totalPrice').textContent = parseInt(transaction.product_prices).toLocaleString() + ' ریال';

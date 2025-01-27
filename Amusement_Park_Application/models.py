@@ -489,6 +489,8 @@ class RerecordingTransaction(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش مجدد")
     rerecording_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='rerecording', verbose_name='کد رهگیری تراکنش') 
     type = models.CharField(max_length=10, choices=Transaction.TransactionType.choices, verbose_name='نوع تراکنش', default=Transaction.TransactionType.pc)    
+    mix_pc = models.PositiveBigIntegerField(verbose_name='مقدار قیمت پرداخت شده با دستگاه کارتخوان',  null=True, blank=True, help_text="در صورتی که نوع فروش ترکیبی باشد این فیلد به صورت اتوماتیک دریافت میشود")
+    mix_cash = models.PositiveBigIntegerField(verbose_name='مقدار قیمت پرداخت شده نقدی',  null=True, blank=True, help_text="در صورتی که نوع فروش ترکیبی باشد این فیلد به صورت اتوماتیک دریافت میشود")    
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='rerecording_transactions', verbose_name='فروشنده', null=True, blank=True)  
     is_success = models.BooleanField('تراکنش موفق', default=True, help_text='این فیلد را نیازی نیست حذف کنید فقط تیک این فیلد را بردارید')
     desc = models.TextField('توضیحات', null=True, blank=True)

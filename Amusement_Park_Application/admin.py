@@ -268,8 +268,14 @@ class RerecordingTransactionAdmin(admin.ModelAdmin):
     readonly_fields = ('create_at',)  # Make the creation date field read-only
 
     fieldsets = (
-        (None, {
-            'fields': ('rerecording_transaction', 'type', 'desc', 'is_success', 'create_at')
+        ("تراکنش", {
+            'fields': ('rerecording_transaction', 'is_success', 'desc',)
+        }),
+        ("نوع پرداخت", {
+            'fields': ('type', 'mix_pc', 'mix_cash',)
+        }),
+        ("تاریخ", {
+            'fields': ('create_at',)
         }),
     )
 
