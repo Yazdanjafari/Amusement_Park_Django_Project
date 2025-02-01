@@ -180,40 +180,38 @@ Page content START -->
                                     <div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
                                     </div>
                                 </div>
-                                <div class="accordion-item mb-3">
-                                    <h6 class="accordion-header" id="heading-combined">
-                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined" data-transaction-type="combined">
-                                            ترکیبی
-                                        </button>
-                                    </h6>
-                                    <div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
-                                        <div class="accordion-body">
-                                            <form method="POST">
-                                                {% csrf_token %}
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
-                                                    <input type="text" id="cash-amount" name="cash_amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-                                                    <input type="text" id="card-amount" name="card_amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
-                                                </div>
-                                                <button type="submit" class="btn btn-primary w-100 mb-0">ارسال</button>
-                                            </form>
-                                            
-                                            <br>
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
-                                                </div>
-                                                <div class="col-6">
-                                                    <button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </div>
-                                    </div>
-                                </div>
+ 								<!-- Combined payment -->
+                                 <div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-combined">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+											ترکیبی
+										</button>
+									</h6>
+									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+										<div class="accordion-body">
+											<form class="row g-3">
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
+												</div>
+												<div class="col-6">
+													<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
+												</div>
+											</form>
+											<br>
+											<div class="row">
+												<div class="col-6">
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+												</div>
+												<div class="col-6">
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+												</div>
+											</div>
+											<br>
+										</div>
+									</div>
+								</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -410,42 +408,61 @@ Page content END -->
             }
         }
     
-        // اعمال مقادیر و محاسبه مبلغ باقی‌مانده
+        function validateValue(value, inputField, fieldName, finalPrice) {
+            if (value > finalPrice) {
+                Swal.fire({
+                    title: 'خطا',
+                    text: `مبلغ ${fieldName} نمی‌تواند بیشتر از قیمت نهایی باشد.`,
+                    icon: 'error',
+                    confirmButtonText: 'باشه'
+                });
+                inputField.value = '';
+                return false;
+            }
+            return true;
+        }
+
         applyButton.addEventListener('click', function() {
             const finalPrice = parseAmount(finalPriceElement.innerText); // دریافت مبلغ نهایی
-            const cashValue = parseAmount(cashInput.value); // دریافت مبلغ نقدی
-            const cardValue = parseAmount(cardInput.value); // دریافت مبلغ کارتخوان
-    
+            const cashValue = parseAmount(cashInput.value);              // دریافت مبلغ نقدی
+            const cardValue = parseAmount(cardInput.value);              // دریافت مبلغ کارتخوان
+
             // اگر هر دو فیلد خالی باشند
             if (cashValue === 0 && cardValue === 0) {
-                alert('لطفاً حداقل یکی از فیلدها را پر کنید.');
+                Swal.fire({
+                    title: 'خطا',
+                    text: 'لطفاً حداقل یکی از فیلدها را پر کنید.',
+                    icon: 'error',
+                    confirmButtonText: 'باشه'
+                });
                 return;
             }
-    
-            // اگر مبلغ نقدی وارد شده باشد
+
+            // اگر مبلغ نقدی وارد شده باشد، آن را اعتبارسنجی و مبلغ کارتخوان را محاسبه می‌کنیم
             if (cashValue > 0) {
-                if (cashValue > finalPrice) {
-                    alert('مبلغ نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.');
+                if (!validateValue(cashValue, cashInput, "نقدی", finalPrice)) {
+                    applyButton.disabled = true;
                     return;
                 }
-                cardInput.value = formatAmount(finalPrice - cashValue); // محاسبه مبلغ کارتخوان
+                cardInput.value = formatAmount(finalPrice - cashValue);
             }
-    
-            // اگر مبلغ کارتخوان وارد شده باشد
+
+            // اگر مبلغ کارتخوان وارد شده باشد، آن را اعتبارسنجی و مبلغ نقدی را محاسبه می‌کنیم
             if (cardValue > 0) {
-                if (cardValue > finalPrice) {
-                    alert('مبلغ کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.');
+                if (!validateValue(cardValue, cardInput, "کارتخوان", finalPrice)) {
+                    applyButton.disabled = true;
                     return;
                 }
-                cashInput.value = formatAmount(finalPrice - cardValue); // محاسبه مبلغ نقدی
+                cashInput.value = formatAmount(finalPrice - cardValue);
             }
-    
+
             // غیرفعال کردن فیلدها پس از اعمال
             cashInput.disabled = true;
             cardInput.disabled = true;
             applyButton.disabled = true;
             resetButton.disabled = false;
         });
+
     
         // بازنشانی فرم
         resetButton.addEventListener('click', function() {
@@ -506,15 +523,20 @@ Page content END -->
         });
     
         function submitTransaction() {
-            // Gather the form data and send the request via AJAX
+            const transactionId = document.getElementById('ticketCodeInput').value;
+            const transactionType = document.querySelector('button[data-bs-toggle="collapse"]:active').textContent.trim();
+            const mixPc = document.getElementById('card-amount').value || null;
+            const mixCash = document.getElementById('cash-amount').value || null;
+            const desc = document.getElementById('desc').value || null;
+        
             const data = {
-                transaction_id: document.getElementById('ticketCodeInput').value,
-                transaction_type: document.querySelector('button[data-bs-toggle="collapse"]:active').textContent.trim(),
-                mix_pc: cardAmount.value || null,
-                mix_cash: cashAmount.value || null,
-                desc: document.getElementById('desc').value || null
+                transaction_id: transactionId,
+                transaction_type: transactionType,
+                mix_pc: mixPc,
+                mix_cash: mixCash,
+                desc: desc
             };
-    
+        
             fetch('{% url "Amusement_Park:save_retransaction" %}', {
                 method: 'POST',
                 headers: {
@@ -522,14 +544,34 @@ Page content END -->
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
                 body: JSON.stringify(data)
-            }).then(response => response.json())
-              .then(data => {
-                  if (data.status === 'success') {
-                      alert(data.message);
-                  } else {
-                      alert(data.message);
-                  }
-              });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفقیت',
+                        text: data.message,
+                        confirmButtonText: 'باشه'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: data.message,
+                        confirmButtonText: 'باشه'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                    confirmButtonText: 'باشه'
+                });
+            });
         }
     });
 
@@ -550,6 +592,79 @@ Page content END -->
         });
     });
 
+
+
+    document.getElementById('pay-button').addEventListener('click', function(event) {
+        event.preventDefault();
+    
+        // تعیین نوع تراکنش بر اساس دکمه‌ی انتخاب‌شده
+        let activeAccordion = document.querySelector('.accordion-collapse.show');
+        let transaction_type = "pc"; // پیش‌فرض
+        if (activeAccordion) {
+            let activeButton = activeAccordion.previousElementSibling.querySelector('button');
+            if (activeButton) {
+                const buttonText = activeButton.textContent.trim();
+                // نگاشت متن دکمه به مقدار type مورد نظر در مدل Transaction
+                if (buttonText === "ترکیبی") {
+                    transaction_type = "mix";
+                } else if (buttonText === "نقدی") {
+                    transaction_type = "cash";
+                } else {
+                    transaction_type = "pc";
+                }
+            }
+        }
+    
+        // جمع‌آوری داده‌ها از فرم
+        const dataToSend = {
+            transaction_id: document.getElementById('ticketCodeInput').value,
+            transaction_type: transaction_type,
+            mix_pc: document.getElementById('card-amount').value || null,
+            mix_cash: document.getElementById('cash-amount').value || null,
+            desc: document.getElementById('desc') ? document.getElementById('desc').value : ""
+        };
+    
+        fetch('{% url "Amusement_Park:save_retransaction" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(dataToSend)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفقیت',
+                    text: data.message,
+                    confirmButtonText: 'باشه'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '{% url "Amusement_Park:Products" %}';
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: data.message,
+                    confirmButtonText: 'باشه'
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                confirmButtonText: 'باشه'
+            });
+        });
+    });
+    
+    
 
 
 </script>

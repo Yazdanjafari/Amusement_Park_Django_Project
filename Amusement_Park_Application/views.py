@@ -9,6 +9,7 @@ import json
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
+from django.core.exceptions import ValidationError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -454,47 +455,52 @@ def retransaction(request):
 
 @csrf_exempt
 def save_retransaction(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
-            # دریافت داده‌ها از درخواست
             data = json.loads(request.body)
-            logger.info('داده‌های دریافتی: %s', data)
-
-            transaction_id = data.get('transaction_id')
-            transaction_type = data.get('transaction_type')
-            mix_pc = data.get('mix_pc')
-            mix_cash = data.get('mix_cash')
-            desc = data.get('desc')
-
-            # بررسی وجود تراکنش و کاربر
-            transaction = Transaction.objects.get(id=transaction_id)
-            user = request.user
-
-            # Handling "combined" transaction type
-            if transaction_type == 'combined':
-                if mix_pc is None or mix_cash is None:
-                    return JsonResponse({'status': 'error', 'message': 'لطفاً مقادیر کارتخوان و نقدی را وارد کنید.'})
-
-            # ایجاد و ذخیره تراکنش جدید
-            rerecording_transaction = RerecordingTransaction(
-                rerecording_transaction=transaction,
+            
+            # دریافت اطلاعات ارسالی از کلاینت
+            transaction_id = data.get("transaction_id")
+            transaction_type = data.get("transaction_type", "pc")
+            mix_pc = data.get("mix_pc")  # ممکن است مقدار خالی (empty string) باشد
+            mix_cash = data.get("mix_cash")
+            desc = data.get("desc")
+            
+            # در صورت دریافت رشته خالی، مقدار را None قرار دهید
+            mix_pc = int(mix_pc) if mix_pc and str(mix_pc).strip() != "" else None
+            mix_cash = int(mix_cash) if mix_cash and str(mix_cash).strip() != "" else None
+            
+            # جستجوی تراکنش اصلی بر اساس کد رهگیری (transaction_id)
+            try:
+                original_transaction = Transaction.objects.get(id=transaction_id)
+            except Transaction.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "تراکنش مورد نظر یافت نشد."})
+            
+            # ایجاد نمونه جدید فروش مجدد
+            rerecording = RerecordingTransaction(
+                rerecording_transaction=original_transaction,
                 type=transaction_type,
                 mix_pc=mix_pc,
                 mix_cash=mix_cash,
-                user=user,
-                desc=desc
+                user=request.user,
+                is_success=True,  # در صورت نیاز می‌توانید این مقدار را تغییر دهید
+                desc=desc,
             )
-            rerecording_transaction.save()
-
-            logger.info('تراکنش با موفقیت ثبت شد.')
-            return JsonResponse({'status': 'success', 'message': 'تراکنش با موفقیت ثبت شد.'})
-        except Transaction.DoesNotExist:
-            logger.error('تراکنش یافت نشد.')
-            return JsonResponse({'status': 'error', 'message': 'تراکنش یافت نشد.'})
+            
+            # اعتبارسنجی (برای اجرای متد clean)
+            rerecording.full_clean()
+            
+            # ذخیره شیء (این فراخوانی باعث ایجاد تراکنش جدید در متد save نیز می‌شود)
+            rerecording.save()
+            
+            return JsonResponse({"status": "success", "message": "فروش مجدد با موفقیت ثبت شد."})
+        
+        except ValidationError as ve:
+            return JsonResponse({"status": "error", "message": ve.message_dict})
         except Exception as e:
-            logger.error('خطا در ثبت تراکنش: %s', str(e))
-            return JsonResponse({'status': 'error', 'message': str(e)})
-    return JsonResponse({'status': 'error', 'message': 'درخواست نامعتبر است.'})
+            return JsonResponse({"status": "error", "message": str(e)})
+    
+    return JsonResponse({"status": "error", "message": "متد درخواست صحیح نیست."})
 
 
 
