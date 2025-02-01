@@ -228,7 +228,6 @@ class TransactionAdminClass(admin.ModelAdmin):
     formatted_price.short_description = 'قیمت نهایی'  # Set a custom label for the column
 
 
-
     def changelist_view(self, request, extra_context=None):
         # Filter the queryset for `is_success=True`
         queryset = self.get_queryset(request).filter(is_success=True)
@@ -246,6 +245,10 @@ class TransactionAdminClass(admin.ModelAdmin):
         total_cash_sales = queryset.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
         total_mix_sales = queryset.filter(type='mix').aggregate(total_mix=Sum('price'))['total_mix'] or 0
 
+        # Calculate totals for mix_pc and mix_cash
+        total_mix_pc = queryset.filter(type='mix').aggregate(total_mix_pc=Sum('mix_pc'))['total_mix_pc'] or 0
+        total_mix_cash = queryset.filter(type='mix').aggregate(total_mix_cash=Sum('mix_cash'))['total_mix_cash'] or 0
+
         # Add all totals to extra_context
         extra_context = extra_context or {}
         extra_context.update({
@@ -256,6 +259,8 @@ class TransactionAdminClass(admin.ModelAdmin):
             'total_pc_sales': total_pc_sales,
             'total_cash_sales': total_cash_sales,
             'total_mix_sales': total_mix_sales,
+            'total_mix_pc': total_mix_pc,  
+            'total_mix_cash': total_mix_cash,  #
         })
 
         return super().changelist_view(request, extra_context=extra_context)

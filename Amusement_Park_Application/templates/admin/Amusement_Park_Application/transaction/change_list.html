@@ -15,6 +15,8 @@
         <tr><td colspan="3"><b>مجموع فروش ها با دستگاه کارتخوان : </b><td>{{ total_pc_sales|intcomma:False|default_if_none:"0" }} ریال</td></tr>
         <tr><td colspan="3"><b>مجموع فروش های نقدی : </b><td>{{ total_cash_sales|intcomma:False|default_if_none:"0" }} ریال</td></tr>
         <tr><td colspan="3"><b>مجموع فروش های ترکیبی : </b><td>{{ total_mix_sales|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+        <tr><td colspan="3"><b>مجموع پرداخت‌های کارتخوان در فروش ترکیبی : </b><td>{{ total_mix_pc|intcomma:False|default_if_none:"0" }} ریال</td></tr>
+        <tr><td colspan="3"><b>مجموع پرداخت‌های نقدی در فروش ترکیبی : </b><td>{{ total_mix_cash|intcomma:False|default_if_none:"0" }} ریال</td></tr>    
     </tfoot>
 </table>
 {% endblock %}
