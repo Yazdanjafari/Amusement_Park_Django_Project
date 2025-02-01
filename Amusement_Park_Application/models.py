@@ -218,14 +218,29 @@ class Transaction(models.Model):
         for ticket in self.ticket.ticket_products.all():
             total_price += ticket.product.price * ticket.quantity
         return total_price
+    
+    def clean(self):
+        # Validate manual_discount
+        if self.manual_discount and self.manual_discount < 0:
+            raise ValidationError("تخفیف دستی نمی‌تواند منفی باشد.")
+        
+        # Validate offer percentage
+        if self.offer and (self.offer.persent < 0 or self.offer.persent > 100):
+            raise ValidationError("درصد تخفیف باید بین 0 تا 100 باشد.")
+        
+        # If an offer is applied, manual_discount should be 0
+        if self.offer and self.offer.activate and self.manual_discount:
+            raise ValidationError("هنگام استفاده از کد تخفیف، تخفیف دستی نباید وارد شود.")
 
     def save(self, *args, **kwargs):
         # Run custom validation before saving the transaction
         self.clean()
         
+        # Initialize fields if they are None
         self.product_prices = self.product_prices or 0
         self.discount = self.discount or 0
-        self.tax = self.tax or 0        
+        self.tax = self.tax or 0
+        self.manual_discount = self.manual_discount or 0
 
         # Calculate and update the product_prices field before saving
         if self.ticket:
@@ -244,11 +259,13 @@ class Transaction(models.Model):
         # Apply discount calculation
         if self.offer and self.offer.activate:
             offer_discount = total_amount * self.offer.persent / 100
+            # If an offer is applied, set manual_discount to 0
+            self.manual_discount = 0
         else:
             offer_discount = 0
 
         # Calculate the total discount: Offer discount + manual discount
-        self.discount = offer_discount + (self.manual_discount or 0)
+        self.discount = offer_discount + self.manual_discount
 
         # Validate discount
         if self.discount > total_amount:
@@ -298,7 +315,7 @@ class Ticket(models.Model):
         return sum(item.product.price * item.quantity for item in self.ticket_products.all())
 
     def calculate_tax(self):
-        tax_rate = TaxRate.objects.first().rate  # نرخ مالیات
+        tax_rate = TaxRate.objects.first().rate 
         return int(self.total_price() * tax_rate / 100)
 
     def calculate_final_price(self):
@@ -428,56 +445,23 @@ class SMS(models.Model):
     
         
 class Notification(models.Model):
-    class NotificationTimeChoise(models.TextChoices):
-        hour = '1 ساعت', '1 ساعت'
-        day = '24 ساعت', '24 ساعت'
-        two_days = '48 ساعت', '48 ساعت'
-        week = 'یک هفته', 'یک هفته'
-        month = 'یک ماه', 'یک ماه'
-    
     title = models.CharField(max_length=255, verbose_name='عنوان')
     description = models.TextField(verbose_name='توضیحات')
-    activate_time = models.CharField(max_length=255, choices=NotificationTimeChoise.choices, verbose_name='اعتبار')
     activate = models.BooleanField(default=True, verbose_name='فعال')
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')  # Fixed field name
     
     class Meta:
-        verbose_name = "اعلان"
-        verbose_name_plural = "اعلان ها"
+        verbose_name = "نوتیفیکیشن"
+        verbose_name_plural = "نوتیفیکیشن ها"
         
     def __str__(self):
         return f"{self.title}"
 
     def j_create_at(self):
         if self.create_at:
-            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at)  # Convert to Jalali
             return jalali_date.strftime('%Y/%m/%d %H:%M')
-        return ''      
-      
-    def save(self, *args, **kwargs):
-        # Determine the expiration time based on the selected activate_time
-        if self.activate_time == '1 ساعت':
-            expiration_time = timedelta(hours=1)
-        elif self.activate_time == '24 ساعت':
-            expiration_time = timedelta(hours=24)
-        elif self.activate_time == '48 ساعت':
-            expiration_time = timedelta(hours=48)
-        elif self.activate_time == 'یک هفته':
-            expiration_time = timedelta(weeks=1)
-        elif self.activate_time == 'یک ماه':
-            expiration_time = timedelta(days=30)
-        else:
-            expiration_time = timedelta(0)
-
-        # Ensure create_at is timezone-aware before performing comparison
-        if self.create_at and timezone.is_aware(self.create_at):
-            current_time = timezone.now()
-            # Check if the expiration time has passed and set 'activate' to False
-            if current_time > self.create_at + expiration_time:
-                self.activate = False
-
-        super().save(*args, **kwargs)
-
+        return ''     
     
 
 class RerecordingTransaction(models.Model):
@@ -530,6 +514,8 @@ class RerecordingTransaction(models.Model):
                 price=self.rerecording_transaction.price,
                 desc=self.desc or self.rerecording_transaction.desc,
                 create_at=timezone.now(),
+                mix_pc=self.mix_pc,
+                mix_cash=self.mix_cash,                
             )
             new_transaction.save()
 

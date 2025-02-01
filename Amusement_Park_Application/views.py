@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
 from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -342,12 +343,16 @@ def submit_pay(request):
 
             final_price = total_price + tax
 
-            discount_amount = transaction_data.get('discount_amount', 0)
-            offer = None 
+            offer = None
+            discount_amount = 0  # Initialize discount_amount to 0
+
             if transaction_data.get('discount_code'):
                 offer = Offer.objects.filter(code=transaction_data['discount_code'], activate=True).first()
                 if offer:
-                    discount_amount += int(final_price * offer.persent / 100)
+                    discount_amount = int(final_price * offer.persent / 100)
+            else:
+                # Only apply manual_discount if no offer is applied
+                discount_amount = transaction_data.get('discount_amount', 0)
 
             final_price -= discount_amount
 
@@ -358,7 +363,7 @@ def submit_pay(request):
                 mix_pc=mix_pc,
                 mix_cash=mix_cash,
                 offer=offer, 
-                manual_discount=discount_amount,
+                manual_discount=0 if offer else discount_amount,  # Set manual_discount to 0 if offer exists
                 product_prices=total_price,
                 tax=tax,
                 price=final_price,
@@ -445,6 +450,54 @@ def retransaction(request):
                 'message': 'خریدی با این کد پیگیری یافت نشد'
             })
     return render(request, "Amusement_Park_Application/Submit_Pay.html")
+
+
+@csrf_exempt
+def save_retransaction(request):
+    if request.method == 'POST':
+        try:
+            # دریافت داده‌ها از درخواست
+            data = json.loads(request.body)
+            logger.info('داده‌های دریافتی: %s', data)
+
+            transaction_id = data.get('transaction_id')
+            transaction_type = data.get('transaction_type')
+            mix_pc = data.get('mix_pc')
+            mix_cash = data.get('mix_cash')
+            desc = data.get('desc')
+
+            # بررسی وجود تراکنش و کاربر
+            transaction = Transaction.objects.get(id=transaction_id)
+            user = request.user
+
+            # Handling "combined" transaction type
+            if transaction_type == 'combined':
+                if mix_pc is None or mix_cash is None:
+                    return JsonResponse({'status': 'error', 'message': 'لطفاً مقادیر کارتخوان و نقدی را وارد کنید.'})
+
+            # ایجاد و ذخیره تراکنش جدید
+            rerecording_transaction = RerecordingTransaction(
+                rerecording_transaction=transaction,
+                type=transaction_type,
+                mix_pc=mix_pc,
+                mix_cash=mix_cash,
+                user=user,
+                desc=desc
+            )
+            rerecording_transaction.save()
+
+            logger.info('تراکنش با موفقیت ثبت شد.')
+            return JsonResponse({'status': 'success', 'message': 'تراکنش با موفقیت ثبت شد.'})
+        except Transaction.DoesNotExist:
+            logger.error('تراکنش یافت نشد.')
+            return JsonResponse({'status': 'error', 'message': 'تراکنش یافت نشد.'})
+        except Exception as e:
+            logger.error('خطا در ثبت تراکنش: %s', str(e))
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'درخواست نامعتبر است.'})
+
+
+
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required

@@ -16,6 +16,7 @@ urlpatterns = [
     path("Refund", views.refund, name= "Refund"),
     path("Setting", views.setting, name= "Setting"),
     path("retransaction", views.retransaction, name= "retransaction"),
+    path("save_retransaction", views.save_retransaction, name= "save_retransaction"),
     path("scanner", views.scanner, name= "Scanner"),
     path('search-customer/', views.search_customer_by_phone, name='search_customer_by_phone'),
     path('save_customer/', views.save_customer, name='save_customer'),

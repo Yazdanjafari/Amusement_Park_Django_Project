@@ -158,15 +158,15 @@ class SMSAdmin(admin.ModelAdmin):
 
 # Notification Admin
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'activate_time', 'activate', 'j_create_at')
-    search_fields = ('title', 'activate_time')
+    list_display = ('title', 'activate', 'description', 'j_create_at')  # Fixed missing comma
+    search_fields = ('title',)
     list_filter = ('activate', 'create_at')
     ordering = ('-create_at',)
     
     def j_create_at(self, obj):
-        # Assuming you have a method in your model that formats the date to Jalali
-        return obj.j_create_at()  # Ensure this method exists in your model
-    j_create_at.short_description = _('تاریخ ایجاد')    
+        # Ensure the `j_create_at` method exists in the Notification model
+        return obj.j_create_at()
+    j_create_at.short_description = _('تاریخ ایجاد')  # Set the column header name
 
 
 
@@ -191,7 +191,6 @@ class TransactionAdminClass(admin.ModelAdmin):
         }),
     )
 
-
     def save_model(self, request, obj, form, change):
         try:
             obj.save()
@@ -200,24 +199,31 @@ class TransactionAdminClass(admin.ModelAdmin):
             return
         super().save_model(request, obj, form, change)
 
-
     def formatted_product_prices(self, obj):
-        return '{:,}'.format(obj.product_prices)  # Format the product_prices with commas
+        if obj.product_prices is not None:
+            return '{:,}'.format(obj.product_prices)  # Format the product_prices with commas
+        return ''  # Return an empty string if product_prices is None
     formatted_product_prices.admin_order_field = 'product_prices'  # Allow sorting by product_prices
     formatted_product_prices.short_description = 'مجموع مبلغ محصولات'  # Set a custom label for the column
 
     def formatted_tax(self, obj):
-        return '{:,}'.format(obj.tax)  # Format the tax with commas
+        if obj.tax is not None:
+            return '{:,}'.format(obj.tax)  # Format the tax with commas
+        return ''  # Return an empty string if tax is None
     formatted_tax.admin_order_field = 'tax'  # Allow sorting by tax
     formatted_tax.short_description = 'مبلغ مالیات'  # Set a custom label for the column
 
     def formatted_discount(self, obj):
-        return '{:,}'.format(obj.discount)  # Format the discount with commas
+        if obj.discount is not None:
+            return '{:,}'.format(obj.discount)  # Format the discount with commas
+        return ''  # Return an empty string if discount is None
     formatted_discount.admin_order_field = 'discount'  # Allow sorting by discount
     formatted_discount.short_description = 'مبلغ تخفیف'  # Set a custom label for the column
 
     def formatted_price(self, obj):
-        return '{:,}'.format(obj.price)  # Format the price with commas
+        if obj.price is not None:
+            return '{:,}'.format(obj.price)  # Format the price with commas
+        return ''  # Return an empty string if price is None
     formatted_price.admin_order_field = 'price'  # Allow sorting by price
     formatted_price.short_description = 'قیمت نهایی'  # Set a custom label for the column
 

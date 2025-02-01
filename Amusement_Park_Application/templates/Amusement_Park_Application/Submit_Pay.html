@@ -89,7 +89,7 @@ Page content START -->
                     <!-- Title for transaction form -->
                     <h5 class="mb-0">ثبت مجدد تراکنش :</h5>
                     <!-- Transaction form START -->
-                    <form id="retransactionForm">
+                    <form id="retransactionForm" method="post">
                         {% csrf_token %}
                         <div class="input-group mt-2">
                             <input id="ticketCodeInput" name="transaction_id" class="form-control" placeholder="کد رهگیری فروش" type="text">
@@ -150,6 +150,10 @@ Page content START -->
 							<label for="">* نام خانوادگی :</label>
 							<input id="userLastName" type="text" class="form-control" readonly value="">
 						</div>
+                        <div class="col-12">
+                            <label class="form-label">توضیحات (در صورت نیاز)</label>
+                            <textarea id="desc" class="form-control" placeholder="توضیحات را وارد کنید"></textarea>
+                        </div>                        
                     </div>
                     <hr>
                     <!-- Payment method START -->
@@ -159,7 +163,7 @@ Page content START -->
                             <div class="accordion accordion-circle" id="accordioncircle">
                                 <div class="accordion-item mb-3">
                                     <h6 class="accordion-header" id="heading-card-reader">
-                                        <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+                                        <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader" data-transaction-type="pc">
                                             دستگاه کارتخوان
                                         </button>
                                     </h6>
@@ -169,7 +173,7 @@ Page content START -->
                                 {% if request.user.is_superuser or request.user.is_staff %}
                                 <div class="accordion-item mb-3">
                                     <h6 class="accordion-header" id="heading-cash">
-                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash" data-transaction-type="cash">
                                             نقدی
                                         </button>
                                     </h6>
@@ -178,22 +182,25 @@ Page content START -->
                                 </div>
                                 <div class="accordion-item mb-3">
                                     <h6 class="accordion-header" id="heading-combined">
-                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined" data-transaction-type="combined">
                                             ترکیبی
                                         </button>
                                     </h6>
                                     <div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
                                         <div class="accordion-body">
-                                            <form class="row g-3">
+                                            <form method="POST">
+                                                {% csrf_token %}
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
-                                                    <input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
+                                                    <input type="text" id="cash-amount" name="cash_amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
                                                 </div>
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-                                                    <input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
+                                                    <input type="text" id="card-amount" name="card_amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
                                                 </div>
+                                                <button type="submit" class="btn btn-primary w-100 mb-0">ارسال</button>
                                             </form>
+                                            
                                             <br>
                                             <div class="row">
                                                 <div class="col-6">
@@ -243,7 +250,7 @@ Page content START -->
                     </ul>
                     <hr>
                     <div class="d-grid">
-                        <a href='' id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
+                        <a type="button" id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
                         <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
                     </div>
                 </div>
@@ -454,7 +461,96 @@ Page content END -->
         cashInput.addEventListener('input', updateButtons);
         cardInput.addEventListener('input', updateButtons);
     });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const transactionTypeButtons = document.querySelectorAll('.accordion-button');
+        const applyButton = document.getElementById('apply-button');
+        const resetButton = document.getElementById('reset-button');
+        const cashAmount = document.getElementById('cash-amount');
+        const cardAmount = document.getElementById('card-amount');
     
+        // Disable the fields by default
+        cashAmount.disabled = true;
+        cardAmount.disabled = true;
+        applyButton.disabled = true;
+    
+        transactionTypeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const selectedType = this.textContent.trim(); // "دستگاه کارتخوان", "نقدی", "ترکیبی"
+                
+                if (selectedType === "ترکیبی") {
+                    // Enable both fields for combined transaction type
+                    cashAmount.disabled = false;
+                    cardAmount.disabled = false;
+                    applyButton.disabled = false;
+                } else {
+                    // Disable both fields for other transaction types
+                    cashAmount.disabled = true;
+                    cardAmount.disabled = true;
+                    applyButton.disabled = false; // Only the apply button remains enabled
+                }
+            });
+        });
+    
+        applyButton.addEventListener('click', function () {
+            const transactionType = document.querySelector('button[data-bs-toggle="collapse"]:active').textContent.trim();
+            
+            // If transaction type is combined, both fields are required
+            if (transactionType === "ترکیبی" && (!cashAmount.value || !cardAmount.value)) {
+                alert("لطفاً مقادیر کارتخوان و نقدی را وارد کنید.");
+            } else {
+                // Submit form or make AJAX request
+                submitTransaction();
+            }
+        });
+    
+        function submitTransaction() {
+            // Gather the form data and send the request via AJAX
+            const data = {
+                transaction_id: document.getElementById('ticketCodeInput').value,
+                transaction_type: document.querySelector('button[data-bs-toggle="collapse"]:active').textContent.trim(),
+                mix_pc: cardAmount.value || null,
+                mix_cash: cashAmount.value || null,
+                desc: document.getElementById('desc').value || null
+            };
+    
+            fetch('{% url "Amusement_Park:save_retransaction" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.status === 'success') {
+                      alert(data.message);
+                  } else {
+                      alert(data.message);
+                  }
+              });
+        }
+    });
+
+    
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const payButton = document.getElementById('pay-button');
+        if (!payButton) {
+            console.error('دکمه پرداخت یافت نشد!');
+            return;
+        }
+    
+        payButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            console.log('دکمه پرداخت کلیک شد!');
+            // بقیه کدها
+        });
+    });
+
+
 
 </script>
 {% endblock script %}

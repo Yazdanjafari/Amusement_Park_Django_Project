@@ -769,14 +769,12 @@ Page content END -->
 
 	// Function to update the final price
 	function updateFinalPrice() {
-		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
-		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
-		const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));  // Get discount amount
-
-		// Calculate final price
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // قیمت محصولات
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // مالیات
+		const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));  // تخفیف
+	
 		const finalPrice = totalPrice + taxAmount - discountAmount;
-
-		// Update final price display
+	
 		document.getElementById('final-price').innerText = finalPrice.toLocaleString() + ' ریال';
 	}
 
@@ -1270,18 +1268,23 @@ Page content END -->
 		const discountCode = document.getElementById('discount-code').value;
 	
 		fetch(`{% url 'Amusement_Park:check_discount_code' %}?code=${discountCode}`)
-		.then(response => response.json())
-		.then(data => {
-			if (data.success) {
-				const discountAmount = (parseFloat(document.getElementById('item-total-price').innerText.replace(/[^0-9.-]+/g, "")) / 100) * data.percent;
-				document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
-				updateFinalPrice(); 
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			alert('خطا در ارتباط با سرور.');
-		});
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/[^0-9.-]+/g, ""));
+					const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/[^0-9.-]+/g, ""));
+					const totalWithTax = totalPrice + taxAmount;  // مجموع قیمت محصولات و مالیات
+	
+					const discountAmount = (totalWithTax / 100) * data.percent;  // محاسبه تخفیف بر اساس مجموع قیمت و مالیات
+					document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
+	
+					updateFinalPrice();  // به‌روزرسانی قیمت نهایی
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('خطا در ارتباط با سرور.');
+			});
 	});
 
 
