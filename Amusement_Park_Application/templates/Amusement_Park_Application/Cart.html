@@ -1273,12 +1273,12 @@ Page content END -->
 				if (data.success) {
 					const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/[^0-9.-]+/g, ""));
 					const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/[^0-9.-]+/g, ""));
-					const totalWithTax = totalPrice + taxAmount;  // مجموع قیمت محصولات و مالیات
+					const totalWithTax = totalPrice + taxAmount;  
 	
-					const discountAmount = (totalWithTax / 100) * data.percent;  // محاسبه تخفیف بر اساس مجموع قیمت و مالیات
+					const discountAmount = (totalWithTax / 100) * data.percent; 
 					document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
 	
-					updateFinalPrice();  // به‌روزرسانی قیمت نهایی
+					updateFinalPrice();  
 				}
 			})
 			.catch(error => {
