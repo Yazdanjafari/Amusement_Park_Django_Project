@@ -31,152 +31,157 @@ Page Banner END -->
 <!-- =======================
 Page content START -->
 <section class="pt-5">
-	<div class="container">
-	
-		<div class="row g-4 g-sm-5">
-			<!-- Main content START -->
-			<div class="col-lg-8 mb-4 mb-sm-0">
-				<div class="card card-body p-4 shadow">
-					<div class="table-responsive border-0 rounded-3">
-						<!-- Table START -->
-						<table class="table align-middle p-4 mb-0">
-                            <!-- Transaction form START -->
-                            <div class="input-group mt-2">
-                                <input id="ticketCodeInput" class="form-control" placeholder="کد رهگیری فروش" type="text">
-                                <button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
-                            </div>        
-                            <hr>   
-                            <!-- Table head -->
-                            <h5 class="">خرید های ثبت شده :</h5>
-							<!-- Table body START -->
-							<tbody class="border-top-0" id="transactionDetails">
-                     
-								<!-- Table item -->
-								<tr>
-									<!-- Course item -->
-									<td>
-										<div class="d-lg-flex align-items-center">
-											<!-- Image -->
-											<div class="w-100px w-md-80px mb-2 mb-md-0">
-												<img src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
-											</div>
-											<!-- Title -->
-											<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">	
-												<a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
-											</h6>
-										</div>
-									</td>
+    <div class="container">
+        <div class="row g-4 g-sm-5">
+            <!-- Main content START -->
+            <div class="col-12 mb-4 mb-sm-0">
+                <!-- Personal info START -->
+                <div class="card card-body shadow p-4">
+                    <!-- Title for transaction form -->
+                    <h5 class="mb-0">ثبت مجدد تراکنش :</h5>
+                    <!-- Transaction form START -->
+                    <form id="retransactionForm" method="post">
+                        {% csrf_token %}
+                        <div class="input-group mt-2">
+                            <input id="ticketCodeInput" name="transaction_id" class="form-control" placeholder="کد رهگیری فروش" type="text">
+                            <button id="applyButton" type="button" class="btn btn-primary">اعمال</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-									<!-- Amount item -->
-									<td class="text-center">
-										<h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
-									</td>
-									<!-- Action item -->
-									<td>
-										<div class="d-flex justify-content-between align-items-center">
-											<button class="btn btn-success btn-sm disabled"><i class="bi bi-cart"></i></button>
-											<button class="btn btn-outline-danger btn-sm disabled" onclick="increment(this)">+</button>
-											<button class="btn btn-outline-primary btn-sm counter" disabled>1</button>
-											<button class="btn btn-outline-danger btn-sm disabled" onclick="decrement(this)">-</button>
-										</div>
-									</td>
-								</tr>
-							</tbody>  
-						</table>
-					</div>
-
-                    <!-- Payment method START -->
-                    <div class="row g-3 mt-4">
-                        <!-- Title -->
-                        <h5 class="mb-3">روش های عودت وجه :</h5>
-                        <div class="col-12">
-                            <div class="accordion accordion-circle" id="accordioncircle">
-                                <!-- Card reader (Default) -->
-                                <div class="accordion-item mb-3">
-                                    <h6 class="accordion-header" id="heading-card-reader">
-                                        <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-                                            نقدی
-                                        </button>
-                                    </h6>
-                                    <div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle"></div>
-                                </div>
-                                <!-- Cash -->
-                                <div class="accordion-item mb-3">
-                                    <h6 class="accordion-header" id="heading-cash">
-                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-                                            کارت به کارت
-                                        </button>
-                                    </h6>
-                                    <div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
-                                        <!-- Accordion body -->
-                                        <div class="accordion-body">
-                                            <!-- Form START -->
-                                            <form class="row g-3">
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">شماره کارت مقصد :</span></label>
-                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="16" minlength="16">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
-                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
-                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
-                                                </div>
-                                            </form>
-                                            <!-- Form END -->
+            <div id="transactionDetails" class="col-xl-8 mb-4 mb-sm-0" style="display: none;">
+                <!-- Personal info START -->
+                <div class="card card-body shadow p-4">
+                    <!-- Transaction form END -->
+                    <h5 class="">اطلاعات فاکتور ثبت شده :</h5>
+                    <table class="table align-middle p-4 mb-0">
+                        <!-- Table body START -->
+                        <tbody class="border-top-0" id="transactionDetailsTable">
+                            <!-- Table item -->
+                            <tr>
+                                <!-- Course item -->
+                                <td>
+                                    <div class="d-lg-flex align-items-center">
+                                        <!-- Image -->
+                                        <div class="w-100px w-md-80px mb-2 mb-md-0">
+                                            <img src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
                                         </div>
+                                        <!-- Title -->
+                                        <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">
+                                            <a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+                                        </h6>
+                                    </div>
+                                </td>
+
+                                <!-- Amount item -->
+                                <td class="text-center">
+                                    <h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
+                                </td>
+                                <!-- Action item -->
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button class="btn btn-success btn-sm disabled"><i class="bi bi-cart"></i></button>
+                                        <button class="btn btn-outline-danger btn-sm disabled" onclick="increment(this)">+</button>
+                                        <button class="btn btn-outline-primary btn-sm counter" disabled>1</button>
+                                        <button class="btn btn-outline-danger btn-sm disabled" onclick="decrement(this)">-</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <!-- Payment method START -->
+                <div class="card card-body p-4 shadow">
+                    <!-- Title -->
+                    <h5 class="mb-3">روش های عودت وجه :</h5>
+                    <div class="col-12">
+                        <div class="accordion accordion-circle" id="accordioncircle">
+                            <!-- Card reader (Default) -->
+                            <div class="accordion-item mb-3">
+                                <h6 class="accordion-header" id="heading-card-reader">
+                                    <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+                                        نقدی
+                                    </button>
+                                </h6>
+                                <div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle"></div>
+                            </div>
+                            <!-- Cash -->
+                            <div class="accordion-item mb-3">
+                                <h6 class="accordion-header" id="heading-cash">
+                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+                                        کارت به کارت
+                                    </button>
+                                </h6>
+                                <div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
+                                    <!-- Accordion body -->
+                                    <div class="accordion-body">
+                                        <!-- Form START -->
+                                        <form class="row g-3">
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
+                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">شماره کارت مقصد :</span></label>
+                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="16" minlength="16">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
+                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
+                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
+                                            </div>
+                                        </form>
+                                        <!-- Form END -->
                                     </div>
                                 </div>
-                                <!-- Combined payment -->
-                                <div class="accordion-item mb-3">
-                                    <h6 class="accordion-header" id="heading-combined">
-                                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-                                            انتقال با شماره شبا
-                                        </button>
-                                    </h6>
-                                    <div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
-                                        <!-- Accordion body -->
-                                        <div class="accordion-body">
-                                            <!-- Form START -->
-                                            <form class="row g-3">
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">شماره شبا مقصد :</span></label>
-                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="24" minlength="24">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
-                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
-                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
-                                                </div>
-                                            </form>
-                                            <!-- Form END -->
-                                        </div>
+                            </div>
+                            <!-- Combined payment -->
+                            <div class="accordion-item mb-3">
+                                <h6 class="accordion-header" id="heading-combined">
+                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+                                        انتقال با شماره شبا
+                                    </button>
+                                </h6>
+                                <div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+                                    <!-- Accordion body -->
+                                    <div class="accordion-body">
+                                        <!-- Form START -->
+                                        <form class="row g-3">
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
+                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">شماره شبا مقصد :</span></label>
+                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="24" minlength="24">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
+                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
+                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
+                                            </div>
+                                        </form>
+                                        <!-- Form END -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Payment method END -->                    
+                </div>
+                <!-- Payment method END -->
+            </div>
+            <!-- Main content END -->
 
-				</div>
-			</div>
-			<!-- Main content END -->
-
-			<!-- Right sidebar START -->
-			<div class="col-lg-4">
+            <!-- Right sidebar START -->
+            <div id="rightSidebar" class="col-lg-4" style="display: none;">
                 <!-- Card total START -->
                 <div class="card card-body p-4 shadow">
                     <h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
@@ -202,14 +207,15 @@ Page content START -->
                     </ul>
                     <hr>
                     <div class="d-grid">
-                        <a type="button" id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
+                        <a type="button" id="pay-button" class="btn btn-lg btn-success">عودت وجه</a>
                         <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
                     </div>
                 </div>
                 <!-- Card total END -->
-			</div>
-		</div><!-- Row END -->
-	</div>
+            </div>
+            <!-- Right sidebar END -->
+        </div><!-- Row END -->
+    </div>
 </section>
 <!-- =======================
 Page content END -->
@@ -454,7 +460,7 @@ Page content END -->
         if (transactionId) {
             fetch(`/Amusement_Park/get_transaction_details/?transaction_id=${transactionId}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })            
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -468,7 +474,8 @@ Page content END -->
     });
     
     function updateTransactionDetails(data) {
-        var tbody = document.getElementById('transactionDetails');
+        // به‌روزرسانی tbody جدول اطلاعات تراکنش
+        var tbody = document.getElementById('transactionDetailsTable');
         tbody.innerHTML = '';
     
         data.products.forEach(product => {
@@ -499,11 +506,19 @@ Page content END -->
             tbody.appendChild(row);
         });
     
+        // به‌روزرسانی اطلاعات قیمت‌ها
         document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('finalPrice').innerText = Number(data.price).toLocaleString('fa-IR') + ' ریال';
+    
+        // نمایش کانتینرهای اطلاعات تراکنش و sidebar
+        document.getElementById('transactionDetails').style.display = 'block';
+        document.getElementById('rightSidebar').style.display = 'block';
+    
+        document.getElementById('applyButton').disabled = true;
     }
+    
     
 
 

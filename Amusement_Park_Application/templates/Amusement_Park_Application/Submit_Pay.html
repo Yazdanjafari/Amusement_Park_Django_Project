@@ -341,13 +341,10 @@ Page content END -->
                 document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + ' ریال';
                 document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + ' ریال';
     
-                // نمایش بخش اطلاعات تراکنش
                 document.getElementById('transactionDetails').style.display = 'block';
     
-                // نمایش بخش Right sidebar
                 document.getElementById('rightSidebar').style.display = 'block';
     
-                // غیرفعال کردن دکمه "اعمال"
                 document.getElementById('applyButton').disabled = true;
     
                 Swal.fire({
