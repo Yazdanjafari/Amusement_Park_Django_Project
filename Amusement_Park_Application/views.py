@@ -380,10 +380,6 @@ def submit_pay(request):
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
 
 
-# ---------------------------------------------   --------------------------------------------- #
-@login_required
-def mobile_error(request):
-    return render(request, "Amusement_Park_Application/Mobile_Error.html")
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
@@ -442,7 +438,7 @@ def retransaction(request):
                             'last_name': customer.last_name if customer else 'N/A',
                             'phone': customer.phone if customer else 'N/A'
                         },
-                        'products': products  # ارسال لیست محصولات
+                        'products': products
                     }
                 })
         except Transaction.DoesNotExist:
@@ -459,38 +455,32 @@ def save_retransaction(request):
         try:
             data = json.loads(request.body)
             
-            # دریافت اطلاعات ارسالی از کلاینت
             transaction_id = data.get("transaction_id")
             transaction_type = data.get("transaction_type", "pc")
-            mix_pc = data.get("mix_pc")  # ممکن است مقدار خالی (empty string) باشد
+            mix_pc = data.get("mix_pc")
             mix_cash = data.get("mix_cash")
             desc = data.get("desc")
             
-            # در صورت دریافت رشته خالی، مقدار را None قرار دهید
             mix_pc = int(mix_pc) if mix_pc and str(mix_pc).strip() != "" else None
             mix_cash = int(mix_cash) if mix_cash and str(mix_cash).strip() != "" else None
             
-            # جستجوی تراکنش اصلی بر اساس کد رهگیری (transaction_id)
             try:
                 original_transaction = Transaction.objects.get(id=transaction_id)
             except Transaction.DoesNotExist:
                 return JsonResponse({"status": "error", "message": "تراکنش مورد نظر یافت نشد."})
             
-            # ایجاد نمونه جدید فروش مجدد
             rerecording = RerecordingTransaction(
                 rerecording_transaction=original_transaction,
                 type=transaction_type,
                 mix_pc=mix_pc,
                 mix_cash=mix_cash,
                 user=request.user,
-                is_success=True,  # در صورت نیاز می‌توانید این مقدار را تغییر دهید
+                is_success=True,  
                 desc=desc,
             )
             
-            # اعتبارسنجی (برای اجرای متد clean)
             rerecording.full_clean()
             
-            # ذخیره شیء (این فراخوانی باعث ایجاد تراکنش جدید در متد save نیز می‌شود)
             rerecording.save()
             
             return JsonResponse({"status": "success", "message": "فروش مجدد با موفقیت ثبت شد."})

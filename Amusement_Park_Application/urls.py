@@ -12,7 +12,6 @@ urlpatterns = [
     path('update_item_quantity/', views.update_item_quantity, name='update_item_quantity'),
     path('calculate-total-price/', views.calculate_total_price, name='calculate_total_price'), 
     path('check-discount-code/', views.check_discount_code, name='check_discount_code'),
-    path("Mobile_Error", views.mobile_error, name= "Mobile_Error"),
     path("Refund", views.refund, name= "Refund"),
     path("Setting", views.setting, name= "Setting"),
     path("retransaction", views.retransaction, name= "retransaction"),

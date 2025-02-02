@@ -59,7 +59,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Amusement_Park_Application.middleware.MobileAccessMiddleware',
     'Amusement_Park_Application.middleware.AdminAccessMiddleware',
     'Amusement_Park_Application.middleware.RoleBasedAccessMiddleware',
     'Amusement_Park_Application.middleware.KioskBasedAccessMiddleware',

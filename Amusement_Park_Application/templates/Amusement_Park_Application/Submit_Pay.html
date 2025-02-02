@@ -493,6 +493,9 @@ Page content END -->
                 }
             });
         });
+
+
+        
         function getTransactionType() {
             const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
             const isCashOpen = document.getElementById('collapse-cash').classList.contains('show');
@@ -511,7 +514,6 @@ Page content END -->
             event.preventDefault();
             const transactionType = getTransactionType();
         
-            // بررسی نوع تراکنش و نمایش پیام مناسب
             if (transactionType === 'cash') {
                 Swal.fire({
                     title: 'تأیید فروش نقدی',
@@ -525,7 +527,7 @@ Page content END -->
                         proceedWithPayment();
                     }
                 });
-                return; // جلوگیری از اجرای ادامه کد قبل از تأیید
+                return;
             }
         
             if (transactionType === 'mix') {
@@ -551,7 +553,6 @@ Page content END -->
                 }
             }
         
-            // اگر هیچ مشکلی وجود نداشت، ادامه بده
             proceedWithPayment();
         });
         
