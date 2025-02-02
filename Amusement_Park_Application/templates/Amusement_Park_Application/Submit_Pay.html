@@ -608,6 +608,95 @@ Page content END -->
     
     
 
+    {% comment %} document.addEventListener("DOMContentLoaded", function () {
+        const cashAmountInput = document.getElementById("cash-amount");
+        const cardAmountInput = document.getElementById("card-amount");
+        const applyButton = document.getElementById("apply-button");
+        const resetButton = document.getElementById("reset-button");
+        const finalPrice = document.getElementById("finalPrice");
+ 
+        // مقدار اولیه فیلدها
+        cashAmountInput.value = '';
+        cardAmountInput.value = '';
+
+        // غیرفعال کردن دکمه‌ها در ابتدا
+        applyButton.disabled = true;
+        resetButton.disabled = true;
+
+        // بازنشانی مقادیر در هر تغییر finalPrice
+        function resetFields() {
+            cashAmountInput.value = '';
+            cardAmountInput.value = '';
+            cashAmountInput.disabled = false;
+            cardAmountInput.disabled = false;
+            applyButton.disabled = true;
+            resetButton.disabled = true;
+        }
+
+        // اعتبارسنجی ورودی
+        function validateAmount(input, otherInput) {
+            let amount = parseFloat(input.value.replace(/[^0-9.]/g, '')) || 0;
+            if (amount > finalPrice) {
+                Swal.fire("مقدار وارد شده بیش از قیمت نهایی است!");
+                input.value = '';
+                return false;
+            }
+            if (otherInput.value !== '') {
+                applyButton.disabled = false;
+            }
+            return true;
+        }
+
+        // دکمه "اعمال"
+        applyButton.addEventListener("click", function () {
+            const cashAmount = parseFloat(cashAmountInput.value.replace(/[^0-9.]/g, '')) || 0;
+            const cardAmount = parseFloat(cardAmountInput.value.replace(/[^0-9.]/g, '')) || 0;
+
+            if (cashAmount > 0) {
+                cardAmountInput.value = finalPrice - cashAmount;
+            } else if (cardAmount > 0) {
+                cashAmountInput.value = finalPrice - cardAmount;
+            }
+
+            // غیرفعال کردن فیلدها و دکمه
+            cashAmountInput.disabled = true;
+            cardAmountInput.disabled = true;
+            applyButton.disabled = true;
+            resetButton.disabled = false;
+        });
+
+        // دکمه "تلاش مجدد"
+        resetButton.addEventListener("click", function () {
+            resetFields();
+        });
+
+        // دکمه "پرداخت"
+        const paymentButton = document.getElementById("payment-button");
+        paymentButton.addEventListener("click", function () {
+            const cashAmount = parseFloat(cashAmountInput.value.replace(/[^0-9.]/g, '')) || 0;
+            const cardAmount = parseFloat(cardAmountInput.value.replace(/[^0-9.]/g, '')) || 0;
+
+            if (cashAmount === 0 && cardAmount === 0) {
+                Swal.fire("لطفاً مقادیر نقدی و کارتخوان را وارد کنید.");
+            } else if (cashAmount > 0 && cardAmount === 0) {
+                Swal.fire("پرداخت نقدی تایید شد.");
+            } else if (cardAmount > 0 && cashAmount === 0) {
+                Swal.fire("پرداخت کارتخوان تایید شد.");
+            }
+        });
+
+        // اعتبارسنجی مقادیر فیلدها
+        cashAmountInput.addEventListener("input", function () {
+            validateAmount(cashAmountInput, cardAmountInput);
+        });
+
+        cardAmountInput.addEventListener("input", function () {
+            validateAmount(cardAmountInput, cashAmountInput);
+        });
+    }); {% endcomment %}
+
+
+
 
 
 </script>

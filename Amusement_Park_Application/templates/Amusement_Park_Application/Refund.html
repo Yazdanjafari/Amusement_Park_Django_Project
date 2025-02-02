@@ -74,7 +74,7 @@ Page content START -->
 									<!-- Action item -->
 									<td>
 										<div class="d-flex justify-content-between align-items-center">
-											<button class="btn btn-outline-warning btn-sm disabled"><i class="fas fa-trash"></i></button>
+											<button class="btn btn-success btn-sm disabled"><i class="bi bi-cart"></i></button>
 											<button class="btn btn-outline-danger btn-sm disabled" onclick="increment(this)">+</button>
 											<button class="btn btn-outline-primary btn-sm counter" disabled>1</button>
 											<button class="btn btn-outline-danger btn-sm disabled" onclick="decrement(this)">-</button>
@@ -114,11 +114,11 @@ Page content START -->
                                             <form class="row g-3">
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
+                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
                                                 </div>
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">شماره کارت مقصد :</span></label>
-                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
+                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="16" minlength="16">
                                                 </div>
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
@@ -147,11 +147,11 @@ Page content START -->
                                             <form class="row g-3">
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
+                                                    <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
                                                 </div>
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">شماره شبا مقصد :</span></label>
-                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
+                                                    <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="24" minlength="24">
                                                 </div>
                                                 <div class="col-6">
                                                     <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
@@ -177,40 +177,36 @@ Page content START -->
 
 			<!-- Right sidebar START -->
 			<div class="col-lg-4">
-				<!-- Card total START -->
-				<div class="card card-body p-4 shadow">
-					<!-- Title -->
-					<h4 class="mb-3 fs-5 text-center">صورت حساب ثبت شده</h4>
-					<hr>
-
-					<!-- Price and detail -->
-					<ul class="list-group list-group-borderless mb-2">
-						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">قیمت</span>
-							<span class="h6 fw-light mb-0 fw-bold">850,000 تومان</span>
-						</li>
-						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">مالیات</span>
-							<span class="h6 fw-light mb-0 fw-bold">85,000 تومان</span>
-						</li>
-						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">تخفیف</span>
-							<span class="h6 fw-light mb-0 fw-bold">250,000 تومان</span>
-						</li>
-						<br>
-						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h5 mb-0">قیمت نهایی</span>
-							<span class="text-danger h5">500,000 تومان</span>
-						</li>
-					</ul>
-					<hr>
-
-					<!-- Button -->
-					<div class="d-grid">
-						<a href="" class="btn btn-lg btn-success">عودت وجه</a>
-					</div>
-				</div>
-				<!-- Card total END -->
+                <!-- Card total START -->
+                <div class="card card-body p-4 shadow">
+                    <h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
+                    <hr>
+                    <ul class="list-group list-group-borderless mb-2">
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">قیمت</span>
+                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">مالیات (% 10)</span>
+                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">تخفیف</span>
+                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <br>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h5 mb-0">قیمت نهایی</span>
+                            <span id="finalPrice" class="text-danger h5">0 ریال</span>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="d-grid">
+                        <a type="button" id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
+                        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
+                    </div>
+                </div>
+                <!-- Card total END -->
 			</div>
 		</div><!-- Row END -->
 	</div>
@@ -294,12 +290,6 @@ Page content END -->
 	
 	
 	
-	
-	<!-- _________________________________________________________ -->
-	
-	
-
-	
     // Function to increment the counter
     function increment(button) {
 		const counter = button.parentElement.querySelector('.counter');
@@ -316,38 +306,6 @@ Page content END -->
         }
     }
 	
-	
-	
-	
-	
-	
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', function() {
-			const buttonId = 'btn-' + this.id.split('-')[1];
-            const tipId = 'tip-' + this.id.split('-')[1];
-            const button = document.getElementById(buttonId);
-            const tip = document.getElementById(tipId);
-            
-            // Reset previous form if another form is being typed in
-            document.querySelectorAll('input').forEach(otherInput => {
-				if (otherInput !== this && otherInput.value.trim() !== '') {
-					otherInput.value = '';
-                    document.getElementById('btn-' + otherInput.id.split('-')[1]).setAttribute('disabled', true);
-                    document.getElementById('tip-' + otherInput.id.split('-')[1]).style.display = 'none';
-                }
-            });
-			
-            // Enable/Disable button and show tip
-            if (this.value.trim() !== '') {
-				button.removeAttribute('disabled');
-                tip.style.display = 'inline';
-                tip.textContent = this.getAttribute('data-tip');
-            } else {
-				button.setAttribute('disabled', true);
-                tip.style.display = 'none';
-            }
-        });
-    });
 
 
     // Get references to the input and button elements
@@ -458,6 +416,33 @@ Page content END -->
             return cookieValue;
         }
     });
+
+
+    document.getElementById("pay-button").addEventListener("click", function(event) {
+        let selectedPayment = document.querySelector(".accordion-collapse.show"); // بخش باز شده را پیدا می‌کند
+        let requiredFields = selectedPayment ? selectedPayment.querySelectorAll("input[placeholder='اجباری']") : []; 
+        let allFilled = true;
+    
+        requiredFields.forEach(input => {
+            if (input.value.trim() === "") {
+                allFilled = false;
+            }
+        });
+    
+        if (!allFilled) {
+            event.preventDefault();
+            Swal.fire({
+                icon: "warning",
+                title: "خطا!",
+                text: "لطفاً همه فیلدهای اجباری را پر کنید.",
+                confirmButtonText: "باشه"
+            });
+        }
+    });
+
+
+
+    {% comment %} Get Information From DB by Ajax {% endcomment %}
 
 
 </script>
