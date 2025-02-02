@@ -381,12 +381,54 @@ def submit_pay(request):
 
 
 
-# ---------------------------------------------   --------------------------------------------- #
+# --------------------------------------------- refund.html --------------------------------------------- #
 @login_required
 def refund(request):
     if request.user.role == 'kiosk':
-        raise Http404("Page not found")  # User with KIOSK role gets a 404 error
+        raise Http404("Page not found")  
     return render(request, "Amusement_Park_Application/refund.html")
+
+
+@login_required
+def get_transaction_details(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        transaction_id = request.GET.get('transaction_id')
+
+        if not transaction_id or not transaction_id.isdigit():
+            return JsonResponse({'error': 'شناسه تراکنش نامعتبر است'}, status=400)
+
+        try:
+            transaction = Transaction.objects.get(id=int(transaction_id))
+        except Transaction.DoesNotExist:
+            return JsonResponse({'error': 'تراکنش یافت نشد'}, status=404)
+        except ValueError:
+            return JsonResponse({'error': 'شناسه تراکنش باید عدد باشد'}, status=400)
+
+        data = {
+            'product_prices': transaction.product_prices,
+            'tax': transaction.tax,
+            'discount': transaction.discount,
+            'price': transaction.price,
+            'products': []
+        }
+
+        for ticket_product in transaction.ticket.ticket_products.all():
+            product = ticket_product.product
+            # فرض کنید فیلد image در مدل Product وجود دارد و به صورت ImageField تعریف شده است.
+            image_url = product.image.url if hasattr(product, 'image') and product.image else ''
+            data['products'].append({
+                'name': product.title,
+                'quantity': ticket_product.quantity,
+                'price': product.price,
+                'total_price': ticket_product.get_total_price(),
+                'image': image_url,
+            })
+
+        return JsonResponse(data)
+
+    return JsonResponse({'error': 'درخواست نامعتبر'}, status=400)
+
+
 
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
