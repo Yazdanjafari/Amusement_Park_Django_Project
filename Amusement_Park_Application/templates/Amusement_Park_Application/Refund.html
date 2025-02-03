@@ -89,7 +89,7 @@ Page content START -->
                                 </td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table>           
                 </div>
                 <hr>
                 <!-- Payment method START -->
@@ -121,19 +121,19 @@ Page content START -->
                                         <form class="row g-3">
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
+                                                <input type="text" id="source_card_number" class="form-control" placeholder="اختیاری" maxlength="16" minlength="16">
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">شماره کارت مقصد :</span></label>
-                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="16" minlength="16">
+                                                <input type="text" id="destination_card_number" class="form-control" placeholder="اجباری" maxlength="16" minlength="16">
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
-                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
+                                                <input type="text" id="source_card_holder_name" class="form-control" placeholder="اختیاری">
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
-                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
+                                                <input type="text" id="destination_card_holder_name" class="form-control" placeholder="اجباری">
                                             </div>
                                         </form>
                                         <!-- Form END -->
@@ -153,20 +153,20 @@ Page content START -->
                                         <!-- Form START -->
                                         <form class="row g-3">
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری" maxlength="16" minlength="16">
+                                                <label class="form-label"><span class="text-danger">شماره شبا مبدا :</span></label>
+                                                <input type="text" id="source_sheba_number" class="form-control" placeholder="اختیاری" maxlength="24" minlength="24">
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">شماره شبا مقصد :</span></label>
-                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری" maxlength="24" minlength="24">
+                                                <input type="text" id="destination_sheba_number" class="form-control" placeholder="اجباری" maxlength="24" minlength="24">
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
-                                                <input type="text" class="form-control" aria-label="cash amount" placeholder="اختیاری">
+                                                <input type="text" id="source_card_holder_name" class="form-control" placeholder="اختیاری">
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
-                                                <input type="text" class="form-control" aria-label="card amount" placeholder="اجباری">
+                                                <input type="text" id="destination_card_holder_name" class="form-control" placeholder="اجباری">
                                             </div>
                                         </form>
                                         <!-- Form END -->
@@ -424,32 +424,8 @@ Page content END -->
     });
 
 
-    document.getElementById("pay-button").addEventListener("click", function(event) {
-        let selectedPayment = document.querySelector(".accordion-collapse.show"); // بخش باز شده را پیدا می‌کند
-        let requiredFields = selectedPayment ? selectedPayment.querySelectorAll("input[placeholder='اجباری']") : []; 
-        let allFilled = true;
-    
-        requiredFields.forEach(input => {
-            if (input.value.trim() === "") {
-                allFilled = false;
-            }
-        });
-    
-        if (!allFilled) {
-            event.preventDefault();
-            Swal.fire({
-                icon: "warning",
-                title: "خطا!",
-                text: "لطفاً همه فیلدهای اجباری را پر کنید.",
-                confirmButtonText: "باشه"
-            });
-        }
-    });
-
-
-
     {% comment %} Get Information From DB by Ajax {% endcomment %}
-
+    
     document.getElementById('ticketCodeInput').addEventListener('input', function() {
         var applyButton = document.getElementById('applyButton');
         applyButton.disabled = this.value.trim() === '';
@@ -461,24 +437,24 @@ Page content END -->
             fetch(`/Amusement_Park/get_transaction_details/?transaction_id=${transactionId}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا',
-                            text: data.error,
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'موفقیت',
-                            text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
-                        });
-                        updateTransactionDetails(data);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: data.error,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفقیت',
+                        text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
+                    });
+                    updateTransactionDetails(data);
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     });
     
@@ -489,9 +465,9 @@ Page content END -->
         data.products.forEach(product => {
             var row = document.createElement('tr');
             row.innerHTML = `
-                <td>
-                    <div class="d-lg-flex align-items-center">
-                        <div class="w-100px w-md-80px mb-2 mb-md-0">
+            <td>
+                <div class="d-lg-flex align-items-center">
+                    <div class="w-100px w-md-80px mb-2 mb-md-0">
                             <img src="${product.image}" class="rounded" alt="">
                         </div>
                         <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
@@ -510,10 +486,10 @@ Page content END -->
                         <button class="btn btn-outline-danger btn-sm disabled" onclick="decrement(this)">-</button>
                     </div>
                 </td>
-            `;
-            tbody.appendChild(row);
-        });
-    
+                `;
+                tbody.appendChild(row);
+            });
+            
         document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('fa-IR') + ' ریال';
@@ -526,8 +502,118 @@ Page content END -->
     }
     
     
+    {% comment %} Save Information in DB {% endcomment %}
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById("pay-button").addEventListener("click", function(event) {
 
+            let selectedPayment = document.querySelector(".accordion-collapse.show");
+            let requiredFields = selectedPayment ? selectedPayment.querySelectorAll("input[placeholder='اجباری']") : [];
+            let allFilled = true;
+        
+            requiredFields.forEach(input => {
+                if (input.value.trim() === "") {
+                    allFilled = false;
+                }
+            });
+        
+            if (!allFilled) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: "warning",
+                    title: "خطا!",
+                    text: "لطفاً همه فیلدهای اجباری را پر کنید.",
+                    confirmButtonText: "باشه"
+                });
+                return; 
+            }
+        
+        
+            const transactionInput = document.getElementById('ticketCodeInput');
+            if (!transactionInput) {
+                console.error("المان 'ticketCodeInput' یافت نشد.");
+                return;
+            }
+            const transactionId = transactionInput.value.trim();
+        
+            let refundType = 'نقد'; // پیش‌فرض
+            if (document.getElementById('collapse-cash') && document.getElementById('collapse-cash').classList.contains('show')) {
+                refundType = 'کارت به کارت';
+            } else if (document.getElementById('collapse-combined') && document.getElementById('collapse-combined').classList.contains('show')) {
+                refundType = 'انتقال با شماره شبا';
+            }
+        
+            const sourceCardHolderName = document.getElementById('source_card_holder_name') ? document.getElementById('source_card_holder_name').value : '';
+            const destinationCardHolderName = document.getElementById('destination_card_holder_name') ? document.getElementById('destination_card_holder_name').value : '';
+            const sourceCardNumber = document.getElementById('source_card_number') ? document.getElementById('source_card_number').value : '';
+            const destinationCardNumber = document.getElementById('destination_card_number') ? document.getElementById('destination_card_number').value : '';
+            const sourceShebaNumber = document.getElementById('source_sheba_number') ? document.getElementById('source_sheba_number').value : '';
+            const destinationShebaNumber = document.getElementById('destination_sheba_number') ? document.getElementById('destination_sheba_number').value : '';
+        
+            const formData = new FormData();
+            formData.append('transaction_id', transactionId);
+            formData.append('refund_type', refundType);
+            formData.append('source_card_holder_name', sourceCardHolderName);
+            formData.append('destination_card_holder_name', destinationCardHolderName);
+            formData.append('source_card_number', sourceCardNumber);
+            formData.append('destination_card_number', destinationCardNumber);
+            formData.append('source_sheba_number', sourceShebaNumber);
+            formData.append('destination_sheba_number', destinationShebaNumber);
+        
+            fetch('{% url "Amusement_Park:save_refund" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفقیت',
+                        text: data.message,
+                    }).then(() => {
+                        window.location.href = "{% url 'Amusement_Park:Products' %}";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'خطایی در ارسال اطلاعات رخ داده است.',
+                });
+            });
+        });
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+    
+    
 
-
+    
+    
 </script>
 {% endblock script %}

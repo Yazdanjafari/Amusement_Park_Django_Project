@@ -431,6 +431,46 @@ def get_transaction_details(request):
 
 
 
+@login_required
+def save_refund(request):
+    if request.method == 'POST':
+        try:
+            transaction_id = request.POST.get('transaction_id')
+            refund_type = request.POST.get('refund_type')
+            desc = request.POST.get('desc', '')
+            source_card_holder_name = request.POST.get('source_card_holder_name', '')
+            destination_card_holder_name = request.POST.get('destination_card_holder_name', '')
+            source_card_number = request.POST.get('source_card_number', '')
+            destination_card_number = request.POST.get('destination_card_number', '')
+            source_sheba_number = request.POST.get('source_sheba_number', '')
+            destination_sheba_number = request.POST.get('destination_sheba_number', '')
+
+            transaction = get_object_or_404(Transaction, id=transaction_id)
+            user = request.user
+
+            returned_transaction = ReturnedTransaction(
+                transaction=transaction,
+                type=refund_type,
+                user=user,
+                desc=desc,
+                source_card_holder_name=source_card_holder_name,
+                destination_card_holder_name=destination_card_holder_name,
+                source_card_number=source_card_number,
+                destination_card_number=destination_card_number,
+                source_sheba_number=source_sheba_number,
+                destination_sheba_number=destination_sheba_number
+            )
+            returned_transaction.save()
+
+            return JsonResponse({'status': 'success', 'message': 'عودت وجه با موفقیت ثبت شد.'})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'درخواست نامعتبر'}, status=400)
+
+
+
 # ---------------------------------------------   --------------------------------------------- #
 @login_required
 def setting(request):
