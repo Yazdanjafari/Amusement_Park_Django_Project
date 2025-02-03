@@ -38,7 +38,7 @@ Page content START -->
                 <!-- Personal info START -->
                 <div class="card card-body shadow p-4">
                     <!-- Title for transaction form -->
-                    <h5 class="mb-0">ثبت مجدد تراکنش :</h5>
+                    <h5 class="mb-0">عودت وجه :</h5>
                     <!-- Transaction form START -->
                     <form id="retransactionForm" method="post">
                         {% csrf_token %}
@@ -192,7 +192,7 @@ Page content START -->
                             <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
                         </li>
                         <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">مالیات (% 10)</span>
+                            <span class="h6 fw-light mb-0">مالیات (%10)</span>
                             <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
                         </li>
                         <li class="list-group-item px-0 d-flex justify-content-between">
@@ -464,8 +464,17 @@ Page content END -->
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        alert(data.error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا',
+                            text: data.error,
+                        });
                     } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'موفقیت',
+                            text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
+                        });
                         updateTransactionDetails(data);
                     }
                 })
@@ -474,7 +483,6 @@ Page content END -->
     });
     
     function updateTransactionDetails(data) {
-        // به‌روزرسانی tbody جدول اطلاعات تراکنش
         var tbody = document.getElementById('transactionDetailsTable');
         tbody.innerHTML = '';
     
@@ -506,13 +514,11 @@ Page content END -->
             tbody.appendChild(row);
         });
     
-        // به‌روزرسانی اطلاعات قیمت‌ها
         document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('fa-IR') + ' ریال';
         document.getElementById('finalPrice').innerText = Number(data.price).toLocaleString('fa-IR') + ' ریال';
     
-        // نمایش کانتینرهای اطلاعات تراکنش و sidebar
         document.getElementById('transactionDetails').style.display = 'block';
         document.getElementById('rightSidebar').style.display = 'block';
     

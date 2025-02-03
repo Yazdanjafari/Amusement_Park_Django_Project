@@ -399,8 +399,10 @@ def get_transaction_details(request):
 
         try:
             transaction = Transaction.objects.get(id=int(transaction_id))
+            if not transaction.is_success:
+                return JsonResponse({'error': 'این فروش وجود ندارد یا منقضی شده است'}, status=404)
         except Transaction.DoesNotExist:
-            return JsonResponse({'error': 'تراکنش یافت نشد'}, status=404)
+            return JsonResponse({'error': 'این فروش وجود ندارد یا منقضی شده است'}, status=404)
         except ValueError:
             return JsonResponse({'error': 'شناسه تراکنش باید عدد باشد'}, status=400)
 
@@ -414,7 +416,6 @@ def get_transaction_details(request):
 
         for ticket_product in transaction.ticket.ticket_products.all():
             product = ticket_product.product
-            # فرض کنید فیلد image در مدل Product وجود دارد و به صورت ImageField تعریف شده است.
             image_url = product.image.url if hasattr(product, 'image') and product.image else ''
             data['products'].append({
                 'name': product.title,
