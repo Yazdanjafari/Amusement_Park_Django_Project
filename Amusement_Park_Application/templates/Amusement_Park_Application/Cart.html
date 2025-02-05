@@ -48,8 +48,149 @@
 			border-color: #80bdff;
 			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 			outline: none;
+		}		
+
+		{% comment %} Make responsive page for cart {% endcomment %}
+		@media (max-width: 768px) {
+
+			.pt-5-special {
+				padding-top: 1rem !important;
+			}	
+
+			.table-responsive {
+				display: flex !important;
+				overflow-x: auto !important;
+				white-space: nowrap !important;
+				scroll-behavior: smooth; 
+			}
+
+			.table-responsive.multi-products {
+				justify-content: flex-start !important; 
+			}
+
+			.table-responsive.single-product {
+				justify-content: center !important; 
+			}
+
+			.table {
+				font-size: 70% !important;
+				width: max-content !important;
+				display: flex !important;
+				margin-left: auto !important;
+				margin-right: auto !important;		
+			}
+
+			.table tbody {
+				display: flex !important;
+				flex-wrap: nowrap !important;
+				gap: 10px !important;
+			}
+
+			.table tr {
+				display: flex !important;
+				flex-direction: column !important;
+				align-items: center !important;
+				text-align: center !important;
+				border: 1px solid #ddd !important;
+				padding: 10px !important;
+				border-radius: 8px !important;
+				background: #fff !important;
+				min-width: 150px !important;
+				scroll-snap-align: start; 
+			}
+
+			.table td {
+				width: 100% !important;
+				text-align: center !important;
+				padding: 6px !important;
+			}
+
+			.w-100px, .w-md-80px {
+				width: 80px !important;
+				height: auto !important;
+				margin: 0 auto !important;
+			}
+
+			.d-lg-flex {
+				display: flex !important;
+				flex-direction: column !important;
+				align-items: center !important;
+				text-align: center !important;
+			}
+
+			.d-lg-flex h6 {
+				font-size: 65% !important;
+				margin-top: 5px !important;
+			}
+
+			h5.text-success {
+				font-size: 70% !important;
+				text-align: center !important;
+			}
+
+			.btn-sm {
+				font-size: 65% !important;
+				padding: 0 !important;
+				width: 30px !important;
+				height: 30px !important;
+				display: flex !important;
+				justify-content: center !important;
+				align-items: center !important;
+				border-radius: 5px !important;
+			}
+
+			.counter {
+				font-size: 75% !important;
+				width: 30px !important;
+				height: 30px !important;
+				display: flex !important;
+				justify-content: center !important;
+				align-items: center !important;
+				border-radius: 5px !important;
+			}
+
+			td .d-flex {
+				justify-content: center !important;
+				gap: 5px !important;
+			}
+
+			.discount-label {
+				font-size: 60%;
+			}
+
+			.card-body h5 {
+				font-size: 13px !important;
+			}
+
+			.d-lg-flex h6 {
+				font-size: 100% !important;
+				margin-top: 5px !important;
+			}	
+			
+			.text-danger {
+				direction: rtl;
+				--bs-text-opacity: 1;
+				color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+				text-align: right;
+				font-size: 55%;
+			}		
+			
+			.form-label {
+				display: block;
+				font-size: 13px;
+				font-weight: 600;
+				color: #2c3e50;
+			}			
+
+			{% comment %} make responsive page for mix sell {% endcomment %}
+
 		}
+		{% comment %} End make responsive page for cart {% endcomment %}
+
 	</style>
+
+
+
 {% endblock style %}
 	
 
@@ -83,7 +224,7 @@ Page Banner END -->
 
 <!-- =======================
 Page content START -->
-<section class="pt-5">
+<section class="pt-5-special">
 	<div class="container">
 	
 		<div class="row g-4 g-sm-5">
@@ -137,7 +278,7 @@ Page content START -->
 						{% csrf_token %}
 
 						<div class="input-group mt-2">
-							<input id="phoneInput" name="phone" class="form-control" placeholder="شماره تماس (مثال : 09120000000)" type="text" maxlength="11" minlength="11" required>
+							<input id="phoneInput" name="phone" class="form-control" placeholder="شماره تماس :" type="text" maxlength="11" minlength="11" required>
 							<button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
 						</div>
 					
@@ -316,47 +457,41 @@ Page content START -->
 					<!-- Coupon input and button -->
 					<hr>
 					<h5 class="mb-0">تخفیف :</h5>
+
 					<div class="row g-3 mt-2">
-						<div class="col-md-6">
-							<div class="input-group">
-								<input class="form-control discount-input" id="discount-code" placeholder="تخفیف با کد تخفیف :">
+						<div class="col-12">
+							<div class="input-group w-100">
+								<input class="form-control discount-input" id="discount-code" placeholder="کد تخفیف :">
+								<button class="btn btn-primary" id="btn-code" disabled>اعمال</button>
 							</div>
 							<small id="tip-code" class="form-text text-muted" style="display: none;"></small>
 						</div>
-						<div class="col-md-6 text-md-end">
-							<button class="btn btn-primary mb-0" id="btn-code" disabled>اعمال</button>
-						</div>
 					</div>
-
+					
 					{% if request.user.is_superuser or request.user.is_staff %}
 					<!-- Coupon input and button -->
 					<div class="row g-3 mt-2">
-						<div class="col-md-6">
-							<div class="input-group">
+						<div class="col-12">
+							<div class="input-group w-100">
 								<input class="form-control discount-input" id="discount-amount" placeholder="تخفیف با مبلغ :">
+								<button class="btn btn-primary" id="btn-amount" disabled>اعمال</button>
 							</div>
 							<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
 						</div>
-						<!-- Update button -->
-						<div class="col-md-6 text-md-end">
-							<button class="btn btn-primary mb-0" id="btn-amount" disabled>اعمال</button>
-						</div>
 					</div>
-
+					
 					<!-- Coupon input and button -->
 					<div class="row g-3 mt-2">
-						<div class="col-md-6">
-							<div class="input-group">
+						<div class="col-12">
+							<div class="input-group w-100">
 								<input class="form-control discount-input" id="discount-percent" placeholder="تخفیف با درصد :">
+								<button class="btn btn-primary" id="btn-percent" disabled>اعمال</button>
 							</div>
 							<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
 						</div>
-						<!-- Update button -->
-						<div class="col-md-6 text-md-end">
-							<button class="btn btn-primary mb-0" id="btn-percent" disabled>اعمال</button>
-						</div>
 					</div>
 					{% endif %}
+					
 
 					<!-- Title -->
 					<hr>
