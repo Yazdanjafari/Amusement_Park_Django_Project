@@ -11,6 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="author" content="">
 	<meta name="description">
+	<meta name="viewport" content="width=1300">
 
 	<!-- Dark mode -->
 	<script>
@@ -88,14 +89,28 @@
 		body {
 			padding-top: 60px; /* Adjust based on your navbar height */
 		}	
+
+		@media screen and (max-width: 768px) {
+			body {
+			  transform: scale(1.5) !important;
+			  transform-origin: top left !important;
+			  width: 1024px !important; 
+			}
+		  }
+
+		html, body {
+		min-width: 1024px !important; 
+		overflow-x: auto !important; 
+		}		  
+
 		{% comment %} End Css for Navbar {% endcomment %}
 		{% comment %} Start Css for applications {% endcomment %}
 		
 		@media (max-width: 767.98px) {
 			/* Make sure to display 3 items per row */
 			.row.g-4 {
-				display: flex !important;;
-				flex-wrap: wrap !important;;
+				display: flex !important;
+				flex-wrap: wrap !important;
 			}
 		
 			.col-6 {
