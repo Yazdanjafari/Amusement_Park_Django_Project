@@ -155,7 +155,7 @@
 			}
 
 			.discount-label {
-				font-size: 60%;
+				font-size: 55%;
 			}
 
 			.card-body h5 {
@@ -172,7 +172,7 @@
 				--bs-text-opacity: 1;
 				color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
 				text-align: right;
-				font-size: 55%;
+				font-size: 48%;
 			}		
 			
 			.form-label {
@@ -182,7 +182,20 @@
 				color: #2c3e50;
 			}			
 
-			{% comment %} make responsive page for mix sell {% endcomment %}
+			.text-danger2 {
+				direction: rtl;
+				--bs-text-opacity: 1;
+				color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+				text-align: right;
+				font-size: 70%;
+			}				
+
+			.list-group .list-group-item i, .list-group .list-group-item span {
+				margin-left: 5px;
+				font-size: 85%;
+			}
+
+			
 
 		}
 		{% comment %} End make responsive page for cart {% endcomment %}
@@ -497,6 +510,7 @@ Page content START -->
 					<hr>
 					<div class="card card-body p-4 shadow">
 						<h5 class="">روش های پرداخت :</h5>
+						<br>
 						<div class="col-12">
 							<div class="accordion accordion-circle" id="accordioncircle">
 
@@ -533,21 +547,23 @@ Page content START -->
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
-												<div class="col-6">
-													<label class="form-label"><span class="text-danger">* مقدار مبلغ نقدی (ریال)</span></label>
-													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی را وارد کنید">
+												<div class="col-12">
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
 												</div>
-												<div class="col-6">
-													<label class="form-label"><span class="text-danger">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان را وارد کنید">
+												<div class="col-12">
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
 												</div>
 											</form>
 											<br>
 											<div class="row">
-												<div class="col-6">
+												<div class="col-12">
 													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
 												</div>
-												<div class="col-6">
+												<br>
+												<br>
+												<div class="col-12">
 													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
 												</div>
 											</div>
