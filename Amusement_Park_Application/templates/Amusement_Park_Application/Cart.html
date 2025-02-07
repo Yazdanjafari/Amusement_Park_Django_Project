@@ -1306,12 +1306,13 @@ Page content END -->
 				if (data.success) {
 					Swal.fire({
 						icon: 'success',
-						title: 'موفقیت آمیز',
+						title: 'موفقیت‌آمیز',
 						text: 'پرداخت با موفقیت انجام شد.',
 						confirmButtonText: 'باشه'
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.location.href = '{% url "Amusement_Park:Products" %}'; 
+							// ریدایرکت به صفحه چاپ بلیت به همراه ticket_id دریافتی از سرور
+							window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
 						}
 					});
 				} else {

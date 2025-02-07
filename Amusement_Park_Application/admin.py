@@ -57,8 +57,8 @@ class TicketProductInline(admin.TabularInline):
 
 # RefundProduct Admin (this is for managing RefundProducts directly if needed)
 class TicketProductAdmin(admin.ModelAdmin):
-    list_display = ('ticket', 'product', 'quantity')
-    list_filter = ('ticket', 'product')
+    list_display = ('ticket', 'product', 'quantity', 'scanned')
+    list_filter = ('ticket', 'product', 'scanned')
     
     def has_change_permission(self, request, obj = ...):
         return False
@@ -94,24 +94,31 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
     inlines = [TicketProductInline]
 
     def get_products(self, obj):
-        return ', '.join([f"{tp.product.title} ({tp.quantity})" for tp in obj.ticket_products.all()])
-    get_products.short_description = 'Products'
+        products = []
+        for tp in obj.ticket_products.all():
+            # تعیین وضعیت اسکن به صورت متنی
+            scanned_status = "اسکن شده" if tp.scanned else "اسکن نشده"
+            products.append(f"{tp.product.title} ({tp.quantity}) [{scanned_status}]")
+        return ', '.join(products)
+    get_products.short_description = 'محصولات'
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
         super().save_model(request, obj, form, change)
 
-        # Recalculate product_prices for related transactions
+        # محاسبه قیمت کل محصولات به درستی
         total_price = obj.ticket_products.aggregate(
-            total=Sum('product__price', field="product__price * quantity")
+            total=Sum(ExpressionWrapper(F('product__price') * F('quantity'), output_field=IntegerField()))
         )['total'] or 0
 
+        # به‌روزرسانی قیمت در تراکنش‌های مربوط به بلیت
         for transaction in obj.transaction.all():
             transaction.product_prices = total_price
             transaction.save()
 
-    def has_delete_permission(self, request, obj = ...):
+    def has_delete_permission(self, request, obj=None):
         return False
+
 
 
 

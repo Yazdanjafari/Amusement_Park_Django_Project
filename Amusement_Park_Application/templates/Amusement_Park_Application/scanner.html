@@ -1,12 +1,12 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اسکن کیو آر کد</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,69 +17,113 @@
             width: 100%;
             max-width: 500px;
             margin: auto;
+            background-color: #f0f0f0;
         }
         #result {
             margin-top: 20px;
             font-weight: bold;
             color: green;
         }
+
+        .select-container {
+            display: inline-block;
+            position: relative;
+            width: 250px;
+        }
+        
+        #product-select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #fff;
+            background-color: #222;
+            color: #fff;
+            cursor: pointer;
+            appearance: none;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        /* افکت هنگام هاور */
+        #product-select:hover {
+            border-color: #0f0;
+        }
+        
+        /* افکت هنگام کلیک */
+        #product-select:focus {
+            border-color: #00ff99;
+            box-shadow: 0px 0px 10px rgba(0, 255, 153, 0.7);
+        }
+        
+        /* استایل گزینه‌ها */
+        #product-select option {
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+        }
+        
+        /* اضافه کردن آیکون فلش */
+        .select-container::after {
+            content: "▼";
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #fff;
+            pointer-events: none;
+            text-align: center;
+        }
+        
+        .logout-container {
+            margin-top: 20px;
+        }
+        
+        .logout-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: black;
+            border: 2px solid #00ff00; /* سبز نئونی */
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 0px 10px rgba(0, 255, 0, 0.7);
+        }
+        
+        /* افکت هنگام هاور */
+        .logout-btn:hover {
+            background-color: #00ff00;
+            color: black;
+            box-shadow: 0px 0px 20px rgba(0, 255, 0, 1);
+        }
+        
+        /* افکت هنگام کلیک */
+        .logout-btn:active {
+            transform: scale(0.95);
+        }
+                
     </style>
 </head>
 <body>
-    <h1>اسکن کیو آر کد</h1>
-    <p>لطفاً کیو آر کد خود را در جلوی دوربین قرار دهید.</p>
+    <h1>QR-Code Scanner</h1>
+    
+    <select id="product-select">
+        <option value="">-- انتخاب محصول --</option>
+        {% for product in products %}
+            <option value="{{ product.id }}">{{ product.title }}</option>
+        {% endfor %}
+    </select>
 
-    <!-- محلی برای اسکن -->
-    <div id="reader"></div>
+    <br><br>
 
-    <!-- نمایش نتیجه -->
+    <div id="reader" style="display:none;"></div>  
+
     <p id="result"></p>
 
     <script>
-        // تنظیمات اسکنر
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`;
-
-            // ارسال درخواست AJAX به سرور
-            fetch('/verify_qr_code/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken(),
-                },
-                body: JSON.stringify({ qr_code: decodedText })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('کیو آر کد معتبر است!');
-                } else {
-                    alert('این کیو آر کد قبلاً استفاده شده است!');
-                }
-            })
-            .catch(error => {
-                console.error('خطا در ارسال درخواست:', error);
-            });
-        };
-
-        const qrCodeErrorCallback = (errorMessage) => {
-            console.log(`خطا در اسکن: ${errorMessage}`);
-        };
-
-        const html5QrCode = new Html5Qrcode("reader");
-        html5QrCode.start(
-            { facingMode: "environment" }, // استفاده از دوربین اصلی دستگاه
-            {
-                fps: 10, // تعداد فریم در ثانیه
-                qrbox: { width: 250, height: 250 } // اندازه باکس اسکن
-            },
-            qrCodeSuccessCallback,
-            qrCodeErrorCallback
-        ).catch(err => {
-            console.error(`خطا در شروع اسکنر: ${err}`);
-        });
-
-        // دریافت CSRF Token
         function getCSRFToken() {
             const cookies = document.cookie.split(';');
             for (let cookie of cookies) {
@@ -90,15 +134,85 @@
             }
             return '';
         }
+
+        function startScanner() {
+            document.getElementById("reader").style.display = "block"; 
+
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices.length > 0) {
+                    // انتخاب دوربین پشت (دوربین اول با برچسب "back")
+                    const backCamera = devices.find(device => device.label.toLowerCase().includes("back"));
+                    const cameraId = backCamera ? backCamera.id : devices[0].id; // اگر دوربین پشت موجود نبود، از دوربین پیش‌فرض استفاده می‌کنیم
+                    
+                    console.log("Starting scanner with camera:", devices[0].label);
+
+                    const html5QrCode = new Html5Qrcode("reader");
+                    html5QrCode.start(
+                        cameraId,
+                        {
+                            fps: 10,
+                            qrbox: { width: 250, height: 250 },
+                            videoConstraints: {
+                                facingMode: "environment", // دوربین پشت را انتخاب می‌کنیم
+                                zoom: 1.0  // تنظیم زوم به 1.0
+                            }
+                        },
+                        (decodedText) => {
+                            const selectedProduct = document.getElementById("product-select").value;
+                            if (!selectedProduct) {
+                                alert("لطفاً ابتدا یک محصول را انتخاب کنید.");
+                                return;
+                            }
+
+                            document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`;
+
+                            fetch("{% url 'Amusement_Park:verify_qr_code' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCSRFToken(),
+                                },
+                                body: JSON.stringify({ 
+                                    qr_code: decodedText, 
+                                    product_id: selectedProduct 
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                alert(data.message);
+                            })
+                            .catch(error => {
+                                console.error('خطا در ارسال درخواست:', error);
+                            });
+                        },
+                        (errorMessage) => {
+                            console.log(`خطا در اسکن: ${errorMessage}`);
+                        }
+                    ).catch(err => {
+                        console.error("خطا در شروع اسکنر:", err);
+                    });
+
+                } else {
+                    alert("هیچ دوربینی پیدا نشد. لطفاً دسترسی به دوربین را بررسی کنید.");
+                }
+            }).catch(err => {
+                console.error("خطا در دسترسی به دوربین:", err);
+                alert("مشکلی در دسترسی به دوربین وجود دارد.");
+            });
+        }
+
+        // فعال‌سازی دوربین به محض بارگذاری صفحه
+        window.onload = function() {
+            startScanner();
+        };
     </script>
 
-    <!-- دکمه خروج -->
-    <div style="text-align: center; margin-top: 20px;">
+    <div class="logout-container">
         <a href="{% url 'Authenticate:Logout' %}">
-            <button style="padding: 10px 20px; font-size: 16px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                خروج
-            </button>
+            <button class="logout-btn">خروج</button>
         </a>
     </div>
+    
+    
 </body>
 </html>

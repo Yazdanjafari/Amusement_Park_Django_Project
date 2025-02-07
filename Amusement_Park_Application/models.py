@@ -327,6 +327,7 @@ class TicketProduct(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='ticket_products', verbose_name='بلیت')
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='ticket_products', verbose_name='محصول')
     quantity = models.PositiveIntegerField(verbose_name='تعداد', default=1)
+    scanned = models.BooleanField(verbose_name="اسکن شده", default=False)
 
     class Meta:
         verbose_name_plural = "محصولات بلیت"

@@ -11,6 +11,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 import logging
+from io import BytesIO
+import json, qrcode, base64
 
 logger = logging.getLogger(__name__)
 
@@ -296,8 +298,6 @@ def submit_pay(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            logger.info(f"Received data: {data}")
-
             customer_data = data.get('customer_data')
             cart_items = data.get('cart_items')
             transaction_data = data.get('transaction_data')
@@ -337,24 +337,20 @@ def submit_pay(request):
                     quantity=item['quantity']
                 )
 
-            total_price = sum(item.product.price * item.quantity for item in ticket.ticket_products.all())
+            total_price = sum(tp.product.price * tp.quantity for tp in ticket.ticket_products.all())
 
             tax_rate = TaxRate.objects.first().rate  
             tax = int(total_price * tax_rate / 100)
-
             final_price = total_price + tax
 
             offer = None
-            discount_amount = 0  # Initialize discount_amount to 0
-
+            discount_amount = 0
             if transaction_data.get('discount_code'):
                 offer = Offer.objects.filter(code=transaction_data['discount_code'], activate=True).first()
                 if offer:
                     discount_amount = int(final_price * offer.persent / 100)
             else:
-                # Only apply manual_discount if no offer is applied
                 discount_amount = transaction_data.get('discount_amount', 0)
-
             final_price -= discount_amount
 
             transaction = Transaction.objects.create(
@@ -364,21 +360,19 @@ def submit_pay(request):
                 mix_pc=mix_pc,
                 mix_cash=mix_cash,
                 offer=offer, 
-                manual_discount=0 if offer else discount_amount,  # Set manual_discount to 0 if offer exists
+                manual_discount=0 if offer else discount_amount,
                 product_prices=total_price,
                 tax=tax,
                 price=final_price,
                 desc=None
             )
 
-            return JsonResponse({'success': True, 'message': 'پرداخت با موفقیت انجام شد.'})
+            return JsonResponse({'success': True, 'message': 'پرداخت با موفقیت انجام شد.', 'ticket_id': ticket.id})
 
         except Exception as e:
-            logger.error(f"Error in submit_pay: {str(e)}")  
             return JsonResponse({'success': False, 'message': f'خطا در پرداخت: {str(e)}'})
 
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
-
 
 
 # --------------------------------------------- refund.html --------------------------------------------- #
@@ -579,8 +573,95 @@ def save_retransaction(request):
 
 
 # ---------------------------------------------   --------------------------------------------- #
+# @login_required
+# def scanner(request):
+#     if request.user.role == 'kiosk':
+#         raise Http404("Page not found")  # User with KIOSK role gets a 404 error
+#     return render(request, "Amusement_Park_Application/scanner.html")
+
+
+
+@login_required
+def print_qr(request, ticket_id):
+    """
+    ویوی چاپ بلیت: QR Code مربوط به بلیت تولید و نمایش داده می‌شود.
+    """
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    transaction = Transaction.objects.filter(ticket=ticket).first()    
+    # آماده‌سازی داده‌های QR Code: شامل آی‌دی بلیت و اطلاعات محصولات موجود در بلیت.
+    qr_content = {
+        "ticket_id": ticket.id,
+        "products": [
+            {
+                "ticket_product_id": tp.id,
+                "product_id": tp.product.id,
+                "title": tp.product.title,
+            }
+            for tp in ticket.ticket_products.all()
+        ]
+    }
+    qr_json = json.dumps(qr_content)
+
+    # تولید QR Code با استفاده از کتابخانه qrcode
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_json)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
+    qr_code_image = "data:image/png;base64," + img_str
+
+    return render(request, "Amusement_Park_Application/print_qr.html", {"ticket": ticket, "qr_code_image": qr_code_image, "transaction_id": transaction.id,})
+
+
+@csrf_exempt
+def verify_qr_code(request):
+    """
+    ویوی بررسی QR Code: پس از اسکن و انتخاب محصول، بررسی می‌کند که:
+      1. اگر بلیت شامل آن محصول باشد و قبلاً استفاده نشده باشد → موفقیت‌آمیز.
+      2. اگر محصول وجود داشته ولی قبلاً اسکن شده باشد → منقضی.
+      3. در غیر این صورت → بلیت یافت نشد.
+    """
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            qr_data = data.get("qr_code")
+            product_id = data.get("product_id")
+            if not qr_data or not product_id:
+                return JsonResponse({"status": "error", "message": "اطلاعات مورد نیاز موجود نیست."})
+            try:
+                qr_content = json.loads(qr_data)
+            except Exception as e:
+                return JsonResponse({"status": "error", "message": "داده‌های کیو آر کد نامعتبر است."})
+            ticket_id = qr_content.get("ticket_id")
+            if not ticket_id:
+                return JsonResponse({"status": "error", "message": "کد بلیت موجود نیست."})
+            ticket = Ticket.objects.get(id=ticket_id)
+            try:
+                # یافتن محصول انتخاب شده در بلیت
+                ticket_product = ticket.ticket_products.get(product__id=product_id)
+            except TicketProduct.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "این بلیت یافت نشد ❌"})
+            if ticket_product.scanned:
+                return JsonResponse({"status": "error", "message": "این بلیت منقضی شده است ⛔"})
+            # علامت گذاری به عنوان اسکن شده
+            ticket_product.scanned = True
+            ticket_product.save()
+            return JsonResponse({"status": "success", "message": "بلیت با موفقیت یافت شد ✅"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": "خطایی رخ داده است."})
+    return JsonResponse({"status": "error", "message": "درخواست نامعتبر است."})
+
+
 @login_required
 def scanner(request):
     if request.user.role == 'kiosk':
-        raise Http404("Page not found")  # User with KIOSK role gets a 404 error
-    return render(request, "Amusement_Park_Application/scanner.html")
+        raise Http404("Page not found")     
+    products = Product.objects.all()
+    return render(request, "Amusement_Park_Application/scanner.html", {"products": products})
