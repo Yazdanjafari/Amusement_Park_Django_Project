@@ -48,7 +48,12 @@
 			border-color: #80bdff;
 			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 			outline: none;
-		}		
+		}	
+		
+		.hidden {
+			display: none !important;
+		}
+				
 
 	</style>
 
@@ -332,27 +337,51 @@ Page content START -->
 					</div>
 					
 					{% if request.user.is_superuser or request.user.is_staff %}
-					<!-- Coupon input and button -->
-					<div class="row g-3 mt-2">
-						<div class="col-12">
-							<div class="input-group w-100">
-								<input class="form-control discount-input" id="discount-amount" placeholder="تخفیف با مبلغ :">
-								<button class="btn btn-primary" id="btn-amount" disabled>اعمال</button>
+						
+						<!-- Coupon input and button -->
+						<div class="row g-3 mt-2">
+							<div class="col-12">
+								<div class="input-group w-100">
+									<input class="form-control discount-input" id="discount-amount" placeholder="تخفیف با مبلغ :">
+									<button class="btn btn-primary" id="btn-amount" disabled>اعمال</button>
+								</div>
+								<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
 							</div>
-							<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
 						</div>
-					</div>
-					
-					<!-- Coupon input and button -->
-					<div class="row g-3 mt-2">
-						<div class="col-12">
-							<div class="input-group w-100">
-								<input class="form-control discount-input" id="discount-percent" placeholder="تخفیف با درصد :">
-								<button class="btn btn-primary" id="btn-percent" disabled>اعمال</button>
+						
+						<!-- Coupon input and button -->
+						<div class="row g-3 mt-2">
+							<div class="col-12">
+								<div class="input-group w-100">
+									<input class="form-control discount-input" id="discount-percent" placeholder="تخفیف با درصد :">
+									<button class="btn btn-primary" id="btn-percent" disabled>اعمال</button>
+								</div>
+								<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
 							</div>
-							<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
 						</div>
-					</div>
+
+					{% else %}
+
+						<div class="row g-3 mt-2 hidden">
+							<div class="col-12">
+								<div class="input-group w-100">
+									<input class="form-control discount-input" id="discount-amount" placeholder="تخفیف با مبلغ :">
+									<button class="btn btn-primary" id="btn-amount" disabled>اعمال</button>
+								</div>
+								<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
+							</div>
+						</div>
+						
+						<div class="row g-3 mt-2 hidden">
+							<div class="col-12">
+								<div class="input-group w-100">
+									<input class="form-control discount-input" id="discount-percent" placeholder="تخفیف با درصد :">
+									<button class="btn btn-primary" id="btn-percent" disabled>اعمال</button>
+								</div>
+								<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
+							</div>
+						</div>
+
 					{% endif %}
 					
 
@@ -363,6 +392,8 @@ Page content START -->
 						<br>
 						<div class="col-12">
 							<div class="accordion accordion-circle" id="accordioncircle">
+
+								{% if request.user.is_superuser or request.user.is_staff %}
 
 								<!-- Card reader (Default) -->
 								<div class="accordion-item mb-3">
@@ -375,7 +406,6 @@ Page content START -->
 									</div>
 								</div>
 
-								{% if request.user.is_superuser or request.user.is_staff %}
 								<!-- Cash -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-cash">
@@ -389,6 +419,65 @@ Page content START -->
 
 								<!-- Combined payment -->
 								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-combined">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+											ترکیبی
+										</button>
+									</h6>
+									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
+										<div class="accordion-body">
+											<form class="row g-3">
+												<div class="col-12">
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+												</div>
+												<div class="col-12">
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+												</div>
+											</form>
+											<br>
+											<div class="row">
+												<div class="col-12">
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+												</div>
+												<br>
+												<br>
+												<div class="col-12">
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+												</div>
+											</div>
+											<br>
+										</div>
+									</div>
+								</div>
+
+								{% else %}
+
+								<!-- Card reader (Default) -->
+								<div class="accordion-item mb-3">
+									<h6 class="accordion-header" id="heading-card-reader">
+										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
+											دستگاه کارتخوان
+										</button>
+									</h6>
+									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
+									</div>
+								</div>								
+
+								<!-- Cash -->
+								<div class="accordion-item mb-3 hidden">
+									<h6 class="accordion-header" id="heading-cash">
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+											نقدی
+										</button>
+									</h6>
+									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
+									</div>
+								</div>
+
+								<!-- Combined payment -->
+								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
 											ترکیبی
