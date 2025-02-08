@@ -284,7 +284,6 @@ class Ticket(models.Model):
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     transaction = models.ManyToManyField(Transaction, related_name='tickets', verbose_name='تراکنش ها')
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='ticket', verbose_name='مشتری', null=True, blank=True)
-    is_scanned = models.BooleanField('اسکن شده', default=False)
     desc = models.TextField('توضیحات', null=True, blank=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='ticket', verbose_name='فروشنده')
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
@@ -343,7 +342,6 @@ class TicketProduct(models.Model):
 @receiver(post_delete, sender=TicketProduct)
 def update_transaction_product_prices(sender, instance, **kwargs):
     for transaction in instance.ticket.transaction.all():
-        # Calculate the total price for all ticket products related to the ticket
         total_price = sum(tp.product.price * tp.quantity for tp in instance.ticket.ticket_products.all())
         transaction.product_prices = total_price
         transaction.save()

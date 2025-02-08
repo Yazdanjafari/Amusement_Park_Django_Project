@@ -239,7 +239,6 @@ def create_ticket(request):
         ticket = Ticket.objects.create(
             customer=customer,
             user=request.user,
-            is_scanned=False,
             desc='توضیحات بلیت'
         )
 
@@ -325,7 +324,6 @@ def submit_pay(request):
             ticket = Ticket.objects.create(
                 customer=customer, 
                 user=request.user,
-                is_scanned=False,
                 desc='توضیحات بلیت'
             )
 
@@ -572,23 +570,11 @@ def save_retransaction(request):
 
 
 
-# ---------------------------------------------   --------------------------------------------- #
-# @login_required
-# def scanner(request):
-#     if request.user.role == 'kiosk':
-#         raise Http404("Page not found")  # User with KIOSK role gets a 404 error
-#     return render(request, "Amusement_Park_Application/scanner.html")
-
-
-
+# --------------------------------------------- QR-Code & Scan --------------------------------------------- #
 @login_required
 def print_qr(request, ticket_id):
-    """
-    ویوی چاپ بلیت: QR Code مربوط به بلیت تولید و نمایش داده می‌شود.
-    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
     transaction = Transaction.objects.filter(ticket=ticket).first()    
-    # آماده‌سازی داده‌های QR Code: شامل آی‌دی بلیت و اطلاعات محصولات موجود در بلیت.
     qr_content = {
         "ticket_id": ticket.id,
         "products": [
@@ -602,7 +588,6 @@ def print_qr(request, ticket_id):
     }
     qr_json = json.dumps(qr_content)
 
-    # تولید QR Code با استفاده از کتابخانه qrcode
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -622,12 +607,6 @@ def print_qr(request, ticket_id):
 
 @csrf_exempt
 def verify_qr_code(request):
-    """
-    ویوی بررسی QR Code: پس از اسکن و انتخاب محصول، بررسی می‌کند که:
-      1. اگر بلیت شامل آن محصول باشد و قبلاً استفاده نشده باشد → موفقیت‌آمیز.
-      2. اگر محصول وجود داشته ولی قبلاً اسکن شده باشد → منقضی.
-      3. در غیر این صورت → بلیت یافت نشد.
-    """
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -644,16 +623,15 @@ def verify_qr_code(request):
                 return JsonResponse({"status": "error", "message": "کد بلیت موجود نیست."})
             ticket = Ticket.objects.get(id=ticket_id)
             try:
-                # یافتن محصول انتخاب شده در بلیت
                 ticket_product = ticket.ticket_products.get(product__id=product_id)
             except TicketProduct.DoesNotExist:
-                return JsonResponse({"status": "error", "message": "این بلیت یافت نشد ❌"})
+                return JsonResponse({"status": "error", "message": "❌ این بلیت یافت نشد ❌"})
             if ticket_product.scanned:
-                return JsonResponse({"status": "error", "message": "این بلیت منقضی شده است ⛔"})
-            # علامت گذاری به عنوان اسکن شده
+                return JsonResponse({"status": "error", "message": "⛔ این بلیت منقضی شده است ⛔"})
+
             ticket_product.scanned = True
             ticket_product.save()
-            return JsonResponse({"status": "success", "message": "بلیت با موفقیت یافت شد ✅"})
+            return JsonResponse({"status": "success", "message": "✅ بلیت با موفقیت یافت شد ✅"})
         except Exception as e:
             return JsonResponse({"status": "error", "message": "خطایی رخ داده است."})
     return JsonResponse({"status": "error", "message": "درخواست نامعتبر است."})

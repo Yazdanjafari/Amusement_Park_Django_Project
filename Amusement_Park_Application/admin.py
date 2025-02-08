@@ -75,7 +75,7 @@ class TicketResource(resources.ModelResource):
 
     class Meta:
         model = Ticket
-        fields = ('id', 'tracking_code', 'is_scanned', 'desc', 'user__last_name', 'user__username', 'j_create_at')
+        fields = ('id', 'tracking_code', 'desc', 'user__last_name', 'user__username', 'j_create_at')
 
     def dehydrate(self, ticket):
         ticket_products = TicketProduct.objects.filter(ticket=ticket)
@@ -87,36 +87,30 @@ class TicketResource(resources.ModelResource):
  
 class TicketAdminClass(ExportMixin, admin.ModelAdmin):
     resource_classes = [TicketResource]
-    list_display = ('id', 'get_products', 'is_scanned', 'create_at', 'user', 'customer')
-    list_filter = ('is_scanned', 'user', 'create_at')
+    list_display = ('id', 'get_products', 'create_at', 'user', 'customer')
+    list_filter = ('user', 'create_at')
     search_fields = ('id',)
-    readonly_fields = ('transaction', 'user', 'is_scanned')
+    readonly_fields = ('transaction', 'user')
     inlines = [TicketProductInline]
 
     def get_products(self, obj):
-        products = []
-        for tp in obj.ticket_products.all():
-            # تعیین وضعیت اسکن به صورت متنی
-            scanned_status = "اسکن شده" if tp.scanned else "اسکن نشده"
-            products.append(f"{tp.product.title} ({tp.quantity}) [{scanned_status}]")
-        return ', '.join(products)
-    get_products.short_description = 'محصولات'
+        return ', '.join([f"{tp.product.title} ({tp.quantity})" for tp in obj.ticket_products.all()])
+    get_products.short_description = 'Products'
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
         super().save_model(request, obj, form, change)
 
-        # محاسبه قیمت کل محصولات به درستی
+        # Recalculate product_prices for related transactions
         total_price = obj.ticket_products.aggregate(
-            total=Sum(ExpressionWrapper(F('product__price') * F('quantity'), output_field=IntegerField()))
+            total=Sum('product__price', field="product__price * quantity")
         )['total'] or 0
 
-        # به‌روزرسانی قیمت در تراکنش‌های مربوط به بلیت
         for transaction in obj.transaction.all():
             transaction.product_prices = total_price
             transaction.save()
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request, obj = ...):
         return False
 
 
