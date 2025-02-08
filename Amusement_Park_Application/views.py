@@ -639,7 +639,7 @@ def verify_qr_code(request):
 
 @login_required
 def scanner(request):
-    if request.user.role == 'kiosk':
-        raise Http404("Page not found")     
+    # if request.user.role == 'kiosk':
+    #     raise Http404("Page not found")     
     products = Product.objects.all()
     return render(request, "Amusement_Park_Application/scanner.html", {"products": products})

@@ -1311,7 +1311,6 @@ Page content END -->
 						confirmButtonText: 'باشه'
 					}).then((result) => {
 						if (result.isConfirmed) {
-							// ریدایرکت به صفحه چاپ بلیت به همراه ticket_id دریافتی از سرور
 							window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
 						}
 					});
