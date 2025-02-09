@@ -480,8 +480,8 @@ class RerecordingTransaction(models.Model):
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
 
     class Meta:
-        verbose_name = "فروش مجدد"
-        verbose_name_plural = "فروش های مجدد"
+        verbose_name = "تراکنش مجدد"
+        verbose_name_plural = "تراکنش های مجدد"
 
     def clean(self):
         if self.rerecording_transaction and not self.rerecording_transaction.is_success:

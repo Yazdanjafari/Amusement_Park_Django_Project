@@ -11,6 +11,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 import logging
+import requests
 from io import BytesIO
 import json, qrcode, base64
 
@@ -463,12 +464,56 @@ def save_refund(request):
 
 
 
-# ---------------------------------------------   --------------------------------------------- #
+# --------------------------------------------- Setting.html and Bank --------------------------------------------- #
+
 @login_required
 def setting(request):
     if request.user.role == 'kiosk':
-        raise Http404("Page not found")  # User with KIOSK role gets a 404 error
+        raise Http404("Page not found")
     return render(request, "Amusement_Park_Application/setting.html")
+
+# برای سادگی می‌توانیم CSRF را در این ویوها غیرفعال کنیم، ولی بهتر است در پروژه‌های واقعی از توکن CSRF استفاده کنید.
+@csrf_exempt  
+def test_connection(request):
+    if request.method == "POST":
+        ip = request.POST.get('ip')
+        port = request.POST.get('port')
+        # مثال: فراخوانی API تست دستگاه کارتخوان
+        try:
+            # فرض می‌کنیم دستگاه دارای endpoint تست به شکل زیر است:
+            url = f"http://{ip}:{port}/api/test"
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                return JsonResponse({'status': 'success', 'message': 'ارتباط برقرار است'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'ارتباط برقرار نیست'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': 'ارتباط برقرار نیست'})
+    return JsonResponse({'status': 'error', 'message': 'روش درخواست نامعتبر است'})
+
+@csrf_exempt
+def test_payment(request):
+    if request.method == "POST":
+        payment = request.POST.get('payment')
+        ip = request.POST.get('ip')
+        port = request.POST.get('port')
+        try:
+            payment_value = int(payment)
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': 'مبلغ پرداخت نامعتبر است'})
+        try:
+            # فرض: endpoint پرداخت دستگاه
+            url = f"http://{ip}:{port}/api/payment"
+            response = requests.post(url, data={'amount': payment_value}, timeout=5)
+            if response.status_code == 200:
+                return JsonResponse({'status': 'success', 'message': 'پرداخت با موفقیت انجام شد'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'پرداخت ناموفق بود'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': 'ارتباط برقرار نیست'})
+    return JsonResponse({'status': 'error', 'message': 'روش درخواست نامعتبر است'})
+
+
 
 # --------------------------------------------- retransaction page (Submit_pay.html) --------------------------------------------- #
 
@@ -645,8 +690,6 @@ def verify_qr_code(request):
 
 
 @login_required
-def scanner(request):
-    # if request.user.role == 'kiosk':
-    #     raise Http404("Page not found")     
+def scanner(request):     
     products = Product.objects.all()
     return render(request, "Amusement_Park_Application/scanner.html", {"products": products})

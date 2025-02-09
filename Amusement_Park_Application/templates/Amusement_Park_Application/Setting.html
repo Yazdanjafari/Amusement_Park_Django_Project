@@ -46,51 +46,44 @@ Page content START -->
 					<h5 class="mb-0">تنظیمات :</h5>
 
 					<!-- Form START -->
-					<form class="row g-3 mt-3">
-
-                        <div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
-                            <label class="form-label mb-0">عملکرد به عنوان دستگاه کارتخوان :</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="deviceModeToggle" class="toggle-input">
-                                <label for="deviceModeToggle" class="toggle-label"></label>
-                            </div>
-                        </div>
-
-                        
-						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="firstName" placeholder="شماره سریال :">
+					<form id="cardReaderForm" class="row g-3 mt-3">
+						<div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
+							<label class="form-label mb-0">عملکرد به عنوان دستگاه کارتخوان :</label>
+							<div class="toggle-switch">
+								<input type="checkbox" id="deviceModeToggle" class="toggle-input">
+								<label for="deviceModeToggle" class="toggle-label"></label>
+							</div>
 						</div>
-
-
+				
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="lastName" placeholder="شماره پذیرنده :">
+							<input type="text" class="form-control" id="serialInput" placeholder="شماره سریال :">
 						</div>
-
-
+				
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="lastName" placeholder="شماره ترمینال :">
+							<input type="text" class="form-control" id="merchantInput" placeholder="شماره پذیرنده :">
 						</div>
-
-
+				
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="lastName" placeholder="آدرس آی پی :">
+							<input type="text" class="form-control" id="terminalInput" placeholder="شماره ترمینال :">
 						</div>
-
-
+				
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="lastName" placeholder="شماره پورت :">
+							<input type="text" class="form-control" id="ipInput" placeholder="آدرس آی پی :">
 						</div>
-
-						<!-- Button -->
+				
+						<div class="col-md-12 bg-light-input">
+							<input type="text" class="form-control" id="portInput" placeholder="شماره پورت :">
+						</div>
+				
+						<!-- دکمه‌های تست ارتباط و تست پرداخت -->
 						<div class="d-flex justify-content-center align-items-center gap-2 w-100">
-							<button type="submit" class="btn btn-danger w-50 mb-1">تست ارتباط</button>
-							<button type="submit" class="btn btn-danger w-50 mb-1">تست پرداخت</button>
+							<button type="button" id="testConnectionBtn" class="btn btn-danger w-50 mb-1">تست ارتباط</button>
+							<button type="button" id="testPaymentBtn" class="btn btn-danger w-50 mb-1">تست پرداخت</button>
 						</div>
-						
+				
 						<div class="d-flex justify-content-center align-items-center mt-2 w-100">
 							<button type="submit" class="btn btn-primary w-100 mb-0">ثبت</button>
-						</div>												
-
+						</div>
 					</form>
 					<!-- Form END -->
 				</div>
@@ -221,6 +214,87 @@ html[lang="fa"] body {
 				return cookieValue;
 			}
 		});
+
+
+		$(document).ready(function(){
+			// تابع برای دریافت توکن CSRF از کوکی (در صورت استفاده از CSRF)
+			function getCookie(name) {
+				var cookieValue = null;
+				if (document.cookie && document.cookie !== '') {
+					var cookies = document.cookie.split(';');
+					for (var i = 0; i < cookies.length; i++) {
+						var cookie = $.trim(cookies[i]);
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+			var csrftoken = getCookie('csrftoken');
+			$.ajaxSetup({
+				beforeSend: function(xhr, settings) {
+					// اگر URL درخواست از سایت ما باشد، توکن CSRF را اضافه می‌کنیم.
+					if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+						xhr.setRequestHeader("X-CSRFToken", csrftoken);
+					}
+				}
+			});
+	
+			// رویداد کلیک برای تست ارتباط
+			$('#testConnectionBtn').click(function(e){
+				e.preventDefault();
+				var ip = $('#ipInput').val();
+				var port = $('#portInput').val();
+	
+				$.ajax({
+					url: "{% url 'Amusement_Park:test_connection' %}",
+					type: "POST",
+					data: {
+						ip: ip,
+						port: port
+					},
+					success: function(response){
+						// نمایش نوتیفیکیشن بر اساس پاسخ دریافتی
+						alert(response.message);
+					},
+					error: function(){
+						alert("خطا در برقراری ارتباط");
+					}
+				});
+			});
+	
+			// رویداد کلیک برای تست پرداخت
+			$('#testPaymentBtn').click(function(e){
+				e.preventDefault();
+				var payment = prompt("مقدار پرداخت را وارد کنید (عدد صحیح):");
+				if(payment === null) return; // اگر کاربر کنسل کرد
+				if(!/^\d+$/.test(payment)){
+					alert("لطفاً فقط عدد صحیح وارد کنید.");
+					return;
+				}
+				var ip = $('#ipInput').val();
+				var port = $('#portInput').val();
+	
+				$.ajax({
+					url: "{% url 'Amusement_Park:test_payment' %}",
+					type: "POST",
+					data: {
+						payment: payment,
+						ip: ip,
+						port: port
+					},
+					success: function(response){
+						alert(response.message);
+					},
+					error: function(){
+						alert("خطا در برقراری ارتباط برای پرداخت");
+					}
+				});
+			});
+		});
+
 	</script>
 {% endblock script %}
 	
