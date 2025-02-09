@@ -234,13 +234,12 @@ Instructor grid END -->
 			text: `${count} عدد از محصول ${productTitle} به سبد خرید اضافه شد`,
 			icon: 'success',
 			confirmButtonText: 'باشه',
-			showCancelButton: true, // نمایش دکمه لغو
-			cancelButtonText: 'سبد خرید', // متن دکمه لغو
-			cancelButtonColor: '#3085d6', // رنگ دکمه لغو
-			focusConfirm: false, // عدم تمرکز روی دکمه تایید
+			showCancelButton: true,
+			cancelButtonText: 'سبد خرید', 
+			cancelButtonColor: '#3085d6',
+			focusConfirm: false, 
 		}).then((result) => {
 			if (result.dismiss === Swal.DismissReason.cancel) {
-				// اگر کاربر روی دکمه "سبد خرید" کلیک کرد
 				window.location.href = "{% url 'Amusement_Park:Cart' %}";
 			}
 		});

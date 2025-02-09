@@ -492,33 +492,53 @@ class RerecordingTransaction(models.Model):
         if self.rerecording_transaction and not self.rerecording_transaction.is_success:
             raise ValidationError("سیستم قادر به ثبت فروش مجدد برای تراکنش ناموفق نیست")
 
-        # Update the is_success field of the parent Transaction if needed
-        if self.is_success != self.rerecording_transaction.is_success:
+        # Update parent transaction status if needed
+        if self.rerecording_transaction and (self.is_success != self.rerecording_transaction.is_success):
             self.rerecording_transaction.is_success = self.is_success
             self.rerecording_transaction.save()
 
-        # Create a new Transaction based on this RerecordingTransaction
-        if not self.pk:  # Only create a new transaction on the first save
+        # Only perform cloning on first save (i.e. creation)
+        if not self.pk:
+            old_transaction = self.rerecording_transaction
+            old_ticket = old_transaction.ticket
+
+            # Step 1: Create a new ticket (the new ticket gets its own tracking_code automatically)
+            new_ticket = Ticket.objects.create(
+                customer=old_ticket.customer,
+                desc=self.desc or old_ticket.desc,
+                user=self.user or old_ticket.user,
+            )
+
+            # Step 2: Copy all TicketProduct records from the old ticket to the new ticket.
+            for ticket_product in old_ticket.ticket_products.all():
+                TicketProduct.objects.create(
+                    ticket=new_ticket,
+                    product=ticket_product.product,
+                    quantity=ticket_product.quantity,
+                    scanned=False,
+                )
+
+            # Step 3: Create a new transaction using the new ticket
             new_transaction = Transaction(
-                user=self.user or self.rerecording_transaction.user,
-                ticket=self.rerecording_transaction.ticket,
+                user=self.user or old_transaction.user,
+                ticket=new_ticket,  # New ticket now contains TicketProduct records!
                 type=self.type,
                 is_success=self.is_success,
-                has_tax=self.rerecording_transaction.has_tax,
-                offer=self.rerecording_transaction.offer,
-                manual_discount=self.rerecording_transaction.manual_discount,
-                product_prices=self.rerecording_transaction.product_prices,
-                tax=self.rerecording_transaction.tax,
-                discount=self.rerecording_transaction.discount,
-                price=self.rerecording_transaction.price,
-                desc=self.desc or self.rerecording_transaction.desc,
-                create_at=timezone.now(),
+                has_tax=old_transaction.has_tax,
+                offer=old_transaction.offer,
+                manual_discount=old_transaction.manual_discount,
                 mix_pc=self.mix_pc,
-                mix_cash=self.mix_cash,                
+                mix_cash=self.mix_cash,
+                desc=self.desc or old_transaction.desc,
+                # Do not pass product_prices, tax, discount, or price;
+                # these will be recalculated in Transaction.save()
             )
             new_transaction.save()
 
-            # Link this RerecordingTransaction to the newly created transaction
+            # Link the new transaction to the new ticket (ManyToMany relationship)
+            new_ticket.transaction.add(new_transaction)
+
+            # Update the rerecording_transaction field to point to the new transaction
             self.rerecording_transaction = new_transaction
 
         super().save(*args, **kwargs)

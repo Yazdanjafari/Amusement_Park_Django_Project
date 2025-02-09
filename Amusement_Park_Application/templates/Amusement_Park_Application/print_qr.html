@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>کد کیو آر بلیت</title>
+    <!-- متا تگ‌های جلوگیری از کش -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <style>
         @font-face {
             font-family: 'IRANSans';
             src: url('{% static "fonts/IRANSans.woff2" %}') format('woff2');
         }
-
         body {
             font-family: 'IRANSans', Arial, sans-serif;
             background-color: black;
@@ -21,7 +25,6 @@
             align-items: center;
             min-height: 100vh;
         }
-        
         .container {
             width: 210mm;
             height: 297mm;
@@ -33,20 +36,16 @@
             box-sizing: border-box;
             padding: 30px;
         }
-        
-
         h1 {
             color: #000;
             font-size: 28px;
             margin-bottom: 10px;
         }
-
         .tracking-id {
             font-size: 20px;
             color: #333;
             margin-bottom: 15px;
         }
-
         .qr-code {
             width: 180mm;
             height: 180mm;
@@ -57,12 +56,10 @@
             padding: 10px;
             background: #fff;
         }
-
         .qr-code img {
             width: 100%;
             height: 100%;
         }
-
         .print-button {
             background-color: #000;
             color: white;
@@ -75,23 +72,19 @@
             font-weight: bold;
             margin-top: 20px;
         }
-
         .print-button:hover {
             background-color: #333;
         }
-
         @media print {
             @page {
                 size: A4 portrait;
                 margin: 0;
             }
-
             body {
                 background-color: white;
                 margin: 0;
                 padding: 0;
             }
-
             .container {
                 width: 210mm;
                 height: 297mm;
@@ -99,7 +92,6 @@
                 border: none;
                 padding: 0;
             }
-
             .print-button {
                 display: none;
             }
@@ -109,6 +101,16 @@
         function printPage() {
             window.print();
         }
+        
+        // پس از بستن دیالوگ چاپ، کاربر به صفحه اصلی هدایت و صفحه فعلی از تاریخچه حذف می‌شود.
+        window.onafterprint = function() {
+            window.location.replace("{% url 'Amusement_Park:Products' %}");
+        };
+
+        // استفاده از history.replaceState برای حذف صفحه از تاریخچه (در صورت لزوم)
+        window.onload = function() {
+            history.replaceState(null, null, location.href);
+        };
     </script>
 </head>
 <body>
