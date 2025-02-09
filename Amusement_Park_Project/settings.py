@@ -60,7 +60,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'Amusement_Park_Application.middleware.AdminAccessMiddleware',
-    'Amusement_Park_Application.middleware.RoleBasedAccessMiddleware',
     'Amusement_Park_Application.middleware.KioskBasedAccessMiddleware',
 ]
 

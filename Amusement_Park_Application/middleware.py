@@ -15,29 +15,7 @@ class AdminAccessMiddleware:
         response = self.get_response(request)
         return response
     
-    
-    
 
-class RoleBasedAccessMiddleware: #For scanner accounts
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        # Allow unrestricted access to login page
-        allowed_paths = [
-            reverse('Amusement_Park:Scanner'),  # Scanner page
-            reverse('Authenticate:Login'),  # Login page
-            reverse('Authenticate:Logout'),  # Logout page
-        ]
-
-        # Restrict SCANNER users
-        if request.user.is_authenticated and request.user.role == 'scanner':
-            if request.path not in allowed_paths:
-                return redirect('Amusement_Park:Scanner')  # Redirect to scanner page
-
-        return self.get_response(request)    
-    
-    
     
 class KioskBasedAccessMiddleware: #For Kiosk accounts
     def __init__(self, get_response):

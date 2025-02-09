@@ -5,94 +5,10 @@
 
 {% block style %}
 	<style>
-		{% comment %} Resposive's style {% endcomment %}
-
-		@media (max-width: 768px) {
-			section {
-				padding-top: 0rem !important;
-				padding-bottom: 3rem !important;
-			}
-
-			body {
-				overflow-x: hidden !important;
-			}
-		
-			.container {
-				padding: 5px !important;
-				max-width: 100% !important;
-				overflow-x: hidden !important;
-			}
-		
-			.row.g-4 {
-				display: flex !important;
-				flex-wrap: wrap !important;
-				justify-content: space-between !important;
-				margin: 0 !important;
-				width: 100% !important;
-			}
-		
-			.col-sm-6 {
-				flex: 0 0 calc(50% - 6px) !important;
-				max-width: calc(50% - 6px) !important;
-				padding: 5px !important;
-			}
-		
-			.card {
-				padding: 6px !important;
-				font-size: 12px !important;
-				box-shadow: none !important;
-				max-width: 100% !important;
-			}
-		
-			.card-title {
-				font-size: 14px !important;
-				text-align: center !important;
-			}
-		
-			.card-img {
-				width: 100% !important; 
-				height: auto !important; 
-				aspect-ratio: 1 / 1 !important;
-				object-fit: cover !important; 
-				border-radius: 5px !important;
-			}
-			
-		
-			.btn-sm {
-				font-size: 13px !important; 
-				padding: 0 !important;
-				margin: 2px !important; 
-				width: 22px !important; 
-				height: 22px !important;
-				display: flex !important;
-				align-items: center !important;
-				justify-content: center !important;
-				text-align: center !important;
-				border-radius: 5px !important;
-			}
-			
-		
-			.d-flex.justify-content-between {
-				flex-wrap: wrap !important; 
-				gap: 3px !important; 
-				justify-content: center !important;
-			}
-		
-			.card-body {
-				padding: 4px !important;
-			}
-
-			.text-bg-dark {
-				font-size: 75%;
-				color: #fff !important;
-				background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
-			}			
-
-		}
-		
-		
-				
-		
+		.special-disabled {
+			pointer-events: none;
+			opacity: 0.5;
+		}		
 	</style>
 {% endblock style %}
 	
@@ -131,12 +47,21 @@ Instructor grid START -->
                             </h5>
                             <hr>
                             <!-- Buttons -->
+							{% if request.user.role == 'scanner' %}
+                            <div class="d-flex justify-content-between align-items-center special-disabled">
+								<button class="btn btn-outline-success btn-sm"><i class="bi bi-cart"></i>
+								<button class="btn btn-outline-danger btn-sm">+</button>
+								<button class="btn btn-outline-primary btn-sm counter">0</button>
+								<button class="btn btn-outline-danger btn-sm">-</button>
+							</div>
+							{% else %}
                             <div class="d-flex justify-content-between align-items-center">
-                                <button class="btn btn-outline-success btn-sm" onclick="addToCart({{ i.id }}); resetCounter(this)"><i class="bi bi-cart"></i>
-                                <button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
-                                <button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
-                                <button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
-                            </div>
+								<button class="btn btn-outline-success btn-sm" onclick="addToCart({{ i.id }}); resetCounter(this)"><i class="bi bi-cart"></i>
+								<button class="btn btn-outline-danger btn-sm" onclick="increment(this)">+</button>
+								<button class="btn btn-outline-primary btn-sm counter" disabled>0</button>
+								<button class="btn btn-outline-danger btn-sm" onclick="decrement(this)">-</button>
+							</div>
+							{% endif %}
                         </div>
                     </div>
                 </div>
