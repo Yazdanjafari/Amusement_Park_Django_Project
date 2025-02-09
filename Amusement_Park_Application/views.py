@@ -555,10 +555,16 @@ def save_retransaction(request):
             )
             
             rerecording.full_clean()
-            
             rerecording.save()
             
-            return JsonResponse({"status": "success", "message": "فروش مجدد با موفقیت ثبت شد."})
+            new_transaction = rerecording.rerecording_transaction
+            ticket_id = new_transaction.ticket.id
+            
+            return JsonResponse({
+                "status": "success", 
+                "message": "فروش مجدد با موفقیت ثبت شد.",
+                "ticket_id": ticket_id,
+            })
         
         except ValidationError as ve:
             return JsonResponse({"status": "error", "message": ve.message_dict})
@@ -566,6 +572,7 @@ def save_retransaction(request):
             return JsonResponse({"status": "error", "message": str(e)})
     
     return JsonResponse({"status": "error", "message": "متد درخواست صحیح نیست."})
+
 
 
 
