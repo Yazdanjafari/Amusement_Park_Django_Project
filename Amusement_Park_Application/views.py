@@ -472,15 +472,12 @@ def setting(request):
         raise Http404("Page not found")
     return render(request, "Amusement_Park_Application/setting.html")
 
-# برای سادگی می‌توانیم CSRF را در این ویوها غیرفعال کنیم، ولی بهتر است در پروژه‌های واقعی از توکن CSRF استفاده کنید.
 @csrf_exempt  
 def test_connection(request):
     if request.method == "POST":
         ip = request.POST.get('ip')
         port = request.POST.get('port')
-        # مثال: فراخوانی API تست دستگاه کارتخوان
         try:
-            # فرض می‌کنیم دستگاه دارای endpoint تست به شکل زیر است:
             url = f"http://{ip}:{port}/api/test"
             response = requests.get(url, timeout=5)
             if response.status_code == 200:
@@ -502,7 +499,6 @@ def test_payment(request):
         except ValueError:
             return JsonResponse({'status': 'error', 'message': 'مبلغ پرداخت نامعتبر است'})
         try:
-            # فرض: endpoint پرداخت دستگاه
             url = f"http://{ip}:{port}/api/payment"
             response = requests.post(url, data={'amount': payment_value}, timeout=5)
             if response.status_code == 200:

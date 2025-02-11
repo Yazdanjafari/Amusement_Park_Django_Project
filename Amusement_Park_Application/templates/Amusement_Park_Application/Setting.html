@@ -46,7 +46,7 @@ Page content START -->
 					<h5 class="mb-0">تنظیمات :</h5>
 
 					<!-- Form START -->
-					<form id="cardReaderForm" class="row g-3 mt-3">
+					<form id="cardReaderForm" class="row g-3 mt-3" action="{% url 'Amusement_Park:Products' %}">
 						<div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
 							<label class="form-label mb-0">عملکرد به عنوان دستگاه کارتخوان :</label>
 							<div class="toggle-switch">
@@ -114,15 +114,13 @@ Page content END -->
 		border-radius: 5px;
 }
 
-/* Ensure proper directionality for the page */
 html[lang="fa"] body {
-	direction: rtl; /* Right-to-left for Persian */
+	direction: rtl; 
     text-align: right;
 }
 
-/* Ensure alignment for buttons and forms */
 .text-end {
-	text-align: right !important; /* Ensure consistent right alignment */
+	text-align: right !important; 
 }
 
 .toggle-switch {
@@ -217,7 +215,6 @@ html[lang="fa"] body {
 
 
 		$(document).ready(function(){
-			// تابع برای دریافت توکن CSRF از کوکی (در صورت استفاده از CSRF)
 			function getCookie(name) {
 				var cookieValue = null;
 				if (document.cookie && document.cookie !== '') {
@@ -235,14 +232,12 @@ html[lang="fa"] body {
 			var csrftoken = getCookie('csrftoken');
 			$.ajaxSetup({
 				beforeSend: function(xhr, settings) {
-					// اگر URL درخواست از سایت ما باشد، توکن CSRF را اضافه می‌کنیم.
 					if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
 						xhr.setRequestHeader("X-CSRFToken", csrftoken);
 					}
 				}
 			});
 	
-			// رویداد کلیک برای تست ارتباط
 			$('#testConnectionBtn').click(function(e){
 				e.preventDefault();
 				var ip = $('#ipInput').val();
@@ -256,7 +251,6 @@ html[lang="fa"] body {
 						port: port
 					},
 					success: function(response){
-						// نمایش نوتیفیکیشن بر اساس پاسخ دریافتی
 						alert(response.message);
 					},
 					error: function(){
@@ -265,11 +259,10 @@ html[lang="fa"] body {
 				});
 			});
 	
-			// رویداد کلیک برای تست پرداخت
 			$('#testPaymentBtn').click(function(e){
 				e.preventDefault();
 				var payment = prompt("مقدار پرداخت را وارد کنید (عدد صحیح):");
-				if(payment === null) return; // اگر کاربر کنسل کرد
+				if(payment === null) return; 
 				if(!/^\d+$/.test(payment)){
 					alert("لطفاً فقط عدد صحیح وارد کنید.");
 					return;
