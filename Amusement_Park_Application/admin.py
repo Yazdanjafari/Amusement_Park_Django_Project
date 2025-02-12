@@ -414,15 +414,20 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
 
         # Define metrics for sales, including unsuccessful transactions
         metrics = {
-            'total_transactions': Count('id'),
-            'total_sales': Sum(F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price')),
-            'total_tickets': Sum('ticket__ticket_products__quantity'),
+            'total_transactions': Count('id', filter=Q(is_success=True)),
+            'total_sales': Sum(
+                F('ticket__ticket_products__quantity') * F('ticket__ticket_products__product__price'),
+                filter=Q(is_success=True)
+            ),
+            'total_tickets': Sum('ticket__ticket_products__quantity', filter=Q(is_success=True)),
         }
+
 
         # Annotating with aggregated data for both successful and unsuccessful transactions
         summary_data = (
             TicketProduct.objects
             .select_related('product', 'ticket')
+            .filter(ticket__transaction_obj__is_success=True)
             .values('product__title')
             .annotate(
                 total_transactions=Count('ticket'),
@@ -430,6 +435,7 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
                 total_tickets=Sum('quantity'),
             )
         )
+
 
         # Add the summary data to the response context
         response.context_data['summary'] = summary_data
