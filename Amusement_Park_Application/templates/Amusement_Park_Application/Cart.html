@@ -1055,7 +1055,6 @@ Page content END -->
 			const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
 			const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
 			const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));
-	
 			const finalPrice = totalPrice + taxAmount - discountAmount;
 			finalPriceElement.innerText = finalPrice.toLocaleString() + ' ریال';
 			return finalPrice;
@@ -1148,31 +1147,237 @@ Page content END -->
 			resetCombinedFields();
 		});
 	
-		payButton.addEventListener('click', function(event) {
+		const cardReaderIP = localStorage.getItem('cardReaderIP') || '192.168.1.100';
+		const cardReaderPort = localStorage.getItem('cardReaderPort') || '8000';
+	
+		function getTransactionType() {
+			const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
+			const isCashOpen = document.getElementById('collapse-cash').classList.contains('show');
+			const isCombinedOpen = document.getElementById('collapse-combined').classList.contains('show');
+	
+			if (isCardReaderOpen) {
+				return 'pc'; 
+			} else if (isCashOpen) {
+				return 'cash'; 
+			} else if (isCombinedOpen) {
+				return 'mix';
+			} else {
+				return 'pc'; 
+			}
+		}
+	
+		payButton.addEventListener('click', function (e) {
+			e.preventDefault();
+	
 			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
-			const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+			const cardAmountInput = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
 	
 			const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
+			const isCashPayment = document.getElementById('collapse-cash').classList.contains('show');
+			const transactionType = getTransactionType();
+			const finalPrice = updateFinalPrice();
+	
+			let cardPaymentAmount = 0;
+			if (transactionType === 'pc') {
+				cardPaymentAmount = finalPrice;
+			} else if (transactionType === 'mix') {
+				cardPaymentAmount = cardAmountInput;
+			}
 	
 			if (isCombinedPayment) {
-				if (cashAmount === 0 && cardAmount === 0) {
-					event.preventDefault(); 
+				if (cashAmount === 0 && cardAmountInput === 0) {
 					Swal.fire({
 						title: 'خطا',
 						text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
+					return;
 				} else if (cashInput.disabled === false || cardInput.disabled === false) {
-					event.preventDefault(); 
 					Swal.fire({
 						title: 'خطا',
 						text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
 						icon: 'error',
 						confirmButtonText: 'باشه'
 					});
+					return;
 				}
 			}
+	
+			if (isCashPayment) {
+				Swal.fire({
+					title: 'تأیید فروش نقدی',
+					text: 'آیا مطمئن هستید که این خرید کاملاً نقدی است؟',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'بله',
+					cancelButtonText: 'خیر'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						proceedWithPayment();
+					}
+				});
+			} else {
+				proceedWithPayment();
+			}
+	
+			function proceedWithPayment() {
+
+				if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+					Swal.fire({
+						title: 'پرداخت از طریق دستگاه کارتخوان...',
+						allowOutsideClick: false,
+						didOpen: () => { Swal.showLoading(); }
+					});
+	
+					const formData = new URLSearchParams();
+					formData.append('payment', cardPaymentAmount);
+					formData.append('ip', cardReaderIP);
+					formData.append('port', cardReaderPort);
+	
+					fetch('{% url "Amusement_Park:test_payment" %}', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+							'X-CSRFToken': '{{ csrf_token }}'
+						},
+						body: formData
+					})
+					.then(response => response.json())
+					.then(cardResponse => {
+						if (cardResponse.status === 'success') {
+							Swal.fire({
+								icon: 'success',
+								title: 'پرداخت کارتخوان موفق',
+								text: cardResponse.message,
+								timer: 1500,
+								showConfirmButton: false
+							}).then(() => {
+								submitPayment();
+							});
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'خطا در پرداخت کارتخوان',
+								text: cardResponse.message,
+								confirmButtonText: 'باشه'
+							});
+						}
+					})
+					.catch(error => {
+						console.error('Error in card payment:', error);
+						Swal.fire({
+							icon: 'error',
+							title: 'خطا در ارتباط با دستگاه کارتخوان',
+							text: 'خطا در ارتباط با دستگاه کارتخوان.',
+							confirmButtonText: 'باشه'
+						});
+					});
+				} else {
+					submitPayment();
+				}
+			}
+	
+			function submitPayment() {
+				const phone = document.getElementById('phoneInput').value;
+				const firstName = document.getElementById('firstName').value;
+				const lastName = document.getElementById('lastName').value;
+				const birthYear = document.getElementById('birthYear').value;
+				const birthMonth = document.getElementById('birthMonth').value;
+				const birthDay = document.getElementById('birthDay').value;
+	
+				const customerData = phone ? {
+					phone: phone,
+					firstName: firstName || null,
+					lastName: lastName || null,
+					birthYear: birthYear || null,
+					birthMonth: birthMonth || null,
+					birthDay: birthDay || null,
+				} : null;
+	
+				const cartItems = [];
+				document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
+					const productId = item.getAttribute('data-ticket-product-id');
+					const quantity = item.querySelector('.counter').innerText;
+					cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
+				});
+	
+				const transactionData = {
+					type: getTransactionType(), 
+					discount_code: document.getElementById('discount-code').value || null, 
+					discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
+					mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
+					mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
+				};
+	
+				Swal.fire({
+					title: 'در حال ثبت تراکنش...',
+					allowOutsideClick: false,
+					didOpen: () => { Swal.showLoading(); }
+				});
+	
+				fetch('{% url "Amusement_Park:submit_pay" %}', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': '{{ csrf_token }}'
+					},
+					body: JSON.stringify({
+						customer_data: customerData,
+						cart_items: cartItems,
+						transaction_data: transactionData,
+					}),
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('خطا در ارتباط با سرور.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					if (data.success) {
+						Swal.fire({
+							icon: 'success',
+							title: 'موفقیت‌آمیز',
+							text: 'پرداخت با موفقیت انجام شد.',
+							confirmButtonText: 'باشه'
+						}).then((result) => {
+							if (result.isConfirmed) {
+								window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
+							}
+						});
+					} else {
+						Swal.fire({
+							icon: 'error',
+							title: 'خطا در پرداخت',
+							text: 'خطا در پرداخت: ' + data.message,
+							confirmButtonText: 'باشه'
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					Swal.fire({
+						icon: 'error',
+						title: 'خطا در ارتباط با سرور',
+						text: 'خطا در ارتباط با سرور.',
+						confirmButtonText: 'باشه'
+					});
+				});
+			}
+		});
+	
+
+		document.querySelectorAll('.discount-input').forEach(input => {
+			input.addEventListener('input', function() {
+				resetCombinedFields();
+			});
+		});
+	
+		document.querySelectorAll('#btn-code, #btn-amount, #btn-percent').forEach(button => {
+			button.addEventListener('click', function() {
+				resetCombinedFields();
+			});
 		});
 	
 		const observer = new MutationObserver(function(mutations) {
@@ -1186,154 +1391,8 @@ Page content END -->
 		observer.observe(finalPriceElement, {
 			attributes: true
 		});
-	
-		document.querySelectorAll('.discount-input').forEach(input => {
-			input.addEventListener('input', function() {
-				resetCombinedFields();
-			});
-		});
-	
-		document.querySelectorAll('#btn-code, #btn-amount, #btn-percent').forEach(button => {
-			button.addEventListener('click', function() {
-				resetCombinedFields();
-			});
-		});
 	});
-
-
-
-
-	document.getElementById('pay-button').addEventListener('click', function (e) {
-		e.preventDefault(); 
 	
-		const cashAmount = parseFloat(document.getElementById('cash-amount').value.replace(/,/g, '')) || 0;
-		const cardAmount = parseFloat(document.getElementById('card-amount').value.replace(/,/g, '')) || 0;
-	
-		const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
-		const isCashPayment = document.getElementById('collapse-cash').classList.contains('show');
-	
-
-		if (isCashPayment) {
-			Swal.fire({
-				title: 'تأیید فروش نقدی',
-				text: 'آیا مطمئن هستید که این خرید کاملاً نقدی است؟',
-				icon: 'question',
-				showCancelButton: true,
-				confirmButtonText: 'بله',
-				cancelButtonText: 'خیر'
-			}).then((result) => {
-				if (result.isConfirmed) {
-					
-					proceedWithPayment();
-				}
-			});
-		} else {
-			
-			proceedWithPayment();
-		}
-	
-		function proceedWithPayment() {
-			if (isCombinedPayment) {
-				if (cashAmount === 0 && cardAmount === 0) {
-					Swal.fire({
-						title: 'خطا',
-						text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-					return; 
-				} else if (document.getElementById('cash-amount').disabled === false || document.getElementById('card-amount').disabled === false) {
-					Swal.fire({
-						title: 'خطا',
-						text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-					return; 
-				}
-			}
-	
-			const phone = document.getElementById('phoneInput').value;
-			const firstName = document.getElementById('firstName').value;
-			const lastName = document.getElementById('lastName').value;
-			const birthYear = document.getElementById('birthYear').value;
-			const birthMonth = document.getElementById('birthMonth').value;
-			const birthDay = document.getElementById('birthDay').value;
-	
-			const customerData = phone ? {
-				phone: phone,
-				firstName: firstName || null,
-				lastName: lastName || null,
-				birthYear: birthYear || null,
-				birthMonth: birthMonth || null,
-				birthDay: birthDay || null,
-			} : null;
-	
-			const cartItems = [];
-			document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
-				const productId = item.getAttribute('data-ticket-product-id');
-				const quantity = item.querySelector('.counter').innerText;
-				cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
-			});
-	
-			const transactionData = {
-				type: getTransactionType(), 
-				discount_code: document.getElementById('discount-code').value || null, 
-				discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
-				mix_pc: document.getElementById('card-amount') ? parseFloat(document.getElementById('card-amount').value.replace(/,/g, '')) : null,
-				mix_cash: document.getElementById('cash-amount') ? parseFloat(document.getElementById('cash-amount').value.replace(/,/g, '')) : null,
-			};
-	
-			fetch('{% url "Amusement_Park:submit_pay" %}', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': '{{ csrf_token }}', 
-				},
-				body: JSON.stringify({
-					customer_data: customerData,
-					cart_items: cartItems,
-					transaction_data: transactionData,
-				}),
-			})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('خطا در ارتباط با سرور.');
-				}
-				return response.json();
-			})
-			.then(data => {
-				if (data.success) {
-					Swal.fire({
-						icon: 'success',
-						title: 'موفقیت‌آمیز',
-						text: 'پرداخت با موفقیت انجام شد.',
-						confirmButtonText: 'باشه'
-					}).then((result) => {
-						if (result.isConfirmed) {
-							window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
-						}
-					});
-				} else {
-					Swal.fire({
-						icon: 'error',
-						title: 'خطا در پرداخت',
-						text: 'خطا در پرداخت: ' + data.message,
-						confirmButtonText: 'باشه'
-					});
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				Swal.fire({
-					icon: 'error',
-					title: 'خطا در ارتباط با سرور',
-					text: 'خطا در ارتباط با سرور.',
-					confirmButtonText: 'باشه'
-				});
-			});
-		}
-	});
 	
 	function getTransactionType() {
 		const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');

@@ -44,6 +44,9 @@ Page content START -->
 
 					<!-- Title -->
 					<h5 class="mb-0">تنظیمات :</h5>
+					<br>
+					<p style="font-size: 11px; color: red;">* نکته : آیپی دستگاه کارتخوان خود را روی "192.168.1.100" تنظیم کنید</p>
+					<p style="font-size: 11px; color: red;">* نکته : پورت دستگاه کارتخوان خود را روی "8000" تنظیم کنید</p>
 
 					<!-- Form START -->
 					<form id="cardReaderForm" class="row g-3 mt-3" action="{% url 'Amusement_Park:Products' %}">
@@ -56,24 +59,30 @@ Page content START -->
 						</div>
 				
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="serialInput" placeholder="شماره سریال :">
+							<label for="serialInput" class="form-label text-danger fw-bold small">* شماره سریال دستگاه</label>
+							<input type="text" class="form-control" id="serialInput" placeholder="مثال: 123456789">
 						</div>
-				
+						
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="merchantInput" placeholder="شماره پذیرنده :">
+							<label for="merchantInput" class="form-label text-danger fw-bold small">* شماره پذیرنده (Merchant ID)</label>
+							<input type="text" class="form-control" id="merchantInput" placeholder="مثال: 987654321">
 						</div>
-				
+						
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="terminalInput" placeholder="شماره ترمینال :">
+							<label for="terminalInput" class="form-label text-danger fw-bold small">* شماره ترمینال (Terminal ID)</label>
+							<input type="text" class="form-control" id="terminalInput" placeholder="مثال: 456123">
 						</div>
-				
+						
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="ipInput" placeholder="آدرس آی پی :">
+							<label for="ipInput" class="form-label text-danger fw-bold small">* آدرس آی‌پی دستگاه</label>
+							<input type="text" class="form-control" id="ipInput" value="192.168.1.100" placeholder="مثال: 192.168.1.200">
 						</div>
-				
+						
 						<div class="col-md-12 bg-light-input">
-							<input type="text" class="form-control" id="portInput" placeholder="شماره پورت :">
+							<label for="portInput" class="form-label text-danger fw-bold small">* شماره پورت ارتباطی</label>
+							<input type="text" class="form-control" id="portInput" value="8000" placeholder="مثال: 8080">
 						</div>
+						
 				
 						<!-- دکمه‌های تست ارتباط و تست پرداخت -->
 						<div class="d-flex justify-content-center align-items-center gap-2 w-100">
