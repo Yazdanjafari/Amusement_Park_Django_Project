@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>کد کیو آر بلیت</title>
-    <!-- متا تگ‌های جلوگیری از کش -->
+
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -100,7 +100,7 @@
             .print-button {
                 display: none;
             }
-            /* افزایش سایز QR-Code در چاپ */
+
             .qr-code {
                 width: 185mm;
                 height: 185mm;
@@ -114,12 +114,10 @@
             window.print();
         }
         
-        // پس از بستن دیالوگ چاپ، کاربر به صفحه اصلی هدایت و صفحه فعلی از تاریخچه حذف می‌شود.
         window.onafterprint = function() {
             window.location.replace("{% url 'Amusement_Park:Products' %}");
         };
 
-        // استفاده از history.replaceState برای حذف صفحه از تاریخچه (در صورت لزوم)
         window.onload = function() {
             history.replaceState(null, null, location.href);
         };
@@ -127,9 +125,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎟 بلیت شما</h1>
-        <p class="tracking-id">📌 کد رهگیری فروش : {{ transaction_id }}</p>
-        <p class="tracking-id">🔖 کد رهگیری بلیت : {{ ticket.id }}</p>
+        <h1>بلیت شما</h1>
+        <p class="tracking-id">کد رهگیری فروش : {{ transaction_id }}</p>
+        <p class="tracking-id">کد رهگیری بلیت : {{ ticket.id }}</p>
         <button class="print-button" onclick="printPage()">🖨 چاپ بلیت</button>
         <br>
         <div class="qr-code">
