@@ -1,11 +1,9 @@
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
 from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
-import json
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta

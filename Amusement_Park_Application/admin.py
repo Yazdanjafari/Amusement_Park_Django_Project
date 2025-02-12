@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
-from django.db.models import Sum
 from import_export.admin import ExportMixin
 from import_export import resources
 from import_export.fields import Field

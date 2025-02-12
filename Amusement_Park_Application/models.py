@@ -4,12 +4,9 @@ from django.core.cache import cache
 import jdatetime
 import uuid
 from django.core.exceptions import ValidationError
-from django.contrib import messages
 from .managers import CategoryQuerySet, ProductModelManager
 from treebeard.mp_tree import MP_Node
 from django_jalali.db import models as jmodels
-from datetime import timedelta
-from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
