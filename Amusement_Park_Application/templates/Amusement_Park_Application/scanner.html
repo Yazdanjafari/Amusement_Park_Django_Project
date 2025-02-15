@@ -145,16 +145,18 @@
                             }
                         },
                         (decodedText) => {
-                            // Prevent scanning if a ticket was scanned less than 1 second ago
+                            // If scanning is not allowed, simply return without doing anything
                             if (!scanningAllowed) {
                                 return;
                             }
+
                             // Disable scanning for 1 second
                             scanningAllowed = false;
                             setTimeout(() => {
                                 scanningAllowed = true;
                             }, 1000);
 
+                            // Continue processing the scanned barcode
                             const selectedProduct = document.getElementById("product-select").value;
                             if (!selectedProduct) {
                                 Swal.fire({

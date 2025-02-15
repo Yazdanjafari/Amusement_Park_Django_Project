@@ -49,7 +49,6 @@ class ScannerBasedAccessMiddleware: #For scanner accounts
             reverse('Amusement_Park:Setting'),
             reverse('Amusement_Park:Cart'),
             reverse('Amusement_Park:retransaction'),
-            reverse('Amusement_Park:Scanner')
         ]
 
         # If the user is authenticated and has the 'scanner' role
