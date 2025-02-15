@@ -70,9 +70,14 @@
 
 {% block script %}
 {% if error_message and request.method == "POST" %}
-<script>
-    alert("{{ error_message }}");
-</script>
+	<script>
+		Swal.fire({
+			icon: 'error',
+			title: 'خطا!',
+			text: "{{ error_message }}",
+			confirmButtonText: 'باشه'
+		});
+	</script>
 {% endif %}
 {% endblock script %}
 	
