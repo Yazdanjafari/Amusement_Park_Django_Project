@@ -48,13 +48,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         verbose_name="کارمند",  # Direct string for verbose name
         default=True,
-        help_text="این فیلد نشان می‌دهد که آیا کاربر باید به عنوان کارمند فعالیت کند (اخطار : به کاربران کیوسک و اسکنر این دسترسی پیشنهاد نمیشود)",  # Direct string for help text
+        help_text="این فیلد نشان می‌دهد که آیا کاربر باید به عنوان کارمند فعالیت کند (اخطار : به کاربران کیوسک و اسکنر این دسترسی را ندهید)",  # Direct string for help text
     )
     
     is_superuser = models.BooleanField(
         verbose_name="ادمین",  # Direct string for verbose name
         default=False,
-        help_text="این فیلد نشان می‌دهد که آیا کاربر دسترسی کامل به تمامی بخش هارا دارد یا خیر.",
+        help_text="این فیلد نشان می‌دهد که آیا کاربر دسترسی کامل به تمامی بخش هارا دارد یا خیر. (اخطار : به کاربران کیوسک و اسکنر این دسترسی را ندهید)",
     )
     
     # Tracking fields for user creation and updates
@@ -63,9 +63,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # Role description with possible choices
     role_info = """
-    |عادی :‌ دسترسی به کل بخش های سایت|
-    |کیوسک :‌ این دسترسی برای فروش از طریق ماشین تیکت تعریف شده|
-    |اسکنر :‌ برای کارکنانی که وظیفه اسکن بارکد را دارند|
+    عادی :‌ دسترسی به کل بخش های سایت*****
+    *****کیوسک :‌ این دسترسی برای فروش از طریق ماشین تیکت تعریف شده*****
+    *****اسکنر :‌ برای کارکنانی که وظیفه اسکن بارکد را دارند
     """
     role = models.CharField(
         verbose_name='نقش کاربری',

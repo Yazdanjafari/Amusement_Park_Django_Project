@@ -329,7 +329,7 @@ Page content START -->
 					<div class="row g-3 mt-2">
 						<div class="col-12">
 							<div class="input-group w-100">
-								<input class="form-control discount-input" id="discount-code" placeholder="کد تخفیف :">
+								<input type="text" class="form-control discount-input" id="discount-code" placeholder="کد تخفیف :">
 								<button class="btn btn-primary" id="btn-code" disabled>اعمال</button>
 							</div>
 							<small id="tip-code" class="form-text text-muted" style="display: none;"></small>
@@ -853,7 +853,7 @@ Page content END -->
 
 	// Restrict input to lowercase English letters
 	document.getElementById('discount-code').addEventListener('input', function() {
-		this.value = this.value.toLowerCase().replace(/[^a-z]/g, '');
+		this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '');
 	});	
 
 
