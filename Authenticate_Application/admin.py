@@ -66,15 +66,6 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         (
-            'اجازه ها',  # Include permissions if needed
-            {
-                'fields': (
-                    'groups',
-                    'user_permissions',
-                ),
-            },
-        ),
-        (
             'تاریخ ها',  # Group for important dates
             {
                 'fields': (
