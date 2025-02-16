@@ -1,10 +1,20 @@
 {% extends 'common.html' %}
 {% load static %}
+
+
+{% block style %}
+	<style>
+		.captcha-container {
+			display: flex;
+			justify-content: center; 
+			align-items: center;      
+			margin-top: 20px;        
+		}
+	</style>
+{% endblock style %}
+	
+
 {% block body %}
-
-
-
-
 <!-- **************** MAIN CONTENT START **************** -->
 <main>
 	<section class="p-0 d-flex align-items-center position-relative overflow-hidden">
@@ -45,6 +55,15 @@
 										<button class="btn btn-primary mb-0" type="submit">ورود</button>
 									</div>
 								</div>
+								<br>
+								<br>
+
+								{% comment %} Hcaptcha {% endcomment %}
+								<div class="captcha-container">
+									<div class="h-captcha" data-sitekey="29c887a0-d0ba-4a92-bf3e-4534e9469a86"></div>
+								</div>
+								{% comment %} End Hcaptcha {% endcomment %}
+								
 							</form>
 							<!-- Form END -->
 						</div>
@@ -69,6 +88,8 @@
 
 
 {% block script %}
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
 {% if error_message and request.method == "POST" %}
 	<script>
 		Swal.fire({
