@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # --------------------------------------------- index.html page --------------------------------------------- #
 
+@login_required
 def products(request):
     Product_Views = Product.objects.all()  # Ensure data is returned here
     # Fetch cart items from the session
@@ -35,7 +36,7 @@ def products(request):
         'cart': cart_items,
     })
 
-
+@csrf_exempt
 def add_to_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -69,13 +70,13 @@ def add_to_cart(request):
         return JsonResponse({'status': 'success', 'cart_items': cart_items})
     
     
-    
+@csrf_exempt    
 def cancle_cart(request):
     if request.method == 'POST':
         request.session['cart'] = []  # Clear the cart
         return JsonResponse({'status': 'success',})  
 
-
+@csrf_exempt
 def check_cart(request):
     cart = request.session.get('cart', [])
     cart_empty = len(cart) == 0
