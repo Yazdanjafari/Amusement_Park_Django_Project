@@ -378,7 +378,7 @@ def submit_pay(request):
 def refund(request):
     if request.user.role == 'kiosk':
         raise Http404("Page not found")  
-    return render(request, "Amusement_Park_Application/refund.html")
+    return render(request, "Amusement_Park_Application/Refund.html")
 
 
 @login_required
@@ -469,7 +469,7 @@ def save_refund(request):
 def setting(request):
     if request.user.role == 'kiosk':
         raise Http404("Page not found")
-    return render(request, "Amusement_Park_Application/setting.html")
+    return render(request, "Amusement_Park_Application/Setting.html")
 
 @csrf_exempt  
 def test_connection(request):

@@ -138,13 +138,30 @@ AUTH_USER_MODEL = 'Authenticate_Application.User'
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = Path(BASE_DIR) / 'media'
+MEDIA_ROOT = Path(BASE_DIR) / 'media' #For host : '/home/(name)/public_html/media'
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = 'C:/path/to/your/project/staticfiles'
+STATIC_ROOT = 'C:/path/to/your/project/staticfiles' # For host : '/home/(name)/public_html/static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'windowma_amusement_park_db',  
+#         'USER': 'windowma_amusement_park', 
+#         'PASSWORD': '@Ya13zd82an#', 
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
+
+# For passenger_wsgi.py in host :
+# from Amusement_Park_Project.wsgi import application
