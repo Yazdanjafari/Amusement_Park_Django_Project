@@ -123,16 +123,27 @@
             return '';
         }
 
-        function startScanner() {
-            document.getElementById("reader").style.display = "block"; 
+        let scannerReady = true; // فلگ کنترل اجرای مجدد تابع
 
+        function startScanner() {
+            // اگر تابع طی یک ثانیه پیش از این اجرا شده باشد، کاری نکند
+            if (!scannerReady) {
+                return;
+            }
+            scannerReady = false;
+            setTimeout(() => {
+                scannerReady = true;
+            }, 4000);
+        
+            document.getElementById("reader").style.display = "block"; 
+        
             Html5Qrcode.getCameras().then(devices => {
                 if (devices && devices.length > 0) {
                     const backCamera = devices.find(device => device.label.toLowerCase().includes("back"));
                     const cameraId = backCamera ? backCamera.id : devices[0].id;
-                    
+                            
                     console.log("Starting scanner with camera:", cameraId);
-
+        
                     const html5QrCode = new Html5Qrcode("reader");
                     html5QrCode.start(
                         cameraId,
@@ -149,13 +160,13 @@
                             if (!scanningAllowed) {
                                 return;
                             }
-
+        
                             // Disable scanning for 1 second
                             scanningAllowed = false;
                             setTimeout(() => {
                                 scanningAllowed = true;
-                            }, 1000);
-
+                            }, 4000);
+        
                             // Continue processing the scanned barcode
                             const selectedProduct = document.getElementById("product-select").value;
                             if (!selectedProduct) {
@@ -166,9 +177,9 @@
                                 });
                                 return;
                             }
-
-                            document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`;
-
+        
+                            {% comment %} document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`; {% endcomment %}
+        
                             fetch("{% url 'Amusement_Park:verify_qr_code' %}", {
                                 method: 'POST',
                                 headers: {
@@ -208,7 +219,7 @@
                         });
                         console.error("خطا در شروع اسکنر:", err);
                     });
-
+        
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -225,6 +236,7 @@
                 console.error("خطا در دسترسی به دوربین:", err);
             });
         }
+        
 
         window.onload = function() {
             startScanner();

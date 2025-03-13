@@ -89,7 +89,7 @@ class Product(models.Model):
         if self.created:
             jalali_date = jdatetime.datetime.fromgregorian(date=self.created.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
-        return ''
+        return '' 
 
     # Convert update time to Jalali date format.
     def j_update(self):
