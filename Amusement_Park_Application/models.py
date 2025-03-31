@@ -64,16 +64,19 @@ class Customer(models.Model):
 
 # Product Model: Represents a product in the system.
 class Product(models.Model):
+    class ProductType(models.TextChoices):
+        normal = ('normal', 'عادی')
+        tourist = ('tourist', 'توریستی')
+        
+    product_type = models.CharField(max_length=10, choices=ProductType.choices, verbose_name='نوع محصول', default=ProductType.normal)
     title = models.CharField(max_length=512, verbose_name='نام محصول', unique=True)
     price = models.PositiveBigIntegerField(verbose_name='قیمت')
     image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')    
     is_active = models.BooleanField(default=True, verbose_name='وضعیت فعال')
     is_taxable = models.BooleanField(editable=False, default=True, verbose_name='مشمول مالیات بر ارزش افزوده')
     order_metric = models.PositiveIntegerField(editable=False, default=0)
-
     created = models.DateTimeField(auto_now_add=True, verbose_name=' زمان ایجاد')
     update = models.DateTimeField(auto_now=True, verbose_name=' زمان ویرایش')
-
     objects = ProductModelManager()  # Custom manager for product queries.
 
     class Meta:

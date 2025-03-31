@@ -19,11 +19,15 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def products(request):
-    Product_Views = Product.objects.all()  # Ensure data is returned here
+    sale_mode = request.GET.get('sale_mode', 'normal')  # Default to 'normal'
+    if sale_mode == 'tourist':
+        Product_Views = Product.objects.filter(product_type=Product.ProductType.tourist)
+    else:
+        Product_Views = Product.objects.filter(product_type=Product.ProductType.normal)
+
     # Fetch cart items from the session
     cart = request.session.get('cart', [])
     cart_items = []
-
     for item in cart:
         product = get_object_or_404(Product, id=item['product_id'])
         cart_items.append({
@@ -32,9 +36,11 @@ def products(request):
         })
 
     return render(request, "Amusement_Park_Application/index.html", {
-        'Product_Views': Product_Views,  # Ensure this variable is passed
+        'Product_Views': Product_Views,
         'cart': cart_items,
     })
+
+
 
 @csrf_exempt
 def add_to_cart(request):

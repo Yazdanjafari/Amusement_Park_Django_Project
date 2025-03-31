@@ -9,6 +9,16 @@
 			pointer-events: none;
 			opacity: 0.5;
 		}		
+
+		.btn-xs {
+			padding: 2px 6px;
+			font-size: 12px;
+			line-height: 1;
+		}
+
+		.mt-2 {
+			margin-top: 0rem !important;
+		}		
 	</style>
 {% endblock style %}
 	
@@ -76,7 +86,17 @@ Instructor grid END -->
 
 
 {% block shortcut_header %}
-<li class="nav-item ms-2 dropdown ">
+<li class="nav-item ms-2">
+    <div class="d-flex align-items-center bg-light rounded-pill p-1 shadow-sm">
+        <span class="mx-2 text-muted" id="saleModeText">فروش عادی</span>
+        <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" id="saleModeToggle">
+        </div>
+        <i class="fas fa-store text-primary mx-2" id="saleModeIcon"></i>
+    </div>
+</li>
+
+<li class="nav-item ms-2 dropdown">
     <a class="btn btn-light btn-round mb-0 text-success" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
         <i class="bi bi-cart3 fa-fw"></i>
     </a>
@@ -100,13 +120,14 @@ Instructor grid END -->
     <!-- Cart dropdown menu END -->
 </li>
 
-
-<li class="nav-item ms-2 ">
-	<!-- Cart button -->
-	<a class="btn btn-light btn-round mb-0 ms-2" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
-		<i class="bi bi-trash fa-fw text-danger"></i>
-	</a>
+<li class="nav-item ms-2">
+    <!-- Cart button -->
+    <a class="btn btn-light btn-round mb-0 ms-2" role="button" aria-expanded="false" data-bs-auto-close="outside" onclick="clearAll()">
+        <i class="bi bi-trash fa-fw text-danger"></i>
+    </a>
 </li>
+
+
 {% endblock shortcut_header %}
 
 
@@ -382,6 +403,32 @@ Instructor grid END -->
             goToCart();
         });
     });
+
+
+	document.addEventListener("DOMContentLoaded", function () {
+		let saleMode = localStorage.getItem("saleMode") === "true";
+		let toggle = document.getElementById("saleModeToggle");
+		let text = document.getElementById("saleModeText");
+		let icon = document.getElementById("saleModeIcon");
+	
+		function updateSaleMode(isTourist) {
+			text.textContent = isTourist ? "فروش توریستی" : "فروش عادی";
+			icon.className = isTourist ? "fas fa-umbrella-beach text-success mx-2" : "fas fa-store text-primary mx-2";
+		}
+	
+		toggle.checked = saleMode;
+		updateSaleMode(saleMode);
+	
+		toggle.addEventListener("change", function () {
+			let isTourist = toggle.checked;
+			localStorage.setItem("saleMode", isTourist);
+			updateSaleMode(isTourist);
+			// Redirect with the appropriate sale_mode query parameter
+			window.location.href = window.location.pathname + '?sale_mode=' + (isTourist ? 'tourist' : 'normal');
+		});
+	});
+		
+
 
 </script>
 {% endblock script %}
