@@ -11,6 +11,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 
+
 # Category Model: Represents product categories, inheriting from MP_Node for tree structure.
 class Category(MP_Node):
     title = models.CharField(max_length=255, db_index=True, verbose_name='عنوان')
