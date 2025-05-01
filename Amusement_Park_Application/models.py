@@ -66,7 +66,7 @@ class Customer(models.Model):
         return ''
 
 
-# Product Model: Represents a product in the system.
+# Product Model: Represents a product in the system
 class Product(models.Model):
     class ProductType(models.TextChoices):
         normal = ('normal', 'عادی')
