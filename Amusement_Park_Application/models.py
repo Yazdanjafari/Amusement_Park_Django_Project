@@ -69,7 +69,9 @@ class Product(models.Model):
         tourist = ('tourist', 'توریستی')
         
     product_type = models.CharField(max_length=10, choices=ProductType.choices, verbose_name='نوع محصول', default=ProductType.normal)
-    title = models.CharField(max_length=512, verbose_name='نام محصول', unique=True)
+    title = models.CharField(max_length=512, verbose_name='نام محصول به فارسی', null=True, blank=True)
+    title_ar = models.CharField(max_length=512, verbose_name='نام محصول به عربی', null=True, blank=True)
+    title_en = models.CharField(max_length=512, verbose_name='نام محصول به انگلیسی', null=True, blank=True)
     price = models.PositiveBigIntegerField(verbose_name='قیمت')
     image = models.ImageField(upload_to='product_image/', verbose_name='تصویر', help_text='لطفا سایز عکس ۱*۱ باشد تا دیزاین سایت زیباتر باشد')    
     is_active = models.BooleanField(default=True, verbose_name='وضعیت فعال')
