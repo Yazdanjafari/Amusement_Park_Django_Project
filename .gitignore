@@ -8,8 +8,8 @@ __pycache__/
 *.py[cod]
 
 # Django-related files
-db.sqlite3
-/migrations/
+# db.sqlite3
+# /migrations/
 
 # Logs
 *.log
