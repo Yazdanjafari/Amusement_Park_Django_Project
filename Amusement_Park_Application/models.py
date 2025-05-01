@@ -36,6 +36,9 @@ class Category(MP_Node):
 class Customer(models.Model):
     first_name = models.CharField(max_length=255, verbose_name='نام', null=True, blank=True)
     last_name = models.CharField(max_length=255, verbose_name='نام خانوادگی', null=True, blank=True)
+    gender = models.CharField(max_length=255, verbose_name='جنسیت', null=True, blank=True)
+    contry = models.CharField(max_length=255, verbose_name='کشور', null=True, blank=True)
+    city = models.CharField(max_length=255, verbose_name='استان', null=True, blank=True)
     phone = models.CharField(max_length=11, verbose_name='شماره تلفن', unique=True)
     date_of_birth = jmodels.jDateField(verbose_name="تاریخ تولد", null=True, blank=True) 
     first_purchase = models.DateTimeField(auto_now_add=True, verbose_name='اولین خرید')
