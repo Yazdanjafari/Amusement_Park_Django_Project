@@ -13,6 +13,7 @@
 	<meta name="description">
 	<meta name="viewport" content="width=1300, user-scalable=no">
 	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<!-- Dark mode -->
 	<script>
@@ -71,7 +72,45 @@
 
 			}
 		})
-
+		{% comment %} Notification of english  {% endcomment %}
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("englishBtn").addEventListener("click", function (e) {
+				e.preventDefault();
+				Swal.fire({
+					title: 'تغییر زبان',
+					text: 'آیا فروش به فروش توریستی تغیر کند؟',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'بله',
+					cancelButtonText: 'خیر',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location.href = "?lang=en";
+					}
+				});
+			});
+		});
+		
+		{% comment %} Notification of Arabic  {% endcomment %}
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("Arabicbtn").addEventListener("click", function (e) {
+				e.preventDefault();
+				Swal.fire({
+					title: 'تغییر زبان',
+					text: 'آیا فروش به فروش توریستی تغیر کند؟',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'بله',
+					cancelButtonText: 'خیر',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location.href = "?lang=ar";
+					}
+				});
+			});
+		});
 	</script>
 
 
@@ -395,12 +434,13 @@
 								</a>
 						
 								<!-- English -->
-								<a href="#" class="btn btn-sm{% if language == 'en' %} active bg-white{% endif %}">
+								<a href="#" id="englishBtn" class="btn btn-sm{% if language == 'en' %} active bg-white{% endif %}">
 									<img class="flag-icon" src="{% static 'assets/images/usa.svg' %}" alt="English">
 								</a>
+								
 						
 								<!-- Arabic -->
-								<a href="#" class="btn btn-sm{% if language == 'ar' %} active bg-white{% endif %}">
+								<a href="#" id="Arabicbtn" class="btn btn-sm{% if language == 'ar' %} active bg-white{% endif %}">
 									<img class="flag-icon" src="{% static 'assets/images/sa.svg' %}" alt="Arabic">
 								</a>
 							</div>

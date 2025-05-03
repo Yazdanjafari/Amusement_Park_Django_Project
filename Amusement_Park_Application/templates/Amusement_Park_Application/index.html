@@ -142,6 +142,40 @@ Instructor grid END -->
 
 {% block script %}
 <script>
+    // change the languge
+	document.getElementById("saleModeToggle").addEventListener("click", function (e) {
+		e.preventDefault();
+	
+		Swal.fire({
+			title: 'تغییر زبان',
+			text: 'آیا مایل به تغییر زبان هستید؟',
+			icon: 'question',
+			showCancelButton: true,
+			showDenyButton: true,
+			confirmButtonText: 'English',
+			denyButtonText: 'Arabic',
+			cancelButtonText: 'خیر',
+			reverseButtons: true,
+			customClass: {
+				confirmButton: 'btn btn-secondary mx-1',
+				denyButton: 'btn btn-secondary mx-1',
+				cancelButton: 'btn btn-danger mx-1'
+			},
+			buttonsStyling: false
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.href = "?lang=en";
+			} else if (result.isDenied) {
+				window.location.href = "?lang=ar";
+			} else {
+				e.target.checked = false;
+			}
+		});
+	
+		return false;
+	});
+	
+	
     // Function to increment the counter
     function increment(button) {
         const counter = button.parentElement.querySelector('.counter');
