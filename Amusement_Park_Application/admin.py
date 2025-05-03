@@ -117,9 +117,9 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
 
 # Customer Admin
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'first_name', 'last_name', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
+    list_display = ('id', 'first_name', 'last_name', 'city', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
     search_fields = ('first_name', 'last_name', 'phone')
-    list_filter = ('date_of_birth', 'first_purchase', 'last_purchase')
+    list_filter = ('gender', 'date_of_birth', 'first_purchase', 'last_purchase', 'city')
     ordering = ('-last_purchase',)
     
     def j_first_purchase(self, obj):
