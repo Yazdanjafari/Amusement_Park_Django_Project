@@ -77,6 +77,24 @@
 
 	<style>		
 
+		{% comment %} Flag design {% endcomment %}
+		.flag-icon {
+			width: 40px;  /* Bigger width */
+			height: 30px; /* Bigger height */
+			object-fit: contain;
+		}
+		.language-switcher {
+			display: flex;
+			justify-content: center; /* Center horizontally */
+			align-items: center;
+			gap: 10px;
+			background-color: #f8f9fa;
+			padding: 10px;
+			border-radius: 8px;
+			margin-top: 10px;
+		}		
+		{% comment %} End Flag design {% endcomment %}
+
 		{% comment %} Start Css for Navbar {% endcomment %}
 
 		.navbar-collapse, .navbar-nav, .nav-link, .btn {
@@ -224,8 +242,8 @@
 				<ul class="navbar-nav navbar-nav-scroll me-auto">
 
 					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'kiosk' %}					
-					<li class="nav-item dropdown" style="padding-top: 5px !important; padding-bottom: 5px !important;">
-						<a class="nav-link bg-primary bg-opacity-10 rounded-3 text-primary px-3 py-3 py-xl-0 cart-link" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu" {% block disabled_cart %}{% endblock disabled_cart %}>
+					<li class="nav-item dropdown" style="padding-top: 5px !important; padding-bottom: 5px !important; font-size: 15px">
+						<a class="nav-link bg-primary bg-opacity-10  rounded-3 text-primary px-3 py-3 py-xl-0 cart-link" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu" {% block disabled_cart %}{% endblock disabled_cart %}>
 							<i class="bi bi-cart me-2"></i><span>سبد خرید</span>
 						</a>
 					</li>
@@ -233,30 +251,30 @@
 					
 					
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>صفحه اصلی</a>
+						<a style="font-size: 13px;" class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>صفحه اصلی</a>
 					</li>
 
 					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'kiosk' %}					
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>ثبت مجدد تراکنش</a>
+						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>ثبت مجدد تراکنش</a>
 					</li>
 					{% endif %}
 
 					{% if request.user.is_superuser or request.user.is_staff %}
 					<li class="nav-item dropdown">
-						<a class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu" {% block disabled_refund %}{% endblock disabled_refund %}>عودت وجه</a>
+						<a style="font-size: 13px;" class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu" {% block disabled_refund %}{% endblock disabled_refund %}>عودت وجه</a>
 					</li>
 					{% endif %}
 					
 					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'scanner' %}
 					<li class="nav-item dropdown">
-						<a class="nav-link" href="{% url 'Amusement_Park:Scanner' %}" id="demoMenu">اسکن بارکد</a>
+						<a style="font-size: 13px;" class="nav-link" href="{% url 'Amusement_Park:Scanner' %}" id="demoMenu">اسکن بارکد</a>
 					</li>				
 					{% endif %}
 					
 					{% if request.user.is_superuser %}
 						<li class="nav-item dropdown">
-							<a class="nav-link" href="/admin" id="demoMenu">پنل ادمین</a>
+							<a style="font-size: 13px;" class="nav-link" href="/admin" id="demoMenu">پنل ادمین</a>
 						</li>			
 					{% endif %}		
 				
@@ -367,7 +385,29 @@
 									</svg> خودکار
 								</button>
 							</div>
-						</li> 						
+						</li> 
+						
+						<li>
+							<div class="language-switcher">
+								<!-- Persian -->
+								<a href="#" class="btn btn-sm{% if language == 'fa' %} active bg-white{% endif %}">
+									<img class="flag-icon" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
+								</a>
+						
+								<!-- English -->
+								<a href="#" class="btn btn-sm{% if language == 'en' %} active bg-white{% endif %}">
+									<img class="flag-icon" src="{% static 'assets/images/usa.svg' %}" alt="English">
+								</a>
+						
+								<!-- Arabic -->
+								<a href="#" class="btn btn-sm{% if language == 'ar' %} active bg-white{% endif %}">
+									<img class="flag-icon" src="{% static 'assets/images/sa.svg' %}" alt="Arabic">
+								</a>
+							</div>
+						</li>
+						  
+						
+						
 					</ul>
 				</div>
 				<!-- Profile dropdown END -->
