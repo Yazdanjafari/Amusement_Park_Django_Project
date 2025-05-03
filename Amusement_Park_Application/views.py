@@ -184,6 +184,10 @@ def search_customer_by_phone(request):
             'exists': True,
             'first_name': customer.first_name,
             'last_name': customer.last_name,
+            'gender': customer.gender,
+            'city': customer.city,
+            'country': customer.country,
+            
             'date_of_birth': customer.date_of_birth.strftime('%Y-%m-%d') if customer.date_of_birth else None,
         }
     except Customer.DoesNotExist:
@@ -201,6 +205,9 @@ def save_customer(request):
 
         first_name = request.POST.get('firstName')
         last_name = request.POST.get('lastName')
+        gender = request.POST.get('gender')
+        city = request.POST.get('city')
+        country = request.POST.get('country')
         birth_year = request.POST.get('birthYear')
         birth_month = request.POST.get('birthMonth')
         birth_day = request.POST.get('birthDay')
@@ -215,6 +222,9 @@ def save_customer(request):
             defaults={
                 'first_name': first_name,
                 'last_name': last_name,
+                'gender': gender,
+                'city': city,
+                'country': country,
                 'date_of_birth': date_of_birth,
                 'first_purchase': timezone.now(),
                 'last_purchase': timezone.now(),
