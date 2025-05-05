@@ -64,7 +64,13 @@ Page Banner START -->
 		<div class="row">
 			<div class="col-12">
 				<div class="bg-light p-4 text-center rounded-3">
-					<h1 class="m-0 fs-2">ثبت مجدد تراکنش</h1>
+                    {% if request.language == 'fa' %}
+                        <h1 class="m-0 fs-2">ثبت مجدد تراکنش</h1>
+                    {% elif request.language == 'en' %}
+                        <h1 class="m-0 fs-2">Retry Transaction</h1>
+                    {% elif request.language == 'ar' %}
+                        <h1 class="m-0 fs-2">إعادة تسجيل المعاملة</h1>
+                    {% endif %}		                    
 					<!-- Breadcrumb -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">

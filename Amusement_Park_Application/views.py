@@ -1,9 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
@@ -15,10 +14,34 @@ import json, qrcode, base64
 
 logger = logging.getLogger(__name__)
 
+# --------------------------------------------- Having 3 languages --------------------------------------------- #
+
+def switch_language(request, lang_code):
+    if lang_code not in ('fa', 'en', 'ar'):
+        lang_code = 'fa'
+
+    request.session['language'] = lang_code
+
+    next_url = (
+        request.GET.get('next') or
+        request.META.get('HTTP_REFERER', '/')
+    )
+
+    from urllib.parse import urlparse
+    path = urlparse(next_url).path
+
+    for code in ('fa', 'en', 'ar'):
+        if path.startswith(f"/{code}/"):
+            path = path[len(code)+1:] or '/'
+
+    return redirect(f"/{lang_code}{path}")
+
+
 # --------------------------------------------- index.html page --------------------------------------------- #
 
 @login_required
-def products(request):
+def products(request, lang=None):
+    language = request.session.get('language', 'fa')
     sale_mode = request.GET.get('sale_mode', 'normal')  # Default to 'normal'
     if sale_mode == 'tourist':
         Product_Views = Product.objects.filter(product_type=Product.ProductType.tourist)
@@ -38,6 +61,7 @@ def products(request):
     return render(request, "Amusement_Park_Application/index.html", {
         'Product_Views': Product_Views,
         'cart': cart_items,
+        'language': language,
     })
 
 
@@ -91,7 +115,8 @@ def check_cart(request):
 
 # --------------------------------------------- Cart.html Page --------------------------------------------- #
 @login_required
-def cart(request):
+def cart(request, lang=None):
+    language = request.session.get('language', 'fa')
     get_TaxRate = TaxRate.objects.first()
     cart = request.session.get('cart', [])
     cart_items = []
@@ -109,6 +134,7 @@ def cart(request):
         'cart_items': cart_items,
         'get_TaxRate': get_TaxRate,
         'cart_empty': cart_empty,
+        'language': language,
     })
 
 
@@ -391,10 +417,11 @@ def submit_pay(request):
 
 # --------------------------------------------- refund.html --------------------------------------------- #
 @login_required
-def refund(request):
+def refund(request, lang=None):
+    language = request.session.get('language', 'fa')
     if request.user.role == 'kiosk':
         raise Http404("Page not found")  
-    return render(request, "Amusement_Park_Application/Refund.html")
+    return render(request, "Amusement_Park_Application/Refund.html", {'language': language,})
 
 
 @login_required
@@ -482,10 +509,11 @@ def save_refund(request):
 # --------------------------------------------- Setting.html and Bank --------------------------------------------- #
 
 @login_required
-def setting(request):
+def setting(request, lang=None):
+    language = request.session.get('language', 'fa')
     if request.user.role == 'kiosk':
         raise Http404("Page not found")
-    return render(request, "Amusement_Park_Application/Setting.html")
+    return render(request, "Amusement_Park_Application/Setting.html", {'language': language,})
 
 @csrf_exempt  
 def test_connection(request):
@@ -529,7 +557,8 @@ def test_payment(request):
 # --------------------------------------------- retransaction page (Submit_pay.html) --------------------------------------------- #
 
 @login_required
-def retransaction(request):
+def retransaction(request, lang=None):
+    language = request.session.get('language', 'fa')
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         transaction_id = request.POST.get('transaction_id')
         try:
@@ -577,7 +606,7 @@ def retransaction(request):
                 'status': 'error',
                 'message': 'خریدی با این کد پیگیری یافت نشد'
             })
-    return render(request, "Amusement_Park_Application/Submit_Pay.html")
+    return render(request, "Amusement_Park_Application/Submit_Pay.html", {'language': language,})
 
 
 @csrf_exempt
@@ -635,7 +664,8 @@ def save_retransaction(request):
 
 # --------------------------------------------- QR-Code & Scan --------------------------------------------- #
 @login_required
-def print_qr(request, ticket_id):
+def print_qr(request, ticket_id, lang=None):
+    language = request.session.get('language', 'fa')
     ticket = get_object_or_404(Ticket, id=ticket_id)
     transaction = Transaction.objects.filter(ticket=ticket).first()    
     qr_content = {
@@ -665,7 +695,12 @@ def print_qr(request, ticket_id):
     img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
     qr_code_image = "data:image/png;base64," + img_str
 
-    return render(request, "Amusement_Park_Application/print_qr.html", {"ticket": ticket, "qr_code_image": qr_code_image, "transaction_id": transaction.id,})
+    return render(request, "Amusement_Park_Application/print_qr.html", {
+    "ticket": ticket, 
+    "qr_code_image": qr_code_image, 
+    "transaction_id": transaction.id, 
+    'language': language,
+    })
 
 
 @csrf_exempt
@@ -701,6 +736,7 @@ def verify_qr_code(request):
 
 
 @login_required
-def scanner(request):     
+def scanner(request, lang=None):
+    language = request.session.get('language', 'fa')     
     products = Product.objects.all()
-    return render(request, "Amusement_Park_Application/scanner.html", {"products": products})
+    return render(request, "Amusement_Park_Application/scanner.html", {"products": products, 'language': language,})

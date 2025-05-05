@@ -125,7 +125,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>بلیت شما</h1>
+        {% if request.language == 'fa' %}
+            <h1>بلیت شما</h1>
+        {% elif request.language == 'en' %}
+            <h1>Your Ticket</h1>
+        {% elif request.language == 'ar' %}
+            <h1>تذكرتك</h1>
+        {% endif %}	        
+        
         <p class="tracking-id">کد رهگیری فروش : {{ transaction_id }}</p>
         <p class="tracking-id">کد رهگیری بلیت : {{ ticket.id }}</p>
         <button class="print-button" onclick="printPage()">🖨 چاپ بلیت</button>

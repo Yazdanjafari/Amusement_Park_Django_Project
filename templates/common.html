@@ -1,7 +1,13 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+{% if request.language == 'fa' %}
+	<html lang="fa" dir="rtl">
+{% elif request.language == 'en' %}
+	<html lang="en" dir="rtl">
+{% elif request.language == 'ar' %}
+	<html lang="ar" dir="rtl">	
+{% endif %}
 
 <head>
 	<title>وب اپلیکیشن شهربازی | Amusement Park Web-App</title>
@@ -427,24 +433,30 @@
 						</li> 
 						
 						<li>
-							<div class="language-switcher">
-								<!-- Persian -->
-								<a href="#" class="btn btn-sm{% if language == 'fa' %} active bg-white{% endif %}">
-									<img class="flag-icon" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
+							<div class="language-switcher">						
+								{% with current_path=request.get_full_path %}
+								<a
+								  href="{% url 'Amusement_Park:switch_language' 'fa' %}?next={{ current_path }}"
+								  class="btn btn-sm{% if request.language == 'fa' %} active bg-white{% endif %}"
+								>
+								  <img class="flag-icon" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
 								</a>
-						
-								<!-- English -->
-								<a href="#" id="englishBtn" class="btn btn-sm{% if language == 'en' %} active bg-white{% endif %}">
-									<img class="flag-icon" src="{% static 'assets/images/usa.svg' %}" alt="English">
+								<a
+								  href="{% url 'Amusement_Park:switch_language' 'en' %}?next={{ current_path }}"
+								  class="btn btn-sm{% if request.language == 'en' %} active bg-white{% endif %}"
+								>
+								  <img class="flag-icon" src="{% static 'assets/images/usa.svg' %}" alt="English">
 								</a>
-								
-						
-								<!-- Arabic -->
-								<a href="#" id="Arabicbtn" class="btn btn-sm{% if language == 'ar' %} active bg-white{% endif %}">
-									<img class="flag-icon" src="{% static 'assets/images/sa.svg' %}" alt="Arabic">
+								<a
+								  href="{% url 'Amusement_Park:switch_language' 'ar' %}?next={{ current_path }}"
+								  class="btn btn-sm{% if request.language == 'ar' %} active bg-white{% endif %}"
+								>
+								  <img class="flag-icon" src="{% static 'assets/images/sa.svg' %}" alt="Arabic">
 								</a>
+							  {% endwith %}							  
 							</div>
 						</li>
+						
 						  
 						
 						
@@ -486,14 +498,34 @@ Footer START -->
 				<!-- Created by Widget -->
 				<div class="col-md-4 mb-3 mb-md-0">
 					<div class="text-center text-white">
-						ایجاد شده توسط 
-						<a href="https://yazdanjafari.github.io/" target="_blank" class="text-reset btn-link">یزدان جعفری</a>
+						{% if request.language == 'fa' %}
+							ایجاد شده توسط 
+						{% elif request.language == 'en' %}
+							Made By 
+						{% elif request.language == 'ar' %}
+							تم الإنشاء بواسطة	
+						{% endif %}						
+						<a href="https://yazdanjafari.github.io/" target="_blank" class="text-reset btn-link">
+						{% if request.language == 'fa' %}
+							یزدان جعفری
+						{% elif request.language == 'en' %}
+							Yazdan Jafari
+						{% elif request.language == 'ar' %}
+							یزدان جعفری	
+						{% endif %}								
+						</a>
 					</div>
 				</div>
 				<!-- Version Widget -->
 				<div class="col-md-4 mb-3 mb-md-0 text-md-start">
 					<div class="text-white" style="text-align: left;">
-						ورژن: 3.0.0
+						{% if request.language == 'fa' %}
+							ورژن: 3.0.0
+						{% elif request.language == 'en' %}
+							Version : 3.0.0
+						{% elif request.language == 'ar' %}
+							ورژن: 3.0.0	
+						{% endif %}							
 					</div>
 				</div>
 			</div>

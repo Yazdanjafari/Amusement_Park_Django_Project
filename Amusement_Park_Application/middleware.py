@@ -58,3 +58,16 @@ class ScannerBasedAccessMiddleware: #For scanner accounts
 
         # Default behavior: Allow access
         return self.get_response(request)    
+    
+    
+class LanguageMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Get language from session or default to 'fa'
+        language = request.session.get('language', 'fa')
+        request.language = language
+        return self.get_response(request)
+    
+    

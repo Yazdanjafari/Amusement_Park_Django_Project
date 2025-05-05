@@ -4,6 +4,7 @@ from . import views
 app_name = "Amusement_Park"
 
 urlpatterns = [
+    path('switch-language/<str:lang_code>/', views.switch_language, name='switch_language'),
     path("Products", views.products, name= "Products"),
     path("add_to_cart", views.add_to_cart, name="add_to_cart"),
     path("cancle_cart", views.cancle_cart, name="cancle_cart"),
