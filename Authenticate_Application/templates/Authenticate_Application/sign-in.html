@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<style>
 		html, body {
-			overflow-y: hidden;
+			overflow-y: hidden !important;
 			overflow-x: hidden !important;
 		  }
 		.captcha-container {
@@ -16,15 +16,21 @@
 			align-items: center;      
 			margin-top: 20px;        
 		}
-		@media (max-width: 576px) {
+		@media (max-width: 800px) {
 			.form-sm {
-			  max-width: 35% !important;
-			  padding: 1rem !important;
-			  overflow-x: hidden !important;
+				width: 100% !important;
+				max-width: 300px;	
+				margin-right:300px;	
+				margin-top:220px;			
+			  padding: 2rem !important;
+			  overflow-y: hidden !important;
+			overflow-x: hidden !important;
 			}
 			.login-image-sm {
-				max-width: 100px !important;
-				height: 100px !important;
+				max-width: 120px !important;
+				height: 320px !important;
+				margin-right:300px;
+				overflow-x: hidden !important;
 				
 			  }
 			  .container-fluid {
@@ -41,7 +47,7 @@
 			  }
 		  
 			  .input-group.input-group-lg {
-				font-size: 0.65rem;
+				font-size: 0.85rem;
 				
 			  }
 		  
@@ -65,8 +71,9 @@
 			.form-sm .btn {
 			  font-size: 0.75rem !important;
 			  padding: 0.4rem  !important;
-			  width:300px !important;
-			  margin-right:15px;
+			  width: 100% !important;
+			  max-width: 300px;			  
+			  margin-right:80px;
 			}
 		
 			.form-sm .form-text {
