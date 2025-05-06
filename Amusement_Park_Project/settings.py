@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'Amusement_Park_Application.middleware.AdminAccessMiddleware',
     'Amusement_Park_Application.middleware.KioskBasedAccessMiddleware',
     'Amusement_Park_Application.middleware.ScannerBasedAccessMiddleware',
+    'Amusement_Park_Application.middleware.LanguageMiddleware',
 ]
 
 ROOT_URLCONF = 'Amusement_Park_Project.urls'

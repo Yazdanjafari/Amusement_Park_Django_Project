@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("Authenticate_Application.urls")),
     path('Amusement_Park/', include("Amusement_Park_Application.urls")),
+    path('<str:lang>/' 'Amusement_Park/', include("Amusement_Park_Application.urls")),  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
