@@ -121,7 +121,13 @@ Page content START -->
 													<img src="{{ item.product.image.url }}" class="rounded" alt="">
 												</div>
 												<h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">
-													<a style="font-size: 75%;">{{ item.product.title }}</a>
+													{% if request.language == 'fa' %}
+														<a style="font-size: 75%;">{{ item.product.title }}</a>
+													{% elif request.language == 'en' %}
+														<a style="font-size: 75%;">{{ item.product.title_en }}</a>
+													{% elif request.language == 'ar' %}
+														<a style="font-size: 75%;">{{ item.product.title_ar }}</a>
+													{% endif %}														
 												</h6>
 											</div>
 										</td>

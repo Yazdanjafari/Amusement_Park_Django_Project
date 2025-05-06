@@ -68,7 +68,13 @@ Instructor grid START -->
                         <div class="card-body px-2">
                             <!-- Title -->
                             <h5 class="card-title">
-                                <a style="font-size: 15px;">{{ i.title }}</a>
+								{% if request.language == 'fa' %}
+									<a style="font-size: 15px;">{{ i.title }}</a>
+								{% elif request.language == 'en' %}
+									<a style="font-size: 15px;">{{ i.title_en }}</a>
+								{% elif request.language == 'ar' %}
+									<a style="font-size: 15px;">{{ i.title_ar }}</a>
+								{% endif %}										
                             </h5>
                             <hr>
                             <!-- Buttons -->
@@ -149,36 +155,75 @@ Instructor grid END -->
 {% block script %}
 <script>
     // change the languge
-	document.getElementById("saleModeToggle").addEventListener("click", function (e) {
-		e.preventDefault();
+	document.addEventListener("DOMContentLoaded", function () {
+		// Initial saleMode setup
+		let saleMode = localStorage.getItem("saleMode") === "true";
+		let toggle = document.getElementById("saleModeToggle");
+		let text = document.getElementById("saleModeText");
+		let icon = document.getElementById("saleModeIcon");
 	
-		Swal.fire({
-			title: 'تغییر زبان',
-			text: 'آیا مایل به تغییر زبان هستید؟',
-			icon: 'question',
-			showCancelButton: true,
-			showDenyButton: true,
-			confirmButtonText: 'English',
-			denyButtonText: 'Arabic',
-			cancelButtonText: 'خیر',
-			reverseButtons: true,
-			customClass: {
-				confirmButton: 'btn btn-secondary mx-1',
-				denyButton: 'btn btn-secondary mx-1',
-				cancelButton: 'btn btn-danger mx-1'
-			},
-			buttonsStyling: false
-		}).then((result) => {
-			if (result.isConfirmed) {
-				window.location.href = "?lang=en";
-			} else if (result.isDenied) {
-				window.location.href = "?lang=ar";
-			} else {
-				e.target.checked = false;
-			}
+		function updateSaleMode(isTourist) {
+			text.textContent = isTourist ? "فروش توریستی" : "فروش عادی";
+			icon.className = isTourist ? "fas fa-umbrella-beach text-success mx-2" : "fas fa-store text-primary mx-2";
+		}
+	
+		// Set initial state
+		toggle.checked = saleMode;
+		updateSaleMode(saleMode);
+	
+		// Click handler instead of change (to control with SweetAlert)
+		toggle.addEventListener("click", function (e) {
+			e.preventDefault();
+	
+			Swal.fire({
+				title: 'تغییر زبان',
+				text: 'مایلید با کدام زبان ارائه دهید ؟',
+				icon: 'question',
+				showDenyButton: true,
+				showCancelButton: true,
+				confirmButtonText: 'فارسی',
+				denyButtonText: 'English',
+				cancelButtonText: 'العربية',
+				reverseButtons: true,
+				customClass: {
+					confirmButton: 'btn btn-secondary mx-1',
+					denyButton: 'btn btn-secondary mx-1',
+					cancelButton: 'btn btn-secondary mx-1'
+				},
+				buttonsStyling: false
+			}).then((result) => {
+				// Set the new toggle state and update sale mode
+				let isTourist = !toggle.checked;
+				toggle.checked = isTourist;
+				localStorage.setItem("saleMode", isTourist);
+				updateSaleMode(isTourist);
+	
+				// Get current path
+				const currentPath = window.location.pathname.split('/').slice(2).join('/'); // removes "/en/", "/fa/", etc.
+				let langPrefix = '';
+	
+				if (result.isConfirmed) {
+					langPrefix = 'fa';
+				} else if (result.isDenied) {
+					langPrefix = 'en';
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					langPrefix = 'ar';
+				} else {
+					return; // No action
+				}
+	
+				// Redirect with language and sale_mode
+				const saleModeValue = isTourist ? 'tourist' : 'normal';
+				window.location.href = `/${langPrefix}/${currentPath}?sale_mode=${saleModeValue}`;
+			});
 		});
 	
-		return false;
+		// Fallback: for direct toggle use (optional)
+		toggle.addEventListener("change", function () {
+			let isTourist = toggle.checked;
+			localStorage.setItem("saleMode", isTourist);
+			updateSaleMode(isTourist);
+		});
 	});
 	
 	
