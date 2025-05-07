@@ -16,7 +16,15 @@ Page Banner START -->
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
 								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
-								<li class="breadcrumb-item active" aria-current="page">عودت وجه</li>
+								<li class="breadcrumb-item active" aria-current="page">
+                                    {% if request.language == 'fa' %}
+                                        عودت وجه    
+                                    {% elif request.language == 'en' %}
+                                        Refund
+                                    {% elif request.language == 'ar' %}
+                                        ریال
+                                    {% endif %}	
+                                </li>
 							</ol>
 						</nav>
 					</div>
@@ -470,8 +478,14 @@ Page content END -->
                     <div class="w-100px w-md-80px mb-2 mb-md-0">
                             <img src="${product.image}" class="rounded" alt="">
                         </div>
-                        <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
-                            <a href="#" style="font-size: 75%;">${product.name}</a>
+                        <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">  
+										{% if request.language == 'fa' %}
+                                            <a style="font-size: 75%;">${product.name}</a>
+                                        {% elif request.language == 'en' %}
+                                            <a style="font-size: 75%;">${product.name}</a>
+                                        {% elif request.language == 'ar' %}
+                                            <a style="font-size: 75%;">${product.name}</a>
+										{% endif %}	                          
                         </h6>
                     </div>
                 </td>

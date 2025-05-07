@@ -1,6 +1,267 @@
-{% extends 'common.html' %}
+{% comment %} {% extends 'common.html' %} {% endcomment %}
 {% load static %}
-{% block body %}
+{% comment %} {% block body %} {% endcomment %}
+
+
+<!DOCTYPE html>
+{% if request.language == 'fa' %}
+	<html lang="fa" dir="rtl">
+{% elif request.language == 'en' %}
+	<html lang="en" dir="rtl">
+{% elif request.language == 'ar' %}
+	<html lang="ar" dir="rtl">	
+{% endif %}
+
+<head>
+	<title>وب اپلیکیشن شهربازی | Amusement Park Web-App</title>
+
+	<!-- Meta Tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="">
+	<meta name="description">
+	<meta name="viewport" content="width=1300, user-scalable=no">
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<!-- Dark mode -->
+	<script>
+		const storedTheme = localStorage.getItem('theme')
+ 
+		const getPreferredTheme = () => {
+			if (storedTheme) {
+				return storedTheme
+			}
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+		}
+
+		const setTheme = function (theme) {
+			if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				document.documentElement.setAttribute('data-bs-theme', 'dark')
+			} else {
+				document.documentElement.setAttribute('data-bs-theme', theme)
+			}
+		}
+
+		setTheme(getPreferredTheme())
+
+		window.addEventListener('DOMContentLoaded', () => {
+		    var el = document.querySelector('.theme-icon-active');
+			if(el != 'undefined' && el != null) {
+				const showActiveTheme = theme => {
+				const activeThemeIcon = document.querySelector('.theme-icon-active use')
+				const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+				const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href')
+
+				document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+					element.classList.remove('active')
+				})
+
+				btnToActive.classList.add('active')
+				activeThemeIcon.setAttribute('href', svgOfActiveBtn)
+			}
+
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				if (storedTheme !== 'light' || storedTheme !== 'dark') {
+					setTheme(getPreferredTheme())
+				}
+			})
+
+			showActiveTheme(getPreferredTheme())
+
+			document.querySelectorAll('[data-bs-theme-value]')
+				.forEach(toggle => {
+					toggle.addEventListener('click', () => {
+						const theme = toggle.getAttribute('data-bs-theme-value')
+						localStorage.setItem('theme', theme)
+						setTheme(theme)
+						showActiveTheme(theme)
+					})
+				})
+
+			}
+		})
+		{% comment %} Notification of english {% endcomment %}
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("englishBtn").addEventListener("click", function (e) {
+				e.preventDefault();
+				Swal.fire({
+					title: 'تغییر زبان',
+					text: 'آیا فروش به فروش توریستی تغیر کند؟',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'بله',
+					cancelButtonText: 'خیر',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location.href = "?lang=en";
+					}
+				});
+			});
+		});
+		
+		{% comment %} Notification of Arabic {% endcomment %}
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("Arabicbtn").addEventListener("click", function (e) {
+				e.preventDefault();
+				Swal.fire({
+					title: 'تغییر زبان',
+					text: 'آیا فروش به فروش توریستی تغیر کند؟',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'بله',
+					cancelButtonText: 'خیر',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location.href = "?lang=ar";
+					}
+				});
+			});
+		});
+	</script>
+
+
+	<style>		
+
+		{% comment %} Flag design {% endcomment %}
+		.flag-icon {
+			width: 40px;  /* Bigger width */
+			height: 30px; /* Bigger height */
+			object-fit: contain;
+		}
+		.language-switcher {
+			display: flex;
+			justify-content: center; /* Center horizontally */
+			align-items: center;
+			gap: 10px;
+			background-color: #f8f9fa;
+			padding: 10px;
+			border-radius: 8px;
+			margin-top: 10px;
+		}		
+		{% comment %} End Flag design {% endcomment %}
+
+		{% comment %} Start Css for Navbar {% endcomment %}
+
+		.navbar-collapse, .navbar-nav, .nav-link, .btn {
+			font-size: 0.70rem; 
+		}
+
+		/* Ensure that the navbar is fixed at the top */
+		.navbar-sticky {
+			position: fixed;
+			top: 0;
+			width: 100%;
+			z-index: 1000; /* Ensure it stays above other content */
+		}
+	
+		/* Optional: Add some padding to the body or content to avoid overlap */
+		body {
+			padding-top: 60px; /* Adjust based on your navbar height */
+		}	
+
+		@media screen and (max-width: 768px) {
+			body {
+			  transform: scale(1.5) !important;
+			  transform-origin: top left !important;
+			  width: 1024px !important; 
+			}
+		  }
+
+		html, body {
+		min-width: 1024px !important; 
+		overflow-x: auto !important; 
+		}		  
+
+		{% comment %} End Css for Navbar {% endcomment %}
+		{% comment %} Start Css for applications {% endcomment %}
+		
+		@media (max-width: 767.98px) {
+			/* Make sure to display 3 items per row */
+			.row.g-4 {
+				display: flex !important;
+				flex-wrap: wrap !important;
+			}
+		
+			.col-6 {
+				flex: 0 0 33.3333% !important; /* 3 items per row */
+				max-width: 33.3333% !important;
+			}
+		
+			.app-card .card {
+				aspect-ratio: 1 / 1 !important; /* Keeps the card square */
+			}
+		
+			.icon-xl {
+				width: 40px !important; /* Smaller icon size */
+				height: 40px !important;
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				margin: 0 auto !important; /* Center the icon horizontally */
+			}
+		
+			.icon-xl img {
+				max-width: 80% !important; /* Adjust size of the logo */
+				max-height: 80% !important; /* Keep the image within the circle */
+				margin-top: 5px !important; /* Adjust margin to move logo up */
+			}
+		
+			.card-body h5 {
+				font-size: 8px !important; /* Smaller title font size */
+			}
+		
+			.card-body h6 {
+				font-size: 10px !important; /* Smaller subtitle font size */
+				margin-top: 4px !important; /* Adjust spacing */
+			}
+		}
+	
+		{% comment %} header {% endcomment %}
+		.navbar-brand-item {
+			width: 40px !important;
+			height: auto !important;
+		}		
+
+
+		html, body {
+			height: 100%;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+		}
+		footer {
+			margin-top: auto;
+		}
+		
+
+		{% comment %} Responsive {% endcomment %}
+
+		
+
+		</style>
+
+		
+		{% block style %}
+			
+		{% endblock style %}
+			
+
+	<!-- Favicon -->
+	<link rel="shortcut icon" href='{% static "assets/images/favicon.ico" %}'>
+
+	<!-- Plugins CSS -->
+	<link rel="stylesheet" type="text/css" href='{% static "assets/css/style-rtl.css"%}'>
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/font-awesome/css/all.min.css' %}">
+	<link rel="stylesheet" type="text/css" href='{% static "assets/vendor/bootstrap-icons/bootstrap-icons.css"%}'>
+	<link rel="stylesheet" type="text/css" href='{% static "assets/vendor/tiny-slider/tiny-slider.css"%}'>
+	<lin rel="stylesheet" type="text/css" href='{% static "assets/vendor/glightbox/css/glightbox.css"%}'>
+
+</head>
+
+<body>
 
 
 <!-- **************** MAIN CONTENT START **************** -->
@@ -14,7 +275,14 @@
 					<!-- Title -->
 					<h1 class="display-1 text-danger mb-0">404</h1>
 					<!-- Subtitle -->
-					<h2>اوه نه، مشکلی پیش آمد!</h2>
+					{% if request.language == 'fa' %}
+						<h2>اوه نه، مشکلی پیش آمد!</h2>
+					{% elif request.language == 'en' %}
+						<h2>oops, there is a problem</h2>
+					{% elif request.language == 'ar' %}
+						<h2>اوه نه، مشکلی پیش آمد!</h2>
+					{% endif %}						 
+					
 					<!-- info -->
 					<p class="mb-4">یا مشکلی پیش آمده یا این صفحه وجود ندارد.</p>
 					<!-- Button -->
@@ -26,6 +294,20 @@
 </main>
 <!-- **************** MAIN CONTENT END **************** -->
 
+<script src='{% static "assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js" %}'></script>
+
+<!-- Vendors -->
+<script src='{% static "assets/vendor/tiny-slider/tiny-slider-rtl.js" %}'></script>
+<script src='{% static "assets/vendor/glightbox/js/glightbox.js" %}'></script>
+<script src='{% static "assets/vendor/purecounterjs/dist/purecounter_vanilla.js" %}'></script>
+
+<!-- Template Functions -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+</body>
+</html>
 
 
-{% endblock body %}
+{% comment %} {% endblock body %} {% endcomment %}
