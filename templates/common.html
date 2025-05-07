@@ -236,7 +236,13 @@
 
 		{% comment %} Responsive {% endcomment %}
 
-		
+		{% if request.language == 'en' %}
+		* {
+			font-family: sans-serif;
+			unicode-bidi: plaintext;
+		  }		
+		{% endif %}
+
 
 		</style>
 
