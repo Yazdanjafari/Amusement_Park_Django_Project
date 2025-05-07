@@ -117,6 +117,44 @@
 				});
 			});
 		});
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+			// Check if we are in tourist mode
+			const urlParams = new URLSearchParams(window.location.search);
+			const isTouristMode = urlParams.get("sale_mode") === "tourist";
+		
+			if (isTouristMode) {
+				document.querySelectorAll(".language-switcher a").forEach(link => {
+					link.addEventListener("click", function (e) {
+						e.preventDefault(); // Stop normal link navigation
+		
+						Swal.fire({
+							title: 'تغییر زبان غیرمجاز',
+							text: 'شما باید در حالت فروش عادی زبان را عوض کنید سپس به بخش فروش توریستی برگردید',
+							icon: 'warning',
+							showCancelButton: true,
+							confirmButtonText: 'رفتن به فروش عادی',
+							cancelButtonText: 'ادامه',
+							reverseButtons: true,
+							customClass: {
+								confirmButton: 'btn btn-primary mx-2',
+								cancelButton: 'btn btn-secondary mx-2'
+							},
+							buttonsStyling: false
+						}).then((result) => {
+							if (result.isConfirmed) {
+								// Redirect to base URL without language prefix and without sale_mode
+								window.location.href = "/Amusement_Park/Products?sale_mode=normal";
+							}
+							// If user clicked "ادامه", do nothing
+						});
+					});
+				});
+			}
+		});		
+
+
 	</script>
 
 
@@ -305,7 +343,7 @@
 						<a style="font-size: 13px;" class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>صفحه اصلی</a>
 					</li>
 
-					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'kiosk' %}					
+					{% if request.user.is_superuser or request.user.is_staff %}					
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>ثبت مجدد تراکنش</a>
 					</li>

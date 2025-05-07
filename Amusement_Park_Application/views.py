@@ -41,8 +41,12 @@ def switch_language(request, lang_code):
 
 @login_required
 def products(request, lang=None):
+    sale_mode = request.GET.get('sale_mode')
+    if not sale_mode:
+        return redirect(f"{request.path}?sale_mode=normal")  # Force default sale_mode
+
     language = request.session.get('language', 'fa')
-    sale_mode = request.GET.get('sale_mode', 'normal')  # Default to 'normal'
+    
     if sale_mode == 'tourist':
         Product_Views = Product.objects.filter(product_type=Product.ProductType.tourist)
     else:
@@ -63,7 +67,6 @@ def products(request, lang=None):
         'cart': cart_items,
         'language': language,
     })
-
 
 
 @csrf_exempt
@@ -558,7 +561,11 @@ def test_payment(request):
 
 @login_required
 def retransaction(request, lang=None):
+    if request.user.role == 'kiosk' :
+        raise Http404("Page not found")
+        
     language = request.session.get('language', 'fa')
+    
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         transaction_id = request.POST.get('transaction_id')
         try:

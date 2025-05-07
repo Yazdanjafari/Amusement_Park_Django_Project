@@ -154,77 +154,42 @@ Instructor grid END -->
 
 {% block script %}
 <script>
-    // change the languge
 	document.addEventListener("DOMContentLoaded", function () {
-		// Initial saleMode setup
-		let saleMode = localStorage.getItem("saleMode") === "true";
 		let toggle = document.getElementById("saleModeToggle");
 		let text = document.getElementById("saleModeText");
 		let icon = document.getElementById("saleModeIcon");
 	
-		function updateSaleMode(isTourist) {
+		// Get current sale_mode from URL
+		const urlParams = new URLSearchParams(window.location.search);
+		const saleModeParam = urlParams.get("sale_mode") || "normal";
+	
+		// Update toggle state based on URL
+		let isTourist = saleModeParam === "tourist";
+		toggle.checked = isTourist;
+	
+		// Update the text and icon
+		function updateSaleModeDisplay(isTourist) {
 			text.textContent = isTourist ? "فروش توریستی" : "فروش عادی";
 			icon.className = isTourist ? "fas fa-umbrella-beach text-success mx-2" : "fas fa-store text-primary mx-2";
 		}
 	
-		// Set initial state
-		toggle.checked = saleMode;
-		updateSaleMode(saleMode);
+		updateSaleModeDisplay(isTourist);
 	
-		// Click handler instead of change (to control with SweetAlert)
-		toggle.addEventListener("click", function (e) {
-			e.preventDefault();
-	
-			Swal.fire({
-				title: 'تغییر زبان',
-				text: 'مایلید با کدام زبان ارائه دهید ؟',
-				icon: 'question',
-				showDenyButton: true,
-				showCancelButton: true,
-				confirmButtonText: 'فارسی',
-				denyButtonText: 'English',
-				cancelButtonText: 'العربية',
-				reverseButtons: true,
-				customClass: {
-					confirmButton: 'btn btn-secondary mx-1',
-					denyButton: 'btn btn-secondary mx-1',
-					cancelButton: 'btn btn-secondary mx-1'
-				},
-				buttonsStyling: false
-			}).then((result) => {
-				// Set the new toggle state and update sale mode
-				let isTourist = !toggle.checked;
-				toggle.checked = isTourist;
-				localStorage.setItem("saleMode", isTourist);
-				updateSaleMode(isTourist);
-	
-				// Get current path
-				const currentPath = window.location.pathname.split('/').slice(2).join('/'); // removes "/en/", "/fa/", etc.
-				let langPrefix = '';
-	
-				if (result.isConfirmed) {
-					langPrefix = 'fa';
-				} else if (result.isDenied) {
-					langPrefix = 'en';
-				} else if (result.dismiss === Swal.DismissReason.cancel) {
-					langPrefix = 'ar';
-				} else {
-					return; // No action
-				}
-	
-				// Redirect with language and sale_mode
-				const saleModeValue = isTourist ? 'tourist' : 'normal';
-				window.location.href = `/${langPrefix}/${currentPath}?sale_mode=${saleModeValue}`;
-			});
-		});
-	
-		// Fallback: for direct toggle use (optional)
+		// When the toggle is changed
 		toggle.addEventListener("change", function () {
 			let isTourist = toggle.checked;
-			localStorage.setItem("saleMode", isTourist);
-			updateSaleMode(isTourist);
+			localStorage.setItem("saleMode", isTourist);  // optional
+			updateSaleModeDisplay(isTourist);
+	
+			// Get current language from the URL
+			let pathParts = window.location.pathname.split('/');
+			let langPrefix = pathParts[1] === 'Amusement_Park' ? 'fa' : pathParts[1];  // fallback to 'fa'
+			
+			const newSaleMode = isTourist ? 'tourist' : 'normal';
+			window.location.href = `/${langPrefix}/Amusement_Park/Products?sale_mode=${newSaleMode}`;
 		});
 	});
+	
 	
 	
     // Function to increment the counter
@@ -498,32 +463,7 @@ Instructor grid END -->
         });
     });
 
-
-	document.addEventListener("DOMContentLoaded", function () {
-		let saleMode = localStorage.getItem("saleMode") === "true";
-		let toggle = document.getElementById("saleModeToggle");
-		let text = document.getElementById("saleModeText");
-		let icon = document.getElementById("saleModeIcon");
-	
-		function updateSaleMode(isTourist) {
-			text.textContent = isTourist ? "فروش توریستی" : "فروش عادی";
-			icon.className = isTourist ? "fas fa-umbrella-beach text-success mx-2" : "fas fa-store text-primary mx-2";
-		}
-	
-		toggle.checked = saleMode;
-		updateSaleMode(saleMode);
-	
-		toggle.addEventListener("change", function () {
-			let isTourist = toggle.checked;
-			localStorage.setItem("saleMode", isTourist);
-			updateSaleMode(isTourist);
-			// Redirect with the appropriate sale_mode query parameter
-			window.location.href = window.location.pathname + '?sale_mode=' + (isTourist ? 'tourist' : 'normal');
-		});
-	});
 		
-
-
 </script>
 {% endblock script %}
 	
