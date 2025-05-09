@@ -11,11 +11,29 @@ Page Banner START -->
 		<div class="row">
 			<div class="col-12">
 				<div class="bg-light p-4 text-center rounded-3">
-					<h1 class="m-0 fs-2">عودت وجه</h1>
+					<h1 class="m-0 fs-2">
+                        {% if request.language == 'fa' %}
+                            عودت وجه
+                        {% elif request.language == 'en' %}
+                            Refund
+                        {% elif request.language == 'ar' %}
+                            استرداد المبلغ
+                        {% endif %}
+
+                    </h1>
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">
+                                    {% if request.language == 'fa' %}
+                                        صفحه اصلی
+                                    {% elif request.language == 'en' %}
+                                        Home Page
+                                    {% elif request.language == 'ar' %}
+                                        الصفحة الرئيسية
+                                    {% endif %}
+
+                                </a></li>
 								<li class="breadcrumb-item active" aria-current="page">
                                     {% if request.language == 'fa' %}
                                         عودت وجه    
@@ -46,13 +64,41 @@ Page content START -->
                 <!-- Personal info START -->
                 <div class="card card-body shadow p-4">
                     <!-- Title for transaction form -->
-                    <h5 class="mb-0">عودت وجه :</h5>
+                    <h5 class="mb-0">  
+                        {% if request.language == 'fa' %}
+                            :عودت وجه
+                        {% elif request.language == 'en' %}
+                            Refund:
+                        {% elif request.language == 'ar' %}
+                            :استرداد المبلغ
+                        {% endif %}
+
+                    </h5>
                     <!-- Transaction form START -->
                     <form id="retransactionForm" method="post">
                         {% csrf_token %}
                         <div class="input-group mt-2">
-                            <input id="ticketCodeInput" name="transaction_id" class="form-control" placeholder="کد رهگیری فروش" type="text">
-                            <button id="applyButton" type="button" class="btn btn-primary">اعمال</button>
+                            <input id="ticketCodeInput" name="transaction_id" class="form-control" 
+                                {% if request.language == 'fa' %}
+                                    placeholder="کد رهگیری فروش"
+                                    style="text-align: right; direction: rtl;"
+                                {% elif request.language == 'en' %}
+                                    placeholder="Transaction Tracking Code"
+                                    style="text-align: left; direction: ltr;"
+                                {% elif request.language == 'ar' %}
+                                    placeholder="رمز تتبع المعاملة"
+                                    style="text-align: right; direction: rtl;"
+                                {% endif %}  
+                            type="text">
+                            <button id="applyButton" type="button" class="btn btn-primary">
+                                {% if request.language == 'fa' %}
+                                    اعمال
+                                {% elif request.language == 'en' %}
+                                    Apply
+                                {% elif request.language == 'ar' %}
+                                    تطبيق
+                                {% endif %}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -62,7 +108,15 @@ Page content START -->
                 <!-- Personal info START -->
                 <div class="card card-body shadow p-4">
                     <!-- Transaction form END -->
-                    <h5 class="">اطلاعات فاکتور ثبت شده :</h5>
+                    <h5 class="">
+                            {% if request.language == 'fa' %}
+                                اطلاعات فاکتور ثبت شده :
+                            {% elif request.language == 'en' %}
+                                Recorded Invoice Information :
+                            {% elif request.language == 'ar' %}
+                                معلومات الفاتورة المسجلة :
+                            {% endif %}
+                    </h5>
                     <table class="table align-middle p-4 mb-0">
                         <!-- Table body START -->
                         <tbody class="border-top-0" id="transactionDetailsTable">
@@ -77,14 +131,30 @@ Page content START -->
                                         </div>
                                         <!-- Title -->
                                         <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">
-                                            <a href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+                                            <a href="#" style="font-size: 75%;">
+                                                    {% if request.language == 'fa' %}
+                                                        دوره جامع آموزش Sketch
+                                                    {% elif request.language == 'en' %}
+                                                        Comprehensive Sketch Training Course
+                                                    {% elif request.language == 'ar' %}
+                                                        الدورة الشاملة لتدريب Sketch
+                                                    {% endif %}                                       
+                                            </a>
                                         </h6>
                                     </div>
                                 </td>
 
                                 <!-- Amount item -->
                                 <td class="text-center">
-                                    <h5 class="text-success mb-0" style="font-size: 75%;">105,000 تومان</h5>
+                                    <h5 class="text-success mb-0" style="font-size: 75%;">
+                                            {% if request.language == 'fa' %}
+                                                105,000 تومان
+                                            {% elif request.language == 'en' %}
+                                                105,000 Toman
+                                            {% elif request.language == 'ar' %}
+                                                105,000 تومان
+                                            {% endif %}
+                                    </h5>
                                 </td>
                                 <!-- Action item -->
                                 <td>
@@ -103,14 +173,28 @@ Page content START -->
                 <!-- Payment method START -->
                 <div class="card card-body p-4 shadow">
                     <!-- Title -->
-                    <h5 class="mb-3">روش های عودت وجه :</h5>
+                    <h5 class="mb-3">
+                        {% if request.language == 'fa' %}
+                            روش های عودت وجه :
+                        {% elif request.language == 'en' %}
+                            Refund Methods:
+                        {% elif request.language == 'ar' %}
+                            طرق استرجاع المبالغ:
+                        {% endif %}
+                    </h5>
                     <div class="col-12">
                         <div class="accordion accordion-circle" id="accordioncircle">
                             <!-- Card reader (Default) -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-card-reader">
                                     <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-                                        نقدی
+                                        {% if request.language == 'fa' %}
+                                            نقدی
+                                        {% elif request.language == 'en' %}
+                                            Cash
+                                        {% elif request.language == 'ar' %}
+                                            نقدًا
+                                        {% endif %}
                                     </button>
                                 </h6>
                                 <div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle"></div>
@@ -119,7 +203,14 @@ Page content START -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-cash">
                                     <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-                                        کارت به کارت
+                                            {% if request.language == 'fa' %}
+                                                کارت به کارت
+                                            {% elif request.language == 'en' %}
+                                                Card to Card
+                                            {% elif request.language == 'ar' %}
+                                                بطاقة إلى بطاقة
+                                            {% endif %}
+
                                     </button>
                                 </h6>
                                 <div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
@@ -128,20 +219,92 @@ Page content START -->
                                         <!-- Form START -->
                                         <form class="row g-3">
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">شماره کارت مبدا :</span></label>
-                                                <input type="text" id="source_card_number" class="form-control" placeholder="اختیاری" maxlength="16" minlength="16">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        شماره کارت مبدا
+                                                    {% elif request.language == 'en' %}
+                                                        Source Card Number
+                                                    {% elif request.language == 'ar' %}
+                                                        رقم بطاقة المصدر
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="source_card_number" class="form-control"
+                                                 {% if request.language == 'fa' %}
+                                                    placeholder="اختیاری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Optional"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="اختياري"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %}   maxlength="16" minlength="16">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">شماره کارت مقصد :</span></label>
-                                                <input type="text" id="destination_card_number" class="form-control" placeholder="اجباری" maxlength="16" minlength="16">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        شماره کارت مقصد
+                                                    {% elif request.language == 'en' %}
+                                                        Destination Card Number
+                                                    {% elif request.language == 'ar' %}
+                                                        رقم بطاقة الوجهة
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="destination_card_number" class="form-control"
+                                                 {% if request.language == 'fa' %}
+                                                    placeholder="اجباری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Required"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="مطلوب"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %}  maxlength="16" minlength="16">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
-                                                <input type="text" id="source_card_holder_name" class="form-control" placeholder="اختیاری">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        نام صاحب حساب مبدا
+                                                    {% elif request.language == 'en' %}
+                                                        Source Account Holder Name
+                                                    {% elif request.language == 'ar' %}
+                                                        اسم صاحب الحساب المصدر
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="source_card_holder_name" class="form-control" 
+                                                 {% if request.language == 'fa' %}
+                                                    placeholder="اختیاری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Optional"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="اختياري"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %} >
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
-                                                <input type="text" id="destination_card_holder_name" class="form-control" placeholder="اجباری">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        نام صاحب حساب مقصد
+                                                    {% elif request.language == 'en' %}
+                                                        Destination Account Holder Name
+                                                    {% elif request.language == 'ar' %}
+                                                        اسم صاحب الحساب المقصد
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="destination_card_holder_name" class="form-control" 
+                                                {% if request.language == 'fa' %}
+                                                    placeholder="اجباری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Required"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="مطلوب"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %} >
                                             </div>
                                         </form>
                                         <!-- Form END -->
@@ -152,7 +315,14 @@ Page content START -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-combined">
                                     <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-                                        انتقال با شماره شبا
+                                            {% if request.language == 'fa' %}
+                                                انتقال با شماره شبا
+                                            {% elif request.language == 'en' %}
+                                                Transfer by IBAN
+                                            {% elif request.language == 'ar' %}
+                                                التحويل بواسطة رقم الحساب المصرفي الدولي (IBAN)
+                                            {% endif %}
+
                                     </button>
                                 </h6>
                                 <div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
@@ -161,20 +331,92 @@ Page content START -->
                                         <!-- Form START -->
                                         <form class="row g-3">
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">شماره شبا مبدا :</span></label>
-                                                <input type="text" id="source_sheba_number" class="form-control" placeholder="اختیاری" maxlength="24" minlength="24">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        شماره شبا مبدا
+                                                    {% elif request.language == 'en' %}
+                                                        Sender IBAN
+                                                    {% elif request.language == 'ar' %}
+                                                        رقم الحساب المصرفي الدولي للمرسل
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="source_sheba_number" class="form-control" 
+                                                {% if request.language == 'fa' %}
+                                                    placeholder="اختیاری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Optional"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="اختياري"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %}  maxlength="24" minlength="24">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">شماره شبا مقصد :</span></label>
-                                                <input type="text" id="destination_sheba_number" class="form-control" placeholder="اجباری" maxlength="24" minlength="24">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        شماره شبا مقصد
+                                                    {% elif request.language == 'en' %}
+                                                        Recipient IBAN
+                                                    {% elif request.language == 'ar' %}
+                                                        رقم الحساب المصرفي الدولي للمرسل إليه
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="destination_sheba_number" class="form-control"
+                                                 {% if request.language == 'fa' %}
+                                                    placeholder="اجباری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Required"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="مطلوب"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %} maxlength="24" minlength="24">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مبدا :</span></label>
-                                                <input type="text" id="source_card_holder_name" class="form-control" placeholder="اختیاری">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        نام صاحب حساب مبدا
+                                                    {% elif request.language == 'en' %}
+                                                        Sender's Account Holder Name
+                                                    {% elif request.language == 'ar' %}
+                                                        اسم صاحب الحساب المرسل
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="source_card_holder_name" class="form-control" 
+                                                {% if request.language == 'fa' %}
+                                                    placeholder="اختیاری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Optional"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="اختياري"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %} >
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">نام صاحب حساب مقصد :</span></label>
-                                                <input type="text" id="destination_card_holder_name" class="form-control" placeholder="اجباری">
+                                                <label class="form-label"><span class="text-danger">
+                                                    {% if request.language == 'fa' %}
+                                                        نام صاحب حساب مقصد
+                                                    {% elif request.language == 'en' %}
+                                                        Recipient's Account Holder Name
+                                                    {% elif request.language == 'ar' %}
+                                                        اسم صاحب الحساب المستلم
+                                                    {% endif %}
+                                                </span></label>
+                                                <input type="text" id="destination_card_holder_name" class="form-control"
+                                                 {% if request.language == 'fa' %}
+                                                    placeholder="اجباری"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% elif request.language == 'en' %}
+                                                    placeholder="Required"
+                                                    style="text-align: left; direction: ltr;"
+                                                {% elif request.language == 'ar' %}
+                                                    placeholder="مطلوب"
+                                                    style="text-align: right; direction: rtl;"
+                                                {% endif %}>
                                             </div>
                                         </form>
                                         <!-- Form END -->
@@ -190,35 +432,126 @@ Page content START -->
 
             <!-- Right sidebar START -->
             <div id="rightSidebar" class="col-lg-4" style="display: none;">
-                <!-- Card total START -->
-                <div class="card card-body p-4 shadow">
-                    <h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
-                    <hr>
-                    <ul class="list-group list-group-borderless mb-2">
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">قیمت</span>
-                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
-                        </li>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">مالیات (%10)</span>
-                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
-                        </li>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">تخفیف</span>
-                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
-                        </li>
-                        <br>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h5 mb-0">قیمت نهایی</span>
-                            <span id="finalPrice" class="text-danger h5">0 ریال</span>
-                        </li>
-                    </ul>
-                    <hr>
-                    <div class="d-grid">
-                        <a type="button" id="pay-button" class="btn btn-lg btn-success">عودت وجه</a>
-                        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
-                    </div>
-                </div>
+    <!-- Card total START -->
+    <div class="card card-body p-4 shadow">
+        <h4 class="mb-3 fs-5 text-center">
+            {% if request.language == 'fa' %}
+                صورت حساب
+            {% elif request.language == 'en' %}
+                Invoice
+            {% elif request.language == 'ar' %}
+                الفاتورة
+            {% endif %}
+        </h4>
+        <hr>
+        <ul class="list-group list-group-borderless mb-2">
+            <li class="list-group-item px-0 d-flex justify-content-between">
+                <span class="h6 fw-light mb-0">
+                    {% if request.language == 'fa' %}
+                        قیمت
+                    {% elif request.language == 'en' %}
+                        Price
+                    {% elif request.language == 'ar' %}
+                        السعر
+                    {% endif %}
+                </span>
+                <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 
+                    {% if request.language == 'fa' %}
+                        ریال
+                    {% elif request.language == 'en' %}
+                        IRR
+                    {% elif request.language == 'ar' %}
+                        ريال
+                    {% endif %}
+                </span>
+            </li>
+            <li class="list-group-item px-0 d-flex justify-content-between">
+                <span class="h6 fw-light mb-0">
+                    {% if request.language == 'fa' %}
+                        مالیات (%10)
+                    {% elif request.language == 'en' %}
+                        Tax (%10)
+                    {% elif request.language == 'ar' %}
+                        ضريبة (%10)
+                    {% endif %}
+                </span>
+                <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 
+                    {% if request.language == 'fa' %}
+                        ریال
+                    {% elif request.language == 'en' %}
+                        IRR
+                    {% elif request.language == 'ar' %}
+                        ريال
+                    {% endif %}
+                </span>
+            </li>
+            <li class="list-group-item px-0 d-flex justify-content-between">
+                <span class="h6 fw-light mb-0">
+                    {% if request.language == 'fa' %}
+                        تخفیف
+                    {% elif request.language == 'en' %}
+                        Discount
+                    {% elif request.language == 'ar' %}
+                        خصم
+                    {% endif %}
+                </span>
+                <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 
+                    {% if request.language == 'fa' %}
+                        ریال
+                    {% elif request.language == 'en' %}
+                        IRR
+                    {% elif request.language == 'ar' %}
+                        ريال
+                    {% endif %}
+                </span>
+            </li>
+            <br>
+            <li class="list-group-item px-0 d-flex justify-content-between">
+                <span class="h5 mb-0">
+                    {% if request.language == 'fa' %}
+                        قیمت نهایی
+                    {% elif request.language == 'en' %}
+                        Final Price
+                    {% elif request.language == 'ar' %}
+                        السعر النهائي
+                    {% endif %}
+                </span>
+                <span id="finalPrice" class="text-danger h5">0 
+                    {% if request.language == 'fa' %}
+                        ریال
+                    {% elif request.language == 'en' %}
+                        IRR
+                    {% elif request.language == 'ar' %}
+                        ريال
+                    {% endif %}
+                </span>
+            </li>
+        </ul>
+        <hr>
+        <div class="d-grid">
+            <a type="button" id="pay-button" class="btn btn-lg btn-success">
+                {% if request.language == 'fa' %}
+                    عودت وجه
+                {% elif request.language == 'en' %}
+                    Refund
+                {% elif request.language == 'ar' %}
+                    استرداد
+                {% endif %}
+            </a>
+            <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">
+                {% if request.language == 'fa' %}
+                    لغو
+                {% elif request.language == 'en' %}
+                    Cancel
+                {% elif request.language == 'ar' %}
+                    إلغاء
+                {% endif %}
+            </a>
+        </div>
+    </div>
+    <!-- Card total END -->
+</div>
+
                 <!-- Card total END -->
             </div>
             <!-- Right sidebar END -->

@@ -96,7 +96,16 @@
     <h1>QR-Code Scanner</h1>
     
     <select id="product-select">
-        <option value="">-- انتخاب محصول --</option>
+        <option value="">
+            {% if request.language == 'fa' %}
+                -- انتخاب محصول --
+            {% elif request.language == 'en' %}
+                -- Select Product --
+            {% elif request.language == 'ar' %}
+                -- اختر المنتج --
+            {% endif %}
+        </option>
+        
         {% for product in products %}
             <option value="{{ product.id }}">{{ product.title }}</option>
         {% endfor %}
@@ -244,15 +253,32 @@
     </script>
 
     <div class="logout-container">
-        <a href="{% url 'Authenticate:Logout' %}">
-            <button class="logout-btn">خروج</button>
-        </a>
-        <br>
-        <br>
-        <a href="{% url 'Amusement_Park:Products' %}">
-            <button class="logout-btn">صفحه اصلی</button>
-        </a>
-    </div>
+    <a href="{% url 'Authenticate:Logout' %}">
+        <button class="logout-btn">
+            {% if request.language == 'fa' %}
+                خروج
+            {% elif request.language == 'en' %}
+                Logout
+            {% elif request.language == 'ar' %}
+                تسجيل الخروج
+            {% endif %}
+        </button>
+    </a>
+    <br>
+    <br>
+    <a href="{% url 'Amusement_Park:Products' %}">
+        <button class="logout-btn">
+            {% if request.language == 'fa' %}
+                صفحه اصلی
+            {% elif request.language == 'en' %}
+                Home Page
+            {% elif request.language == 'ar' %}
+                الصفحة الرئيسية
+            {% endif %}
+        </button>
+    </a>
+</div>
+
     
 </body>
 </html>

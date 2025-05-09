@@ -109,7 +109,16 @@ Instructor grid END -->
 {% block shortcut_header %}
 <li class="nav-item ms-2">
     <div class="d-flex align-items-center bg-light rounded-pill p-1 shadow-sm">
-        <span class="mx-2 text-muted" id="saleModeText">فروش عادی</span>
+        <span class="mx-2 text-muted" id="saleModeText">
+			{% if request.language == 'fa' %}
+    			فروش عادی
+			{% elif request.language == 'en' %}
+   				 Regular Sale
+			{% elif request.language == 'ar' %}
+    			بيع عادي
+			{% endif %}
+		</span>
+			
         <div class="form-check form-switch m-0 pt-1">
             <input class="form-check-input" type="checkbox" id="saleModeToggle">
         </div>
@@ -127,14 +136,38 @@ Instructor grid END -->
     <div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0" id="cart-dropdown">
         <div class="card bg-transparent">
             <div class="card-header bg-transparent border-bottom py-4">
-                <h5 class="m-0">سبد خرید شما :</h5>
+                <h5 class="m-0">
+					{% if request.language == 'fa' %}
+        				سبد خرید شما:
+					{% elif request.language == 'en' %}
+						Your Cart:
+					{% elif request.language == 'ar' %}
+						سلة التسوق الخاصة بك:
+					{% endif %}
+				</h5>
             </div>
             <div class="card-body p-0" id="cart-items" style="max-height: 300px; overflow-y: auto;">
                 <!-- Cart items will be populated here -->
             </div>
             <div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
-                <a href="{% url 'Amusement_Park:Cart' %}" class="cart-link btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
-                <a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">حذف همه</a>
+                <a href="{% url 'Amusement_Park:Cart' %}" class="cart-link btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">
+					{% if request.language == 'fa' %}
+						سبد خرید
+					{% elif request.language == 'en' %}
+						Cart
+					{% elif request.language == 'ar' %}
+						عربة التسوق
+					{% endif %}
+				</a>
+                <a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">
+					{% if request.language == 'fa' %}
+					حذف همه
+				{% elif request.language == 'en' %}
+					Delete All
+				{% elif request.language == 'ar' %}
+					حذف الكل
+				{% endif %}
+				</a>
             </div>
         </div>
     </div>
@@ -155,40 +188,53 @@ Instructor grid END -->
 {% block script %}
 <script>
 	document.addEventListener("DOMContentLoaded", function () {
-		let toggle = document.getElementById("saleModeToggle");
-		let text = document.getElementById("saleModeText");
-		let icon = document.getElementById("saleModeIcon");
+		const toggle = document.getElementById("saleModeToggle");
+		const text = document.getElementById("saleModeText");
+		const icon = document.getElementById("saleModeIcon");
 	
-		// Get current sale_mode from URL
+		// دریافت زبان از مسیر URL
+		const pathParts = window.location.pathname.split('/');
+		const langPrefix = (pathParts[1] === 'Amusement_Park' || !pathParts[1]) ? 'fa' : pathParts[1];
+	
+		// تعریف پیام‌ها برای چند زبان
+		const messages = {
+			fa: { normal: 'فروش عادی', tourist: 'فروش توریستی' },
+			en: { normal: 'Normal Sale', tourist: 'Tourist Sale' },
+			ar: { normal: 'بيع عادي', tourist: 'بيع سياحي' }
+		};
+	
+		const msg = messages[langPrefix] || messages.fa;
+	
+		// خواندن sale_mode از پارامتر URL
 		const urlParams = new URLSearchParams(window.location.search);
 		const saleModeParam = urlParams.get("sale_mode") || "normal";
-	
-		// Update toggle state based on URL
+		
 		let isTourist = saleModeParam === "tourist";
 		toggle.checked = isTourist;
 	
-		// Update the text and icon
+		
 		function updateSaleModeDisplay(isTourist) {
-			text.textContent = isTourist ? "فروش توریستی" : "فروش عادی";
-			icon.className = isTourist ? "fas fa-umbrella-beach text-success mx-2" : "fas fa-store text-primary mx-2";
+			text.textContent = isTourist ? msg.tourist : msg.normal;
+			icon.className = isTourist
+				? "fas fa-umbrella-beach text-success mx-2"
+				: "fas fa-store text-primary mx-2";
 		}
 	
 		updateSaleModeDisplay(isTourist);
 	
-		// When the toggle is changed
+
 		toggle.addEventListener("change", function () {
-			let isTourist = toggle.checked;
-			localStorage.setItem("saleMode", isTourist);  // optional
+			isTourist = toggle.checked;
+			
+			localStorage.setItem("saleMode", isTourist);  // اختیاری
 			updateSaleModeDisplay(isTourist);
 	
-			// Get current language from the URL
-			let pathParts = window.location.pathname.split('/');
-			let langPrefix = pathParts[1] === 'Amusement_Park' ? 'fa' : pathParts[1];  // fallback to 'fa'
-			
+
 			const newSaleMode = isTourist ? 'tourist' : 'normal';
 			window.location.href = `/${langPrefix}/Amusement_Park/Products?sale_mode=${newSaleMode}`;
 		});
 	});
+	
 	
 	
 	
