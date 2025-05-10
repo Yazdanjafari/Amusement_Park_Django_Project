@@ -305,6 +305,10 @@ html[lang="fa"] body {
 			document.querySelectorAll('.cart-link').forEach(link => {
 				link.addEventListener('click', function(event) {
 					event.preventDefault();
+					
+					// دریافت زبان از سرور
+					const lang = '{{ request.language }}';  // این متغیر باید از سرور دریافت شود و زبان فعلی را برگرداند
+					
 					fetch("{% url 'Amusement_Park:check_cart' %}", {
 						method: "GET",
 						headers: {
@@ -315,10 +319,10 @@ html[lang="fa"] body {
 					.then(data => {
 						if (data.cart_empty) {
 							Swal.fire({
-								title: 'سبد خرید شما خالی است!',
-								text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+								title: lang === 'fa' ? 'سبد خرید شما خالی است!' : lang === 'en' ? 'Your cart is empty!' : 'عربتك فارغة!',
+								text: lang === 'fa' ? 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.' : lang === 'en' ? 'Please add a product to your cart first.' : 'يرجى إضافة منتج إلى سلة التسوق أولاً.',
 								icon: 'warning',
-								confirmButtonText: 'باشه'
+								confirmButtonText: lang === 'fa' ? 'باشه' : lang === 'en' ? 'OK' : 'حسناً'
 							});
 						} else {
 							window.location.href = "{% url 'Amusement_Park:Cart' %}";
@@ -329,6 +333,7 @@ html[lang="fa"] body {
 					});
 				});
 			});
+			
 	
 			function getCookie(name) {
 				let cookieValue = null;
@@ -394,15 +399,21 @@ html[lang="fa"] body {
 	
 			$('#testPaymentBtn').click(function(e){
 				e.preventDefault();
-				var payment = prompt("مقدار پرداخت را وارد کنید (عدد صحیح):");
+				
+				// دریافت زبان از سرور
+				const lang = '{{ request.language }}';  // متغیر زبان از سرور
+				
+				var payment = prompt(lang === 'fa' ? "مقدار پرداخت را وارد کنید (عدد صحیح):" : lang === 'en' ? "Enter payment amount (integer):" : "أدخل المبلغ للدفع (عدد صحيح):");
 				if(payment === null) return; 
+				
 				if(!/^\d+$/.test(payment)){
-					alert("لطفاً فقط عدد صحیح وارد کنید.");
+					alert(lang === 'fa' ? "لطفاً فقط عدد صحیح وارد کنید." : lang === 'en' ? "Please enter only a valid integer." : "الرجاء إدخال عدد صحيح فقط.");
 					return;
 				}
+				
 				var ip = $('#ipInput').val();
 				var port = $('#portInput').val();
-	
+			
 				$.ajax({
 					url: "{% url 'Amusement_Park:test_payment' %}",
 					type: "POST",
@@ -412,13 +423,14 @@ html[lang="fa"] body {
 						port: port
 					},
 					success: function(response){
-						alert(response.message);
+						alert(response.message);  // اینجا نیز می‌توانید متن را به زبان مورد نظر ترجمه کنید
 					},
 					error: function(){
-						alert("خطا در برقراری ارتباط برای پرداخت");
+						alert(lang === 'fa' ? "خطا در برقراری ارتباط برای پرداخت" : lang === 'en' ? "Error establishing connection for payment" : "خطأ في إقامة الاتصال للدفع");
 					}
 				});
 			});
+			
 		});
 
 	</script>

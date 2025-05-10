@@ -178,73 +178,121 @@
         
                             // Continue processing the scanned barcode
                             const selectedProduct = document.getElementById("product-select").value;
-                            if (!selectedProduct) {
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'توجه',
-                                    text: 'لطفاً ابتدا یک محصول را انتخاب کنید.'
-                                });
-                                return;
-                            }
+                            // پیام‌ها برای زبان‌های مختلف
+const messages = {
+    selectProduct: {
+        fa: 'لطفاً ابتدا یک محصول را انتخاب کنید.',
+        en: 'Please select a product first.',
+        ar: 'يرجى اختيار منتج أولاً.'
+    }
+};
+
+
+const lang = '{{ request.language }}';
+
+
+if (!selectedProduct) {
+    Swal.fire({
+        icon: 'warning',
+        title: lang === 'fa' ? 'توجه' : lang === 'en' ? 'Warning' : 'تنبيه',
+        text: messages.selectProduct[lang],
+    });
+    return;
+}
+
         
                             {% comment %} document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`; {% endcomment %}
         
-                            fetch("{% url 'Amusement_Park:verify_qr_code' %}", {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRFToken': getCSRFToken(),
-                                },
-                                body: JSON.stringify({ 
-                                    qr_code: decodedText, 
-                                    product_id: selectedProduct 
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                Swal.fire({
-                                    icon: 'status',
-                                    title: 'بارکد خوانده شد',
-                                    text: data.message
-                                });
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'خطا',
-                                    text: 'خطا در ارسال درخواست.'
-                                });
-                                console.error('خطا در ارسال درخواست:', error);
-                            });
-                        },
-                        (errorMessage) => {
-                            console.log(`خطا در اسکن: ${errorMessage}`);
-                        }
-                    ).catch(err => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا',
-                            text: 'خطا در شروع اسکنر.'
-                        });
-                        console.error("خطا در شروع اسکنر:", err);
-                    });
-        
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطا',
-                        text: 'هیچ دوربینی پیدا نشد. لطفاً دسترسی به دوربین را بررسی کنید.'
-                    });
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطا',
-                    text: 'مشکلی در دسترسی به دوربین وجود دارد.'
-                });
-                console.error("خطا در دسترسی به دوربین:", err);
+// پیام‌ها برای زبان‌های مختلف
+const messages = {
+    qrCodeVerified: {
+        fa: 'بارکد خوانده شد.',
+        en: 'QR code scanned successfully.',
+        ar: 'تم مسح رمز الاستجابة السريعة بنجاح.'
+    },
+    errorSendingRequest: {
+        fa: 'خطا در ارسال درخواست.',
+        en: 'Error in sending request.',
+        ar: 'حدث خطأ أثناء إرسال الطلب.'
+    },
+    scanError: {
+        fa: 'خطا در اسکن.',
+        en: 'Scan error.',
+        ar: 'خطأ في المسح.'
+    },
+    noCamera: {
+        fa: 'هیچ دوربینی پیدا نشد. لطفاً دسترسی به دوربین را بررسی کنید.',
+        en: 'No camera found. Please check your camera access.',
+        ar: 'لم يتم العثور على كاميرا. يرجى التحقق من وصول الكاميرا.'
+    },
+    cameraAccessError: {
+        fa: 'مشکلی در دسترسی به دوربین وجود دارد.',
+        en: 'There is an issue with accessing the camera.',
+        ar: 'هناك مشكلة في الوصول إلى الكاميرا.'
+    }
+};
+
+// دریافت زبان از سرور (توجه داشته باشید که باید زبان از سرور در دسترس باشد)
+const lang = '{{ request.language }}';  // این متغیر باید در سرور به روز شود و زبان فعلی را برگرداند
+
+fetch("{% url 'Amusement_Park:verify_qr_code' %}", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken(),
+    },
+    body: JSON.stringify({ 
+        qr_code: decodedText, 
+        product_id: selectedProduct 
+    })
+})
+.then(response => response.json())
+.then(data => {
+    Swal.fire({
+        icon: 'status',
+        title: lang === 'fa' ? 'بارکد خوانده شد' : lang === 'en' ? 'QR Code Scanned' : 'تم مسح رمز الاستجابة السريعة',
+        text: data.message || messages.qrCodeVerified[lang]
+    });
+})
+.catch(error => {
+    Swal.fire({
+        icon: 'error',
+        title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
+        text: messages.errorSendingRequest[lang],
+    });
+    console.error('خطا در ارسال درخواست:', error);
+});
+
+navigator.mediaDevices.enumerateDevices().then(devices => {
+    const camera = devices.find(device => device.kind === 'videoinput');
+    if (camera) {
+        // logic for scanning with the camera
+
+        // if there is a scanning issue
+        .catch(err => {
+            Swal.fire({
+                icon: 'error',
+                title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
+                text: messages.scanError[lang],
             });
-        }
+            console.error(`خطا در اسکن: ${err}`);
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
+            text: messages.noCamera[lang],
+        });
+    }
+}).catch(err => {
+    Swal.fire({
+        icon: 'error',
+        title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
+        text: messages.cameraAccessError[lang],
+    });
+    console.error("خطا در دسترسی به دوربین:", err);
+});
+
         
 
         window.onload = function() {

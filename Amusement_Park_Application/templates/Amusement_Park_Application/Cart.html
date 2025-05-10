@@ -2259,6 +2259,36 @@ Page content END -->
 		})
 		.then(response => response.json())
 		.then(data => {
+			const lang = '{{ request.language }}';  // فرض بر این است که زبان را از بک‌اند به صورت متغیر در اختیار داری
+		
+			const messages = {
+				success: {
+					fa: 'موفقیت‌آمیز',
+					en: 'Success',
+					ar: 'ناجح'
+				},
+				successMessage: {
+					fa: 'اطلاعات کاربر با موفقیت ذخیره شد.',
+					en: 'User information saved successfully.',
+					ar: 'تم حفظ معلومات المستخدم بنجاح.'
+				},
+				error: {
+					fa: 'خطا',
+					en: 'Error',
+					ar: 'خطأ'
+				},
+				errorMessage: {
+					fa: 'مشکلی در ذخیره اطلاعات به وجود آمد.',
+					en: 'There was an issue saving the information.',
+					ar: 'حدثت مشكلة أثناء حفظ المعلومات.'
+				},
+				serverErrorMessage: {
+					fa: 'مشکلی در ارتباط با سرور به وجود آمد.',
+					en: 'There was a problem connecting to the server.',
+					ar: 'حدثت مشكلة في الاتصال بالخادم.'
+				}
+			};
+		
 			if (data.success) {
 				document.getElementById('firstName').setAttribute('disabled', true);
 				document.getElementById('lastName').setAttribute('disabled', true);
@@ -2266,28 +2296,30 @@ Page content END -->
 				document.getElementById('birthMonth').setAttribute('disabled', true);
 				document.getElementById('birthDay').setAttribute('disabled', true);
 				document.querySelector('button[type="submit"]').setAttribute('disabled', true);
-	
+		
 				Swal.fire({
 					icon: 'success',
-					title: 'موفقیت‌آمیز',
-					text: data.message || 'اطلاعات کاربر با موفقیت ذخیره شد.',
+					title: messages.success[lang],
+					text: data.message || messages.successMessage[lang],
 				});
 			} else {
 				Swal.fire({
 					icon: 'error',
-					title: 'خطا',
-					text: data.message || 'مشکلی در ذخیره اطلاعات به وجود آمد.',
+					title: messages.error[lang],
+					text: data.message || messages.errorMessage[lang],
 				});
 			}
 		})
 		.catch(error => {
 			console.error('Error:', error);
+			const lang = '{{ request.language }}';
 			Swal.fire({
 				icon: 'error',
-				title: 'خطا',
-				text: 'مشکلی در ارتباط با سرور به وجود آمد.',
+				title: messages.error[lang],
+				text: messages.serverErrorMessage[lang],
 			});
 		});
+		
 	});
 
 
@@ -2321,7 +2353,7 @@ Page content END -->
 		function validateInput(input, finalPrice) {
 			const value = parseFloat(input.value.replace(/,/g, '')) || 0;
 		
-			// زبان کاربر را دریافت کنید
+
 			const language = "{{ request.language }}";
 		
 			const messages = {
@@ -2389,7 +2421,7 @@ Page content END -->
 	
 			if (cashAmount > 0) {
 				if (cashAmount > finalPrice) {
-					// زبان کاربر را دریافت کنید
+
 					const language = "{{ request.language }}";
 			
 					const messages = {
@@ -2423,7 +2455,7 @@ Page content END -->
 				cardInput.value = (finalPrice - cashAmount).toLocaleString();
 			} else if (cardAmount > 0) {
 				if (cardAmount > finalPrice) {
-					// زبان کاربر را دریافت کنید
+
 					const language = "{{ request.language }}";
 			
 					const messages = {
@@ -2510,7 +2542,7 @@ Page content END -->
 	
 			if (isCombinedPayment) {
 				if (cashAmount === 0 && cardAmountInput === 0) {
-					// زبان کاربر را دریافت کنید
+
 					const language = "{{ request.language }}";
 			
 					const messages = {
@@ -2541,7 +2573,7 @@ Page content END -->
 					});
 					return;
 				} else if (cashInput.disabled === false || cardInput.disabled === false) {
-					// زبان کاربر را دریافت کنید
+
 					const language = "{{ request.language }}";
 			
 					const messages = {
@@ -2576,7 +2608,7 @@ Page content END -->
 			
 	
 			if (isCashPayment) {
-				// زبان کاربر را دریافت کنید
+
 				const language = "{{ request.language }}";
 			
 				const messages = {

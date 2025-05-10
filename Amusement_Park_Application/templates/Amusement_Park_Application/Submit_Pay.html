@@ -653,18 +653,25 @@ Page content END -->
         })
         .then(response => response.json())
         .then(data => {
+            const lang = '{{ request.language }}';  // دریافت زبان از سرور
+            
             if (data.status === 'error') {
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطا',
+                    title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
                     text: data.message,
-                    confirmButtonText: 'باشه'
+                    confirmButtonText: lang === 'fa' ? 'باشه' : lang === 'en' ? 'OK' : 'موافق',
                 });
             } else {
                 const transaction = data.data;
                 const tbody = document.querySelector('tbody');
                 tbody.innerHTML = ''; 
-    
+        
+                // پردازش اطلاعات تراکنش (مابقی کد که مربوط به نمایش اطلاعات تراکنش است)
+                // اینجا می‌توانید جزئیات تراکنش را بر اساس داده‌های دریافتی اضافه کنید.
+            }
+        })
+        
                 transaction.products.forEach(product => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
