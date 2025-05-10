@@ -130,12 +130,31 @@
 						e.preventDefault(); // Stop normal link navigation
 		
 						Swal.fire({
-							title: 'تغییر زبان غیرمجاز',
-							text: 'شما باید در حالت فروش عادی زبان را عوض کنید سپس به بخش فروش توریستی برگردید',
-							icon: 'warning',
-							showCancelButton: true,
-							confirmButtonText: 'رفتن به فروش عادی',
-							cancelButtonText: 'ادامه',
+							{% if request.language == 'fa' %}
+								title: 'تغییر زبان غیرمجاز',
+								text: 'شما باید در حالت فروش عادی زبان را عوض کنید سپس به بخش فروش توریستی برگردید',
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonText: 'رفتن به فروش عادی',
+								cancelButtonText: 'ادامه',
+
+							{% elif request.language == 'en' %}
+								title: 'Unauthorized Language Change',
+								text: 'You must switch the language in the regular sales mode, then return to the tourist sales section.',
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonText: 'Go to Regular Sales',
+								cancelButtonText: 'Continue',
+								
+							{% elif request.language == 'ar' %}
+								title: 'تغيير اللغة غير مسموح',
+								text: 'لازم تغيّر اللغة بوضع البيع العادي، وبعدين ترجع لقسم البيع السياحي.',
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonText: 'الذهاب للبيع العادي',
+								cancelButtonText: 'استمرار',
+
+							{% endif %}							
 							reverseButtons: true,
 							customClass: {
 								confirmButton: 'btn btn-primary mx-2',
@@ -569,7 +588,7 @@
 									{% if request.language == 'fa' %}
 										خودکار		
 							  		{% elif request.language == 'en' %}
-									 	Automatic
+									 	Auto
 							  		{% elif request.language == 'ar' %}
 									  	تلقائي	
 							 		{% endif %}
