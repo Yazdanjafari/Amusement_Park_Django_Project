@@ -675,6 +675,9 @@ def print_qr(request, ticket_id, lang=None):
     language = request.session.get('language', 'fa')
     ticket = get_object_or_404(Ticket, id=ticket_id)
     transaction = Transaction.objects.filter(ticket=ticket).first()    
+
+    ordered_products = ticket.ticket_products.select_related('product')  # ✅ Get products with their details
+
     qr_content = {
         "ticket_id": ticket.id,
         "products": [
@@ -683,7 +686,7 @@ def print_qr(request, ticket_id, lang=None):
                 "product_id": tp.product.id,
                 "title": tp.product.title,
             }
-            for tp in ticket.ticket_products.all()
+            for tp in ordered_products
         ]
     }
     qr_json = json.dumps(qr_content)
@@ -703,11 +706,13 @@ def print_qr(request, ticket_id, lang=None):
     qr_code_image = "data:image/png;base64," + img_str
 
     return render(request, "Amusement_Park_Application/print_qr.html", {
-    "ticket": ticket, 
-    "qr_code_image": qr_code_image, 
-    "transaction_id": transaction.id, 
-    'language': language,
+        "ticket": ticket,
+        "qr_code_image": qr_code_image,
+        "transaction_id": transaction.id if transaction else None,
+        "language": language,
+        "ordered_products": ordered_products,  # ✅ Send to template
     })
+
 
 
 @csrf_exempt
