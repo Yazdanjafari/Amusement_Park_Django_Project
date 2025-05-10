@@ -18,8 +18,8 @@ __pycache__/
 .env
 
 # Media and static files (if generated dynamically)
-/media/
-/staticfiles/
+# /media/
+# /staticfiles/
 
 # IDE-specific files
 .idea/
