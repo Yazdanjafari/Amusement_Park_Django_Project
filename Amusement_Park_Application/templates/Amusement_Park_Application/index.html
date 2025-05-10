@@ -38,7 +38,7 @@ Instructor grid START -->
     <div class="container">
 
         <!-- Instructor grid -->
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
 
             <!-- Card item START -->
             {% for i in Product_Views %}
@@ -109,7 +109,16 @@ Instructor grid END -->
 {% block shortcut_header %}
 <li class="nav-item ms-2">
     <div class="d-flex align-items-center bg-light rounded-pill p-1 shadow-sm">
-        <span class="mx-2 text-muted" id="saleModeText">فروش عادی</span>
+        <span class="mx-2 text-muted" id="saleModeText">
+			{% if request.language == 'fa' %}
+    			فروش عادی
+			{% elif request.language == 'en' %}
+   				 Regular Sale
+			{% elif request.language == 'ar' %}
+    			بيع عادي
+			{% endif %}
+		</span>
+			
         <div class="form-check form-switch m-0 pt-1">
             <input class="form-check-input" type="checkbox" id="saleModeToggle">
         </div>
@@ -127,14 +136,38 @@ Instructor grid END -->
     <div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0" id="cart-dropdown">
         <div class="card bg-transparent">
             <div class="card-header bg-transparent border-bottom py-4">
-                <h5 class="m-0">سبد خرید شما :</h5>
+                <h5 class="m-0">
+					{% if request.language == 'fa' %}
+        				سبد خرید شما:
+					{% elif request.language == 'en' %}
+						Your Cart:
+					{% elif request.language == 'ar' %}
+						سلة التسوق الخاصة بك:
+					{% endif %}
+				</h5>
             </div>
             <div class="card-body p-0" id="cart-items" style="max-height: 300px; overflow-y: auto;">
                 <!-- Cart items will be populated here -->
             </div>
             <div class="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
-                <a href="{% url 'Amusement_Park:Cart' %}" class="cart-link btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">سبد خرید</a>
-                <a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">حذف همه</a>
+                <a href="{% url 'Amusement_Park:Cart' %}" class="cart-link btn btn-sm btn-primary mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;">
+					{% if request.language == 'fa' %}
+						سبد خرید
+					{% elif request.language == 'en' %}
+						Cart
+					{% elif request.language == 'ar' %}
+						عربة التسوق
+					{% endif %}
+				</a>
+                <a class="btn btn-sm btn-danger mb-0" style="flex: 1; margin: 0 5px; padding: 0.5rem; font-size: 0.875rem; width: 100px; height: 40px; text-align: center; line-height: 1.2;" onclick="clearAll()">
+					{% if request.language == 'fa' %}
+					حذف همه
+				{% elif request.language == 'en' %}
+					Delete All
+				{% elif request.language == 'ar' %}
+					حذف الكل
+				{% endif %}
+				</a>
             </div>
         </div>
     </div>
@@ -155,40 +188,53 @@ Instructor grid END -->
 {% block script %}
 <script>
 	document.addEventListener("DOMContentLoaded", function () {
-		let toggle = document.getElementById("saleModeToggle");
-		let text = document.getElementById("saleModeText");
-		let icon = document.getElementById("saleModeIcon");
+		const toggle = document.getElementById("saleModeToggle");
+		const text = document.getElementById("saleModeText");
+		const icon = document.getElementById("saleModeIcon");
 	
-		// Get current sale_mode from URL
+		// دریافت زبان از مسیر URL
+		const pathParts = window.location.pathname.split('/');
+		const langPrefix = (pathParts[1] === 'Amusement_Park' || !pathParts[1]) ? 'fa' : pathParts[1];
+	
+		// تعریف پیام‌ها برای چند زبان
+		const messages = {
+			fa: { normal: 'فروش عادی', tourist: 'فروش توریستی' },
+			en: { normal: 'Normal Sale', tourist: 'Tourist Sale' },
+			ar: { normal: 'بيع عادي', tourist: 'بيع سياحي' }
+		};
+	
+		const msg = messages[langPrefix] || messages.fa;
+	
+		// خواندن sale_mode از پارامتر URL
 		const urlParams = new URLSearchParams(window.location.search);
 		const saleModeParam = urlParams.get("sale_mode") || "normal";
-	
-		// Update toggle state based on URL
+		
 		let isTourist = saleModeParam === "tourist";
 		toggle.checked = isTourist;
 	
-		// Update the text and icon
+		
 		function updateSaleModeDisplay(isTourist) {
-			text.textContent = isTourist ? "فروش توریستی" : "فروش عادی";
-			icon.className = isTourist ? "fas fa-umbrella-beach text-success mx-2" : "fas fa-store text-primary mx-2";
+			text.textContent = isTourist ? msg.tourist : msg.normal;
+			icon.className = isTourist
+				? "fas fa-umbrella-beach text-success mx-2"
+				: "fas fa-store text-primary mx-2";
 		}
 	
 		updateSaleModeDisplay(isTourist);
 	
-		// When the toggle is changed
+
 		toggle.addEventListener("change", function () {
-			let isTourist = toggle.checked;
-			localStorage.setItem("saleMode", isTourist);  // optional
+			isTourist = toggle.checked;
+			
+			localStorage.setItem("saleMode", isTourist);  
 			updateSaleModeDisplay(isTourist);
 	
-			// Get current language from the URL
-			let pathParts = window.location.pathname.split('/');
-			let langPrefix = pathParts[1] === 'Amusement_Park' ? 'fa' : pathParts[1];  // fallback to 'fa'
-			
+
 			const newSaleMode = isTourist ? 'tourist' : 'normal';
 			window.location.href = `/${langPrefix}/Amusement_Park/Products?sale_mode=${newSaleMode}`;
 		});
 	});
+	
 	
 	
 	
@@ -215,40 +261,61 @@ Instructor grid END -->
 		const resetButton = parent.querySelector('.btn-outline-success');
 		const productTitle = parent.closest('.card-body').querySelector('.card-title a').innerText;
 	
-		// Get the current counter value
+
 		const count = parseInt(counter.innerText, 10);
+		if (count === 0) return;
 	
-		// If the counter is 0, do nothing
-		if (count === 0) {
-			return;
-		}
-	
-		// Change the cart button to active state
+
 		resetButton.classList.remove('btn-outline-success');
 		resetButton.classList.add('btn-success');
 	
-		// Disable all other buttons except for the reset button
+
 		parent.querySelectorAll('button').forEach(btn => {
 			if (!btn.classList.contains('btn-success')) {
 				btn.disabled = true;
 			}
 		});
 	
+		const lang = '{{ request.language }}';
+		const messages = {
+			title: {
+				fa: 'محصول به سبد خرید اضافه شد!',
+				en: 'Product added to cart!',
+				ar: 'تمت إضافة المنتج إلى السلة!'
+			},
+			text: {
+				fa: `${count} عدد از محصول ${productTitle} به سبد خرید اضافه شد`,
+				en: `${count} item(s) of ${productTitle} added to the cart`,
+				ar: `تمت إضافة ${count} من المنتج ${productTitle} إلى السلة`
+			},
+			confirmButton: {
+				fa: 'باشه',
+				en: 'OK',
+				ar: 'حسنًا'
+			},
+			cancelButton: {
+				fa: 'سبد خرید',
+				en: 'Cart',
+				ar: 'السلة'
+			}
+		};
+	
 		Swal.fire({
-			title: 'محصول به سبد خرید اضافه شد!',
-			text: `${count} عدد از محصول ${productTitle} به سبد خرید اضافه شد`,
+			title: messages.title[lang],
+			text: messages.text[lang],
 			icon: 'success',
-			confirmButtonText: 'باشه',
+			confirmButtonText: messages.confirmButton[lang],
 			showCancelButton: true,
-			cancelButtonText: 'سبد خرید', 
+			cancelButtonText: messages.cancelButton[lang],
 			cancelButtonColor: '#3085d6',
-			focusConfirm: false, 
+			focusConfirm: false,
 		}).then((result) => {
 			if (result.dismiss === Swal.DismissReason.cancel) {
 				window.location.href = "{% url 'Amusement_Park:Cart' %}";
 			}
 		});
 	}
+	
 
     // Function to reset everything to its initial state
     function clearAll() {
@@ -272,48 +339,73 @@ Instructor grid END -->
 
 
 	function addToCart(productId) {
-		const parent = document.querySelector(`[data-product-id="${productId}"]`);
-		const counter = parent.querySelector('.counter');
-		const quantity = parseInt(counter.innerText, 10);
-	
-		if (quantity === 0) {
-			Swal.fire({
-				title: 'خطا',
-				text: 'لطفاً تعداد را مشخص کنید.',
-				icon: 'error',
-				confirmButtonText: 'باشه'
-			});
-			return;
+	const parent = document.querySelector(`[data-product-id="${productId}"]`);
+	const counter = parent.querySelector('.counter');
+	const quantity = parseInt(counter.innerText, 10);
+
+	const lang = '{{ request.language }}';
+	const messages = {
+		empty: {
+			fa: 'لطفاً تعداد را مشخص کنید.',
+			en: 'Please specify the quantity.',
+			ar: 'يرجى تحديد الكمية.'
+		},
+		errorTitle: {
+			fa: 'خطا',
+			en: 'Error',
+			ar: 'خطأ'
+		},
+		errorAdd: {
+			fa: 'مشکلی در افزودن به سبد خرید وجود دارد.',
+			en: 'There was a problem adding to the cart.',
+			ar: 'حدثت مشكلة أثناء الإضافة إلى السلة.'
+		},
+		ok: {
+			fa: 'باشه',
+			en: 'OK',
+			ar: 'حسنًا'
 		}
-	
-		const data = {
-			'product_id': productId,
-			'quantity': quantity
-		};
-	
-		fetch("{% url 'Amusement_Park:add_to_cart' %}", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFToken": getCookie("csrftoken")
-			},
-			body: JSON.stringify(data)
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === 'success') {
-					updateCartDropdown(data.cart_items);
-					resetCounter(parent);
-				} else {
-					Swal.fire({
-						title: 'خطا',
-						text: 'مشکلی در افزودن به سبد خرید وجود دارد.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-				}
-			});
+	};
+
+	if (quantity === 0) {
+		Swal.fire({
+			title: messages.errorTitle[lang],
+			text: messages.empty[lang],
+			icon: 'error',
+			confirmButtonText: messages.ok[lang]
+		});
+		return;
 	}
+
+	const data = {
+		'product_id': productId,
+		'quantity': quantity
+	};
+
+	fetch("{% url 'Amusement_Park:add_to_cart' %}", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken")
+		},
+		body: JSON.stringify(data)
+	})
+	.then(response => response.json())
+	.then(data => {
+		if (data.status === 'success') {
+			updateCartDropdown(data.cart_items);
+			resetCounter(parent);
+		} else {
+			Swal.fire({
+				title: messages.errorTitle[lang],
+				text: messages.errorAdd[lang],
+				icon: 'error',
+				confirmButtonText: messages.ok[lang]
+			});
+		}
+	});
+}
+
 
 	function updateCartDropdown(cartItems) {
 		const cartContent = cartItems.map(item => `
@@ -419,41 +511,83 @@ Instructor grid END -->
 	
 
 	{% if cart_empty %}
-		document.addEventListener('DOMContentLoaded', function() {
-			Swal.fire({
-				title: 'سبد خرید شما خالی است!',
-				text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-				icon: 'warning',
-				confirmButtonText: 'باشه'
-			}).then(() => {
-				// Redirect to the products page or any other page
-				window.location.href = "{% url 'Amusement_Park:Products' %}";
-			});
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const lang = '{{ request.language }}';
+		const messages = {
+			title: {
+				fa: 'سبد خرید شما خالی است!',
+				en: 'Your cart is empty!',
+				ar: 'سلة التسوق فارغة!'
+			},
+			text: {
+				fa: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+				en: 'Please add a product to your cart first.',
+				ar: 'يرجى إضافة منتج إلى سلة التسوق أولاً.'
+			},
+			confirm: {
+				fa: 'باشه',
+				en: 'OK',
+				ar: 'حسنًا'
+			}
+		};
+
+		Swal.fire({
+			title: messages.title[lang],
+			text: messages.text[lang],
+			icon: 'warning',
+			confirmButtonText: messages.confirm[lang]
+		}).then(() => {
+			window.location.href = "{% url 'Amusement_Park:Products' %}";
 		});
-	{% endif %}
+	});
+</script>
+{% endif %}
 
 
-    function goToCart() {
-        fetch("{% url 'Amusement_Park:check_cart' %}", {
-            method: "GET",
-            headers: {
-                "X-CSRFToken": getCookie('csrftoken')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.cart_empty) {
-                Swal.fire({
-                    title: 'سبد خرید شما خالی است!',
-                    text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-                    icon: 'warning',
-                    confirmButtonText: 'باشه'
-                });
-            } else {
-                window.location.href = "{% url 'Amusement_Park:Cart' %}";
-            }
-        });
-    }
+
+function goToCart() {
+    const lang = '{{ request.language }}';
+
+    const messages = {
+        title: {
+            fa: 'سبد خرید شما خالی است!',
+            en: 'Your cart is empty!',
+            ar: 'سلة التسوق فارغة!'
+        },
+        text: {
+            fa: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+            en: 'Please add a product to your cart first.',
+            ar: 'يرجى إضافة منتج إلى سلة التسوق أولاً.'
+        },
+        confirm: {
+            fa: 'باشه',
+            en: 'OK',
+            ar: 'حسنًا'
+        }
+    };
+
+    fetch("{% url 'Amusement_Park:check_cart' %}", {
+        method: "GET",
+        headers: {
+            "X-CSRFToken": getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.cart_empty) {
+            Swal.fire({
+                title: messages.title[lang],
+                text: messages.text[lang],
+                icon: 'warning',
+                confirmButtonText: messages.confirm[lang]
+            });
+        } else {
+            window.location.href = "{% url 'Amusement_Park:Cart' %}";
+        }
+    });
+}
+
 
     // Update the cart link to call goToCart() instead of direct navigation
     document.querySelectorAll('.cart-link').forEach(link => {

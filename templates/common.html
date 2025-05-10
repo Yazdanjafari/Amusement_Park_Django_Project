@@ -165,6 +165,9 @@
 			width: 40px;  /* Bigger width */
 			height: 30px; /* Bigger height */
 			object-fit: contain;
+			border: none; 
+  			outline: none; 
+  			box-shadow: none;
 		}
 		.language-switcher {
 			display: flex;
@@ -175,9 +178,15 @@
 			padding: 10px;
 			border-radius: 8px;
 			margin-top: 10px;
-		}		
+		}	
+		.flag-icon:focus, .flag-icon:active, .flag-icon:hover {
+			outline: none;
+			box-shadow: none; 
+			border:none;
+		  }
+			  
 		{% comment %} End Flag design {% endcomment %}
-
+		
 		{% comment %} Start Css for Navbar {% endcomment %}
 
 		.navbar-collapse, .navbar-nav, .nav-link, .btn {
@@ -333,37 +342,85 @@
 					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'kiosk' %}					
 					<li class="nav-item dropdown" style="padding-top: 5px !important; padding-bottom: 5px !important; font-size: 15px">
 						<a class="nav-link bg-primary bg-opacity-10  rounded-3 text-primary px-3 py-3 py-xl-0 cart-link" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu" {% block disabled_cart %}{% endblock disabled_cart %}>
-							<i class="bi bi-cart me-2"></i><span>سبد خرید</span>
+							<i class="bi bi-cart me-2"></i><span>
+								{% if request.language == 'fa' %}
+									سبد خرید 
+								{% elif request.language == 'en' %}
+									Shopping Cart
+								{% elif request.language == 'ar' %}
+									سلة التسوّق		
+								{% endif %}
+							</span>
 						</a>
 					</li>
 					{% endif %}
 					
 					
 					<li class="nav-item dropdown">
-						<a style="font-size: 13px;" class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>صفحه اصلی</a>
+						<a style="font-size: 13px;" class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>
+								{% if request.language == 'fa' %}
+									صفحه اصلی	 
+								{% elif request.language == 'en' %}
+									Home Page
+								{% elif request.language == 'ar' %}
+									الصفحة الرئيسية		
+								{% endif %}
+						</a>
 					</li>
 
 					{% if request.user.is_superuser or request.user.is_staff %}					
 					<li class="nav-item dropdown">
-						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>ثبت مجدد تراکنش</a>
+						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>
+								{% if request.language == 'fa' %}
+									ثبت مجدد تراکنش	 
+								{% elif request.language == 'en' %}
+									Resubmit Transaction
+								{% elif request.language == 'ar' %}
+									إعادة إرسال المعاملة		
+								{% endif %}
+						</a>
 					</li>
 					{% endif %}
 
 					{% if request.user.is_superuser or request.user.is_staff %}
 					<li class="nav-item dropdown">
-						<a style="font-size: 13px;" class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu" {% block disabled_refund %}{% endblock disabled_refund %}>عودت وجه</a>
+						<a style="font-size: 13px;" class="nav-link {% block active_refund %}{% endblock active_refund %}" href="{% url 'Amusement_Park:Refund' %}" id="demoMenu" {% block disabled_refund %}{% endblock disabled_refund %}>
+								{% if request.language == 'fa' %}
+									عودت وجه		
+								{% elif request.language == 'en' %}
+									Refund
+								{% elif request.language == 'ar' %}
+									استرجاع المبلغ		
+								{% endif %}
+						</a>
 					</li>
 					{% endif %}
 					
 					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'scanner' %}
 					<li class="nav-item dropdown">
-						<a style="font-size: 13px;" class="nav-link" href="{% url 'Amusement_Park:Scanner' %}" id="demoMenu">اسکن بارکد</a>
+						<a style="font-size: 13px;" class="nav-link" href="{% url 'Amusement_Park:Scanner' %}" id="demoMenu">
+								{% if request.language == 'fa' %}
+									اسکن بارکد
+								{% elif request.language == 'en' %}
+									Scan Barcode
+								{% elif request.language == 'ar' %}
+									مسح الرمز الشريطي
+								{% endif %}
+						</a>
 					</li>				
 					{% endif %}
 					
 					{% if request.user.is_superuser %}
 						<li class="nav-item dropdown">
-							<a style="font-size: 13px;" class="nav-link" href="/admin" id="demoMenu">پنل ادمین</a>
+							<a style="font-size: 13px;" class="nav-link" href="/admin" id="demoMenu">
+								{% if request.language == 'fa' %}
+									پنل ادمین
+								{% elif request.language == 'en' %}
+									Admin Panel
+								{% elif request.language == 'ar' %}
+									لوحة التحكم الإدارية
+								{% endif %}
+							</a>
 						</li>			
 					{% endif %}		
 				
@@ -387,9 +444,17 @@
 							<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
 								<div class="card bg-transparent">
 									<div class="card-header bg-transparent border-bottom py-4 d-flex justify-content-between align-items-center">
-										<h6 class="m-0">نوتیفیکیشن :</h6>
+										<h6 class="m-0">
+											{% if request.language == 'fa' %}
+												:نوتیفیکیشن 
+											{% elif request.language == 'en' %}
+												Notification:
+											{% elif request.language == 'ar' %}
+												إشعار:
+											{% endif %}
+										</h6>
 									</div>
-									<div class="card-body p-0">
+									<div class="card-body">
 										{% for i in Notification_views %}
 											{% if i.activate == True %}
 												<ul class="list-group list-unstyled list-group-flush">
@@ -441,14 +506,29 @@
 						<li><hr class="dropdown-divider"></li>
 						{% if request.user.is_superuser or request.user.is_staff %}
 						<li>
-							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:Setting' %}">
-								<i class="bi bi-gear fa-fw me-2"></i> تنظیمات
+							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:Setting' %}" style="display: flex; flex-direction: {% if request.language == 'fa' or request.language == 'ar' %} row {% else %} row-reverse {% endif %}; align-items: center;">
+							  <i class="bi bi-gear fa-fw me-2"></i>
+							  {% if request.language == 'fa' %}
+								تنظیمات
+							  {% elif request.language == 'en' %}
+								Settings
+							  {% elif request.language == 'ar' %}
+								الإعدادات
+							  {% endif %}
 							</a>
-						</li>
+						  </li> 
 						{% endif %}
 						<li>
-							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}">
-								<i class="bi bi-box-arrow-right fa-fw me-2"></i> خروج
+							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}"
+							style="display: flex; flex-direction: {% if request.language == 'fa' or request.language == 'ar' %} row {% else %} row-reverse {% endif %}; align-items: center;">
+								<i class="bi bi-box-arrow-right fa-fw me-2"></i>
+								 	{% if request.language == 'fa' %}
+								 		خروج	
+							  		{% elif request.language == 'en' %}
+									  	Logout
+							  		{% elif request.language == 'ar' %}
+									  	تسجيل الخروج	
+							 		{% endif %}
 							</a>
 						</li>
 						<li>
@@ -458,20 +538,41 @@
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sun fa-fw mode-switch" viewBox="0 0 16 16">
 										<path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
 										<use href="#"></use>
-									</svg> روشن
+									</svg> 
+									{% if request.language == 'fa' %}
+										روشن		
+							  		{% elif request.language == 'en' %}
+									  	Light
+							  		{% elif request.language == 'ar' %}
+									  	فاتح
+							 		{% endif %}
 								</button>
 								<button type="button" class="btn btn-sm mb-0" data-bs-theme-value="dark">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon-stars fa-fw mode-switch" viewBox="0 0 16 16">
 										<path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278zM4.858 1.311A7.269 7.269 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.316 7.316 0 0 0 5.205-2.162c-.337.042-.68.063-1.029.063-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286z"/>
 										<path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
 										<use href="#"></use>
-									</svg> تیره
+									</svg> 
+									{% if request.language == 'fa' %}
+										تیره		
+							  		{% elif request.language == 'en' %}
+									  	Dark
+							  		{% elif request.language == 'ar' %}
+									  	داكن	
+							 		{% endif %}
 								</button>
 								<button type="button" class="btn btn-sm mb-0 active" data-bs-theme-value="auto">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle-half fa-fw mode-switch" viewBox="0 0 16 16">
 										<path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
 										<use href="#"></use>
-									</svg> خودکار
+									</svg> 
+									{% if request.language == 'fa' %}
+										خودکار		
+							  		{% elif request.language == 'en' %}
+									 	Automatic
+							  		{% elif request.language == 'ar' %}
+									  	تلقائي	
+							 		{% endif %}
 								</button>
 							</div>
 						</li> 
@@ -483,7 +584,8 @@
 								  href="{% url 'Amusement_Park:switch_language' 'fa' %}?next={{ current_path }}"
 								  class="btn btn-sm{% if request.language == 'fa' %} active bg-white{% endif %}"
 								>
-								  <img class="flag-icon" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
+								<img class="flag-icon" id="flagImage" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
+
 								</a>
 								<a
 								  href="{% url 'Amusement_Park:switch_language' 'en' %}?next={{ current_path }}"
@@ -530,7 +632,7 @@
 <!-- =======================
 Footer START -->
 {% if request.user.is_superuser or request.user.is_staff %}
-	<footer class="bg-dark p-3">
+	<footer class="bg-dark p-3" style="margin-top:190px;">
 		<div class="container">
 			<div class="row align-items-center">
 				<!-- Logo Widget -->

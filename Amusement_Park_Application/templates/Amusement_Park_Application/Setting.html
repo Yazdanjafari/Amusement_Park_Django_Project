@@ -11,17 +11,44 @@ Page Banner START -->
 		<div class="row">
 			<div class="col-12">
 				<div class="bg-light p-4 text-center rounded-3">
-					<h1 class="m-0 fs-2">تنظیمات</h1>
+					<h1 class="m-0 fs-2">
+						{% if request.language == 'fa' %}
+							تنظیمات
+						{% elif request.language == 'en' %}
+							Settings
+						{% elif request.language == 'ar' %}
+							الإعدادات
+						{% endif %}
+					</h1>
 					<!-- Breadcrumb -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="{% url 'Amusement_Park:Products' %}">صفحه اصلی</a></li>
-								<li class="breadcrumb-item active" aria-current="page">تنظیمات</a></li>
+								<li class="breadcrumb-item">
+									<a href="{% url 'Amusement_Park:Products' %}">
+										{% if request.language == 'fa' %}
+											صفحه اصلی
+										{% elif request.language == 'en' %}
+											Home Page
+										{% elif request.language == 'ar' %}
+											الصفحة الرئيسية
+										{% endif %}
+									</a>
+								</li>
+								<li class="breadcrumb-item active" aria-current="page">
+									{% if request.language == 'fa' %}
+										تنظیمات
+									{% elif request.language == 'en' %}
+										Settings
+									{% elif request.language == 'ar' %}
+										الإعدادات
+									{% endif %}
+								</li>
 							</ol>
 						</nav>
 					</div>
 				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -43,57 +70,154 @@ Page content START -->
 				<div class="card card-body shadow p-4">
 
 					<!-- Title -->
-					<h5 class="mb-0">تنظیمات :</h5>
+					<h5 class="mb-0">
+						{% if request.language == 'fa' %}
+							تنظیمات :
+						{% elif request.language == 'en' %}
+							Settings :
+						{% elif request.language == 'ar' %}
+							الإعدادات :
+						{% endif %}
+					</h5>
 					<br>
-					<p style="font-size: 11px; color: red;">* نکته : آیپی دستگاه کارتخوان خود را روی "192.168.1.100" تنظیم کنید</p>
-					<p style="font-size: 11px; color: red;">* نکته : پورت دستگاه کارتخوان خود را روی "8000" تنظیم کنید</p>
+					<p style="font-size: 11px; color: red;">
+						{% if request.language == 'fa' %}
+							* نکته : آیپی دستگاه کارتخوان خود را روی "192.168.1.100" تنظیم کنید
+						{% elif request.language == 'en' %}
+							* Note: Set the IP of your card reader device to "192.168.1.100"
+						{% elif request.language == 'ar' %}
+							* ملاحظة : اضبط عنوان جهاز القارئ الخاص بك إلى "192.168.1.100"
+						{% endif %}
+					</p>
+					<p style="font-size: 11px; color: red;">
+						{% if request.language == 'fa' %}
+							* نکته : پورت دستگاه کارتخوان خود را روی "8000" تنظیم کنید
+						{% elif request.language == 'en' %}
+							* Note: Set the port of your card reader device to "8000"
+						{% elif request.language == 'ar' %}
+							* ملاحظة : اضبط منفذ جهاز القارئ الخاص بك إلى "8000"
+						{% endif %}
+					</p>
+					
 
 					<!-- Form START -->
 					<form id="cardReaderForm" class="row g-3 mt-3" action="{% url 'Amusement_Park:Products' %}">
-						<div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
-							<label class="form-label mb-0">عملکرد به عنوان دستگاه کارتخوان :</label>
-							<div class="toggle-switch">
-								<input type="checkbox" id="deviceModeToggle" class="toggle-input">
-								<label for="deviceModeToggle" class="toggle-label"></label>
-							</div>
-						</div>
-				
-						<div class="col-md-12 bg-light-input">
-							<label for="serialInput" class="form-label text-danger fw-bold small">* شماره سریال دستگاه</label>
-							<input type="text" class="form-control" id="serialInput" placeholder="مثال: 123456789">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="merchantInput" class="form-label text-danger fw-bold small">* شماره پذیرنده (Merchant ID)</label>
-							<input type="text" class="form-control" id="merchantInput" placeholder="مثال: 987654321">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="terminalInput" class="form-label text-danger fw-bold small">* شماره ترمینال (Terminal ID)</label>
-							<input type="text" class="form-control" id="terminalInput" placeholder="مثال: 456123">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="ipInput" class="form-label text-danger fw-bold small">* آدرس آی‌پی دستگاه</label>
-							<input type="text" class="form-control" id="ipInput" value="192.168.1.100" placeholder="مثال: 192.168.1.200">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="portInput" class="form-label text-danger fw-bold small">* شماره پورت ارتباطی</label>
-							<input type="text" class="form-control" id="portInput" value="1100" placeholder="مثال: 1100">
-						</div>
-						
-				
-						<!-- دکمه‌های تست ارتباط و تست پرداخت -->
-						<div class="d-flex justify-content-center align-items-center gap-2 w-100">
-							<button type="button" id="testConnectionBtn" class="btn btn-danger w-50 mb-1">تست ارتباط</button>
-							<button type="button" id="testPaymentBtn" class="btn btn-danger w-50 mb-1">تست پرداخت</button>
-						</div>
-				
-						<div class="d-flex justify-content-center align-items-center mt-2 w-100">
-							<button type="submit" class="btn btn-primary w-100 mb-0">ثبت</button>
-						</div>
-					</form>
+    <div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
+        <label class="form-label mb-0">
+            {% if request.language == 'fa' %}
+                عملکرد به عنوان دستگاه کارتخوان :
+            {% elif request.language == 'en' %}
+                Function as Card Reader Device :
+            {% elif request.language == 'ar' %}
+                العمل كجهاز قارئ بطاقة :
+            {% endif %}
+        </label>
+        <div class="toggle-switch">
+            <input type="checkbox" id="deviceModeToggle" class="toggle-input">
+            <label for="deviceModeToggle" class="toggle-label"></label>
+        </div>
+    </div>
+
+    <div class="col-md-12 bg-light-input">
+        <label for="serialInput" class="form-label text-danger fw-bold small">
+            {% if request.language == 'fa' %}
+                * شماره سریال دستگاه
+            {% elif request.language == 'en' %}
+                * Device Serial Number
+            {% elif request.language == 'ar' %}
+                * رقم السيريال للجهاز
+            {% endif %}
+        </label>
+        <input type="text" class="form-control" id="serialInput" placeholder="مثال: 123456789">
+    </div>
+    
+    <div class="col-md-12 bg-light-input">
+        <label for="merchantInput" class="form-label text-danger fw-bold small">
+            {% if request.language == 'fa' %}
+                * شماره پذیرنده (Merchant ID)
+            {% elif request.language == 'en' %}
+                * Merchant Number (Merchant ID)
+            {% elif request.language == 'ar' %}
+                * رقم التاجر (معرف التاجر)
+            {% endif %}
+        </label>
+        <input type="text" class="form-control" id="merchantInput" placeholder="مثال: 987654321">
+    </div>
+    
+    <div class="col-md-12 bg-light-input">
+        <label for="terminalInput" class="form-label text-danger fw-bold small">
+            {% if request.language == 'fa' %}
+                * شماره ترمینال (Terminal ID)
+            {% elif request.language == 'en' %}
+                * Terminal Number (Terminal ID)
+            {% elif request.language == 'ar' %}
+                * رقم المحطة (معرف المحطة)
+            {% endif %}
+        </label>
+        <input type="text" class="form-control" id="terminalInput" placeholder="مثال: 456123">
+    </div>
+    
+    <div class="col-md-12 bg-light-input">
+        <label for="ipInput" class="form-label text-danger fw-bold small">
+            {% if request.language == 'fa' %}
+                * آدرس آی‌پی دستگاه
+            {% elif request.language == 'en' %}
+                * Device IP Address
+            {% elif request.language == 'ar' %}
+                * عنوان الIP للجهاز
+            {% endif %}
+        </label>
+        <input type="text" class="form-control" id="ipInput" value="192.168.1.100" placeholder="مثال: 192.168.1.200">
+    </div>
+    
+    <div class="col-md-12 bg-light-input">
+        <label for="portInput" class="form-label text-danger fw-bold small">
+            {% if request.language == 'fa' %}
+                * شماره پورت ارتباطی
+            {% elif request.language == 'en' %}
+                * Communication Port Number
+            {% elif request.language == 'ar' %}
+                * رقم منفذ الاتصال
+            {% endif %}
+        </label>
+        <input type="text" class="form-control" id="portInput" value="1100" placeholder="مثال: 1100">
+    </div>
+
+    <!-- دکمه‌های تست ارتباط و تست پرداخت -->
+    <div class="d-flex justify-content-center align-items-center gap-2 w-100">
+        <button type="button" id="testConnectionBtn" class="btn btn-danger w-50 mb-1">
+            {% if request.language == 'fa' %}
+                تست ارتباط
+            {% elif request.language == 'en' %}
+                Test Connection
+            {% elif request.language == 'ar' %}
+                اختبار الاتصال
+            {% endif %}
+        </button>
+        <button type="button" id="testPaymentBtn" class="btn btn-danger w-50 mb-1">
+            {% if request.language == 'fa' %}
+                تست پرداخت
+            {% elif request.language == 'en' %}
+                Test Payment
+            {% elif request.language == 'ar' %}
+                اختبار الدفع
+            {% endif %}
+        </button>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center mt-2 w-100">
+        <button type="submit" class="btn btn-primary w-100 mb-0">
+            {% if request.language == 'fa' %}
+                ثبت
+            {% elif request.language == 'en' %}
+                Submit
+            {% elif request.language == 'ar' %}
+                تقديم
+            {% endif %}
+        </button>
+    </div>
+</form>
+
 					<!-- Form END -->
 				</div>
 				<!-- Personal info END -->
@@ -181,6 +305,10 @@ html[lang="fa"] body {
 			document.querySelectorAll('.cart-link').forEach(link => {
 				link.addEventListener('click', function(event) {
 					event.preventDefault();
+					
+					// دریافت زبان از سرور
+					const lang = '{{ request.language }}';  // این متغیر باید از سرور دریافت شود و زبان فعلی را برگرداند
+					
 					fetch("{% url 'Amusement_Park:check_cart' %}", {
 						method: "GET",
 						headers: {
@@ -191,10 +319,10 @@ html[lang="fa"] body {
 					.then(data => {
 						if (data.cart_empty) {
 							Swal.fire({
-								title: 'سبد خرید شما خالی است!',
-								text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+								title: lang === 'fa' ? 'سبد خرید شما خالی است!' : lang === 'en' ? 'Your cart is empty!' : 'عربتك فارغة!',
+								text: lang === 'fa' ? 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.' : lang === 'en' ? 'Please add a product to your cart first.' : 'يرجى إضافة منتج إلى سلة التسوق أولاً.',
 								icon: 'warning',
-								confirmButtonText: 'باشه'
+								confirmButtonText: lang === 'fa' ? 'باشه' : lang === 'en' ? 'OK' : 'حسناً'
 							});
 						} else {
 							window.location.href = "{% url 'Amusement_Park:Cart' %}";
@@ -205,6 +333,7 @@ html[lang="fa"] body {
 					});
 				});
 			});
+			
 	
 			function getCookie(name) {
 				let cookieValue = null;
@@ -270,15 +399,21 @@ html[lang="fa"] body {
 	
 			$('#testPaymentBtn').click(function(e){
 				e.preventDefault();
-				var payment = prompt("مقدار پرداخت را وارد کنید (عدد صحیح):");
+				
+				// دریافت زبان از سرور
+				const lang = '{{ request.language }}';  // متغیر زبان از سرور
+				
+				var payment = prompt(lang === 'fa' ? "مقدار پرداخت را وارد کنید (عدد صحیح):" : lang === 'en' ? "Enter payment amount (integer):" : "أدخل المبلغ للدفع (عدد صحيح):");
 				if(payment === null) return; 
+				
 				if(!/^\d+$/.test(payment)){
-					alert("لطفاً فقط عدد صحیح وارد کنید.");
+					alert(lang === 'fa' ? "لطفاً فقط عدد صحیح وارد کنید." : lang === 'en' ? "Please enter only a valid integer." : "الرجاء إدخال عدد صحيح فقط.");
 					return;
 				}
+				
 				var ip = $('#ipInput').val();
 				var port = $('#portInput').val();
-	
+			
 				$.ajax({
 					url: "{% url 'Amusement_Park:test_payment' %}",
 					type: "POST",
@@ -288,13 +423,14 @@ html[lang="fa"] body {
 						port: port
 					},
 					success: function(response){
-						alert(response.message);
+						alert(response.message);  // اینجا نیز می‌توانید متن را به زبان مورد نظر ترجمه کنید
 					},
 					error: function(){
-						alert("خطا در برقراری ارتباط برای پرداخت");
+						alert(lang === 'fa' ? "خطا در برقراری ارتباط برای پرداخت" : lang === 'en' ? "Error establishing connection for payment" : "خطأ في إقامة الاتصال للدفع");
 					}
 				});
 			});
+			
 		});
 
 	</script>

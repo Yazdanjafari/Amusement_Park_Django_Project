@@ -133,9 +133,34 @@
             <h1>تذكرتك</h1>
         {% endif %}	        
         
-        <p class="tracking-id">کد رهگیری فروش : {{ transaction_id }}</p>
-        <p class="tracking-id">کد رهگیری بلیت : {{ ticket.id }}</p>
-        <button class="print-button" onclick="printPage()">🖨 چاپ بلیت</button>
+        <p class="tracking-id">
+            {% if request.language == 'fa' %}
+                کد رهگیری فروش : {{ transaction_id }}
+            {% elif request.language == 'en' %}
+                Sale Tracking Code: {{ transaction_id }}
+            {% elif request.language == 'ar' %}
+                كود تتبع البيع : {{ transaction_id }}
+            {% endif %}
+        </p>
+        <p class="tracking-id">
+            {% if request.language == 'fa' %}
+                کد رهگیری بلیت : {{ ticket.id }}
+            {% elif request.language == 'en' %}
+                Ticket Tracking Code: {{ ticket.id }}
+            {% elif request.language == 'ar' %}
+                كود تتبع التذكرة : {{ ticket.id }}
+            {% endif %}
+        </p>
+        <button class="print-button" onclick="printPage()">
+            {% if request.language == 'fa' %}
+                🖨 چاپ بلیت
+            {% elif request.language == 'en' %}
+                🖨 Print Ticket
+            {% elif request.language == 'ar' %}
+                🖨 طباعة التذكرة
+            {% endif %}
+        </button>
+        
         <br>
         <div class="qr-code">
             <img src="{{ qr_code_image }}" alt="QR Code">

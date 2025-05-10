@@ -73,7 +73,15 @@ Page Banner START -->
 		<div class="row">
 			<div class="col-12">
 				<div class="bg-light p-4 text-center rounded-3">
-					<h1 class="m-0 fs-2">سبد خرید</h1>
+					<h1 class="m-0 fs-2">
+						{% if request.language == 'fa' %}
+							سبد خرید
+						{% elif request.language == 'en' %}
+							Shopping Cart
+						{% elif request.language == 'ar' %}
+							سلة التسوق	
+						{% endif %}
+					</h1>
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
@@ -132,7 +140,15 @@ Page content START -->
 											</div>
 										</td>
 										<td class="text-center">
-											<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma:False|default_if_none:"0" }} ریال</h5>
+											<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma:False|default_if_none:"0" }} 
+												{% if request.language == 'fa' %}
+													ریال
+												{% elif request.language == 'en' %}
+													Rial
+												{% elif request.language == 'ar' %}
+													ریال
+												{% endif %}
+											</h5>
 										</td>
 										<td>
 											<div class="d-flex justify-content-between align-items-center">
@@ -153,110 +169,729 @@ Page content START -->
 
 					<!-- Title -->
 					<br>
-					<h5 class="mb-0">اطلاعات مشتری (اختیاری) :</h5>
+					<h5 class="mb-0">
+						{% if request.language == 'fa' %}
+								اطلاعات مشتری (اختیاری) :
+						{% elif request.language == 'en' %}
+								Customer Information (Optional):
+						{% elif request.language == 'ar' %}
+								معلومات الزبون (اختياري):
+						{% endif %}
+					</h5>
 					<br>
-					<label class="discount-label">با پر کردن این فرم از تخفیف های هیجان انگیز با بهره مند شوید !</label>
+					<label class="discount-label">
+						{% if request.language == 'fa' %}
+						با پر کردن این فرم از تخفیف های هیجان انگیز با بهره مند شوید !
+						{% elif request.language == 'en' %}
+						Fill out this form to enjoy exciting discounts!
+						{% elif request.language == 'ar' %}
+						عبئ هذا النموذج للاستفادة من الخصومات المثيرة!
+						{% endif %}
+					</label>
 					<form class="row g-3 mt-0" method="POST" action="{% url 'Amusement_Park:save_customer' %}" id="customer-form">
 						{% csrf_token %}
 
 						<div class="input-group mt-2">
-							<input id="phoneInput" name="phone" class="form-control" placeholder="شماره تماس :" type="text" maxlength="11" minlength="11" required>
-							<button id="applyButton" type="button" class="btn btn-primary" disabled>اعمال</button>
-						</div>
+							<input id="phoneInput" name="phone" class="form-control" type="text" maxlength="11" minlength="11" required
+							  {% if request.language == 'fa' %}
+								placeholder="شماره تماس :"
+								style="text-align: right; direction: rtl;"
+							  {% elif request.language == 'en' %}
+								placeholder="Contact Number:"
+								style="text-align: left; direction: ltr;"
+							  {% elif request.language == 'ar' %}
+								placeholder="رقم الاتصال:"
+								style="text-align: right; direction: rtl;"
+							  {% endif %}
+							>
+							<button id="applyButton" type="button" class="btn btn-primary" disabled>
+								{% if request.language == 'fa' %}
+									اعمال
+							  	{% elif request.language == 'en' %}
+							  		Apply
+							  	{% elif request.language == 'ar' %}
+							 		تطبيق
+							  	{% endif %}
+							</button>
+						  </div>
+						  
 					
-						<div class="col-md-6 bg-light-input">
-							<label for="firstName" class="form-label">نام :</label>
-							<input type="text" id="firstName" name="firstName" class="form-control" disabled>
-						</div>
-						
-						<div class="col-md-6 bg-light-input">
-							<label for="lastName" class="form-label">نام خانوادگی :</label>
-							<input type="text" id="lastName" name="lastName" class="form-control" disabled>
-						</div>
-						<div class="col-md-4 bg-light-input">
-							<label for="gender" class="form-label">جنسیت :</label>
-							<select name="gender" id="gender" class="form-control" dir="rtl" disabled>
-								<option value="" disabled selected></option>								
-								<option style="direction: rtl;" value="آقا">آقا</option>
-								<option style="direction: rtl;" value="خانم">خانم</option>
+						  <div class="col-md-6 bg-light-input">
+							<label for="firstName" class="form-label"
+								   style="{% if request.language == 'en' %} text-align: left; display: block; {% endif %}">
+							  {% if request.language == 'fa' %}
+								نام:
+							  {% elif request.language == 'en' %}
+								Name:
+							  {% elif request.language == 'ar' %}
+								الاسم:
+							  {% endif %}
+							</label>
+							<input type="text" id="firstName" name="firstName" class="form-control"
+								   style="{% if request.language == 'en' %} text-align: left; direction: ltr; {% else %} text-align: right; direction: rtl; {% endif %}" disabled>
+						  </div>
+						  
+						  <div class="col-md-6 bg-light-input">
+							<label for="lastName" class="form-label"
+								   style="{% if request.language == 'en' %} text-align: left; display: block; {% endif %}">
+							  {% if request.language == 'fa' %}
+								نام خانوادگی:
+							  {% elif request.language == 'en' %}
+								Last Name:
+							  {% elif request.language == 'ar' %}
+								اسم العائلة:
+							  {% endif %}
+							</label>
+							<input type="text" id="lastName" name="lastName" class="form-control"
+								   style="{% if request.language == 'en' %} text-align: left; direction: ltr; {% else %} text-align: right; direction: rtl; {% endif %}" disabled>
+						  </div>
+						  
+						  <div class="col-md-4 bg-light-input">
+							<label for="gender" class="form-label"
+								   style="{% if request.language == 'en' %} text-align: left; display: block; {% endif %}">
+							  {% if request.language == 'fa' %}
+								جنسیت:
+							  {% elif request.language == 'en' %}
+								Gender:
+							  {% elif request.language == 'ar' %}
+								الجنس:
+							  {% endif %}
+							</label>
+							<select name="gender" id="gender" class="form-control"
+									style="{% if request.language == 'en' %} text-align: left; direction: ltr; {% else %} text-align: right; direction: rtl; {% endif %}" disabled>
+							  <option value="" disabled selected></option>
+							  {% if request.language == 'fa' %}
+								<option value="آقا">آقا</option>
+								<option value="خانم">خانم</option>
+							  {% elif request.language == 'en' %}
+								<option value="Mr">Mr</option>
+								<option value="Ms">Ms</option>
+							  {% elif request.language == 'ar' %}
+								<option value="السيد">السيد</option>
+								<option value="السيدة">السيدة</option>
+							  {% endif %}
 							</select>
+						  </div>
+						  
+						
+						  <div class="col-md-4 bg-light-input"> 
+							<label for="city" class="form-label">
+								{% if request.language == 'fa' %}
+									استان :
+								{% elif request.language == 'en' %}
+									Province :
+									{% elif request.language == 'ar' %}
+									محافظات:
+								{% endif %}
+							</label>
+							<select name="city" id="city" class="form-control" disabled>
+								<option value="" disabled selected></option>
+							
+								<option value="مازندران" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										مازندران
+									{% elif request.language == 'en' %}
+										Mazandaran
+									{% endif %}
+								</option>
+							
+								<option value="گیلان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										گیلان
+									{% elif request.language == 'en' %}
+										Gilan
+									{% endif %}
+								</option>
+							
+								<option value="گلستان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										گلستان
+									{% elif request.language == 'en' %}
+										Golestan
+									{% endif %}
+								</option>
+							
+								<option value="تهران" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										تهران
+									{% elif request.language == 'en' %}
+										Tehran
+									{% endif %}
+								</option>
+							
+								<option value="البرز" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										البرز
+									{% elif request.language == 'en' %}
+										Alborz
+									{% endif %}
+								</option>
+							
+								<option value="اردبیل" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										اردبیل
+									{% elif request.language == 'en' %}
+										Ardabil
+									{% endif %}
+								</option>
+							
+								<option value="آذربایجان شرقی" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										آذربایجان شرقی
+									{% elif request.language == 'en' %}
+										East Azerbaijan
+									{% endif %}
+								</option>
+							
+								<option value="آذربایجان غربی" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										آذربایجان غربی
+									{% elif request.language == 'en' %}
+										West Azerbaijan
+									{% endif %}
+								</option>
+							
+								<option value="بوشهر" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										بوشهر
+									{% elif request.language == 'en' %}
+										Bushehr
+									{% endif %}
+								</option>
+							
+								<option value="چهارمحال و بختیاری" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										چهارمحال و بختیاری
+									{% elif request.language == 'en' %}
+										Chaharmahal and Bakhtiari
+									{% endif %}
+								</option>
+							
+								<option value="فارس" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										فارس
+									{% elif request.language == 'en' %}
+										Fars
+									{% endif %}
+								</option>
+							
+								<option value="همدان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										همدان
+									{% elif request.language == 'en' %}
+										Hamadan
+									{% endif %}
+								</option>
+							
+								<option value="هرمزگان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										هرمزگان
+									{% elif request.language == 'en' %}
+										Hormozgan
+									{% endif %}
+								</option>
+							
+								<option value="ایلام" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										ایلام
+									{% elif request.language == 'en' %}
+										Ilam
+									{% endif %}
+								</option>
+							
+								<option value="اصفهان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										اصفهان
+									{% elif request.language == 'en' %}
+										Isfahan
+									{% endif %}
+								</option>
+							
+								<option value="کرمان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										کرمان
+									{% elif request.language == 'en' %}
+										Kerman
+									{% endif %}
+								</option>
+							
+								<option value="کرمانشاه" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										کرمانشاه
+									{% elif request.language == 'en' %}
+										Kermanshah
+									{% endif %}
+								</option>
+							
+								<option value="کهگیلویه و بویراحمد" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										کهگیلویه و بویراحمد
+									{% elif request.language == 'en' %}
+										Kohgiluyeh and Boyer-Ahmad
+									{% endif %}
+								</option>
+							
+								<option value="کردستان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										کردستان
+									{% elif request.language == 'en' %}
+										Kurdistan
+									{% endif %}
+								</option>
+							
+								<option value="لرستان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										لرستان
+									{% elif request.language == 'en' %}
+										Lorestan
+									{% endif %}
+								</option>
+							
+								<option value="مرکزی" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										مرکزی
+									{% elif request.language == 'en' %}
+										Markazi
+									{% endif %}
+								</option>
+							
+								<option value="قزوین" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										قزوین
+									{% elif request.language == 'en' %}
+										Qazvin
+									{% endif %}
+								</option>
+							
+								<option value="قم" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										قم
+									{% elif request.language == 'en' %}
+										Qom
+									{% endif %}
+								</option>
+							
+								<option value="خراسان رضوی" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										خراسان رضوی
+									{% elif request.language == 'en' %}
+										Razavi Khorasan
+									{% endif %}
+								</option>
+							
+								<option value="خراسان شمالی" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										خراسان شمالی
+									{% elif request.language == 'en' %}
+										North Khorasan
+									{% endif %}
+								</option>
+							
+								<option value="خراسان جنوبی" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										خراسان جنوبی
+									{% elif request.language == 'en' %}
+										South Khorasan
+									{% endif %}
+								</option>
+							
+								<option value="سمنان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										سمنان
+									{% elif request.language == 'en' %}
+										Semnan
+									{% endif %}
+								</option>
+							
+								<option value="سیستان و بلوچستان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										سیستان و بلوچستان
+									{% elif request.language == 'en' %}
+										Sistan and Baluchestan
+									{% endif %}
+								</option>
+							
+								<option value="یزد" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										یزد
+									{% elif request.language == 'en' %}
+										Yazd
+									{% endif %}
+								</option>
+							
+								<option value="زنجان" 
+									{% if request.language == 'fa' %}
+										style="direction: rtl;"
+									{% elif request.language == 'en' %}
+										style="direction: ltr;"
+									{% endif %}>
+									{% if request.language == 'fa' %}
+										زنجان
+									{% elif request.language == 'en' %}
+										Zanjan
+									{% endif %}
+								</option>
+							</select>							
 						</div>
 						
-						<div class="col-md-4 bg-light-input"> 
-							<label for="city" class="form-label">استان :</label>
-							<select name="city" id="city" class="form-control" dir="rtl" disabled>								
-								<option value="" disabled selected></option>
+						
+						
+						<div class="col-md-4 bg-light-input">
+    <label for="country" class="form-label">
+        {% if request.language == 'fa' %}
+            کشور :
+        {% elif request.language == 'en' %}
+            Country :
+        {% elif request.language == 'ar' %}
+            البلد :
+        {% endif %}
+    </label>
+    <select name="country" id="country" class="form-control" dir="rtl" disabled>
+		<option value="" disabled selected>
+		</option>
+		<option value="ایران" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				ایران
+			{% elif request.language == 'en' %}
+				Iran
+			{% elif request.language == 'ar' %}
+				إيران
+			{% endif %}
+		</option>
+		<option value="افغانستان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				افغانستان
+			{% elif request.language == 'en' %}
+				Afghanistan
+			{% elif request.language == 'ar' %}
+				أفغانستان
+			{% endif %}
+		</option>
+		<option value="پاکستان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				پاکستان
+			{% elif request.language == 'en' %}
+				Pakistan
+			{% elif request.language == 'ar' %}
+				باكستان
+			{% endif %}
+		</option>
+		<option value="عراق" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				عراق
+			{% elif request.language == 'en' %}
+				Iraq
+			{% elif request.language == 'ar' %}
+				العراق
+			{% endif %}
+		</option>
+		<option value="ترکیه" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				ترکیه
+			{% elif request.language == 'en' %}
+				Turkey
+			{% elif request.language == 'ar' %}
+				تركيا
+			{% endif %}
+		</option>
+		<option value="ارمنستان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				ارمنستان
+			{% elif request.language == 'en' %}
+				Armenia
+			{% elif request.language == 'ar' %}
+				أرمينيا
+			{% endif %}
+		</option>
+		<option value="آذربایجان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				آذربایجان
+			{% elif request.language == 'en' %}
+				Azerbaijan
+			{% elif request.language == 'ar' %}
+				أذربيجان
+			{% endif %}
+		</option>
+		<option value="ترکمنستان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				ترکمنستان
+			{% elif request.language == 'en' %}
+				Turkmenistan
+			{% elif request.language == 'ar' %}
+				تركمانستان
+			{% endif %}
+		</option>
+		<option value="عربستان سعودی" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				عربستان سعودی
+			{% elif request.language == 'en' %}
+				Saudi Arabia
+			{% elif request.language == 'ar' %}
+				المملكة العربية السعودية
+			{% endif %}
+		</option>
+		<option value="کویت" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				کویت
+			{% elif request.language == 'en' %}
+				Kuwait
+			{% elif request.language == 'ar' %}
+				الكويت
+			{% endif %}
+		</option>
+		<option value="بحرین" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				بحرین
+			{% elif request.language == 'en' %}
+				Bahrain
+			{% elif request.language == 'ar' %}
+				البحرين
+			{% endif %}
+		</option>
+		<option value="قطر" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				قطر
+			{% elif request.language == 'en' %}
+				Qatar
+			{% elif request.language == 'ar' %}
+				قطر
+			{% endif %}
+		</option>
+		<option value="امارات متحده عربی" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				امارات متحده عربی
+			{% elif request.language == 'en' %}
+				United Arab Emirates
+			{% elif request.language == 'ar' %}
+				الإمارات العربية المتحدة
+			{% endif %}
+		</option>
+		<option value="عمان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				عمان
+			{% elif request.language == 'en' %}
+				Oman
+			{% elif request.language == 'ar' %}
+				عمان
+			{% endif %}
+		</option>
+		<option value="آلمان" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				آلمان
+			{% elif request.language == 'en' %}
+				Germany
+			{% elif request.language == 'ar' %}
+				ألمانيا
+			{% endif %}
+		</option>
+		<option value="آمریکا" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				آمریکا
+			{% elif request.language == 'en' %}
+				USA
+			{% elif request.language == 'ar' %}
+				أمريكا
+			{% endif %}
+		</option>
+		<option value="ایتالیا" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				ایتالیا
+			{% elif request.language == 'en' %}
+				Italy
+			{% elif request.language == 'ar' %}
+				إيطاليا
+			{% endif %}
+		</option>
+		<option value="اسپانیا" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				اسپانیا
+			{% elif request.language == 'en' %}
+				Spain
+			{% elif request.language == 'ar' %}
+				إسبانيا
+			{% endif %}
+		</option>
+		<option value="استرالیا" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				استرالیا
+			{% elif request.language == 'en' %}
+				Australia
+			{% elif request.language == 'ar' %}
+				أستراليا
+			{% endif %}
+		</option>
+		<option value="کانادا" style="direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};">
+			{% if request.language == 'fa' %}
+				کانادا
+			{% elif request.language == 'en' %}
+				Canada
+			{% elif request.language == 'ar' %}
+				كندا
+			{% endif %}
+		</option>
+		
+	</select>
+	
+</div>
 
-								<option style="direction: rtl;" value="مازندران">مازندران</option>
-								<option style="direction: rtl;" value="گیلان">گیلان</option>
-								<option style="direction: rtl;" value="گلستان">گلستان</option>
-								<option style="direction: rtl;" value="تهران">تهران</option>
-								<option style="direction: rtl;" value="البرز">البرز</option>
-								<option style="direction: rtl;" value="اردبیل">اردبیل</option>
-								<option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
-								<option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
-								<option style="direction: rtl;" value="بوشهر">بوشهر</option>
-								<option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
-								<option style="direction: rtl;" value="فارس">فارس</option>
-								<option style="direction: rtl;" value="همدان">همدان</option>
-								<option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
-								<option style="direction: rtl;" value="ایلام">ایلام</option>
-								<option style="direction: rtl;" value="اصفهان">اصفهان</option>
-								<option style="direction: rtl;" value="کرمان">کرمان</option>
-								<option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
-								<option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
-								<option style="direction: rtl;" value="کردستان">کردستان</option>
-								<option style="direction: rtl;" value="لرستان">لرستان</option>
-								<option style="direction: rtl;" value="مرکزی">مرکزی</option>
-								<option style="direction: rtl;" value="قزوین">قزوین</option>
-								<option style="direction: rtl;" value="قم">قم</option>
-								<option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
-								<option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
-								<option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
-								<option style="direction: rtl;" value="سمنان">سمنان</option>
-								<option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
-								<option style="direction: rtl;" value="یزد">یزد</option>
-								<option style="direction: rtl;" value="زنجان">زنجان</option>
-								<option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
-								
-							</select>
-						</div>
-						
-						
-						<div class="col-md-4 bg-light-input">
-							<label for="country" class="form-label">کشور :</label>
-							<select name="country" id="country" class="form-control" dir="rtl" disabled>
-								<option value="" disabled selected></option>
-								<option style="direction: rtl;" value="ایران">ایران</option>
-								<option style="direction: rtl;" value="افغانستان">افغانستان</option>
-								<option style="direction: rtl;" value="پاکستان">پاکستان</option>
-								<option style="direction: rtl;" value="عراق">عراق</option>
-								<option style="direction: rtl;" value="ترکیه">ترکیه</option>
-								<option style="direction: rtl;" value="ارمنستان">ارمنستان</option>
-								<option style="direction: rtl;" value="آذربایجان">آذربایجان</option>
-								<option style="direction: rtl;" value="ترکمنستان">ترکمنستان</option>
-								
-								<option style="direction: rtl;" value="عربستان سعودی">عربستان سعودی</option>
-								<option style="direction: rtl;" value="کویت">کویت</option>
-								<option style="direction: rtl;" value="بحرین">بحرین</option>
-								<option style="direction: rtl;" value="قطر">قطر</option>
-								<option style="direction: rtl;" value="امارات متحده عربی">امارات متحده عربی</option>
-								<option style="direction: rtl;" value="عمان">عمان</option>
-								
-								<option style="direction: rtl;" value="آلمان">آلمان</option>
-								<option style="direction: rtl;" value="آمریکا">آمریکا</option>
-								<option style="direction: rtl;" value="ایتالیا">ایتالیا</option>
-								<option style="direction: rtl;" value="اسپانیا">اسپانیا</option>
-								<option style="direction: rtl;" value="استرالیا">استرالیا</option>
-								<option style="direction: rtl;" value="کانادا">کانادا</option>
-								
-							</select>
-						</div>
 						
 						
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthDay" class="form-label">روز تولد :</label>
+							<label for="birthDay" class="form-label">
+								{% if request.language == 'fa' %}
+									روز تولد:
+								{% elif request.language == 'en' %}
+							  		Date of Birth:
+								{% elif request.language == 'ar' %}
+							  		تاريخ الميلاد:
+								{% endif %}
+							</label>
 							<select id="birthDay" name="birthDay" class="form-control" disabled>
 								<option value="" disabled selected></option>
 								<option value="01">1</option>
@@ -294,7 +929,15 @@ Page content START -->
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthMonth" class="form-label">ماه تولد :</label>
+							<label for="birthMonth" class="form-label">
+								{% if request.language == 'fa' %}
+									ماه تولد:
+								{% elif request.language == 'en' %}
+							  		Birth Month:
+							  	{% elif request.language == 'ar' %}
+							  		شهر الميلاد:
+							 	 {% endif %}
+							</label>
 							<select id="birthMonth" name="birthMonth" class="form-control" disabled>
 								<option value="" disabled selected></option> <!-- Placeholder -->
 								<option value="01">1</option>
@@ -313,9 +956,19 @@ Page content START -->
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthYear" class="form-label">سال تولد :</label>
+							<label for="birthYear" class="form-label">
+							  {% if request.language == 'fa' %}
+								سال تولد :
+							  {% elif request.language == 'en' %}
+								Birth Year:
+							  {% elif request.language == 'ar' %}
+								سنة الميلاد:
+							  {% endif %}
+							</label>
 							<select id="birthYear" name="birthYear" class="form-control" disabled>
-								<option value="" disabled selected></option>
+							  <option value="" disabled selected></option>
+						  
+							  {% if request.language == 'fa' %}
 								<option value="1395">1395</option>
 								<option value="1394">1394</option>
 								<option value="1393">1393</option>
@@ -382,34 +1035,149 @@ Page content START -->
 								<option value="1332">1332</option>
 								<option value="1331">1331</option>
 								<option value="1330">1330</option>
-								<option value="1329">1329</option>
-								<option value="1328">1328</option>
-								<option value="1327">1327</option>
-								<option value="1326">1326</option>
-								<option value="1325">1325</option>
-								<option value="1324">1324</option>
-								<option value="1323">1323</option>
-								<option value="1322">1322</option>
-								<option value="1321">1321</option>
-								<option value="1320">1320</option>
-								<option value="1319">1319</option>
-								<option value="1318">1318</option>
-								<option value="1317">1317</option>
-								<option value="1316">1316</option>
-								<option value="1315">1315</option>
-								<option value="1314">1314</option>
-								<option value="1313">1313</option>
-								<option value="1312">1312</option>
-								<option value="1311">1311</option>
-								<option value="1310">1310</option>
+								<option value="1343">1329</option>
+								<option value="1342">1328</option>
+								<option value="1341">1327</option>
+								<option value="1340">1326</option>
+								<option value="1339">1325</option>
+								<option value="1338">1324</option>
+								<option value="1337">1323</option>
+								<option value="1336">1322</option>
+								<option value="1335">1321</option>
+								<option value="1334">1320</option>
+								<option value="1333">1319</option>
+								<option value="1332">1318</option>
+								<option value="1331">1317</option>
+								<option value="1330">1316</option>
+							  {% elif request.language == 'en' %}
+								<option value="2016">2016</option>
+								<option value="2015">2015</option>
+								<option value="2014">2014</option>
+								<option value="2013">2013</option>
+								<option value="2012">2012</option>
+								<option value="2011">2011</option>
+								<option value="2010">2010</option>
+								<option value="2009">2009</option>
+								<option value="2008">2008</option>
+								<option value="2007">2007</option>
+								<option value="2006">2006</option>
+								<option value="2005">2005</option>
+								<option value="2004">2004</option>
+								<option value="2003">2003</option>
+								<option value="2002">2002</option>
+								<option value="2001">2001</option>
+								<option value="2000">2000</option>
+								<option value="1999">1999</option>
+								<option value="1998">1998</option>
+								<option value="1997">1997</option>
+								<option value="1996">1996</option>
+								<option value="1995">1995</option>
+								<option value="1994">1994</option>
+								<option value="1993">1993</option>
+								<option value="1992">1992</option>
+								<option value="1991">1991</option>
+								<option value="1990">1990</option>
+								<option value="1989">1989</option>
+								<option value="1988">1988</option>
+								<option value="1987">1987</option>
+								<option value="1986">1986</option>
+								<option value="1985">1985</option>
+								<option value="1984">1984</option>
+								<option value="1983">1983</option>
+								<option value="1982">1982</option>
+								<option value="1981">1981</option>
+								<option value="1980">1980</option>
+								<option value="1979">1979</option>
+								<option value="1978">1978</option>
+								<option value="1977">1977</option>
+								<option value="1976">1976</option>
+								<option value="1975">1975</option>
+								<option value="1974">1974</option>
+								<option value="1973">1973</option>
+								<option value="1972">1972</option>
+								<option value="1971">1971</option>
+								<option value="1970">1970</option>
+								<option value="1981">1969</option>
+								<option value="1980">1968</option>
+								<option value="1979">1967</option>
+								<option value="1978">1966</option>
+								<option value="1977">1965</option>
+								<option value="1976">1964</option>
+								<option value="1975">1963</option>
+								<option value="1974">1962</option>
+								<option value="1973">1961</option>
+								<option value="1972">1960</option>
+								<option value="1971">1959</option>
+								<option value="1970">1958</option>
+							  {% elif request.language == 'ar' %}
+								<option value="1444">1444 هـ (2022 م)</option>
+								<option value="1443">1443 هـ (2021 م)</option>
+								<option value="1442">1442 هـ (2020 م)</option>
+								<option value="1441">1441 هـ (2019 م)</option>
+								<option value="1440">1440 هـ (2018 م)</option>
+								<option value="1439">1439 هـ (2017 م)</option>
+								<option value="1438">1438 هـ (2016 م)</option>
+								<option value="1437">1437 هـ (2015 م)</option>
+								<option value="1436">1436 هـ (2014 م)</option>
+								<option value="1435">1435 هـ (2013 م)</option>
+								<option value="1434">1434 هـ (2012 م)</option>
+								<option value="1433">1433 هـ (2011 م)</option>
+								<option value="1432">1432 هـ (2010 م)</option>
+								<option value="1431">1431 هـ (2009 م)</option>
+								<option value="1430">1430 هـ (2008 م)</option>
+								<option value="1429">1429 هـ (2007 م)</option>
+								<option value="1428">1428 هـ (2006 م)</option>
+								<option value="1427">1427 هـ (2005 م)</option>
+								<option value="1426">1426 هـ (2004 م)</option>
+								<option value="1425">1425 هـ (2003 م)</option>
+								<option value="1424">1424 هـ (2002 م)</option>
+								<option value="1423">1423 هـ (2001 م)</option>
+								<option value="1422">1422 هـ (2000 م)</option>
+								<option value="1421">1421 هـ (1999 م)</option>
+								<option value="1420">1420 هـ (1998 م)</option>
+								<option value="1419">1419 هـ (1997 م)</option>
+								<option value="1418">1418 هـ (1996 م)</option>
+								<option value="1417">1417 هـ (1995 م)</option>
+								<option value="1416">1416 هـ (1994 م)</option>
+								<option value="1415">1415 هـ (1993 م)</option>
+								<option value="1414">1414 هـ (1992 م)</option>
+								<option value="1413">1413 هـ (1991 م)</option>
+								<option value="1412">1412 هـ (1990 م)</option>
+								<option value="1411">1411 هـ (1989 م)</option>
+								<option value="1410">1410 هـ (1988 م)</option>
+								<option value="1409">1409 هـ (1987 م)</option>
+								<option value="1408">1408 هـ (1986 م)</option>
+								<option value="1407">1407 هـ (1985 م)</option>
+								<option value="1406">1406 هـ (1984 م)</option>
+								<option value="1405">1405 هـ (1983 م)</option>
+								<option value="1404">1404 هـ (1982 م)</option>
+								<option value="1403">1403 هـ (1981 م)</option>
+								<option value="1402">1402 هـ (1980 م)</option>
+							  {% endif %}
 							</select>
-						</div>
+						  </div>
+						  
 					
 						<div class="col-12 text-end p-0 position-relative">
-							<button type="submit" class="btn btn-primary w-100 mb-0" disabled>ذخیره</button>
+							<button type="submit" class="btn btn-primary w-100 mb-0" disabled>
+								{% if request.language == 'fa' %}
+									ذخیره		
+								{% elif request.language == 'en' %}
+									Save
+								{% elif request.language == 'ar' %}
+									حفظ
+								{% endif %}
+							</button>
 							<br>
 							<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
-								<i class="fas fa-exclamation-triangle"></i> لطفا اطلاعات را با دقت وارد کنید زیرا پس از ذخیره امکان تغییر آن وجود ندارد.
+								<i class="fas fa-exclamation-triangle"></i> 
+								{% if request.language == 'fa' %}
+									لطفا اطلاعات را با دقت وارد کنید زیرا پس از ذخیره امکان تغییر آن وجود ندارد.	
+								{% elif request.language == 'en' %}
+									Please enter the information carefully, as it cannot be changed after saving.
+								{% elif request.language == 'ar' %}
+									يرجى إدخال المعلومات بدقة لأنه لا يمكن تعديلها بعد الحفظ.
+								{% endif %}
 							</small>
 							<br>
 						</div>					
@@ -419,13 +1187,39 @@ Page content START -->
 
 					<!-- Coupon input and button -->
 					<hr>
-					<h5 class="mb-0">تخفیف :</h5>
+					<h5 class="mb-0">
+						{% if request.language == 'fa' %}
+								تخفیف :	
+						{% elif request.language == 'en' %}
+								Discount:
+						{% elif request.language == 'ar' %}
+								خصم:
+						{% endif %}
+					</h5>
 
 					<div class="row g-3 mt-2">
 						<div class="col-12">
 							<div class="input-group w-100">
-								<input type="text" class="form-control discount-input" id="discount-code" placeholder="کد تخفیف :">
-								<button class="btn btn-primary" id="btn-code" disabled>اعمال</button>
+								<input type="text" class="form-control discount-input" id="discount-code" 
+									{% if request.language == 'fa' %}
+										placeholder="کد تخفیف :"
+										style="text-align: right; direction: rtl;"
+									{% elif request.language == 'en' %}
+										placeholder="Discount Code:"
+										style="text-align: left; direction: ltr;"
+									{% elif request.language == 'ar' %}
+										placeholder="رمز الخصم:"
+										style="text-align: right; direction: rtl;"
+									{% endif %}>
+								<button class="btn btn-primary" id="btn-code" disabled>
+									{% if request.language == 'fa' %}
+        								اعمال
+									{% elif request.language == 'en' %}
+										Apply
+									{% elif request.language == 'ar' %}
+										تطبيق
+									{% endif %}
+								</button>
 							</div>
 							<small id="tip-code" class="form-text text-muted" style="display: none;"></small>
 						</div>
@@ -437,8 +1231,25 @@ Page content START -->
 						<div class="row g-3 mt-2">
 							<div class="col-12">
 								<div class="input-group w-100">
-									<input class="form-control discount-input" id="discount-amount" placeholder="تخفیف با مبلغ :">
-									<button class="btn btn-primary" id="btn-amount" disabled>اعمال</button>
+									<input class="form-control discount-input" id="discount-amount" {% if request.language == 'fa' %}
+									placeholder="تخفیف با مبلغ:"
+									style="text-align: right; direction: rtl;"
+								{% elif request.language == 'en' %}
+									placeholder="Discount Amount:"
+									style="text-align: left; direction: ltr;"
+								{% elif request.language == 'ar' %}
+									placeholder="مبلغ الخصم:"
+									style="text-align: right; direction: rtl;"
+								{% endif %}>
+									<button class="btn btn-primary" id="btn-amount" disabled>
+										{% if request.language == 'fa' %}
+											اعمال
+										{% elif request.language == 'en' %}
+											Apply
+										{% elif request.language == 'ar' %}
+											تطبيق
+										{% endif %}
+									</button>
 								</div>
 								<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
 							</div>
@@ -448,8 +1259,25 @@ Page content START -->
 						<div class="row g-3 mt-2">
 							<div class="col-12">
 								<div class="input-group w-100">
-									<input class="form-control discount-input" id="discount-percent" placeholder="تخفیف با درصد :">
-									<button class="btn btn-primary" id="btn-percent" disabled>اعمال</button>
+									<input class="form-control discount-input" id="discount-percent" {% if request.language == 'fa' %}
+									placeholder="تخفیف با درصد:"
+									style="text-align: right; direction: rtl;"
+								{% elif request.language == 'en' %}
+									placeholder="Discount Percentage:"
+									style="text-align: left; direction: ltr;"
+								{% elif request.language == 'ar' %}
+									placeholder="نسبة الخصم:"
+									style="text-align: right; direction: rtl;"
+								{% endif %}>
+									<button class="btn btn-primary" id="btn-percent" disabled>
+										{% if request.language == 'fa' %}
+											اعمال
+										{% elif request.language == 'en' %}
+											Apply
+										{% elif request.language == 'ar' %}
+											تطبيق
+										{% endif %}
+									</button>
 								</div>
 								<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
 							</div>
@@ -460,8 +1288,25 @@ Page content START -->
 						<div class="row g-3 mt-2 hidden">
 							<div class="col-12">
 								<div class="input-group w-100">
-									<input class="form-control discount-input" id="discount-amount" placeholder="تخفیف با مبلغ :">
-									<button class="btn btn-primary" id="btn-amount" disabled>اعمال</button>
+									<input class="form-control discount-input" id="discount-amount" {% if request.language == 'fa' %}
+									placeholder="تخفیف با مبلغ:"
+									style="text-align: right; direction: rtl;"
+								{% elif request.language == 'en' %}
+									placeholder="Discount Amount:"
+									style="text-align: left; direction: ltr;"
+								{% elif request.language == 'ar' %}
+									placeholder="مبلغ الخصم:"
+									style="text-align: right; direction: rtl;"
+								{% endif %}>
+									<button class="btn btn-primary" id="btn-amount" disabled>
+										{% if request.language == 'fa' %}
+											اعمال
+										{% elif request.language == 'en' %}
+											Apply
+										{% elif request.language == 'ar' %}
+											تطبيق
+										{% endif %}
+									</button>
 								</div>
 								<small id="tip-amount" class="form-text text-muted" style="display: none;"></small>
 							</div>
@@ -470,8 +1315,25 @@ Page content START -->
 						<div class="row g-3 mt-2 hidden">
 							<div class="col-12">
 								<div class="input-group w-100">
-									<input class="form-control discount-input" id="discount-percent" placeholder="تخفیف با درصد :">
-									<button class="btn btn-primary" id="btn-percent" disabled>اعمال</button>
+									<input class="form-control discount-input" id="discount-percent" {% if request.language == 'fa' %}
+									placeholder="تخفیف با درصد:"
+									style="text-align: right; direction: rtl;"
+								{% elif request.language == 'en' %}
+									placeholder="Discount Percentage:"
+									style="text-align: left; direction: ltr;"
+								{% elif request.language == 'ar' %}
+									placeholder="نسبة الخصم:"
+									style="text-align: right; direction: rtl;"
+								{% endif %}>
+									<button class="btn btn-primary" id="btn-percent" disabled>
+										{% if request.language == 'fa' %}
+											اعمال
+										{% elif request.language == 'en' %}
+											Apply
+										{% elif request.language == 'ar' %}
+											تطبيق
+										{% endif %}
+									</button>
 								</div>
 								<small id="tip-percent" class="form-text text-muted" style="display: none;"></small>
 							</div>
@@ -482,8 +1344,16 @@ Page content START -->
 
 					<!-- Title -->
 					<hr>
-					<div class="card card-body p-4 shadow">
-						<h5 class="">روش های پرداخت :</h5>
+					<div class="card card-body p-4 shadow" style="{% if request.language == 'en' %} text-align: left; {% endif %}">
+						<h5 class="">
+							{% if request.language == 'fa' %}
+							روش های پرداخت:
+						{% elif request.language == 'en' %}
+							Payment Methods:
+						{% elif request.language == 'ar' %}
+							طرق الدفع:
+						{% endif %}
+						</h5>
 						<br>
 						<div class="col-12">
 							<div class="accordion accordion-circle" id="accordioncircle">
@@ -493,58 +1363,114 @@ Page content START -->
 								<!-- Card reader (Default) -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
-										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-											دستگاه کارتخوان
+										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader"
+											>
+											{% if request.language == 'fa' %}
+												دستگاه کارتخوان
+											{% elif request.language == 'en' %}
+												Card Reader
+											{% elif request.language == 'ar' %}
+												جهاز القارئ البطاقات
+											{% endif %}
 										</button>
 									</h6>
 									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
 									</div>
 								</div>
-
+								
 								<!-- Cash -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-cash">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											نقدی
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash"
+											>
+											{% if request.language == 'fa' %}
+												نقدی
+											{% elif request.language == 'en' %}
+												Cash
+											{% elif request.language == 'ar' %}
+												نقدًا
+											{% endif %}
 										</button>
 									</h6>
 									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
 									</div>
 								</div>
+								
 
 								<!-- Combined payment -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+											{% if request.language == 'fa' %}
 											ترکیبی
+										{% elif request.language == 'en' %}
+											Combined
+										{% elif request.language == 'ar' %}
+											مدمج
+										{% endif %}
 										</button>
 									</h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
-													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+													<label class="form-label">
+														<span class="text-danger2">
+															{% if request.language == 'fa' %}
+																* مقدار مبلغ نقدی (ریال)
+															{% elif request.language == 'en' %}
+																* Cash Amount (Rials)
+															{% elif request.language == 'ar' %}
+																* مقدار المبلغ النقدي (ريال)
+															{% endif %}
+														</span>
+													</label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="{% if request.language == 'fa' %}مبلغ نقدی :{% elif request.language == 'en' %}Cash Amount :{% elif request.language == 'ar' %}مقدار المبلغ النقدي :{% endif %}">
 												</div>
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+													<label class="form-label">
+														<span class="text-danger2">
+															{% if request.language == 'fa' %}
+																* مقدار مبلغ پرداخت با کارتخوان (ریال)
+															{% elif request.language == 'en' %}
+																* Card Reader Payment Amount (Rials)
+															{% elif request.language == 'ar' %}
+																* مقدار مبلغ القارئ البطاقات (ريال)
+															{% endif %}
+														</span>
+													</label>
+													<input type="text" id="card-amount" class="form-control" placeholder="{% if request.language == 'fa' %}مبلغ کارتخوان :{% elif request.language == 'en' %}Card Reader Amount :{% elif request.language == 'ar' %}مقدار مبلغ القارئ البطاقات :{% endif %}">
 												</div>
 											</form>
 											<br>
 											<div class="row">
 												<div class="col-12">
-													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>
+														{% if request.language == 'fa' %}
+															اعمال
+														{% elif request.language == 'en' %}
+															Apply
+														{% elif request.language == 'ar' %}
+															تطبيق
+														{% endif %}
+													</button>
 												</div>
-												<br>
-												<br>
+												<br><br>
 												<div class="col-12">
-													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
+														{% if request.language == 'fa' %}
+															تلاش مجدد
+														{% elif request.language == 'en' %}
+															Retry
+														{% elif request.language == 'ar' %}
+															إعادة المحاولة
+														{% endif %}
+													</button>
 												</div>
 											</div>
 											<br>
 										</div>
-									</div>
+									</div>									
 								</div>
 
 								{% else %}
@@ -553,58 +1479,111 @@ Page content START -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
 										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
-											دستگاه کارتخوان
+											{% if request.language == 'fa' %}
+												دستگاه کارتخوان
+											{% elif request.language == 'en' %}
+												Card Reader
+											{% elif request.language == 'ar' %}
+												جهاز القارئ البطاقات
+											{% endif %}
 										</button>
 									</h6>
 									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
 									</div>
-								</div>								
-
+								</div>
+								
 								<!-- Cash -->
 								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-cash">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											نقدی
+											{% if request.language == 'fa' %}
+												نقدی
+											{% elif request.language == 'en' %}
+												Cash
+											{% elif request.language == 'ar' %}
+												نقدي
+											{% endif %}
 										</button>
 									</h6>
 									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
 									</div>
 								</div>
-
+								
 								<!-- Combined payment -->
 								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-											ترکیبی
+											{% if request.language == 'fa' %}
+												ترکیبی
+											{% elif request.language == 'en' %}
+												Combined
+											{% elif request.language == 'ar' %}
+												مدمج
+											{% endif %}
 										</button>
 									</h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
-													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+													<label class="form-label">
+														<span class="text-danger2">
+															{% if request.language == 'fa' %}
+																* مقدار مبلغ نقدی (ریال)
+															{% elif request.language == 'en' %}
+																* Cash Amount (Rials)
+															{% elif request.language == 'ar' %}
+																* مقدار المبلغ النقدي (ريال)
+															{% endif %}
+														</span>
+													</label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="{% if request.language == 'fa' %}مبلغ نقدی :{% elif request.language == 'en' %}Cash Amount :{% elif request.language == 'ar' %}مقدار المبلغ النقدي :{% endif %}">
 												</div>
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+													<label class="form-label">
+														<span class="text-danger2">
+															{% if request.language == 'fa' %}
+																* مقدار مبلغ پرداخت با کارتخوان (ریال)
+															{% elif request.language == 'en' %}
+																* Card Reader Payment Amount (Rials)
+															{% elif request.language == 'ar' %}
+																* مقدار مبلغ القارئ البطاقات (ريال)
+															{% endif %}
+														</span>
+													</label>
+													<input type="text" id="card-amount" class="form-control" placeholder="{% if request.language == 'fa' %}مبلغ کارتخوان :{% elif request.language == 'en' %}Card Reader Amount :{% elif request.language == 'ar' %}مقدار مبلغ القارئ البطاقات :{% endif %}">
 												</div>
 											</form>
 											<br>
 											<div class="row">
 												<div class="col-12">
-													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>
+														{% if request.language == 'fa' %}
+															اعمال
+														{% elif request.language == 'en' %}
+															Apply
+														{% elif request.language == 'ar' %}
+															تطبيق
+														{% endif %}
+													</button>
 												</div>
-												<br>
-												<br>
+												<br><br>
 												<div class="col-12">
-													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
+														{% if request.language == 'fa' %}
+															تلاش مجدد
+														{% elif request.language == 'en' %}
+															Retry
+														{% elif request.language == 'ar' %}
+															إعادة المحاولة
+														{% endif %}
+													</button>
 												</div>
 											</div>
 											<br>
 										</div>
 									</div>
-								</div>
+								</div>								
 								{% endif %}
 								<!-- Credit or debit card END -->
 
@@ -622,43 +1601,106 @@ Page content START -->
 				<!-- Card total START -->
 				<div class="card card-body p-4 shadow">
 					<!-- Title -->
-					<h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
+					<h4 class="mb-3 fs-5 text-center">
+						{% if request.language == 'fa' %}
+							صورت حساب
+						{% elif request.language == 'en' %}
+							Invoice
+						{% elif request.language == 'ar' %}
+							الفاتورة
+						{% endif %}
+					</h4>
 					<hr>
-
+				
 					<!-- Price and detail -->
 					<ul class="list-group list-group-borderless mb-2">
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">قیمت</span>
+							<span class="h6 fw-light mb-0">
+								{% if request.language == 'fa' %}
+									قیمت
+								{% elif request.language == 'en' %}
+									Price
+								{% elif request.language == 'ar' %}
+									السعر
+								{% endif %}
+							</span>
 							<span class="h6 fw-light mb-0 fw-bold" id="item-total-price"> ریال</span> <!-- Dynamic price -->
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">مالیات (%{{ get_TaxRate.rate|floatformat:0 }})</span>
+							<span class="h6 fw-light mb-0">
+								{% if request.language == 'fa' %}
+									مالیات (%{{ get_TaxRate.rate|floatformat:0 }})
+								{% elif request.language == 'en' %}
+									Tax (%{{ get_TaxRate.rate|floatformat:0 }})
+								{% elif request.language == 'ar' %}
+									الضريبة (%{{ get_TaxRate.rate|floatformat:0 }})
+								{% endif %}
+							</span>
 							<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">0 ریال</span> <!-- Dynamic tax -->
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">تخفیف</span>
-							<span class="h6 fw-light mb-0 fw-bold"  id="discount-display">0 ریال</span>
+							<span class="h6 fw-light mb-0">
+								{% if request.language == 'fa' %}
+									تخفیف
+								{% elif request.language == 'en' %}
+									Discount
+								{% elif request.language == 'ar' %}
+									خصم
+								{% endif %}
+							</span>
+							<span class="h6 fw-light mb-0 fw-bold" id="discount-display">0 ریال</span>
 						</li>
 						<br>
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h5 mb-0">قیمت نهایی</span>
+							<span class="h5 mb-0">
+								{% if request.language == 'fa' %}
+									قیمت نهایی
+								{% elif request.language == 'en' %}
+									Final Price
+								{% elif request.language == 'ar' %}
+									السعر النهائي
+								{% endif %}
+							</span>
 							<span class="text-danger h5" id="final-price">0 ریال</span>
 						</li>
 					</ul>
 					<hr>
-
+				
 					<!-- Button -->
 					<div class="d-grid">
 						{% if cart_empty %}
-							<a id="pay-button" class="btn btn-lg btn-success disabled">پرداخت</a>
+							<a id="pay-button" class="btn btn-lg btn-success disabled">
+								{% if request.language == 'fa' %}
+									پرداخت
+								{% elif request.language == 'en' %}
+									Pay
+								{% elif request.language == 'ar' %}
+									دفع
+								{% endif %}
+							</a>
 						{% else %}
-							<a id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
+							<a id="pay-button" class="btn btn-lg btn-success">
+								{% if request.language == 'fa' %}
+									پرداخت
+								{% elif request.language == 'en' %}
+									Pay
+								{% elif request.language == 'ar' %}
+									دفع
+								{% endif %}
+							</a>
 						{% endif %}
-						<a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
+						<a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">
+							{% if request.language == 'fa' %}
+								لغو
+							{% elif request.language == 'en' %}
+								Cancel
+							{% elif request.language == 'ar' %}
+								إلغاء
+							{% endif %}
+						</a>
 					</div>
 				</div>
-				<!-- Card total END -->
-			</div>
+				
 			<!-- Right sidebar END -->
 
 		</div><!-- Row END -->
@@ -775,45 +1817,75 @@ Page content END -->
 	// Function to apply discount
 	function applyDiscount() {
 		const discountInput = document.getElementById('discount-amount');
-		const discountValue = parseFloat(discountInput.value);  // Convert input to number
-		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
-		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
-		const maxDiscount = totalPrice + taxAmount;  // Calculate maximum allowed discount
-
+		const discountValue = parseFloat(discountInput.value);
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, '')) || 0;
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, '')) || 0;
+		const maxDiscount = totalPrice + taxAmount;
+	
+		const language = "{{ request.language }}";
+	
+		const messages = {
+			fa: {
+				errorTitle: 'خطا!',
+				invalidValue: 'لطفاً یک مقدار معتبر برای تخفیف وارد کنید.',
+				maxExceeded: `حداکثر مقدار تخفیف قابل اعمال ${maxDiscount.toLocaleString()} ریال است.`,
+				successTitle: 'تخفیف اعمال شد!',
+				successText: `تخفیف ${discountValue.toLocaleString()} ریال با موفقیت اعمال شد.`,
+				confirm: 'باشه'
+			},
+			en: {
+				errorTitle: 'Error!',
+				invalidValue: 'Please enter a valid discount amount.',
+				maxExceeded: `The maximum discount allowed is ${maxDiscount.toLocaleString()} Rials.`,
+				successTitle: 'Discount Applied!',
+				successText: `A discount of ${discountValue.toLocaleString()} Rials was successfully applied.`,
+				confirm: 'OK'
+			},
+			ar: {
+				errorTitle: 'خطأ!',
+				invalidValue: 'يرجى إدخال مبلغ خصم صالح.',
+				maxExceeded: `الحد الأقصى للخصم المسموح به هو ${maxDiscount.toLocaleString()} ريال.`,
+				successTitle: 'تم تطبيق الخصم!',
+				successText: `تم تطبيق خصم بمقدار ${discountValue.toLocaleString()} ريال بنجاح.`,
+				confirm: 'حسنًا'
+			}
+		};
+	
+		const msg = messages[language] || messages['fa'];
+	
 		if (isNaN(discountValue) || discountValue <= 0) {
 			Swal.fire({
-				title: 'خطا!',
-				text: 'لطفاً یک مقدار معتبر برای تخفیف وارد کنید.',
+				title: msg.errorTitle,
+				text: msg.invalidValue,
 				icon: 'error',
-				confirmButtonText: 'باشه'
+				confirmButtonText: msg.confirm
 			});
 			return;
 		}
-
+	
 		if (discountValue > maxDiscount) {
 			Swal.fire({
-				title: 'خطا!',
-				text: `حداکثر مقدار تخفیف قابل اعمال ${maxDiscount.toLocaleString()} ریال است.`,
+				title: msg.errorTitle,
+				text: msg.maxExceeded,
 				icon: 'error',
-				confirmButtonText: 'باشه'
+				confirmButtonText: msg.confirm
 			});
 			return;
 		}
-
-		// Update discount display
+	
 		document.getElementById('discount-display').innerText = discountValue.toLocaleString() + ' ریال';
-
-		// Show success notification
+	
 		Swal.fire({
-			title: 'تخفیف اعمال شد!',
-			text: `تخفیف ${discountValue.toLocaleString()} ریال با موفقیت اعمال شد.`,
+			title: msg.successTitle,
+			text: msg.successText,
 			icon: 'success',
-			confirmButtonText: 'باشه'
+			confirmButtonText: msg.confirm
 		});
-		    // Set discount applied flag
-    			isDiscountApplied = true;
-				updateFinalPrice();
+	
+		isDiscountApplied = true;
+		updateFinalPrice();
 	}
+	
 
 	// Add event listener to the discount button
 	document.getElementById('btn-amount').addEventListener('click', applyDiscount);
@@ -832,40 +1904,64 @@ Page content END -->
 	// Function to apply percentage discount
 	function applyPercentageDiscount() {
 		const discountPercentInput = document.getElementById('discount-percent');
-		const discountPercentValue = parseFloat(discountPercentInput.value);  // Convert input to number
-		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
-		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
-		const totalAmount = totalPrice + taxAmount;  // Calculate total amount (price + tax)
-
-		// Validate input
+		const discountPercentValue = parseFloat(discountPercentInput.value);
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, '')) || 0;
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, '')) || 0;
+		const totalAmount = totalPrice + taxAmount;
+	
+		const language = "{{ request.language }}";
+	
+		const messages = {
+			fa: {
+				errorTitle: 'خطا!',
+				invalidValue: 'لطفاً یک درصد معتبر بین ۱ تا ۱۰۰ وارد کنید.',
+				successTitle: 'تخفیف اعمال شد!',
+				successText: (percent, amount) => `تخفیف ${percent}% (${amount} ریال) با موفقیت اعمال شد.`,
+				confirm: 'باشه'
+			},
+			en: {
+				errorTitle: 'Error!',
+				invalidValue: 'Please enter a valid percentage between 1 and 100.',
+				successTitle: 'Discount Applied!',
+				successText: (percent, amount) => `A discount of ${percent}% (${amount} Rials) was successfully applied.`,
+				confirm: 'OK'
+			},
+			ar: {
+				errorTitle: 'خطأ!',
+				invalidValue: 'يرجى إدخال نسبة مئوية صالحة بين 1 و 100.',
+				successTitle: 'تم تطبيق الخصم!',
+				successText: (percent, amount) => `تم تطبيق خصم بنسبة ${percent}% (${amount} ريال) بنجاح.`,
+				confirm: 'حسنًا'
+			}
+		};
+	
+		const msg = messages[language] || messages['fa'];
+	
 		if (isNaN(discountPercentValue) || discountPercentValue < 1 || discountPercentValue > 100) {
 			Swal.fire({
-				title: 'خطا!',
-				text: 'لطفاً یک درصد معتبر بین ۱ تا ۱۰۰ وارد کنید.',
+				title: msg.errorTitle,
+				text: msg.invalidValue,
 				icon: 'error',
-				confirmButtonText: 'باشه'
+				confirmButtonText: msg.confirm
 			});
 			return;
 		}
-
-		// Calculate discount amount
+	
 		const discountAmount = (totalAmount / 100) * discountPercentValue;
-
-		// Update discount display
+	
 		document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
-
-		// Show success notification
+	
 		Swal.fire({
-			title: 'تخفیف اعمال شد!',
-			text: `تخفیف ${discountPercentValue}% (${discountAmount.toLocaleString()} ریال) با موفقیت اعمال شد.`,
+			title: msg.successTitle,
+			text: msg.successText(discountPercentValue, discountAmount.toLocaleString()),
 			icon: 'success',
-			confirmButtonText: 'باشه'
+			confirmButtonText: msg.confirm
 		});
-		    // Set discount applied flag
-    			isDiscountApplied = true;
-				updateFinalPrice();
+	
+		isDiscountApplied = true;
+		updateFinalPrice();
 	}
-
+	
 	// Add event listener to the percentage discount button
 	document.getElementById('btn-percent').addEventListener('click', applyPercentageDiscount);
 
@@ -883,55 +1979,87 @@ Page content END -->
 	// Function to apply discount code
 	function applyDiscountCode() {
 		const discountCodeInput = document.getElementById('discount-code');
-		const discountCode = discountCodeInput.value.trim().toLowerCase();  // Normalize the input
-
+		const discountCode = discountCodeInput.value.trim().toLowerCase();
+	
+		const language = "{{ request.language }}";
+	
+		const messages = {
+			fa: {
+				errorTitle: 'خطا!',
+				emptyCode: 'لطفاً یک کد تخفیف وارد کنید.',
+				successTitle: 'تخفیف اعمال شد!',
+				successConfirm: 'باشه',
+				invalidCode: 'کد تخفیف وارد شده معتبر نیست.'
+			},
+			en: {
+				errorTitle: 'Error!',
+				emptyCode: 'Please enter a discount code.',
+				successTitle: 'Discount Applied!',
+				successConfirm: 'OK',
+				invalidCode: 'The entered discount code is not valid.'
+			},
+			ar: {
+				errorTitle: 'خطأ!',
+				emptyCode: 'الرجاء إدخال رمز الخصم.',
+				successTitle: 'تم تطبيق الخصم!',
+				successConfirm: 'حسنًا',
+				invalidCode: 'رمز الخصم غير صالح.'
+			}
+		};
+	
+		const msg = messages[language] || messages['fa'];
+	
 		if (!discountCode) {
 			Swal.fire({
-				title: 'خطا!',
-				text: 'لطفاً یک کد تخفیف وارد کنید.',
+				title: msg.errorTitle,
+				text: msg.emptyCode,
 				icon: 'error',
-				confirmButtonText: 'باشه'
+				confirmButtonText: msg.successConfirm
 			});
 			return;
 		}
-
-		// Fetch discount code details from the server
+	
 		fetch(`{% url 'Amusement_Park:check_discount_code' %}?code=${discountCode}`)
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
-				const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
-				const totalAmount = totalPrice + taxAmount;  // Calculate total amount (price + tax)
-				const discountAmount = (totalAmount / 100) * data.percent;  // Calculate discount amount
-
-				// Update discount display
+				const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, '')) || 0;
+				const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, '')) || 0;
+				const totalAmount = totalPrice + taxAmount;
+				const discountAmount = (totalAmount / 100) * data.percent;
+	
 				document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + ' ریال';
-
-				// Show success notification
+	
 				Swal.fire({
-					title: 'تخفیف اعمال شد!',
-					text: data.message,
+					title: msg.successTitle,
+					text: data.message || '',
 					icon: 'success',
-					confirmButtonText: 'باشه'
+					confirmButtonText: msg.successConfirm
 				});
-				    // Set discount applied flag
-    			isDiscountApplied = true;
+	
+				isDiscountApplied = true;
 				updateFinalPrice();
 			} else {
-				// Show error notification
+				// Ignore server message, use local translation
 				Swal.fire({
-					title: 'خطا!',
-					text: data.message,
+					title: msg.errorTitle,
+					text: msg.invalidCode,
 					icon: 'error',
-					confirmButtonText: 'باشه'
+					confirmButtonText: msg.successConfirm
 				});
 			}
 		})
 		.catch(error => {
-			console.log('Error:', error);
+			console.error('Error:', error);
+			Swal.fire({
+				title: msg.errorTitle,
+				text: 'خطا در ارتباط با سرور.',
+				icon: 'error',
+				confirmButtonText: msg.successConfirm
+			});
 		});
 	}
+	
 
 	// Add event listener to the discount code button
 	document.getElementById('btn-code').addEventListener('click', applyDiscountCode);
@@ -1008,6 +2136,37 @@ Page content END -->
 		const phoneInput = document.getElementById('phoneInput');
 		const phone = phoneInput.value;
 	
+		const language = "{{ request.language }}";
+	
+		const messages = {
+			fa: {
+				foundTitle: 'کاربر با موفقیت یافت شد',
+				foundText: 'خوش حال هستیم که ما شریک شادی شما هستیم.',
+				newUserTitle: 'کاربر جدید',
+				newUserText: 'لطفاً اطلاعات خود را وارد کنید.',
+				errorTitle: 'خطا',
+				errorText: 'مشکلی در ارتباط با سرور به وجود آمد.'
+			},
+			en: {
+				foundTitle: 'User Found Successfully',
+				foundText: 'We’re happy to be part of your joy.',
+				newUserTitle: 'New User',
+				newUserText: 'Please enter your information.',
+				errorTitle: 'Error',
+				errorText: 'There was a problem communicating with the server.'
+			},
+			ar: {
+				foundTitle: 'تم العثور على المستخدم بنجاح',
+				foundText: 'يسعدنا أن نكون جزءًا من سعادتكم.',
+				newUserTitle: 'مستخدم جديد',
+				newUserText: 'يرجى إدخال معلوماتك.',
+				errorTitle: 'خطأ',
+				errorText: 'حدثت مشكلة في الاتصال بالخادم.'
+			}
+		};
+	
+		const msg = messages[language] || messages.fa;
+	
 		fetch(`/Amusement_Park/search-customer/?phone=${phone}`)
 			.then(response => response.json())
 			.then(data => {
@@ -1022,42 +2181,30 @@ Page content END -->
 						document.getElementById('birthDay').value = dateParts[2];
 					}
 	
-					document.getElementById('firstName').setAttribute('disabled', true);
-					document.getElementById('lastName').setAttribute('disabled', true);
-					document.getElementById('birthYear').setAttribute('disabled', true);
-					document.getElementById('gender').setAttribute('disabled', true);
-					document.getElementById('city').setAttribute('disabled', true);
-					document.getElementById('country').setAttribute('disabled', true);
-					document.getElementById('birthMonth').setAttribute('disabled', true);
-					document.getElementById('birthDay').setAttribute('disabled', true);
+					['firstName', 'lastName', 'birthYear', 'gender', 'city', 'country', 'birthMonth', 'birthDay'].forEach(id =>
+						document.getElementById(id).setAttribute('disabled', true)
+					);
 					document.querySelector('button[type="submit"]').setAttribute('disabled', true);
-	
 					phoneInput.setAttribute('disabled', true);
 					document.getElementById('applyButton').setAttribute('disabled', true);
 	
 					Swal.fire({
 						icon: 'info',
-						title: 'کاربر با موفقیت یافت شد',
-						text: 'خوش حال هستیم که ما شریک شادی شما هستیم.',
+						title: msg.foundTitle,
+						text: msg.foundText,
 					});
 				} else {
-					document.getElementById('firstName').removeAttribute('disabled');
-					document.getElementById('lastName').removeAttribute('disabled');
-					document.getElementById('birthYear').removeAttribute('disabled');
-					document.getElementById('gender').removeAttribute('disabled');
-					document.getElementById('city').removeAttribute('disabled');
-					document.getElementById('country').removeAttribute('disabled');
-					document.getElementById('birthMonth').removeAttribute('disabled');
-					document.getElementById('birthDay').removeAttribute('disabled');
+					['firstName', 'lastName', 'birthYear', 'gender', 'city', 'country', 'birthMonth', 'birthDay'].forEach(id =>
+						document.getElementById(id).removeAttribute('disabled')
+					);
 					document.querySelector('button[type="submit"]').removeAttribute('disabled');
-	
 					phoneInput.setAttribute('disabled', true);
 					document.getElementById('applyButton').setAttribute('disabled', true);
 	
 					Swal.fire({
 						icon: 'success',
-						title: 'کاربر جدید',
-						text: 'لطفاً اطلاعات خود را وارد کنید.',
+						title: msg.newUserTitle,
+						text: msg.newUserText,
 					});
 				}
 			})
@@ -1065,11 +2212,12 @@ Page content END -->
 				console.error('Error:', error);
 				Swal.fire({
 					icon: 'error',
-					title: 'خطا',
-					text: 'مشکلی در ارتباط با سرور به وجود آمد.',
+					title: msg.errorTitle,
+					text: msg.errorText,
 				});
 			});
 	});
+	
 	
 	document.getElementById('phoneInput').addEventListener('input', function () {
 		const phone = this.value;
@@ -1111,6 +2259,36 @@ Page content END -->
 		})
 		.then(response => response.json())
 		.then(data => {
+			const lang = '{{ request.language }}';  // فرض بر این است که زبان را از بک‌اند به صورت متغیر در اختیار داری
+		
+			const messages = {
+				success: {
+					fa: 'موفقیت‌آمیز',
+					en: 'Success',
+					ar: 'ناجح'
+				},
+				successMessage: {
+					fa: 'اطلاعات کاربر با موفقیت ذخیره شد.',
+					en: 'User information saved successfully.',
+					ar: 'تم حفظ معلومات المستخدم بنجاح.'
+				},
+				error: {
+					fa: 'خطا',
+					en: 'Error',
+					ar: 'خطأ'
+				},
+				errorMessage: {
+					fa: 'مشکلی در ذخیره اطلاعات به وجود آمد.',
+					en: 'There was an issue saving the information.',
+					ar: 'حدثت مشكلة أثناء حفظ المعلومات.'
+				},
+				serverErrorMessage: {
+					fa: 'مشکلی در ارتباط با سرور به وجود آمد.',
+					en: 'There was a problem connecting to the server.',
+					ar: 'حدثت مشكلة في الاتصال بالخادم.'
+				}
+			};
+		
 			if (data.success) {
 				document.getElementById('firstName').setAttribute('disabled', true);
 				document.getElementById('lastName').setAttribute('disabled', true);
@@ -1118,28 +2296,30 @@ Page content END -->
 				document.getElementById('birthMonth').setAttribute('disabled', true);
 				document.getElementById('birthDay').setAttribute('disabled', true);
 				document.querySelector('button[type="submit"]').setAttribute('disabled', true);
-	
+		
 				Swal.fire({
 					icon: 'success',
-					title: 'موفقیت‌آمیز',
-					text: data.message || 'اطلاعات کاربر با موفقیت ذخیره شد.',
+					title: messages.success[lang],
+					text: data.message || messages.successMessage[lang],
 				});
 			} else {
 				Swal.fire({
 					icon: 'error',
-					title: 'خطا',
-					text: data.message || 'مشکلی در ذخیره اطلاعات به وجود آمد.',
+					title: messages.error[lang],
+					text: data.message || messages.errorMessage[lang],
 				});
 			}
 		})
 		.catch(error => {
 			console.error('Error:', error);
+			const lang = '{{ request.language }}';
 			Swal.fire({
 				icon: 'error',
-				title: 'خطا',
-				text: 'مشکلی در ارتباط با سرور به وجود آمد.',
+				title: messages.error[lang],
+				text: messages.serverErrorMessage[lang],
 			});
 		});
+		
 	});
 
 
@@ -1172,19 +2352,45 @@ Page content END -->
 	
 		function validateInput(input, finalPrice) {
 			const value = parseFloat(input.value.replace(/,/g, '')) || 0;
+		
+
+			const language = "{{ request.language }}";
+		
+			const messages = {
+				fa: {
+					errorTitle: 'خطا',
+					errorText: 'مقدار وارد شده نمی‌تواند بیشتر از قیمت نهایی باشد.',
+					confirmButton: 'باشه'
+				},
+				en: {
+					errorTitle: 'Error',
+					errorText: 'The entered amount cannot be greater than the final price.',
+					confirmButton: 'OK'
+				},
+				ar: {
+					errorTitle: 'خطأ',
+					errorText: 'المقدار المدخل لا يمكن أن يكون أكبر من السعر النهائي.',
+					confirmButton: 'حسنًا'
+				}
+			};
+		
+			const msg = messages[language] || messages.fa;
+		
 			if (value > finalPrice) {
 				Swal.fire({
-					title: 'خطا',
-					text: 'مقدار وارد شده نمی‌تواند بیشتر از قیمت نهایی باشد.',
+					title: msg.errorTitle,
+					text: msg.errorText,
 					icon: 'error',
-					confirmButtonText: 'باشه'
+					confirmButtonText: msg.confirmButton
 				});
 				input.value = '';
 				applyButton.disabled = true;
 				return false;
 			}
+		
 			return true;
 		}
+		
 	
 		function disableOtherInput(currentInput, otherInput, finalPrice) {
 			if (currentInput.value.trim() !== '') {
@@ -1215,27 +2421,76 @@ Page content END -->
 	
 			if (cashAmount > 0) {
 				if (cashAmount > finalPrice) {
+
+					const language = "{{ request.language }}";
+			
+					const messages = {
+						fa: {
+							errorTitle: 'خطا',
+							errorText: 'مقدار نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.',
+							confirmButton: 'باشه'
+						},
+						en: {
+							errorTitle: 'Error',
+							errorText: 'The cash amount cannot be greater than the final price.',
+							confirmButton: 'OK'
+						},
+						ar: {
+							errorTitle: 'خطأ',
+							errorText: 'المقدار النقدي لا يمكن أن يكون أكبر من السعر النهائي.',
+							confirmButton: 'حسنًا'
+						}
+					};
+			
+					const msg = messages[language] || messages.fa;
+			
 					Swal.fire({
-						title: 'خطا',
-						text: 'مقدار نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.',
+						title: msg.errorTitle,
+						text: msg.errorText,
 						icon: 'error',
-						confirmButtonText: 'باشه'
+						confirmButtonText: msg.confirmButton
 					});
 					return;
 				}
 				cardInput.value = (finalPrice - cashAmount).toLocaleString();
 			} else if (cardAmount > 0) {
 				if (cardAmount > finalPrice) {
+
+					const language = "{{ request.language }}";
+			
+					const messages = {
+						fa: {
+							errorTitle: 'خطا',
+							errorText: 'مقدار کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.',
+							confirmButton: 'باشه'
+						},
+						en: {
+							errorTitle: 'Error',
+							errorText: 'The card amount cannot be greater than the final price.',
+							confirmButton: 'OK'
+						},
+						ar: {
+							errorTitle: 'خطأ',
+							errorText: 'المقدار باستخدام البطاقة لا يمكن أن يكون أكبر من السعر النهائي.',
+							confirmButton: 'حسنًا'
+						}
+					};
+			
+					const msg = messages[language] || messages.fa;
+			
 					Swal.fire({
-						title: 'خطا',
-						text: 'مقدار کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.',
+						title: msg.errorTitle,
+						text: msg.errorText,
 						icon: 'error',
-						confirmButtonText: 'باشه'
+						confirmButtonText: msg.confirmButton
 					});
 					return;
+				
 				}
-				cashInput.value = (finalPrice - cardAmount).toLocaleString();
+			
 			}
+
+			
 	
 			cashInput.disabled = true;
 			cardInput.disabled = true;
@@ -1287,32 +2542,117 @@ Page content END -->
 	
 			if (isCombinedPayment) {
 				if (cashAmount === 0 && cardAmountInput === 0) {
+
+					const language = "{{ request.language }}";
+			
+					const messages = {
+						fa: {
+							errorTitle: 'خطا',
+							errorText: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
+							confirmButton: 'باشه'
+						},
+						en: {
+							errorTitle: 'Error',
+							errorText: 'Please specify how much of your combined payment is cash and how much is paid by card.',
+							confirmButton: 'OK'
+						},
+						ar: {
+							errorTitle: 'خطأ',
+							errorText: 'يرجى تحديد مقدار الدفع النقدي في المبيعات المركبة ومقدار الدفع عن طريق جهاز بطاقة الائتمان.',
+							confirmButton: 'حسنًا'
+						}
+					};
+			
+					const msg = messages[language] || messages.fa;
+			
 					Swal.fire({
-						title: 'خطا',
-						text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
+						title: msg.errorTitle,
+						text: msg.errorText,
 						icon: 'error',
-						confirmButtonText: 'باشه'
+						confirmButtonText: msg.confirmButton
 					});
 					return;
 				} else if (cashInput.disabled === false || cardInput.disabled === false) {
+
+					const language = "{{ request.language }}";
+			
+					const messages = {
+						fa: {
+							errorTitle: 'خطا',
+							errorText: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
+							confirmButton: 'باشه'
+						},
+						en: {
+							errorTitle: 'Error',
+							errorText: 'Please click the "Apply" button to confirm the cash and card amounts.',
+							confirmButton: 'OK'
+						},
+						ar: {
+							errorTitle: 'خطأ',
+							errorText: 'يرجى الضغط على زر "تطبيق" لتأكيد المبالغ النقدية وبطاقة الائتمان.',
+							confirmButton: 'حسنًا'
+						}
+					};
+			
+					const msg = messages[language] || messages.fa;
+			
 					Swal.fire({
-						title: 'خطا',
-						text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
+						title: msg.errorTitle,
+						text: msg.errorText,
 						icon: 'error',
-						confirmButtonText: 'باشه'
+						confirmButtonText: msg.confirmButton
 					});
 					return;
 				}
 			}
+			
 	
 			if (isCashPayment) {
+
+				const language = "{{ request.language }}";
+			
+				const messages = {
+					fa: {
+						confirmTitle: 'تأیید فروش نقدی',
+						confirmText: 'آیا مطمئن هستید که این خرید کاملاً نقدی است؟',
+						confirmButton: 'بله',
+						cancelButton: 'خیر',
+						paymentTitle: 'پرداخت از طریق دستگاه کارتخوان...',
+						cardSuccessTitle: 'پرداخت کارتخوان موفق',
+						cardErrorTitle: 'خطا در پرداخت کارتخوان',
+						cardErrorText: 'خطا در ارتباط با دستگاه کارتخوان'
+					},
+					en: {
+						confirmTitle: 'Cash Payment Confirmation',
+						confirmText: 'Are you sure this purchase is completely cash?',
+						confirmButton: 'Yes',
+						cancelButton: 'No',
+						paymentTitle: 'Payment through card reader...',
+						cardSuccessTitle: 'Card Payment Successful',
+						cardErrorTitle: 'Card Payment Error',
+						cardErrorText: 'Error connecting to card reader'
+					},
+					ar: {
+						confirmTitle: 'تأكيد الدفع نقداً',
+						confirmText: 'هل أنت متأكد أن هذه الشراء بالكامل نقدي؟',
+						confirmButton: 'نعم',
+						cancelButton: 'لا',
+						paymentTitle: 'الدفع عبر جهاز القارئ...',
+						cardSuccessTitle: 'الدفع عبر بطاقة ناجح',
+						cardErrorTitle: 'خطأ في الدفع عبر بطاقة',
+						cardErrorText: 'خطأ في الاتصال بجهاز القارئ'
+					}
+				};
+			
+				const msg = messages[language] || messages.fa;
+			
 				Swal.fire({
-					title: 'تأیید فروش نقدی',
-					text: 'آیا مطمئن هستید که این خرید کاملاً نقدی است؟',
+					title: msg.confirmTitle,
+					text: msg.confirmText,
 					icon: 'question',
 					showCancelButton: true,
-					confirmButtonText: 'بله',
-					cancelButtonText: 'خیر'
+					confirmButtonText: msg.confirmButton,
+					cancelButtonText: msg.cancelButton
 				}).then((result) => {
 					if (result.isConfirmed) {
 						proceedWithPayment();
@@ -1321,21 +2661,20 @@ Page content END -->
 			} else {
 				proceedWithPayment();
 			}
-	
+			
 			function proceedWithPayment() {
-
 				if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 					Swal.fire({
-						title: 'پرداخت از طریق دستگاه کارتخوان...',
+						title: messages[language].paymentTitle,
 						allowOutsideClick: false,
 						didOpen: () => { Swal.showLoading(); }
 					});
-	
+			
 					const formData = new URLSearchParams();
 					formData.append('payment', cardPaymentAmount);
 					formData.append('ip', cardReaderIP);
 					formData.append('port', cardReaderPort);
-	
+			
 					fetch('{% url "Amusement_Park:test_payment" %}', {
 						method: 'POST',
 						headers: {
@@ -1349,7 +2688,7 @@ Page content END -->
 						if (cardResponse.status === 'success') {
 							Swal.fire({
 								icon: 'success',
-								title: 'پرداخت کارتخوان موفق',
+								title: messages[language].cardSuccessTitle,
 								text: cardResponse.message,
 								timer: 1500,
 								showConfirmButton: false
@@ -1359,7 +2698,7 @@ Page content END -->
 						} else {
 							Swal.fire({
 								icon: 'error',
-								title: 'خطا در پرداخت کارتخوان',
+								title: messages[language].cardErrorTitle,
 								text: cardResponse.message,
 								confirmButtonText: 'باشه'
 							});
@@ -1369,8 +2708,8 @@ Page content END -->
 						console.error('Error in card payment:', error);
 						Swal.fire({
 							icon: 'error',
-							title: 'خطا در ارتباط با دستگاه کارتخوان',
-							text: 'خطا در ارتباط با دستگاه کارتخوان.',
+							title: messages[language].cardErrorTitle,
+							text: messages[language].cardErrorText,
 							confirmButtonText: 'باشه'
 						});
 					});
@@ -1378,7 +2717,7 @@ Page content END -->
 					submitPayment();
 				}
 			}
-	
+			
 			function submitPayment() {
 				const phone = document.getElementById('phoneInput').value;
 				const firstName = document.getElementById('firstName').value;
@@ -1411,60 +2750,95 @@ Page content END -->
 					mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
 				};
 	
-				Swal.fire({
-					title: 'در حال ثبت تراکنش...',
-					allowOutsideClick: false,
-					didOpen: () => { Swal.showLoading(); }
-				});
-	
-				fetch('{% url "Amusement_Park:submit_pay" %}', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-CSRFToken': '{{ csrf_token }}'
-					},
-					body: JSON.stringify({
-						customer_data: customerData,
-						cart_items: cartItems,
-						transaction_data: transactionData,
-					}),
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('خطا در ارتباط با سرور.');
-					}
-					return response.json();
-				})
-				.then(data => {
-					if (data.success) {
-						Swal.fire({
-							icon: 'success',
-							title: 'موفقیت‌آمیز',
-							text: 'پرداخت با موفقیت انجام شد.',
-							confirmButtonText: 'باشه'
-						}).then((result) => {
-							if (result.isConfirmed) {
-								window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
-							}
-						});
-					} else {
-						Swal.fire({
-							icon: 'error',
-							title: 'خطا در پرداخت',
-							text: 'خطا در پرداخت: ' + data.message,
-							confirmButtonText: 'باشه'
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					Swal.fire({
-						icon: 'error',
-						title: 'خطا در ارتباط با سرور',
-						text: 'خطا در ارتباط با سرور.',
-						confirmButtonText: 'باشه'
-					});
-				});
+				const language = "{{ request.language }}";
+
+const messages = {
+	fa: {
+		processingTitle: 'در حال ثبت تراکنش...',
+		successTitle: 'موفقیت‌آمیز',
+		successText: 'پرداخت با موفقیت انجام شد.',
+		errorTitle: 'خطا در پرداخت',
+		errorServer: 'خطا در ارتباط با سرور.',
+		errorTextPrefix: 'خطا در پرداخت: ',
+		confirmText: 'باشه'
+	},
+	en: {
+		processingTitle: 'Processing transaction...',
+		successTitle: 'Successful',
+		successText: 'Payment completed successfully.',
+		errorTitle: 'Payment Error',
+		errorServer: 'Error connecting to the server.',
+		errorTextPrefix: 'Payment error: ',
+		confirmText: 'OK'
+	},
+	ar: {
+		processingTitle: 'جارٍ تسجيل المعاملة...',
+		successTitle: 'تم بنجاح',
+		successText: 'تمت عملية الدفع بنجاح.',
+		errorTitle: 'خطأ في الدفع',
+		errorServer: 'حدث خطأ في الاتصال بالخادم.',
+		errorTextPrefix: 'خطأ في الدفع: ',
+		confirmText: 'حسنًا'
+	}
+};
+
+const msg = messages[language] || messages.fa;
+
+Swal.fire({
+	title: msg.processingTitle,
+	allowOutsideClick: false,
+	didOpen: () => { Swal.showLoading(); }
+});
+
+fetch('{% url "Amusement_Park:submit_pay" %}', {
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/json',
+		'X-CSRFToken': '{{ csrf_token }}'
+	},
+	body: JSON.stringify({
+		customer_data: customerData,
+		cart_items: cartItems,
+		transaction_data: transactionData,
+	}),
+})
+.then(response => {
+	if (!response.ok) {
+		throw new Error(msg.errorServer);
+	}
+	return response.json();
+})
+.then(data => {
+	if (data.success) {
+		Swal.fire({
+			icon: 'success',
+			title: msg.successTitle,
+			text: msg.successText,
+			confirmButtonText: msg.confirmText
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
+			}
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: msg.errorTitle,
+			text: msg.errorTextPrefix + data.message,
+			confirmButtonText: msg.confirmText
+		});
+	}
+})
+.catch(error => {
+	console.error('Error:', error);
+	Swal.fire({
+		icon: 'error',
+		title: msg.errorTitle,
+		text: msg.errorServer,
+		confirmButtonText: msg.confirmText
+	});
+});
+
 			}
 		});
 	
