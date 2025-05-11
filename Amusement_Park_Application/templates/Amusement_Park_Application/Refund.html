@@ -687,11 +687,23 @@ Page content END -->
                 .then(data => {
                     if (data.cart_empty) {
                         Swal.fire({
-                            title: 'سبد خرید شما خالی است!',
-                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+                            title: `{% if request.language == 'fa'%}سبد خرید شما خالی است!
+                            {% elif request.language == 'en'%}Your cart is empty!
+                            {% elif request.language == 'ar'%}سلة التسوق فارغة!{% endif %}`,
+
+                            text: `{% if request.language == 'fa'%}لطفاً ابتدا محصولی به سبد خرید اضافه کنید.
+                            {% elif request.language == 'en'%}Please add a product to your cart first.
+                            {% elif request.language == 'ar'%}يرجى إضافة منتج إلى سلة التسوق أولاً.{% endif %}`,
+
                             icon: 'warning',
-                            confirmButtonText: 'باشه'
+
+                            confirmButtonText: `{% if request.language == 'fa'%}باشه{
+                            % elif request.language == 'en'%}OK
+                            {% elif request.language == 'ar'%}حسنًا{% endif %}`
                         });
+                    }
+                });
+                
                     } else {
                         window.location.href = "{% url 'Amusement_Park:Cart' %}";
                     }
