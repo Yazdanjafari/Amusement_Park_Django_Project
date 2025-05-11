@@ -674,54 +674,45 @@ Page content END -->
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        const lang = '{{ request.language }}';
+        document.querySelectorAll('.cart-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch("{% url 'Amusement_Park:check_cart' %}", {
+                    method: "GET",
+                    headers: {
+                        "X-CSRFToken": getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cart_empty) {
+                        Swal.fire({
+                            title: `{% if request.language == 'fa'%}سبد خرید شما خالی است!
+                            {% elif request.language == 'en'%}Your cart is empty!
+                            {% elif request.language == 'ar'%}سلة التسوق فارغة!{% endif %}`,
 
-const messages = {
-    title: {
-        fa: 'سبد خرید شما خالی است!',
-        en: 'Your cart is empty!',
-        ar: 'سلة التسوق فارغة!'
-    },
-    text: {
-        fa: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-        en: 'Please add a product to your cart first.',
-        ar: 'يرجى إضافة منتج إلى سلة التسوق أولاً.'
-    },
-    confirm: {
-        fa: 'باشه',
-        en: 'OK',
-        ar: 'حسنًا'
-    }
-};
+                            text: `{% if request.language == 'fa'%}لطفاً ابتدا محصولی به سبد خرید اضافه کنید.
+                            {% elif request.language == 'en'%}Please add a product to your cart first.
+                            {% elif request.language == 'ar'%}يرجى إضافة منتج إلى سلة التسوق أولاً.{% endif %}`,
 
-document.querySelectorAll('.cart-link').forEach(link => {
-    link.addEventListener('click', function(event) {
-        event.preventDefault();
-        fetch("{% url 'Amusement_Park:check_cart' %}", {
-            method: "GET",
-            headers: {
-                "X-CSRFToken": getCookie('csrftoken')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.cart_empty) {
-                Swal.fire({
-                    title: messages.title[lang],
-                    text: messages.text[lang],
-                    icon: 'warning',
-                    confirmButtonText: messages.confirm[lang]
+                            icon: 'warning',
+
+                            confirmButtonText: `{% if request.language == 'fa'%}باشه{
+                            % elif request.language == 'en'%}OK
+                            {% elif request.language == 'ar'%}حسنًا{% endif %}`
+                        });
+                    }
                 });
-            } else {
-                window.location.href = "{% url 'Amusement_Park:Cart' %}";
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
+                
+                    } else {
+                        window.location.href = "{% url 'Amusement_Park:Cart' %}";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            });
         });
-    });
-});
-
 
         function getCookie(name) {
             let cookieValue = null;
@@ -741,26 +732,6 @@ document.querySelectorAll('.cart-link').forEach(link => {
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        const lang = '{{ request.language }}';
-
-        const messages = {
-            title: {
-                fa: 'سبد خرید شما خالی است!',
-                en: 'Your cart is empty!',
-                ar: 'سلة التسوق فارغة!'
-            },
-            text: {
-                fa: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-                en: 'Please add a product to your cart first.',
-                ar: 'يرجى إضافة منتج إلى سلة التسوق أولاً.'
-            },
-            confirm: {
-                fa: 'باشه',
-                en: 'OK',
-                ar: 'حسنًا'
-            }
-        };
-        
         document.querySelectorAll('.cart-link').forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
@@ -774,10 +745,10 @@ document.querySelectorAll('.cart-link').forEach(link => {
                 .then(data => {
                     if (data.cart_empty) {
                         Swal.fire({
-                            title: messages.title[lang] || messages.title.fa,
-                            text: messages.text[lang] || messages.text.fa,
+                            title: 'سبد خرید شما خالی است!',
+                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
                             icon: 'warning',
-                            confirmButtonText: messages.confirm[lang] || messages.confirm.fa
+                            confirmButtonText: 'باشه'
                         });
                     } else {
                         window.location.href = "{% url 'Amusement_Park:Cart' %}";
@@ -788,7 +759,6 @@ document.querySelectorAll('.cart-link').forEach(link => {
                 });
             });
         });
-        
 
         function getCookie(name) {
             let cookieValue = null;
@@ -814,53 +784,47 @@ document.querySelectorAll('.cart-link').forEach(link => {
         applyButton.disabled = this.value.trim() === '';
     });
     
-    const lang = '{{ request.language }}';
-
-const messages = {
-    errorTitle: {
-        fa: 'خطا',
-        en: 'Error',
-        ar: 'خطأ'
-    },
-    successTitle: {
-        fa: 'موفقیت',
-        en: 'Success',
-        ar: 'نجاح'
-    },
-    successText: {
-        fa: 'اطلاعات تراکنش با موفقیت دریافت شد.',
-        en: 'Transaction details retrieved successfully.',
-        ar: 'تم استلام تفاصيل المعاملة بنجاح.'
-    }
-};
-
-document.getElementById('applyButton').addEventListener('click', function () {
-    var transactionId = document.getElementById('ticketCodeInput').value.trim();
-    if (transactionId) {
-        fetch(`/Amusement_Park/get_transaction_details/?transaction_id=${transactionId}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: messages.errorTitle[lang] || messages.errorTitle.fa,
-                    text: data.error,
-                });
-            } else {
-                Swal.fire({
-                    icon: 'success',
-                    title: messages.successTitle[lang] || messages.successTitle.fa,
-                    text: messages.successText[lang] || messages.successText.fa,
-                });
-                updateTransactionDetails(data);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-});
-
+    document.getElementById('applyButton').addEventListener('click', function() {
+        var transactionId = document.getElementById('ticketCodeInput').value.trim();
+        if (transactionId) {
+            fetch(`/Amusement_Park/get_transaction_details/?transaction_id=${transactionId}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+						{% if request.language == 'fa' %}
+                            title: 'خطا',
+                        {% elif request.language == 'en' %}
+                            title: 'error',
+                        {% elif request.language == 'ar' %}
+                            title: 'غلط',
+						{% endif %}		                        
+                        text: data.error,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+						{% if request.language == 'fa' %}
+                            title: 'موفقیت',
+                            text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
+                            {% elif request.language == 'en' %}
+                            title: 'Success',
+                            text: 'Transaction information received successfully.',
+                        {% elif request.language == 'ar' %}
+                            title: 'نجاح',
+                            text: 'تم استلام معلومات المعاملة بنجاح.',                        
+						{% endif %}                        
+                    });
+                    updateTransactionDetails(data);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+    
     function updateTransactionDetails(data) {
         var tbody = document.getElementById('transactionDetailsTable');
         tbody.innerHTML = '';
@@ -926,88 +890,31 @@ document.getElementById('applyButton').addEventListener('click', function () {
                 }
             });
         
-            const lang = '{{ request.language }}';
-
-const messages = {
-    errorTitle: {
-        fa: 'خطا!',
-        en: 'Error!',
-        ar: 'خطأ!'
-    },
-    warningText: {
-        fa: 'لطفاً همه فیلدهای اجباری را پر کنید.',
-        en: 'Please fill all required fields.',
-        ar: 'يرجى ملء جميع الحقول المطلوبة.'
-    },
-    confirmButtonText: {
-        fa: 'باشه',
-        en: 'OK',
-        ar: 'حسناً'
-    }
-};
-
-if (!allFilled) {
-    event.preventDefault();
-    Swal.fire({
-        icon: "warning",
-        title: messages.errorTitle[lang] || messages.errorTitle.fa,
-        text: messages.warningText[lang] || messages.warningText.fa,
-        confirmButtonText: messages.confirmButtonText[lang] || messages.confirmButtonText.fa
-    });
-    return; 
-}
-
+            if (!allFilled) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: "warning",
+                    title: "خطا!",
+                    text: "لطفاً همه فیلدهای اجباری را پر کنید.",
+                    confirmButtonText: "باشه"
+                });
+                return; 
+            }
         
-const lang = '{{ request.language }}';  // تعیین زبان از سرور
-
-// پیام‌ها برای زبان‌های مختلف
-const messages = {
-    transactionError: {
-        fa: "المان 'ticketCodeInput' یافت نشد.",
-        en: "'ticketCodeInput' element not found.",
-        ar: "عنصر 'ticketCodeInput' غير موجود."
-    },
-    refundType: {
-        fa: {
-            cash: 'کارت به کارت',
-            combined: 'انتقال با شماره شبا',
-            default: 'نقد'
-        },
-        en: {
-            cash: 'Card to card',
-            combined: 'Transfer with IBAN number',
-            default: 'Cash'
-        },
-        ar: {
-            cash: 'بطاقة إلى بطاقة',
-            combined: 'التحويل برقم الآيبان',
-            default: 'نقد'
-        }
-    }
-};
-
-// بررسی وجود المان 'ticketCodeInput'
-const transactionInput = document.getElementById('ticketCodeInput');
-if (!transactionInput) {
-    console.error(messages.transactionError[lang] || messages.transactionError.fa);  // نمایش پیغام خطا به زبان مناسب
-    return;
-}
-
-const transactionId = transactionInput.value.trim();
-
-// نوع بازپرداخت پیش‌فرض
-let refundType = messages.refundType[lang].default; 
-
-// بررسی نوع بازپرداخت
-if (document.getElementById('collapse-cash') && document.getElementById('collapse-cash').classList.contains('show')) {
-    refundType = messages.refundType[lang].cash;
-} else if (document.getElementById('collapse-combined') && document.getElementById('collapse-combined').classList.contains('show')) {
-    refundType = messages.refundType[lang].combined;
-}
-
-// خروجی برای بررسی
-console.log(refundType);  // اینجا نوع بازپرداخت با توجه به زبان انتخابی نمایش داده می‌شود.
-
+        
+            const transactionInput = document.getElementById('ticketCodeInput');
+            if (!transactionInput) {
+                console.error("المان 'ticketCodeInput' یافت نشد.");
+                return;
+            }
+            const transactionId = transactionInput.value.trim();
+        
+            let refundType = 'نقد'; // پیش‌فرض
+            if (document.getElementById('collapse-cash') && document.getElementById('collapse-cash').classList.contains('show')) {
+                refundType = 'کارت به کارت';
+            } else if (document.getElementById('collapse-combined') && document.getElementById('collapse-combined').classList.contains('show')) {
+                refundType = 'انتقال با شماره شبا';
+            }
         
             const sourceCardHolderName = document.getElementById('source_card_holder_name') ? document.getElementById('source_card_holder_name').value : '';
             const destinationCardHolderName = document.getElementById('destination_card_holder_name') ? document.getElementById('destination_card_holder_name').value : '';
@@ -1026,62 +933,40 @@ console.log(refundType);  // اینجا نوع بازپرداخت با توجه 
             formData.append('source_sheba_number', sourceShebaNumber);
             formData.append('destination_sheba_number', destinationShebaNumber);
         
-            const lang = '{{ request.language }}';  // زبان انتخابی از سرور
-
-// پیام‌ها برای زبان‌های مختلف
-const messages = {
-    success: {
-        fa: 'عملیات با موفقیت انجام شد.',
-        en: 'The operation was successful.',
-        ar: 'تمت العملية بنجاح.'
-    },
-    error: {
-        fa: 'خطا در ارسال اطلاعات.',
-        en: 'Error occurred while sending data.',
-        ar: 'حدث خطأ أثناء إرسال البيانات.'
-    },
-    generalError: {
-        fa: 'خطایی در ارسال اطلاعات رخ داده است.',
-        en: 'An error occurred while submitting the information.',
-        ar: 'حدث خطأ أثناء إرسال المعلومات.'
-    }
-};
-
-// ارسال درخواست
-fetch('{% url "Amusement_Park:save_refund" %}', {
-    method: 'POST',
-    body: formData,
-    headers: {
-        'X-CSRFToken': getCookie('csrftoken')
-    }
-})
-.then(response => response.json())
-.then(data => {
-    if (data.status === 'success') {
-        Swal.fire({
-            icon: 'success',
-            title: lang === 'fa' ? 'موفقیت' : lang === 'en' ? 'Success' : 'نجاح',
-            text: data.message || messages.success[lang],
-        }).then(() => {
-            window.location.href = "{% url 'Amusement_Park:Products' %}";
+            fetch('{% url "Amusement_Park:save_refund" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفقیت',
+                        text: data.message,
+                    }).then(() => {
+                        window.location.href = "{% url 'Amusement_Park:Products' %}";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'خطایی در ارسال اطلاعات رخ داده است.',
+                });
+            });
         });
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
-            text: data.message || messages.error[lang],
-        });
-    }
-})
-.catch(error => {
-    console.error('Error:', error);
-    Swal.fire({
-        icon: 'error',
-        title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
-        text: messages.generalError[lang],
-    });
-});
-
         
         function getCookie(name) {
             let cookieValue = null;

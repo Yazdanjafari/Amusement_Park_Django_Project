@@ -135,22 +135,31 @@
         
         <p class="tracking-id">
             {% if request.language == 'fa' %}
-                کد رهگیری فروش : {{ transaction_id }}
+                کد رهگیری فروش : <b>{{ transaction_id }}</b> | کد رهگیری بلیت : <b>{{ ticket.id }}</b>
             {% elif request.language == 'en' %}
-                Sale Tracking Code: {{ transaction_id }}
+                Sale Tracking Code: <b>{{ transaction_id }}</b> | Ticket Tracking Code: <b>{{ ticket.id }}</b>
             {% elif request.language == 'ar' %}
-                كود تتبع البيع : {{ transaction_id }}
+                كود تتبع البيع : <b>{{ transaction_id }}</b> | كود تتبع التذكرة : <b>{{ ticket.id }}</b>
             {% endif %}
         </p>
-        <p class="tracking-id">
-            {% if request.language == 'fa' %}
-                کد رهگیری بلیت : {{ ticket.id }}
-            {% elif request.language == 'en' %}
-                Ticket Tracking Code: {{ ticket.id }}
-            {% elif request.language == 'ar' %}
-                كود تتبع التذكرة : {{ ticket.id }}
-            {% endif %}
+
+        <p>
+            {% for tp in ordered_products %}
+                <div style="font-size: 65%;">
+                    {{ tp.quantity }} × 
+                    {% if language == "fa" %}
+                        {{ tp.product.title }}✅
+                    {% elif language == "en" %}
+                        {{ tp.product.title_en }}✅
+                    {% elif language == "ar" %}
+                        {{ tp.product.title_ar }}✅
+                    {% else %}
+                        {{ tp.product.title }}✅
+                    {% endif %}
+                </div>
+            {% endfor %}
         </p>
+
         <button class="print-button" onclick="printPage()">
             {% if request.language == 'fa' %}
                 🖨 چاپ بلیت

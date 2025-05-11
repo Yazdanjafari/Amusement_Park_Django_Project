@@ -75,28 +75,9 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-                                <li class="breadcrumb-item">
-                                    <a href="{% url 'Amusement_Park:Products' %}">
-                                        {% if request.language == 'fa' %}
-                                            صفحه اصلی
-                                        {% elif request.language == 'en' %}
-                                            Home Page
-                                        {% elif request.language == 'ar' %}
-                                            الصفحة الرئيسية
-                                        {% endif %}
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item active" aria-current="page">
-                                    {% if request.language == 'fa' %}
-                                        ثبت مجدد تراکنش
-                                    {% elif request.language == 'en' %}
-                                        Re-register Transaction
-                                    {% elif request.language == 'ar' %}
-                                        إعادة تسجيل المعاملة
-                                    {% endif %}
-                                </li>
-                            </ol>
-                            
+								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
+								<li class="breadcrumb-item active" aria-current="page">ثبت مجدد تراکنش</a></li>
+							</ol>
 						</nav>
 					</div>
 				</div>
@@ -117,39 +98,13 @@ Page content START -->
                 <!-- Personal info START -->
                 <div class="card card-body shadow p-4">
                     <!-- Title for transaction form -->
-                    <h5 class="mb-0"> 
-                        {% if request.language == 'fa' %}
-                            ثبت مجدد تراکنش :
-                        {% elif request.language == 'en' %}
-                            Re-register Transaction :
-                        {% elif request.language == 'ar' %}
-                            إعادة تسجيل المعاملة :
-                        {% endif %}
-                    </h5>
+                    <h5 class="mb-0">ثبت مجدد تراکنش :</h5>
                     <!-- Transaction form START -->
                     <form id="retransactionForm" method="post">
                         {% csrf_token %}
                         <div class="input-group mt-2">
-                            <input id="ticketCodeInput" name="transaction_id" class="form-control"
-                             {% if request.language == 'fa' %}
-                                placeholder="کد رهگیری فروش"
-                                style="text-align: right; direction: rtl;"
-                            {% elif request.language == 'en' %}
-                                placeholder="Sales Tracking Code"
-                                style="text-align: left; direction: ltr;"
-                            {% elif request.language == 'ar' %}
-                                placeholder=" رمز تتبع البيع"
-                                style="text-align: right; direction: rtl;"
-                            {% endif %} type="text">
-                            <button id="applyButton" type="button" class="btn btn-primary">
-                                {% if request.language == 'fa' %}
-                                    اعمال
-                                {% elif request.language == 'en' %}
-                                    Apply
-                                {% elif request.language == 'ar' %}
-                                    تطبيق
-                                {% endif %}
-                            </button>
+                            <input id="ticketCodeInput" name="transaction_id" class="form-control" placeholder="کد رهگیری فروش" type="text">
+                            <button id="applyButton" type="button" class="btn btn-primary">اعمال</button>
                         </div>
                     </form>
 				</div>
@@ -161,15 +116,7 @@ Page content START -->
 				<div class="card card-body shadow p-4">					
                     <!-- Transaction form END -->
                     <table class="table align-middle p-4 mb-0">
-                        <h5 class="">
-                            {% if request.language == 'fa' %}
-                                اطلاعات فاکتور ثبت شده :
-                            {% elif request.language == 'en' %}
-                                Registered Invoice Information:
-                            {% elif request.language == 'ar' %}
-                                معلومات الفاتورة المسجلة :
-                            {% endif %}
-                        </h5>
+                        <h5 class="">اطلاعات فاکتور ثبت شده :</h5>
                         <tbody class="border-top-0">
                             <tr>
                                 <td>
@@ -178,28 +125,12 @@ Page content START -->
                                             <img id="productImage" src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
                                         </div>
                                         <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
-                                            <a id="productName" href="#" style="font-size: 75%;">
-                                                {% if request.language == 'fa' %}
-                                                    دوره جامع آموزش Sketch
-                                                {% elif request.language == 'en' %}
-                                                    Comprehensive Sketch Training Course
-                                                {% elif request.language == 'ar' %}
-                                                    دورة تدريبية شاملة لـ Sketch
-                                                {% endif %}
-                                            </a>
+                                            <a id="productName" href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
                                         </h6>
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    <h5 id="productPrice" class="text-success mb-0" style="font-size: 75%;">
-                                            {% if request.language == 'fa' %}
-                                                0 ریال
-                                            {% elif request.language == 'en' %}
-                                                0 IRR
-                                            {% elif request.language == 'ar' %}
-                                                0 ريال
-                                            {% endif %}
-                                    </h5>
+                                    <h5 id="productPrice" class="text-success mb-0" style="font-size: 75%;">0 ریال</h5>
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-between align-items-center">
@@ -215,61 +146,29 @@ Page content START -->
                     <br>
                     <div class="row">
                         <div class="col-md-6 bg-light-input hidden">
-                            <label for="">* 
-                                {% if request.language == 'fa' %}تاریخ ثبت فاکتور
-                                {% elif request.language == 'en' %}Invoice Creation Date
-                                {% elif request.language == 'ar' %}تاريخ تسجيل الفاتورة
-                                {% endif %} :</label>
+                            <label for="">* تاریخ ثبت فاکتور :</label>
                             <input id="createAt" type="text" class="form-control" readonly value="">
                         </div>
-                        <div class="col-md-12 bg-light-input">
-                            <label for="" style="font-size: 15px;">* {% if request.language == 'fa' %}شماره تماس
-                                {% elif request.language == 'en' %}Phone Number
-                                {% elif request.language == 'ar' %}رقم الهاتف
-                                {% endif %} :</label>
-                            <input id="userPhone" type="text" class="form-control" readonly value="">
-                        </div>
-                        <div class="col-md-6 bg-light-input">
-                            <label for="" style="font-size: 15px;">* {% if request.language == 'fa' %}نام
-                                {% elif request.language == 'en' %}First Name
-                                {% elif request.language == 'ar' %}الاسم الأول
-                                {% endif %} :</label>
-                            <input id="userFirstName" type="text" class="form-control" readonly value="">
-                        </div>
-                        <div class="col-md-6 bg-light-input">
-                            <label for="" style="font-size: 15px;">* {% if request.language == 'fa' %}نام خانوادگی
-                                {% elif request.language == 'en' %}Last Name
-                                {% elif request.language == 'ar' %}اسم العائلة
-                                {% endif %} :</label>
-                            <input id="userLastName" type="text" class="form-control" readonly value="">
-                        </div>
-                        
+						<div class="col-md-12 bg-light-input">
+							<label for="" style="font-size: 15px;">* شماره تماس :</label>
+							<input id="userPhone" type="text" class="form-control" readonly value="">
+						</div>
+						<div class="col-md-6 bg-light-input">
+							<label for="" style="font-size: 15px;">* نام :</label>
+							<input id="userFirstName" type="text" class="form-control" readonly value="">
+						</div>
+						<div class="col-md-6 bg-light-input">
+							<label for="" style="font-size: 15px;">* نام خانوادگی :</label>
+							<input id="userLastName" type="text" class="form-control" readonly value="">
+						</div>
                         <div class="col-12">
-                            <textarea id="desc" class="form-control" 
-                             {% if request.language == 'fa' %}
-                                placeholder="توضیحات(اختیاری)"
-                                style="text-align: right; direction: rtl;"
-                            {% elif request.language == 'en' %}
-                                placeholder=" Description (Optional)"
-                                style="text-align: left; direction: ltr;"
-                            {% elif request.language == 'ar' %}
-                                placeholder="الوصف (اختياري)"
-                                style="text-align: right; direction: rtl;"
-                            {% endif %} hidden></textarea>
+                            <textarea id="desc" class="form-control" placeholder="توضیحات (اختیاری) :" hidden></textarea>
                         </div>                        
                     </div>
                     <hr>
                     <!-- Payment method START -->
                     <div class="card card-body p-4 shadow">
-                        <h5 class="">
-                            {% if request.language == 'fa' %}
-                                روش های پرداخت :
-                            {% elif request.language == 'en' %}
-                                Payment Methods :
-                            {% elif request.language == 'ar' %}
-                                طرق الدفع :
-                            {% endif %}
-                        </h5>
+                        <h5 class="">روش های پرداخت :</h5>
                         <div class="col-12">
                             <div class="accordion accordion-circle" id="accordioncircle">
                                 
@@ -280,13 +179,7 @@ Page content START -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
 										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-                                            {% if request.language == 'fa' %}
-                                                دستگاه کارتخوان
-                                            {% elif request.language == 'en' %}
-                                                Card Reader
-                                            {% elif request.language == 'ar' %}
-                                                جهاز قراءة البطاقة
-                                            {% endif %}
+											دستگاه کارتخوان
 										</button>
 									</h6>
 									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
@@ -297,13 +190,7 @@ Page content START -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-cash">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-                                            {% if request.language == 'fa' %}
-                                                نقدی
-                                            {% elif request.language == 'en' %}
-                                                Cash
-                                            {% elif request.language == 'ar' %}
-                                                نقداً
-                                            {% endif %}
+											نقدی
 										</button>
 									</h6>
 									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
@@ -314,96 +201,32 @@ Page content START -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-                                            {% if request.language == 'fa' %}
-                                                ترکیبی
-                                            {% elif request.language == 'en' %}
-                                                Combined
-                                            {% elif request.language == 'ar' %}
-                                                مدمج
-                                            {% endif %}
+											ترکیبی
 										</button>
 									</h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-                                                    <label class="form-label">
-                                                        <span class="text-danger2">
-                                                            {% if request.language == 'fa' %}
-                                                                * مقدار مبلغ نقدی (ریال)
-                                                            {% elif request.language == 'en' %}
-                                                                * Cash Amount (Rials)
-                                                            {% elif request.language == 'ar' %}
-                                                                * المبلغ النقدي (ريال)
-                                                            {% endif %}
-                                                        </span>
-                                                    </label>
-                                                    <input type="text" id="cash-amount" class="form-control"
-                                                    {% if request.language == 'fa' %}
-                                                        placeholder="* مبلغ نقدی :"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% elif request.language == 'en' %}
-                                                        placeholder="* Cash Amount :"
-                                                        style="text-align: left; direction: ltr;"
-                                                    {% elif request.language == 'ar' %}
-                                                        placeholder="* المبلغ النقدي :"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% endif %}>
-                                                </div>
-                                                
-                                                <div class="col-12">
-                                                    <label class="form-label">
-                                                        <span class="text-danger2">
-                                                            {% if request.language == 'fa' %}
-                                                                * مقدار مبلغ پرداخت با کارتخوان (ریال)
-                                                            {% elif request.language == 'en' %}
-                                                                * Card Payment Amount (Rials)
-                                                            {% elif request.language == 'ar' %}
-                                                                * مبلغ الدفع عبر جهاز البطاقة (ريال)
-                                                            {% endif %}
-                                                        </span>
-                                                    </label>
-                                                    <input type="text" id="card-amount" class="form-control" 
-                                                     {% if request.language == 'fa' %}
-                                                        placeholder=" * مبلغ کارتخوان :"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% elif request.language == 'en' %}
-                                                        placeholder="* Card Reader Amount :"
-                                                        style="text-align: left; direction: ltr;"
-                                                    {% elif request.language == 'ar' %}
-                                                        placeholder="* مبلغ قارئه البطاقة :"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% endif %}>
-                                                </div>
-                                                
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+												</div>
+												<div class="col-12">
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+												</div>
 											</form>
 											<br>
 											<div class="row">
 												<div class="col-12">
-                                                    <button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>
-                                                        {% if request.language == 'fa' %}
-                                                            اعمال
-                                                        {% elif request.language == 'en' %}
-                                                            Apply
-                                                        {% elif request.language == 'ar' %}
-                                                            تطبيق
-                                                        {% endif %}
-                                                    </button>
-                                                </div>
-                                                <br>
-                                                <br>
-                                                <div class="col-12">
-                                                    <button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
-                                                        {% if request.language == 'fa' %}
-                                                            تلاش مجدد
-                                                        {% elif request.language == 'en' %}
-                                                            Retry
-                                                        {% elif request.language == 'ar' %}
-                                                            إعادة المحاولة
-                                                        {% endif %}
-                                                    </button>
-                                                </div>
-                                                
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+												</div>
+												<br>
+												<br>
+												<div class="col-12">
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+												</div>
+											</div>
 											<br>
 										</div>
 									</div>
@@ -415,13 +238,7 @@ Page content START -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
 										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
-											{% if request.language == 'fa' %}
-                                                دستگاه کارتخوان
-                                            {% elif request.language == 'en' %}
-                                                Card Reader
-                                            {% elif request.language == 'ar' %}
-                                                جهاز قراءة البطاقة
-                                            {% endif %}
+											دستگاه کارتخوان
 										</button>
 									</h6>
 									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
@@ -432,13 +249,7 @@ Page content START -->
 								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-cash">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											{% if request.language == 'fa' %}
-                                                نقدی
-                                            {% elif request.language == 'en' %}
-                                                Cash
-                                            {% elif request.language == 'ar' %}
-                                                نقداً
-                                            {% endif %}
+											نقدی
 										</button>
 									</h6>
 									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
@@ -449,68 +260,32 @@ Page content START -->
 								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-                                            {% if request.language == 'fa' %}
-                                                ترکیبی
-                                            {% elif request.language == 'en' %}
-                                                Combined
-                                            {% elif request.language == 'ar' %}
-                                                مدمج
-                                            {% endif %}
+											ترکیبی
 										</button>
 									</h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-                                                    <label class="form-label">
-                                                        <span class="text-danger2">
-                                                            {% if request.language == 'fa' %}
-                                                                * مقدار مبلغ نقدی (ریال)
-                                                            {% elif request.language == 'en' %}
-                                                                * Cash Amount (Rials)
-                                                            {% elif request.language == 'ar' %}
-                                                                * مقدار المبلغ النقدي (ريال)
-                                                            {% endif %}
-                                                        </span>
-                                                    </label>
-                                                    <input type="text" id="cash-amount" class="form-control"
-                                                        {% if request.language == 'fa' %}
-                                                            placeholder="مبلغ نقدی :"
-                                                            style="text-align: right; direction: rtl;"
-                                                        {% elif request.language == 'en' %}
-                                                            placeholder="Cash Amount :"
-                                                            style="text-align: left; direction: ltr;"
-                                                        {% elif request.language == 'ar' %}
-                                                            placeholder="مقدار المبلغ النقدي :"
-                                                            style="text-align: right; direction: rtl;"
-                                                        {% endif %}
-                                                    >
-                                                </div>
-                                                <div class="col-12">
-                                                    <label class="form-label">
-                                                        <span class="text-danger2">
-                                                            {% if request.language == 'fa' %}
-                                                                * مقدار مبلغ پرداخت با کارتخوان (ریال)
-                                                            {% elif request.language == 'en' %}
-                                                                * Card Payment Amount (Rials)
-                                                            {% elif request.language == 'ar' %}
-                                                                * مقدار المبلغ المدفوع بواسطة بطاقة (ريال)
-                                                            {% endif %}
-                                                        </span>
-                                                    </label>
-                                                    <input type="text" id="card-amount" class="form-control"
-                                                        {% if request.language == 'fa' %}
-                                                            placeholder="مبلغ کارتخوان :"
-                                                            style="text-align: right; direction: rtl;"
-                                                        {% elif request.language == 'en' %}
-                                                            placeholder="Card Payment Amount :"
-                                                            style="text-align: left; direction: ltr;"
-                                                        {% elif request.language == 'ar' %}
-                                                            placeholder="مقدار المبلغ المدفوع بواسطة بطاقة :"
-                                                            style="text-align: right; direction: rtl;"
-                                                        {% endif %}
-                                                    >
-                                                </div>                                                
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
+													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+												</div>
+												<div class="col-12">
+													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
+													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+												</div>
+											</form>
+											<br>
+											<div class="row">
+												<div class="col-12">
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+												</div>
+												<br>
+												<br>
+												<div class="col-12">
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+												</div>
+											</div>
 											<br>
 										</div>
 									</div>
@@ -529,91 +304,34 @@ Page content START -->
             <!-- Right sidebar START -->
             <div id="rightSidebar" class="col-lg-4" style="display: none;">
                 <!-- Card total START -->
-               <div class="card card-body p-4 shadow">
-                <h4 class="mb-3 fs-5 text-center">
-                {% if request.language == 'fa' %}
-                    صورت حساب
-                {% elif request.language == 'en' %}
-                    Invoice
-                {% elif request.language == 'ar' %}
-                    الفاتورة
-                {% endif %}
-    </h4>
-    <hr>
-    <ul class="list-group list-group-borderless mb-2">
-        <li class="list-group-item px-0 d-flex justify-content-between">
-            <span class="h6 fw-light mb-0">
-                {% if request.language == 'fa' %}
-                    قیمت
-                {% elif request.language == 'en' %}
-                    Price
-                {% elif request.language == 'ar' %}
-                    السعر
-                {% endif %}
-            </span>
-            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
-        </li>
-        <li class="list-group-item px-0 d-flex justify-content-between">
-            <span class="h6 fw-light mb-0">
-                {% if request.language == 'fa' %}
-                    مالیات (% 10)
-                {% elif request.language == 'en' %}
-                    Tax (%10)
-                {% elif request.language == 'ar' %}
-                    الضريبة (%10)
-                {% endif %}
-            </span>
-            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
-        </li>
-        <li class="list-group-item px-0 d-flex justify-content-between">
-            <span class="h6 fw-light mb-0">
-                {% if request.language == 'fa' %}
-                    تخفیف
-                {% elif request.language == 'en' %}
-                    Discount
-                {% elif request.language == 'ar' %}
-                    الخصم
-                {% endif %}
-            </span>
-            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
-        </li>
-        <br>
-        <li class="list-group-item px-0 d-flex justify-content-between">
-            <span class="h5 mb-0">
-                {% if request.language == 'fa' %}
-                    قیمت نهایی
-                {% elif request.language == 'en' %}
-                    Final Price
-                {% elif request.language == 'ar' %}
-                    السعر النهائي
-                {% endif %}
-            </span>
-            <span id="finalPrice" class="text-danger h5">0 ریال</span>
-        </li>
-    </ul>
-    <hr>
-    <div class="d-grid">
-        <a type="button" id="pay-button" class="btn btn-lg btn-success">
-            {% if request.language == 'fa' %}
-                پرداخت
-            {% elif request.language == 'en' %}
-                Pay
-            {% elif request.language == 'ar' %}
-                دفع
-            {% endif %}
-        </a>
-        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">
-            {% if request.language == 'fa' %}
-                لغو
-            {% elif request.language == 'en' %}
-                Cancel
-            {% elif request.language == 'ar' %}
-                إلغاء
-            {% endif %}
-        </a>
-    </div>
-</div>
-
+                <div class="card card-body p-4 shadow">
+                    <h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
+                    <hr>
+                    <ul class="list-group list-group-borderless mb-2">
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">قیمت</span>
+                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">مالیات (% 10)</span>
+                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h6 fw-light mb-0">تخفیف</span>
+                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        </li>
+                        <br>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="h5 mb-0">قیمت نهایی</span>
+                            <span id="finalPrice" class="text-danger h5">0 ریال</span>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="d-grid">
+                        <a type="button" id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
+                        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
+                    </div>
+                </div>
                 <!-- Card total END -->
             </div>
             <!-- Right sidebar END -->
@@ -653,25 +371,18 @@ Page content END -->
         })
         .then(response => response.json())
         .then(data => {
-            const lang = '{{ request.language }}';  // دریافت زبان از سرور
-            
             if (data.status === 'error') {
                 Swal.fire({
                     icon: 'error',
-                    title: lang === 'fa' ? 'خطا' : lang === 'en' ? 'Error' : 'خطأ',
+                    title: 'خطا',
                     text: data.message,
-                    confirmButtonText: lang === 'fa' ? 'باشه' : lang === 'en' ? 'OK' : 'موافق',
+                    confirmButtonText: 'باشه'
                 });
             } else {
                 const transaction = data.data;
                 const tbody = document.querySelector('tbody');
                 tbody.innerHTML = ''; 
-        
-                // پردازش اطلاعات تراکنش (مابقی کد که مربوط به نمایش اطلاعات تراکنش است)
-                // اینجا می‌توانید جزئیات تراکنش را بر اساس داده‌های دریافتی اضافه کنید.
-            }
-        })
-        
+    
                 transaction.products.forEach(product => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
