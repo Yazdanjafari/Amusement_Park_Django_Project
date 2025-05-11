@@ -70,8 +70,8 @@ Page Banner START -->
 <br><br>
 <section class="py-0">
 	<div class="container">
-		<div class="row">
-			<div class="col-12">
+		{% comment %} <div class="row">
+			{% comment %} <div class="col-12"> {% endcomment %}
 				<div class="bg-light p-4 text-center rounded-3">
 					<h1 class="m-0 fs-2">
 						{% if request.language == 'fa' %}
@@ -1418,6 +1418,9 @@ Page content START -->
 									الدفع
 								{% endif %}
 							</a>
+							<a id="search" class="btn btn-lg btn-success disabled">پرداخت</a>
+						{% else %}
+							<a id="search" class="btn btn-lg btn-success">پرداخت</a>
 						{% endif %}
 						<a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">
 							{% if request.language == 'fa' %}
@@ -1437,6 +1440,42 @@ Page content START -->
 		</div><!-- Row END -->
 	</div>
 </section>
+
+<input style="display:none;" type="text" placeholder="URL" value="http://127.0.0.1:8080/pcpos" id="pcpos_url" />
+<input style="display:none;" type="text" placeholder="Pr Code" value="000000" id="pr_code" />
+<input type="text" placeholder="Amount" value="1234" id="amount" />
+<input style="display:none;" type="text" placeholder="Currency" value="364" id="currency" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r_cardholder" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r3" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r5" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r7" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r9" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r_merchant" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r4" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r6" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r8" />
+<input style="display:none;" type="text" placeholder="Card Holder Title" id="t_cardholder" />
+<input style="display:none;" type="text" placeholder="Merchant Title" id="t_merchant" />
+<input style="display:none;" type="checkbox" id="chBox1" onclick="check1()" />
+<input style="display:none;" type="text" placeholder="WareHoff1" value="9430324404128" id="WareHoff1" />
+<input style="display:none;" type="text" placeholder="WareHoff2" value="40370492" id="WareHoff2" />
+<input style="display:none;" type="checkbox" id="chBox2" onclick="check2()" />
+<input style="display:none;" type="text" placeholder="Amount1" id="Amount1" />
+<input style="display:none;" type="text" placeholder="IBAN1" id="IBAN1" />
+<input style="display:none;" type="text" placeholder="ID1" id="ID1" />
+<input style="display:none;" type="text" placeholder="Amount2" id="Amount2" />
+<input style="display:none;" type="text" placeholder="IBAN2" id="IBAN2" />
+<input style="display:none;" type="text" placeholder="ID2" id="ID2" />
+<input style="display:none;" type="text" placeholder="Amount3" id="Amount3" />
+<input style="display:none;" type="text" placeholder="IBAN3" id="IBAN3" />
+<input style="display:none;" type="text" placeholder="ID3" id="ID3" />
+<input style="display:none;" type="text" placeholder="Amount4" id="Amount4" />
+<input style="display:none;" type="text" placeholder="IBAN4" id="IBAN4" />
+<input style="display:none;" type="text" placeholder="ID4" id="ID4" />
+<input style="display:none;" type="text" placeholder="Service" id="service" />
+<input style="display:none;" type="text" placeholder="Service Group" id="service_group" />
+<textarea style="display:none;" cols="40" rows="5" placeholder="Settelment" id="settelment"></textarea>
+<textarea style="display:none;" cols="40" rows="5" placeholder="Key Value" id="key_value"></textarea>
 <!-- =======================
 Page content END -->
 {% endblock body %}
@@ -1725,17 +1764,6 @@ Page content END -->
 	});	
 
 
-	// Function to update the final price
-	function updateFinalPrice() {
-		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // قیمت محصولات
-		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // مالیات
-		const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));  // تخفیف
-	
-		const finalPrice = totalPrice + taxAmount - discountAmount;
-	
-		document.getElementById('final-price').innerText = finalPrice.toLocaleString() + ' ریال';
-	}
-
 	document.addEventListener('DOMContentLoaded', function() {
 		fetchTotalPrice();
 		updateFinalPrice();  // Update final price on page load
@@ -1914,358 +1942,6 @@ Page content END -->
 			});
 		});
 	});
-
-
-
-	document.addEventListener('DOMContentLoaded', function() {
-		const cashInput = document.getElementById('cash-amount');
-		const cardInput = document.getElementById('card-amount');
-		const applyButton = document.getElementById('apply-button');
-		const resetButton = document.getElementById('reset-button');
-		const finalPriceElement = document.getElementById('final-price');
-		const payButton = document.getElementById('pay-button');
-	
-		function updateFinalPrice() {
-			const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
-			const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
-			const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));
-			const finalPrice = totalPrice + taxAmount - discountAmount;
-			finalPriceElement.innerText = finalPrice.toLocaleString() + ' ریال';
-			return finalPrice;
-		}
-	
-		function resetCombinedFields() {
-			cashInput.value = '';
-			cardInput.value = '';
-			cashInput.disabled = false;
-			cardInput.disabled = false;
-			applyButton.disabled = true;
-			resetButton.disabled = true;
-		}
-	
-		function validateInput(input, finalPrice) {
-			const value = parseFloat(input.value.replace(/,/g, '')) || 0;
-			if (value > finalPrice) {
-				Swal.fire({
-					title: 'خطا',
-					text: 'مقدار وارد شده نمی‌تواند بیشتر از قیمت نهایی باشد.',
-					icon: 'error',
-					confirmButtonText: 'باشه'
-				});
-				input.value = '';
-				applyButton.disabled = true;
-				return false;
-			}
-			return true;
-		}
-	
-		function disableOtherInput(currentInput, otherInput, finalPrice) {
-			if (currentInput.value.trim() !== '') {
-				if (validateInput(currentInput, finalPrice)) {
-					otherInput.disabled = true;
-					applyButton.disabled = false;
-				}
-			} else {
-				otherInput.disabled = false;
-				applyButton.disabled = true;
-			}
-		}
-	
-		cashInput.addEventListener('input', function() {
-			const finalPrice = updateFinalPrice();
-			disableOtherInput(cashInput, cardInput, finalPrice);
-		});
-	
-		cardInput.addEventListener('input', function() {
-			const finalPrice = updateFinalPrice();
-			disableOtherInput(cardInput, cashInput, finalPrice);
-		});
-	
-		applyButton.addEventListener('click', function() {
-			const finalPrice = updateFinalPrice();
-			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
-			const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
-	
-			if (cashAmount > 0) {
-				if (cashAmount > finalPrice) {
-					Swal.fire({
-						title: 'خطا',
-						text: 'مقدار نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-					return;
-				}
-				cardInput.value = (finalPrice - cashAmount).toLocaleString();
-			} else if (cardAmount > 0) {
-				if (cardAmount > finalPrice) {
-					Swal.fire({
-						title: 'خطا',
-						text: 'مقدار کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-					return;
-				}
-				cashInput.value = (finalPrice - cardAmount).toLocaleString();
-			}
-	
-			cashInput.disabled = true;
-			cardInput.disabled = true;
-	
-			applyButton.disabled = true;
-			resetButton.disabled = false;
-		});
-	
-		resetButton.addEventListener('click', function() {
-			resetCombinedFields();
-		});
-	
-		const cardReaderIP = localStorage.getItem('cardReaderIP') || '192.168.1.100';
-		const cardReaderPort = localStorage.getItem('cardReaderPort') || '8000';
-	
-		function getTransactionType() {
-			const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
-			const isCashOpen = document.getElementById('collapse-cash').classList.contains('show');
-			const isCombinedOpen = document.getElementById('collapse-combined').classList.contains('show');
-	
-			if (isCardReaderOpen) {
-				return 'pc'; 
-			} else if (isCashOpen) {
-				return 'cash'; 
-			} else if (isCombinedOpen) {
-				return 'mix';
-			} else {
-				return 'pc'; 
-			}
-		}
-	
-		payButton.addEventListener('click', function (e) {
-			e.preventDefault();
-	
-			const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
-			const cardAmountInput = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
-	
-			const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
-			const isCashPayment = document.getElementById('collapse-cash').classList.contains('show');
-			const transactionType = getTransactionType();
-			const finalPrice = updateFinalPrice();
-	
-			let cardPaymentAmount = 0;
-			if (transactionType === 'pc') {
-				cardPaymentAmount = finalPrice;
-			} else if (transactionType === 'mix') {
-				cardPaymentAmount = cardAmountInput;
-			}
-	
-			if (isCombinedPayment) {
-				if (cashAmount === 0 && cardAmountInput === 0) {
-					Swal.fire({
-						title: 'خطا',
-						text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-					return;
-				} else if (cashInput.disabled === false || cardInput.disabled === false) {
-					Swal.fire({
-						title: 'خطا',
-						text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
-						icon: 'error',
-						confirmButtonText: 'باشه'
-					});
-					return;
-				}
-			}
-	
-			if (isCashPayment) {
-				Swal.fire({
-					title: 'تأیید فروش نقدی',
-					text: 'آیا مطمئن هستید که این خرید کاملاً نقدی است؟',
-					icon: 'question',
-					showCancelButton: true,
-					confirmButtonText: 'بله',
-					cancelButtonText: 'خیر'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						proceedWithPayment();
-					}
-				});
-			} else {
-				proceedWithPayment();
-			}
-	
-			function proceedWithPayment() {
-
-				if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
-					Swal.fire({
-						title: 'پرداخت از طریق دستگاه کارتخوان...',
-						allowOutsideClick: false,
-						didOpen: () => { Swal.showLoading(); }
-					});
-	
-					const formData = new URLSearchParams();
-					formData.append('payment', cardPaymentAmount);
-					formData.append('ip', cardReaderIP);
-					formData.append('port', cardReaderPort);
-	
-					fetch('{% url "Amusement_Park:test_payment" %}', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-							'X-CSRFToken': '{{ csrf_token }}'
-						},
-						body: formData
-					})
-					.then(response => response.json())
-					.then(cardResponse => {
-						if (cardResponse.status === 'success') {
-							Swal.fire({
-								icon: 'success',
-								title: 'پرداخت کارتخوان موفق',
-								text: cardResponse.message,
-								timer: 1500,
-								showConfirmButton: false
-							}).then(() => {
-								submitPayment();
-							});
-						} else {
-							Swal.fire({
-								icon: 'error',
-								title: 'خطا در پرداخت کارتخوان',
-								text: cardResponse.message,
-								confirmButtonText: 'باشه'
-							});
-						}
-					})
-					.catch(error => {
-						console.error('Error in card payment:', error);
-						Swal.fire({
-							icon: 'error',
-							title: 'خطا در ارتباط با دستگاه کارتخوان',
-							text: 'خطا در ارتباط با دستگاه کارتخوان.',
-							confirmButtonText: 'باشه'
-						});
-					});
-				} else {
-					submitPayment();
-				}
-			}
-	
-			function submitPayment() {
-				const phone = document.getElementById('phoneInput').value;
-				const firstName = document.getElementById('firstName').value;
-				const lastName = document.getElementById('lastName').value;
-				const birthYear = document.getElementById('birthYear').value;
-				const birthMonth = document.getElementById('birthMonth').value;
-				const birthDay = document.getElementById('birthDay').value;
-	
-				const customerData = phone ? {
-					phone: phone,
-					firstName: firstName || null,
-					lastName: lastName || null,
-					birthYear: birthYear || null,
-					birthMonth: birthMonth || null,
-					birthDay: birthDay || null,
-				} : null;
-	
-				const cartItems = [];
-				document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
-					const productId = item.getAttribute('data-ticket-product-id');
-					const quantity = item.querySelector('.counter').innerText;
-					cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
-				});
-	
-				const transactionData = {
-					type: getTransactionType(), 
-					discount_code: document.getElementById('discount-code').value || null, 
-					discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
-					mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
-					mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
-				};
-	
-				Swal.fire({
-					title: 'در حال ثبت تراکنش...',
-					allowOutsideClick: false,
-					didOpen: () => { Swal.showLoading(); }
-				});
-	
-				fetch('{% url "Amusement_Park:submit_pay" %}', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-CSRFToken': '{{ csrf_token }}'
-					},
-					body: JSON.stringify({
-						customer_data: customerData,
-						cart_items: cartItems,
-						transaction_data: transactionData,
-					}),
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('خطا در ارتباط با سرور.');
-					}
-					return response.json();
-				})
-				.then(data => {
-					if (data.success) {
-						Swal.fire({
-							icon: 'success',
-							title: 'موفقیت‌آمیز',
-							text: 'پرداخت با موفقیت انجام شد.',
-							confirmButtonText: 'باشه'
-						}).then((result) => {
-							if (result.isConfirmed) {
-								window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
-							}
-						});
-					} else {
-						Swal.fire({
-							icon: 'error',
-							title: 'خطا در پرداخت',
-							text: 'خطا در پرداخت: ' + data.message,
-							confirmButtonText: 'باشه'
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					Swal.fire({
-						icon: 'error',
-						title: 'خطا در ارتباط با سرور',
-						text: 'خطا در ارتباط با سرور.',
-						confirmButtonText: 'باشه'
-					});
-				});
-			}
-		});
-	
-
-		document.querySelectorAll('.discount-input').forEach(input => {
-			input.addEventListener('input', function() {
-				resetCombinedFields();
-			});
-		});
-	
-		document.querySelectorAll('#btn-code, #btn-amount, #btn-percent').forEach(button => {
-			button.addEventListener('click', function() {
-				resetCombinedFields();
-			});
-		});
-	
-		const observer = new MutationObserver(function(mutations) {
-			mutations.forEach(function(mutation) {
-				if (mutation.attributeName === 'innerText' && mutation.target.id === 'final-price') {
-					resetCombinedFields();
-				}
-			});
-		});
-	
-		observer.observe(finalPriceElement, {
-			attributes: true
-		});
-	});
 	
 	
 	function getTransactionType() {
@@ -2311,10 +1987,581 @@ Page content END -->
 	});
 
 
+{% comment %} PcPos JS Setting Start {% endcomment %}
+function check1() {
+	var checkBox1 = document.getElementById("chBox1");
+		var checkBox2 = document.getElementById("chBox2");
+		if (checkBox1.checked == true){
+			checkBox2.checked = false;
+		}
+	}
+	
+	function check2() {
+		var checkBox1 = document.getElementById("chBox1");
+		var checkBox2 = document.getElementById("chBox2");
+		if (checkBox2.checked == true){
+			checkBox1.checked = false;
+		}
+	}
+	
+	var doPCPOS = function(){
+		
+		var req_params = new Object();
+		req_params.PR = $('#pr_code').val();
+		req_params.AM = $('#amount').val();
+		req_params.CU = $('#currency').val();
+		if (($('#r_cardholder').val().length > 0)) { req_params.R1 = $('#r_cardholder').val(); }
+		if (($('#r3').val().length > 0)) { req_params.R3 = $('#r3').val(); }
+		if (($('#r5').val().length > 0)) { req_params.R5 = $('#r5').val(); }
+		if (($('#r7').val().length > 0)) { req_params.R7 = $('#r7').val(); }
+		if (($('#r9').val().length > 0)) { req_params.R9 = $('#r9').val(); }
+		
+		if (($('#r4').val().length > 0)) { req_params.R4 = $('#r4').val(); }
+		if (($('#r6').val().length > 0)) { req_params.R6 = $('#r6').val(); }
+		if (($('#r8').val().length > 0)) { req_params.R8 = $('#r8').val(); }
+		
+		if (($('#r_merchant').val().length > 0))   { req_params.R2 = $('#r_merchant').val();   }
+		if (($('#t_cardholder').val().length > 0)) { req_params.T1 = $('#t_cardholder').val(); }
+		if (($('#t_merchant').val().length > 0))   { req_params.T2 = $('#t_merchant').val();   }
+		var checkBox1 = document.getElementById("chBox1");
+		if (checkBox1.checked == true){
+			if (($('#WareHoff1').val().length > 0)  && ($('#WareHoff2').val().length > 0)){
+				req_params.SV = $('#WareHoff1').val();
+				req_params.SG = $('#WareHoff2').val();
+			}
+		}
+		else{
+			var checkBox2 = document.getElementById("chBox2");
+			if (checkBox2.checked == true){
+				if (($('#Amount1').val().length > 0) && ($('#IBAN1').val().length > 0) && ($('#ID1').val().length > 0)){
+					req_params.A1 = $('#Amount1').val();
+					req_params.D1 = $('#ID1').val();
+					req_params.I1 = $('#IBAN1').val();
+				}
+				if (($('#Amount2').val().length > 0)  
+				&& ($('#IBAN2').val().length > 0) 
+				&& ($('#ID2').val().length > 0)){
+					req_params.A2 = $('#Amount2').val();
+					req_params.D2 = $('#ID2').val();
+					req_params.I2 = $('#IBAN2').val();
+				}
+				if (($('#Amount3').val().length > 0)  
+				&& ($('#IBAN3').val().length > 0) 
+				&& ($('#ID3').val().length > 0)){
+					req_params.A3 = $('#Amount3').val();
+					req_params.D3 = $('#ID3').val();
+					req_params.I3 = $('#IBAN3').val();
+				}
+				if (($('#Amount4').val().length > 0)  
+				&& ($('#IBAN4').val().length > 0) 
+				&& ($('#ID4').val().length > 0)){
+					req_params.A4 = $('#Amount4').val();
+					req_params.D4 = $('#ID4').val();
+					req_params.I4 = $('#IBAN4').val();
+				}
+			}
+		}
+		req_params.AD = "";
+		req_params.PD = "1";
+		req_params.ST = $('#settelment').val().split(",");
+		req_params.AV = $('#key_value').val().split(",");
+		
+		
+		$('#result').empty();
+		$.ajax({
+			type: "POST",
+			url: $('#pcpos_url').val(),				
+			data: JSON.stringify(req_params),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			timeout:120*1000,
+			success: doSuccess,
+			failure: function(errMsg) {
+				alert(errMsg);
+			}
+		});
+		
+	}
+	
+	var doSuccess = function(data){
+		$('#result').empty();
+		$('#result').append(JSON.stringify(data,null, "\t"));
+	}
+	
+	$('#search').click(doPCPOS);
+{% comment %} PcPos JS Setting Finish {% endcomment %}
+
+{% comment %} PcPos _ move number to hidden input Start {% endcomment %}
+function updateFinalPrice() {
+			const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
+			const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
+			const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));
+			
+			const finalPrice = totalPrice + taxAmount - discountAmount;
+			
+			const finalPriceElement = document.getElementById('final-price');
+			finalPriceElement.innerText = finalPrice.toLocaleString() + ' ریال';
+			
+			// Set this final price to the hidden input with id="amount"
+			const hiddenAmountInput = document.getElementById('amount');
+			if (hiddenAmountInput) {
+				hiddenAmountInput.value = finalPrice;
+			}
+			
+			return finalPrice;
+		}
+{% comment %} PcPos _ move number to hidden input Finish {% endcomment %}
+
+{% comment %} PcPos _ move number correctly to hidden input Start {% endcomment %}
+document.addEventListener('DOMContentLoaded', function() {
+	const amountInput       = document.getElementById('amount');
+	const cashInput         = document.getElementById('cash-amount');
+	const cardInput         = document.getElementById('card-amount');
+	const applyButton       = document.getElementById('apply-button');
+	const resetButton       = document.getElementById('reset-button');
+	const collapseCard      = document.getElementById('collapse-card-reader');
+	const collapseCombined  = document.getElementById('collapse-combined');
+	const collapseCash      = document.getElementById('collapse-cash');
+	
+	collapseCard.addEventListener('shown.bs.collapse', () => {
+		const final = updateFinalPrice();
+		amountInput.value = final;
+	});
+	
+			collapseCombined.addEventListener('shown.bs.collapse', () => {
+				// reset inputs & buttons
+				cashInput.value = '';
+				cardInput.value = '';
+				applyButton.disabled = true;
+				resetButton.disabled = true;
+				amountInput.value = 0;
+			});
+			
+			collapseCash.addEventListener('shown.bs.collapse', () => {
+				amountInput.value = 0;
+			});
+			
+			// live‐sync in mix if they type in card‐amount
+			cardInput.addEventListener('input', () => {
+				if (collapseCombined.classList.contains('show')) {
+					const cardVal = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+				amountInput.value = cardVal;
+				// enable apply if either field has a valid number
+				applyButton.disabled = (cardVal === 0 && (parseFloat(cashInput.value.replace(/,/g,'')) || 0) === 0);
+			}
+		});
+		
+		cashInput.addEventListener('input', () => {
+			if (collapseCombined.classList.contains('show')) {
+				// enable apply when they start typing
+				const cashVal = parseFloat(cashInput.value.replace(/,/g,'')) || 0;
+				applyButton.disabled = (cashVal === 0 && (parseFloat(cardInput.value.replace(/,/g,'')) || 0) === 0);
+			  }
+			});
+		  
+			// 4) on Apply in mix, always compute and mirror the CARD side:
+			applyButton.addEventListener('click', function() {
+			  const finalPrice  = updateFinalPrice();
+			  const cashAmount  = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
+			  const cardAmount  = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+		  
+			  if (cashAmount > 0) {
+				if (cashAmount > finalPrice) {
+				  Swal.fire({ title:'خطا', text:'مقدار نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.', icon:'error', confirmButtonText:'باشه' });
+				  return;
+				}
+				cardInput.value = (finalPrice - cashAmount).toLocaleString();
+			}
+			else if (cardAmount > 0) {
+				if (cardAmount > finalPrice) {
+					Swal.fire({ title:'خطا', text:'مقدار کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.', icon:'error', confirmButtonText:'باشه' });
+				  return;
+				}
+				cashInput.value = (finalPrice - cardAmount).toLocaleString();
+			}
+			
+			// ← here’s the key: always mirror the computed CARD amount
+			const newCardVal = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+			amountInput.value = newCardVal;
+			
+			// disable inputs/buttons
+			cashInput.disabled   = true;
+			cardInput.disabled   = true;
+			applyButton.disabled = true;
+			resetButton.disabled = false;
+			});
+			
+			// 5) Reset button returns everything to start
+			resetButton.addEventListener('click', function() {
+				cashInput.disabled = false;
+				cardInput.disabled = false;
+				cashInput.value    = '';
+			  cardInput.value    = '';
+			  amountInput.value  = 0;
+			  applyButton.disabled = true;
+			  resetButton.disabled = true;
+			});
+		});
+{% comment %} PcPos _ move number correctly to hidden input Finish {% endcomment %}
+
+{% comment %} PcPos _ For save the bill correctly  {% endcomment %}
+document.addEventListener('DOMContentLoaded', function() {
+	const cashInput = document.getElementById('cash-amount');
+	const cardInput = document.getElementById('card-amount');
+	const applyButton = document.getElementById('apply-button');
+	const resetButton = document.getElementById('reset-button');
+	const finalPriceElement = document.getElementById('final-price');
+	const payButton = document.getElementById('search');
+
+	function updateFinalPrice() {
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
+		const discountAmount = parseFloat(document.getElementById('discount-display').innerText.replace(/,/g, ''));
+		const finalPrice = totalPrice + taxAmount - discountAmount;
+		finalPriceElement.innerText = finalPrice.toLocaleString() + ' ریال';
+		return finalPrice;
+	}
+
+	function resetCombinedFields() {
+		cashInput.value = '';
+		cardInput.value = '';
+		cashInput.disabled = false;
+		cardInput.disabled = false;
+		applyButton.disabled = true;
+		resetButton.disabled = true;
+	}
+
+	function validateInput(input, finalPrice) {
+		const value = parseFloat(input.value.replace(/,/g, '')) || 0;
+		if (value > finalPrice) {
+			Swal.fire({
+				title: 'خطا',
+				text: 'مقدار وارد شده نمی‌تواند بیشتر از قیمت نهایی باشد.',
+				icon: 'error',
+				confirmButtonText: 'باشه'
+			});
+			input.value = '';
+			applyButton.disabled = true;
+			return false;
+		}
+		return true;
+	}
+
+	function disableOtherInput(currentInput, otherInput, finalPrice) {
+		if (currentInput.value.trim() !== '') {
+			if (validateInput(currentInput, finalPrice)) {
+				otherInput.disabled = true;
+				applyButton.disabled = false;
+			}
+		} else {
+			otherInput.disabled = false;
+			applyButton.disabled = true;
+		}
+	}
+
+	cashInput.addEventListener('input', function() {
+		const finalPrice = updateFinalPrice();
+		disableOtherInput(cashInput, cardInput, finalPrice);
+	});
+
+	cardInput.addEventListener('input', function() {
+		const finalPrice = updateFinalPrice();
+		disableOtherInput(cardInput, cashInput, finalPrice);
+	});
+
+	applyButton.addEventListener('click', function() {
+		const finalPrice = updateFinalPrice();
+		const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
+		const cardAmount = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+
+		if (cashAmount > 0) {
+			if (cashAmount > finalPrice) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'مقدار نقدی نمی‌تواند بیشتر از قیمت نهایی باشد.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				return;
+			}
+			cardInput.value = (finalPrice - cashAmount).toLocaleString();
+		} else if (cardAmount > 0) {
+			if (cardAmount > finalPrice) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'مقدار کارتخوان نمی‌تواند بیشتر از قیمت نهایی باشد.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				return;
+			}
+			cashInput.value = (finalPrice - cardAmount).toLocaleString();
+		}
+
+		cashInput.disabled = true;
+		cardInput.disabled = true;
+
+		applyButton.disabled = true;
+		resetButton.disabled = false;
+	});
+
+	resetButton.addEventListener('click', function() {
+		resetCombinedFields();
+	});
+
+	const cardReaderIP = localStorage.getItem('cardReaderIP') || '192.168.1.100';
+	const cardReaderPort = localStorage.getItem('cardReaderPort') || '8000';
+
+	function getTransactionType() {
+		const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
+		const isCashOpen = document.getElementById('collapse-cash').classList.contains('show');
+		const isCombinedOpen = document.getElementById('collapse-combined').classList.contains('show');
+
+		if (isCardReaderOpen) {
+			return 'pc'; 
+		} else if (isCashOpen) {
+			return 'cash'; 
+		} else if (isCombinedOpen) {
+			return 'mix';
+		} else {
+			return 'pc'; 
+		}
+	}
+
+	payButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		const cashAmount = parseFloat(cashInput.value.replace(/,/g, '')) || 0;
+		const cardAmountInput = parseFloat(cardInput.value.replace(/,/g, '')) || 0;
+
+		const isCombinedPayment = document.getElementById('collapse-combined').classList.contains('show');
+		const isCashPayment = document.getElementById('collapse-cash').classList.contains('show');
+		const transactionType = getTransactionType();
+		const finalPrice = updateFinalPrice();
+
+		let cardPaymentAmount = 0;
+		if (transactionType === 'pc') {
+			cardPaymentAmount = finalPrice;
+		} else if (transactionType === 'mix') {
+			cardPaymentAmount = cardAmountInput;
+		}
+
+		if (isCombinedPayment) {
+			if (cashAmount === 0 && cardAmountInput === 0) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				return;
+			} else if (cashInput.disabled === false || cardInput.disabled === false) {
+				Swal.fire({
+					title: 'خطا',
+					text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
+					icon: 'error',
+					confirmButtonText: 'باشه'
+				});
+				return;
+			}
+		}
+
+		if (isCashPayment) {
+			Swal.fire({
+				title: 'تأیید فروش نقدی',
+				text: 'آیا مطمئن هستید که این خرید کاملاً نقدی است؟',
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonText: 'بله',
+				cancelButtonText: 'خیر'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					proceedWithPayment();
+				}
+			});
+		} else {
+			proceedWithPayment();
+		}
+
+		function proceedWithPayment() {
+
+			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+				Swal.fire({
+					title: 'پرداخت از طریق دستگاه کارتخوان...',
+					allowOutsideClick: false,
+					didOpen: () => { Swal.showLoading(); }
+				});
+
+				const formData = new URLSearchParams();
+				formData.append('payment', cardPaymentAmount);
+				formData.append('ip', cardReaderIP);
+				formData.append('port', cardReaderPort);
+
+				fetch('{% url "Amusement_Park:test_payment" %}', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'X-CSRFToken': '{{ csrf_token }}'
+					},
+					body: formData
+				})
+				.then(response => response.json())
+				.then(cardResponse => {
+					if (cardResponse.status === 'success') {
+						Swal.fire({
+							icon: 'success',
+							title: 'پرداخت کارتخوان موفق',
+							text: cardResponse.message,
+							timer: 1500,
+							showConfirmButton: false
+						}).then(() => {
+							submitPayment();
+						});
+					} else {
+						Swal.fire({
+							icon: 'error',
+							title: 'خطا در پرداخت کارتخوان',
+							text: cardResponse.message,
+							confirmButtonText: 'باشه'
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error in card payment:', error);
+					Swal.fire({
+						icon: 'error',
+						title: 'خطا در ارتباط با دستگاه کارتخوان',
+						text: 'خطا در ارتباط با دستگاه کارتخوان.',
+						confirmButtonText: 'باشه'
+					});
+				});
+			} else {
+				submitPayment();
+			}
+		}
+
+		function submitPayment() {
+			const phone = document.getElementById('phoneInput').value;
+			const firstName = document.getElementById('firstName').value;
+			const lastName = document.getElementById('lastName').value;
+			const birthYear = document.getElementById('birthYear').value;
+			const birthMonth = document.getElementById('birthMonth').value;
+			const birthDay = document.getElementById('birthDay').value;
+
+			const customerData = phone ? {
+				phone: phone,
+				firstName: firstName || null,
+				lastName: lastName || null,
+				birthYear: birthYear || null,
+				birthMonth: birthMonth || null,
+				birthDay: birthDay || null,
+			} : null;
+
+			const cartItems = [];
+			document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
+				const productId = item.getAttribute('data-ticket-product-id');
+				const quantity = item.querySelector('.counter').innerText;
+				cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
+			});
+
+			const transactionData = {
+				type: getTransactionType(), 
+				discount_code: document.getElementById('discount-code').value || null, 
+				discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
+				mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
+				mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
+			};
+
+			Swal.fire({
+				title: 'در حال ثبت تراکنش...',
+				allowOutsideClick: false,
+				didOpen: () => { Swal.showLoading(); }
+			});
+
+			fetch('{% url "Amusement_Park:submit_pay" %}', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': '{{ csrf_token }}'
+				},
+				body: JSON.stringify({
+					customer_data: customerData,
+					cart_items: cartItems,
+					transaction_data: transactionData,
+				}),
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('خطا در ارتباط با سرور.');
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (data.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'موفقیت‌آمیز',
+						text: 'پرداخت با موفقیت انجام شد.',
+						confirmButtonText: 'باشه'
+					}).then((result) => {
+						if (result.isConfirmed) {
+							window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
+						}
+					});
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: 'خطا در پرداخت',
+						text: 'خطا در پرداخت: ' + data.message,
+						confirmButtonText: 'باشه'
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				Swal.fire({
+					icon: 'error',
+					title: 'خطا در ارتباط با سرور',
+					text: 'خطا در ارتباط با سرور.',
+					confirmButtonText: 'باشه'
+				});
+			});
+		}
+	});
+
+
+	document.querySelectorAll('.discount-input').forEach(input => {
+		input.addEventListener('input', function() {
+			resetCombinedFields();
+		});
+	});
+
+	document.querySelectorAll('#btn-code, #btn-amount, #btn-percent').forEach(button => {
+		button.addEventListener('click', function() {
+			resetCombinedFields();
+		});
+	});
+
+	const observer = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.attributeName === 'innerText' && mutation.target.id === 'final-price') {
+				resetCombinedFields();
+			}
+		});
+	});
+
+	observer.observe(finalPriceElement, {
+		attributes: true
+	});
+});
 
 
 
-</script>
-{% endblock script %}
+{% comment %} PcPos _ For save the bill correctly  {% endcomment %}
 
 
+	</script>
+	{% endblock script %}
+	
+	
+	
