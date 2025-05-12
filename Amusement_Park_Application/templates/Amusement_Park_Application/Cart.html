@@ -1340,7 +1340,8 @@ Page content START -->
 									ضريبة
 								{% endif %}
 
-								(%{{ get_TaxRate.rate|floatformat:0 }})</span>
+								(%{{ get_TaxRate.rate|floatformat:0 }})
+							</span>
 							<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">
 								{% if request.language == 'fa' %}
 									0 ریال
@@ -2002,6 +2003,13 @@ function check1() {
 	}
 	
 	var doPCPOS = function(){
+
+		const amountValue = parseFloat($('#amount').val().replace(/,/g, '')) || 0;
+		const isCashSale = document.getElementById('collapse-cash').classList.contains('show');
+		
+		if (amountValue <= 0 || isCashSale) {
+			return;
+		}		
 		
 		var req_params = new Object();
 		req_params.PR = $('#pr_code').val();
@@ -2201,7 +2209,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 {% comment %} PcPos _ move number correctly to hidden input Finish {% endcomment %}
 
-{% comment %} PcPos _ For save the bill correctly  {% endcomment %}
+{% comment %} PcPos _ For save the bill correctly Start  {% endcomment %}
 document.addEventListener('DOMContentLoaded', function() {
 	const cashInput = document.getElementById('cash-amount');
 	const cardInput = document.getElementById('card-amount');
@@ -2554,7 +2562,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-{% comment %} PcPos _ For save the bill correctly  {% endcomment %}
+{% comment %} PcPos _ For save the bill correctly Finish {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	</script>
