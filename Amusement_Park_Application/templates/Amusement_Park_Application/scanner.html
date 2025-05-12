@@ -96,14 +96,7 @@
     <h1>QR-Code Scanner</h1>
     
     <select id="product-select">
-                    {% if request.language == 'fa' %}
-                    <option value="">-- انتخاب محصول --</option>
-                    {% elif request.language == 'en' %}
-                    <option value=""> -- Select Product --</option>
-                    {% elif request.language == 'ar' %}
-                    <option value="">-- اختر المنتج --</option>                 
-                    {% endif %} 
-        
+        <option value="">-- انتخاب محصول --</option>
         {% for product in products %}
             <option value="{{ product.id }}">{{ product.title }}</option>
         {% endfor %}
@@ -179,16 +172,8 @@
                             if (!selectedProduct) {
                                 Swal.fire({
                                     icon: 'warning',
-                                    {% if request.language == 'fa' %}
-                                        title: 'توجه',
-                                        text:'لطفاً ابتدا یک محصول را انتخاب کنید.',
-                                    {% elif request.language == 'en' %}
-                                        title: 'Attention',
-                                        text: 'Please select a product first.',
-                                    {% elif request.language == 'ar' %}
-                                        title: 'تنبيه',
-                                        text: ' يرجى اختيار منتج أولاً.',                     
-                                    {% endif %}   
+                                    title: 'توجه',
+                                    text: 'لطفاً ابتدا یک محصول را انتخاب کنید.'
                                 });
                                 return;
                             }
@@ -210,106 +195,43 @@
                             .then(data => {
                                 Swal.fire({
                                     icon: 'status',
-                                    {% if request.language == 'fa' %}
-                                        title: 'بارکد خوانده شد',
-                                        text: data.message,
-                                    {% elif request.language == 'en' %}
-                                        title: ' Barcode scanned',
-                                        text: data.message,
-                                    {% elif request.language == 'ar' %}
-                                        title: 'تم مسح الباركود',
-                                        text: data.message,                     
-                                    {% endif %}  
+                                    title: 'بارکد خوانده شد',
+                                    text: data.message
                                 });
                             })
                             .catch(error => {
                                 Swal.fire({
-                                icon: 'error',
-                                {% if request.language == 'fa' %}
+                                    icon: 'error',
                                     title: 'خطا',
-                                    text:'خطا در ارسال درخواست.',
-                                {% elif request.language == 'en' %}
-                                    title: 'Error',
-                                    text: 'Error sending request.',
-                                {% elif request.language == 'ar' %}
-                                    title: 'خطأ',
-                                    text: ' حدث خطأ أثناء إرسال الطلب.',                     
-                                {% endif %}   
-                            });
+                                    text: 'خطا در ارسال درخواست.'
                                 });
-                                
-                            {% if request.language == 'fa' %}
-                                console.error('خطا در ارسال درخواست:', err);
-                            {% elif request.language == 'en' %}
-                                console.error('Error sending request.', err);
-                            {% elif request.language == 'ar' %}
-                                console.error(' حدث خطأ أثناء إرسال الطلب.', err);                   
-                            {% endif %}   
+                                console.error('خطا در ارسال درخواست:', error);
                             });
                         },
                         (errorMessage) => {
-                            {% if request.language == 'fa' %}
-                                console.log(`خطا در اسکن: ${errorMessage}`);
-                            {% elif request.language == 'en' %}
-                                console.error('Scan error:', ${errorMessage});
-                            {% elif request.language == 'ar' %}
-                                console.error(' خطأ في المسح:', ${errorMessage});                   
-                            {% endif %} 
-                           
+                            console.log(`خطا در اسکن: ${errorMessage}`);
                         }
                     ).catch(err => {
                         Swal.fire({
                             icon: 'error',
-                            {% if request.language == 'fa' %}
-                                title: 'خطا',
-                                text:'خطا در شروع اسکنر.',
-                            {% elif request.language == 'en' %}
-                                title: 'Error',
-                                text: 'Error starting scanner',
-                            {% elif request.language == 'ar' %}
-                                title: 'خطأ',
-                                text: 'خطأ في بدء الماسح',                     
-                            {% endif %} 
+                            title: 'خطا',
+                            text: 'خطا در شروع اسکنر.'
                         });
-                        
-                        {% if request.language == 'fa' %}
-                            console.error("خطا در شروع اسکنر:", error);
-                        {% elif request.language == 'en' %}
-                            console.error('Error starting scanner', error);
-                        {% elif request.language == 'ar' %}
-                            console.error('خطأ في بدء الماسح', error);                   
-                        {% endif %}   
+                        console.error("خطا در شروع اسکنر:", err);
                     });
         
                 } else {
                     Swal.fire({
-                        icon:'error',
-                    {% if request.language == 'fa' %}
-                        title:'خطا',
-                        text:'هیچ دوربینی پیدا نشد. لطفاً دسترسی به دوربین را بررسی کنید.',
-                    {% elif request.language == 'en' %}
-                        title: 'Error',
-                        text:' No camera found. Please check your camera access.',
-                    {% elif request.language == 'ar' %}
-                        title:'خطأ',
-                        text:'لم يتم العثور على كاميرا. يرجى التحقق من وصول الكاميرا.',                     
-                    {% endif %} 
-                });
-                    };
+                        icon: 'error',
+                        title: 'خطا',
+                        text: 'هیچ دوربینی پیدا نشد. لطفاً دسترسی به دوربین را بررسی کنید.'
+                    });
                 }
             }).catch(err => {
                 Swal.fire({
                     icon: 'error',
-                    {% if request.language == 'fa' %}
-                        title:'خطا',
-                        text:'مشکلی در دسترسی به دوربین وجود دارد.',
-                    {% elif request.language == 'en' %}
-                        title: 'Error',
-                        text:'There is a problem with camera access.',
-                    {% elif request.language == 'ar' %}
-                        title:'خطأ',
-                        text:'هناك مشكلة في الوصول إلى الكاميرا.',                     
-                    {% endif %} 
+                    title: 'خطا',
+                    text: 'مشکلی در دسترسی به دوربین وجود دارد.'
                 });
                 console.error("خطا در دسترسی به دوربین:", err);
             });
@@ -322,29 +244,13 @@
     </script>
 
     <div class="logout-container">
-        <a href="{% url 'Authenticate:Logout' %}"> 
-
-            {% if request.language == 'fa' %}
-                <button class="logout-btn">خروج</button>
-            {% elif request.language == 'en' %}
-                <button class="logout-btn">Logout</button>
-            {% elif request.language == 'ar' %}
-                <button class="logout-btn">تسجيل الخروج</button>                    
-            {% endif %} 
-
+        <a href="{% url 'Authenticate:Logout' %}">
+            <button class="logout-btn">خروج</button>
         </a>
         <br>
         <br>
         <a href="{% url 'Amusement_Park:Products' %}">
-    
-            {% if request.language == 'fa' %}
-                <button class="logout-btn">صفحه اصلی</button>
-            {% elif request.language == 'en' %}
-                <button class="logout-btn">Home Page</button>
-            {% elif request.language == 'ar' %}
-                <button class="logout-btn">الصفحة الرئيسية</button>                    
-            {% endif %} 
-
+            <button class="logout-btn">صفحه اصلی</button>
         </a>
     </div>
     

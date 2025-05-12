@@ -686,25 +686,12 @@ Page content END -->
                 .then(response => response.json())
                 .then(data => {
                     if (data.cart_empty) {
-                        Swal.fire({                    
-                            icon: 'warning',
-						{% if request.language == 'fa' %}
+                        Swal.fire({
                             title: 'سبد خرید شما خالی است!',
                             text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-                            confirmButtonText:'باشه',
-                        {% elif request.language == 'en' %}
-                            title: 'Your cart is empty!',
-                            text: 'Please add a product to your cart first.',
-                            confirmButtonText:'OK',
-                        {% elif request.language == 'ar' %}
-                            title: 'سلة التسوق فارغة!',
-                            text: 'يرجى إضافة منتج إلى سلة التسوق أولاً.', 
-                            confirmButtonText:'حسنًا',                       
-						{% endif %}     
+                            icon: 'warning',
+                            confirmButtonText: 'باشه'
                         });
-                    }
-                });
-                
                     } else {
                         window.location.href = "{% url 'Amusement_Park:Cart' %}";
                     }
@@ -746,20 +733,10 @@ Page content END -->
                 .then(data => {
                     if (data.cart_empty) {
                         Swal.fire({
+                            title: 'سبد خرید شما خالی است!',
+                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
                             icon: 'warning',
-                            {% if request.language == 'fa' %}
-                                title: 'سبد خرید شما خالی است!',
-                                text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-                                confirmButtonText:'باشه',
-                            {% elif request.language == 'en' %}
-                                title: 'Your cart is empty!',
-                                text: 'Please add a product to your cart first.',
-                                confirmButtonText:'OK',
-                            {% elif request.language == 'ar' %}
-                                title: 'سلة التسوق فارغة!',
-                                text: 'يرجى إضافة منتج إلى سلة التسوق أولاً.', 
-                                confirmButtonText:'حسنًا',                       
-                            {% endif %}  
+                            confirmButtonText: 'باشه'
                         });
                     } else {
                         window.location.href = "{% url 'Amusement_Park:Cart' %}";
@@ -821,7 +798,7 @@ Page content END -->
 						{% if request.language == 'fa' %}
                             title: 'موفقیت',
                             text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
-                        {% elif request.language == 'en' %}
+                            {% elif request.language == 'en' %}
                             title: 'Success',
                             text: 'Transaction information received successfully.',
                         {% elif request.language == 'ar' %}
@@ -904,20 +881,10 @@ Page content END -->
             if (!allFilled) {
                 event.preventDefault();
                 Swal.fire({
-                    icon: 'warning',
-                    {% if request.language == 'fa' %}
-                        title: 'خطا!',
-                        text: 'لطفاً همه فیلدهای اجباری را پر کنید.',
-                        confirmButtonText:'باشه',
-                    {% elif request.language == 'en' %}
-                        title: 'Error',
-                        text: 'Please fill in all required fields.',
-                        confirmButtonText:'OK',
-                    {% elif request.language == 'ar' %}
-                        title: 'خطأ',
-                        text: 'يرجى ملء جميع الحقول المطلوبة.', 
-                        confirmButtonText:'حسنًا',                       
-                    {% endif %}  
+                    icon: "warning",
+                    title: "خطا!",
+                    text: "لطفاً همه فیلدهای اجباری را پر کنید.",
+                    confirmButtonText: "باشه"
                 });
                 return; 
             }
@@ -925,16 +892,8 @@ Page content END -->
         
             const transactionInput = document.getElementById('ticketCodeInput');
             if (!transactionInput) {
-                {% if request.language == 'fa' %}
-                  console.error("المان 'ticketCodeInput' یافت نشد.");
-                  return;
-                {% elif request.language == 'en' %}
-                  console.error("Element 'ticketCodeInput' not found.")
-                  return;
-                {% elif request.language == 'ar' %}
-                  console.error(" لم يتم العثور على العنصر 'ticketCodeInput'.")
-                  return;
-                {% endif %}  
+                console.error("المان 'ticketCodeInput' یافت نشد.");
+                return;
             }
             const transactionId = transactionInput.value.trim();
         
@@ -974,32 +933,16 @@ Page content END -->
                 if (data.status === 'success') {
                     Swal.fire({
                         icon: 'success',
-                        {% if request.language == 'fa' %}
-                            title: 'موفقیت',
-                            text: data.message,
-                        {% elif request.language == 'en' %}
-                            title: 'Success',
-                            text: data.message,
-                        {% elif request.language == 'ar' %}
-                            title: 'نجاح',
-                            text: data.message,                     
-                        {% endif %}  
+                        title: 'موفقیت',
+                        text: data.message,
                     }).then(() => {
                         window.location.href = "{% url 'Amusement_Park:Products' %}";
                     });
                 } else {
                     Swal.fire({
-                    icon: 'error',
-                        {% if request.language == 'fa' %}
-                            title: 'خطا',
-                            text: data.message,
-                        {% elif request.language == 'en' %}
-                            title: 'Error',
-                            text: data.message,
-                        {% elif request.language == 'ar' %}
-                            title: 'خطأ',
-                            text: data.message,                     
-                        {% endif %}  
+                        icon: 'error',
+                        title: 'خطا',
+                        text: data.message,
                     });
                 }
             })
@@ -1007,16 +950,8 @@ Page content END -->
                 console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
-                    {% if request.language == 'fa' %}
-                        title: 'خطا',
-                        text:'خطایی در ارسال اطلاعات رخ داده است.',
-                    {% elif request.language == 'en' %}
-                        title: 'Error',
-                        text: 'An error occurred while submitting the information.',
-                    {% elif request.language == 'ar' %}
-                        title: 'خطأ',
-                        text: 'حدث خطأ أثناء إرسال المعلومات.',                     
-                    {% endif %}  
+                    title: 'خطا',
+                    text: 'خطایی در ارسال اطلاعات رخ داده است.',
                 });
             });
         });
