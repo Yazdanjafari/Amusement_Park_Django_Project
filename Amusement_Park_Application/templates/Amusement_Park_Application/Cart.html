@@ -142,11 +142,11 @@ Page content START -->
 										<td class="text-center">
 											<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma:False|default_if_none:"0" }} 
 													{% if request.language == 'fa' %}
-													ریال
+														ریال
 													{% elif request.language == 'en' %}
-													Rial
+														Rial
 													{% elif request.language == 'ar' %}
-													ريال
+														ريال
 													{% endif %}
 
 											</h5>
@@ -283,111 +283,111 @@ Page content START -->
 								{% endif %}
 							</label>
 							{% if request.language == 'fa' %}
-  <select name="city" id="city" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="مازندران">مازندران</option>
-    <option style="direction: rtl;" value="گلستان">گلستان</option>
-    <option style="direction: rtl;" value="گیلان">گیلان</option>
-    <option style="direction: rtl;" value="تهران">تهران</option>
-    <option style="direction: rtl;" value="البرز">البرز</option>
-    <option style="direction: rtl;" value="اردبیل">اردبیل</option>
-    <option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
-    <option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
-    <option style="direction: rtl;" value="بوشهر">بوشهر</option>
-    <option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
-    <option style="direction: rtl;" value="فارس">فارس</option>
-    <option style="direction: rtl;" value="همدان">همدان</option>
-    <option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
-    <option style="direction: rtl;" value="ایلام">ایلام</option>
-    <option style="direction: rtl;" value="اصفهان">اصفهان</option>
-    <option style="direction: rtl;" value="کرمان">کرمان</option>
-    <option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
-    <option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
-    <option style="direction: rtl;" value="کردستان">کردستان</option>
-    <option style="direction: rtl;" value="لرستان">لرستان</option>
-    <option style="direction: rtl;" value="مرکزی">مرکزی</option>
-    <option style="direction: rtl;" value="قزوین">قزوین</option>
-    <option style="direction: rtl;" value="قم">قم</option>
-    <option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
-    <option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
-    <option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
-    <option style="direction: rtl;" value="سمنان">سمنان</option>
-    <option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
-    <option style="direction: rtl;" value="یزد">یزد</option>
-    <option style="direction: rtl;" value="زنجان">زنجان</option>
-    <option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
-  </select>
-{% elif request.language == 'en' %}
-  <select name="city" id="city" class="form-control" dir="ltr" disabled>
-    <option value="" disabled selected></option>
-    <option value="Mazandaran">Mazandaran</option>
-    <option value="Gilan">Gilan</option>
-    <option value="Golestan">Golestan</option>
-    <option value="Tehran">Tehran</option>
-    <option value="Alborz">Alborz</option>
-    <option value="Ardabil">Ardabil</option>
-    <option value="East Azerbaijan">East Azerbaijan</option>
-    <option value="West Azerbaijan">West Azerbaijan</option>
-    <option value="Bushehr">Bushehr</option>
-    <option value="Chaharmahal and Bakhtiari">Chaharmahal and Bakhtiari</option>
-    <option value="Fars">Fars</option>
-    <option value="Hamedan">Hamedan</option>
-    <option value="Hormozgan">Hormozgan</option>
-    <option value="Ilam">Ilam</option>
-    <option value="Isfahan">Isfahan</option>
-    <option value="Kerman">Kerman</option>
-    <option value="Kermanshah">Kermanshah</option>
-    <option value="Kohgiluyeh and Boyer-Ahmad">Kohgiluyeh and Boyer-Ahmad</option>
-    <option value="Kurdistan">Kurdistan</option>
-    <option value="Lorestan">Lorestan</option>
-    <option value="Markazi">Markazi</option>
-    <option value="Qazvin">Qazvin</option>
-    <option value="Qom">Qom</option>
-    <option value="Razavi Khorasan">Razavi Khorasan</option>
-    <option value="North Khorasan">North Khorasan</option>
-    <option value="South Khorasan">South Khorasan</option>
-    <option value="Semnan">Semnan</option>
-    <option value="Sistan and Baluchestan">Sistan and Baluchestan</option>
-    <option value="Yazd">Yazd</option>
-    <option value="Zanjan">Zanjan</option>
-    <option value="None">None</option>
-  </select>
-{% elif request.language == 'ar' %}
-  <select name="city" id="city" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="مازندران">مازندران</option>
-    <option style="direction: rtl;" value="گیلان">گیلان</option>
-    <option style="direction: rtl;" value="گلستان">گلستان</option>
-    <option style="direction: rtl;" value="تهران">تهران</option>
-    <option style="direction: rtl;" value="البرز">البرز</option>
-    <option style="direction: rtl;" value="اردبیل">اردبیل</option>
-    <option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
-    <option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
-    <option style="direction: rtl;" value="بوشهر">بوشهر</option>
-    <option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
-    <option style="direction: rtl;" value="فارس">فارس</option>
-    <option style="direction: rtl;" value="همدان">همدان</option>
-    <option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
-    <option style="direction: rtl;" value="ایلام">ایلام</option>
-    <option style="direction: rtl;" value="اصفهان">اصفهان</option>
-    <option style="direction: rtl;" value="کرمان">کرمان</option>
-    <option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
-    <option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
-    <option style="direction: rtl;" value="کردستان">کردستان</option>
-    <option style="direction: rtl;" value="لرستان">لرستان</option>
-    <option style="direction: rtl;" value="مرکزی">مرکزی</option>
-    <option style="direction: rtl;" value="قزوین">قزوین</option>
-    <option style="direction: rtl;" value="قم">قم</option>
-    <option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
-    <option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
-    <option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
-    <option style="direction: rtl;" value="سمنان">سمنان</option>
-    <option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
-    <option style="direction: rtl;" value="یزد">یزد</option>
-    <option style="direction: rtl;" value="زنجان">زنجان</option>
-    <option style="direction: rtl;" value="لا شيء">لا شيء</option>
-  </select>
-{% endif %}
+								<select name="city" id="city" class="form-control" dir="rtl" disabled>
+									<option value="" disabled selected></option>
+									<option style="direction: rtl;" value="مازندران">مازندران</option>
+									<option style="direction: rtl;" value="گلستان">گلستان</option>
+									<option style="direction: rtl;" value="گیلان">گیلان</option>
+									<option style="direction: rtl;" value="تهران">تهران</option>
+									<option style="direction: rtl;" value="البرز">البرز</option>
+									<option style="direction: rtl;" value="اردبیل">اردبیل</option>
+									<option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
+									<option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
+									<option style="direction: rtl;" value="بوشهر">بوشهر</option>
+									<option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
+									<option style="direction: rtl;" value="فارس">فارس</option>
+									<option style="direction: rtl;" value="همدان">همدان</option>
+									<option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
+									<option style="direction: rtl;" value="ایلام">ایلام</option>
+									<option style="direction: rtl;" value="اصفهان">اصفهان</option>
+									<option style="direction: rtl;" value="کرمان">کرمان</option>
+									<option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
+									<option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
+									<option style="direction: rtl;" value="کردستان">کردستان</option>
+									<option style="direction: rtl;" value="لرستان">لرستان</option>
+									<option style="direction: rtl;" value="مرکزی">مرکزی</option>
+									<option style="direction: rtl;" value="قزوین">قزوین</option>
+									<option style="direction: rtl;" value="قم">قم</option>
+									<option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
+									<option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
+									<option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
+									<option style="direction: rtl;" value="سمنان">سمنان</option>
+									<option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
+									<option style="direction: rtl;" value="یزد">یزد</option>
+									<option style="direction: rtl;" value="زنجان">زنجان</option>
+									<option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
+								</select>
+							{% elif request.language == 'en' %}
+							<select name="city" id="city" class="form-control" dir="ltr" disabled>
+								<option value="" disabled selected></option>
+								<option value="Mazandaran">Mazandaran</option>
+								<option value="Gilan">Gilan</option>
+								<option value="Golestan">Golestan</option>
+								<option value="Tehran">Tehran</option>
+								<option value="Alborz">Alborz</option>
+								<option value="Ardabil">Ardabil</option>
+								<option value="East Azerbaijan">East Azerbaijan</option>
+								<option value="West Azerbaijan">West Azerbaijan</option>
+								<option value="Bushehr">Bushehr</option>
+								<option value="Chaharmahal and Bakhtiari">Chaharmahal and Bakhtiari</option>
+								<option value="Fars">Fars</option>
+								<option value="Hamedan">Hamedan</option>
+								<option value="Hormozgan">Hormozgan</option>
+								<option value="Ilam">Ilam</option>
+								<option value="Isfahan">Isfahan</option>
+								<option value="Kerman">Kerman</option>
+								<option value="Kermanshah">Kermanshah</option>
+								<option value="Kohgiluyeh and Boyer-Ahmad">Kohgiluyeh and Boyer-Ahmad</option>
+								<option value="Kurdistan">Kurdistan</option>
+								<option value="Lorestan">Lorestan</option>
+								<option value="Markazi">Markazi</option>
+								<option value="Qazvin">Qazvin</option>
+								<option value="Qom">Qom</option>
+								<option value="Razavi Khorasan">Razavi Khorasan</option>
+								<option value="North Khorasan">North Khorasan</option>
+								<option value="South Khorasan">South Khorasan</option>
+								<option value="Semnan">Semnan</option>
+								<option value="Sistan and Baluchestan">Sistan and Baluchestan</option>
+								<option value="Yazd">Yazd</option>
+								<option value="Zanjan">Zanjan</option>
+								<option value="None">None</option>
+							</select>
+						{% elif request.language == 'ar' %}
+						<select name="city" id="city" class="form-control" dir="rtl" disabled>
+							<option value="" disabled selected></option>
+							<option style="direction: rtl;" value="مازندران">مازندران</option>
+							<option style="direction: rtl;" value="گیلان">گیلان</option>
+							<option style="direction: rtl;" value="گلستان">گلستان</option>
+							<option style="direction: rtl;" value="تهران">تهران</option>
+							<option style="direction: rtl;" value="البرز">البرز</option>
+							<option style="direction: rtl;" value="اردبیل">اردبیل</option>
+							<option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
+							<option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
+							<option style="direction: rtl;" value="بوشهر">بوشهر</option>
+							<option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
+							<option style="direction: rtl;" value="فارس">فارس</option>
+							<option style="direction: rtl;" value="همدان">همدان</option>
+							<option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
+							<option style="direction: rtl;" value="ایلام">ایلام</option>
+							<option style="direction: rtl;" value="اصفهان">اصفهان</option>
+							<option style="direction: rtl;" value="کرمان">کرمان</option>
+							<option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
+							<option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
+							<option style="direction: rtl;" value="کردستان">کردستان</option>
+							<option style="direction: rtl;" value="لرستان">لرستان</option>
+							<option style="direction: rtl;" value="مرکزی">مرکزی</option>
+							<option style="direction: rtl;" value="قزوین">قزوین</option>
+							<option style="direction: rtl;" value="قم">قم</option>
+							<option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
+							<option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
+							<option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
+							<option style="direction: rtl;" value="سمنان">سمنان</option>
+							<option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
+							<option style="direction: rtl;" value="یزد">یزد</option>
+							<option style="direction: rtl;" value="زنجان">زنجان</option>
+							<option style="direction: rtl;" value="لا شيء">لا شيء</option>
+						</select>
+						{% endif %}
 
 						</div>
 						
@@ -403,81 +403,81 @@ Page content START -->
 								{% endif %}
 							</label>
 							{% if request.language == 'fa' %}
-  <select name="country" id="country" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="ایران">ایران</option>
-    <option style="direction: rtl;" value="افغانستان">افغانستان</option>
-    <option style="direction: rtl;" value="پاکستان">پاکستان</option>
-    <option style="direction: rtl;" value="عراق">عراق</option>
-    <option style="direction: rtl;" value="ترکیه">ترکیه</option>
-    <option style="direction: rtl;" value="ارمنستان">ارمنستان</option>
-    <option style="direction: rtl;" value="آذربایجان">آذربایجان</option>
-    <option style="direction: rtl;" value="ترکمنستان">ترکمنستان</option>
-    <option style="direction: rtl;" value="عربستان سعودی">عربستان سعودی</option>
-    <option style="direction: rtl;" value="کویت">کویت</option>
-    <option style="direction: rtl;" value="بحرین">بحرین</option>
-    <option style="direction: rtl;" value="قطر">قطر</option>
-    <option style="direction: rtl;" value="امارات متحده عربی">امارات متحده عربی</option>
-    <option style="direction: rtl;" value="عمان">عمان</option>
-    <option style="direction: rtl;" value="آلمان">آلمان</option>
-    <option style="direction: rtl;" value="آمریکا">آمریکا</option>
-    <option style="direction: rtl;" value="ایتالیا">ایتالیا</option>
-    <option style="direction: rtl;" value="اسپانیا">اسپانیا</option>
-    <option style="direction: rtl;" value="استرالیا">استرالیا</option>
-    <option style="direction: rtl;" value="کانادا">کانادا</option>
-    <option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
-  </select>
-{% elif request.language == 'en' %}
-  <select name="country" id="country" class="form-control" dir="ltr" disabled>
-    <option value="" disabled selected></option>
-    <option value="Iran">Iran</option>
-    <option value="Afghanistan">Afghanistan</option>
-    <option value="Pakistan">Pakistan</option>
-    <option value="Iraq">Iraq</option>
-    <option value="Turkey">Turkey</option>
-    <option value="Armenia">Armenia</option>
-    <option value="Azerbaijan">Azerbaijan</option>
-    <option value="Turkmenistan">Turkmenistan</option>
-    <option value="Saudi Arabia">Saudi Arabia</option>
-    <option value="Kuwait">Kuwait</option>
-    <option value="Bahrain">Bahrain</option>
-    <option value="Qatar">Qatar</option>
-    <option value="UAE">United Arab Emirates</option>
-    <option value="Oman">Oman</option>
-    <option value="Germany">Germany</option>
-    <option value="USA">USA</option>
-    <option value="Italy">Italy</option>
-    <option value="Spain">Spain</option>
-    <option value="Australia">Australia</option>
-    <option value="Canada">Canada</option>
-    <option value="None">None</option>
-  </select>
-{% elif request.language == 'ar' %}
-  <select name="country" id="country" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="إيران">إيران</option>
-    <option style="direction: rtl;" value="أفغانستان">أفغانستان</option>
-    <option style="direction: rtl;" value="باكستان">باكستان</option>
-    <option style="direction: rtl;" value="العراق">العراق</option>
-    <option style="direction: rtl;" value="تركيا">تركيا</option>
-    <option style="direction: rtl;" value="أرمينيا">أرمينيا</option>
-    <option style="direction: rtl;" value="أذربيجان">أذربيجان</option>
-    <option style="direction: rtl;" value="تركمانستان">تركمانستان</option>
-    <option style="direction: rtl;" value="السعودية">السعودية</option>
-    <option style="direction: rtl;" value="الكويت">الكويت</option>
-    <option style="direction: rtl;" value="البحرين">البحرين</option>
-    <option style="direction: rtl;" value="قطر">قطر</option>
-    <option style="direction: rtl;" value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
-    <option style="direction: rtl;" value="عمان">عمان</option>
-    <option style="direction: rtl;" value="ألمانيا">ألمانيا</option>
-    <option style="direction: rtl;" value="أمريكا">أمريكا</option>
-    <option style="direction: rtl;" value="إيطاليا">إيطاليا</option>
-    <option style="direction: rtl;" value="إسبانيا">إسبانيا</option>
-    <option style="direction: rtl;" value="أستراليا">أستراليا</option>
-    <option style="direction: rtl;" value="كندا">كندا</option>
-    <option style="direction: rtl;" value="لا شيء">لا شيء</option>
-  </select>
-{% endif %}
+								<select name="country" id="country" class="form-control" dir="rtl" disabled>
+									<option value="" disabled selected></option>
+									<option style="direction: rtl;" value="ایران">ایران</option>
+									<option style="direction: rtl;" value="افغانستان">افغانستان</option>
+									<option style="direction: rtl;" value="پاکستان">پاکستان</option>
+									<option style="direction: rtl;" value="عراق">عراق</option>
+									<option style="direction: rtl;" value="ترکیه">ترکیه</option>
+									<option style="direction: rtl;" value="ارمنستان">ارمنستان</option>
+									<option style="direction: rtl;" value="آذربایجان">آذربایجان</option>
+									<option style="direction: rtl;" value="ترکمنستان">ترکمنستان</option>
+									<option style="direction: rtl;" value="عربستان سعودی">عربستان سعودی</option>
+									<option style="direction: rtl;" value="کویت">کویت</option>
+									<option style="direction: rtl;" value="بحرین">بحرین</option>
+									<option style="direction: rtl;" value="قطر">قطر</option>
+									<option style="direction: rtl;" value="امارات متحده عربی">امارات متحده عربی</option>
+									<option style="direction: rtl;" value="عمان">عمان</option>
+									<option style="direction: rtl;" value="آلمان">آلمان</option>
+									<option style="direction: rtl;" value="آمریکا">آمریکا</option>
+									<option style="direction: rtl;" value="ایتالیا">ایتالیا</option>
+									<option style="direction: rtl;" value="اسپانیا">اسپانیا</option>
+									<option style="direction: rtl;" value="استرالیا">استرالیا</option>
+									<option style="direction: rtl;" value="کانادا">کانادا</option>
+									<option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
+								</select>
+							{% elif request.language == 'en' %}
+									<select name="country" id="country" class="form-control" dir="ltr" disabled>
+										<option value="" disabled selected></option>
+										<option value="Iran">Iran</option>
+										<option value="Afghanistan">Afghanistan</option>
+										<option value="Pakistan">Pakistan</option>
+										<option value="Iraq">Iraq</option>
+										<option value="Turkey">Turkey</option>
+										<option value="Armenia">Armenia</option>
+										<option value="Azerbaijan">Azerbaijan</option>
+										<option value="Turkmenistan">Turkmenistan</option>
+										<option value="Saudi Arabia">Saudi Arabia</option>
+										<option value="Kuwait">Kuwait</option>
+										<option value="Bahrain">Bahrain</option>
+										<option value="Qatar">Qatar</option>
+										<option value="UAE">United Arab Emirates</option>
+										<option value="Oman">Oman</option>
+										<option value="Germany">Germany</option>
+										<option value="USA">USA</option>
+										<option value="Italy">Italy</option>
+										<option value="Spain">Spain</option>
+										<option value="Australia">Australia</option>
+										<option value="Canada">Canada</option>
+										<option value="None">None</option>
+									</select>
+							{% elif request.language == 'ar' %}
+									<select name="country" id="country" class="form-control" dir="rtl" disabled>
+										<option value="" disabled selected></option>
+										<option style="direction: rtl;" value="إيران">إيران</option>
+										<option style="direction: rtl;" value="أفغانستان">أفغانستان</option>
+										<option style="direction: rtl;" value="باكستان">باكستان</option>
+										<option style="direction: rtl;" value="العراق">العراق</option>
+										<option style="direction: rtl;" value="تركيا">تركيا</option>
+										<option style="direction: rtl;" value="أرمينيا">أرمينيا</option>
+										<option style="direction: rtl;" value="أذربيجان">أذربيجان</option>
+										<option style="direction: rtl;" value="تركمانستان">تركمانستان</option>
+										<option style="direction: rtl;" value="السعودية">السعودية</option>
+										<option style="direction: rtl;" value="الكويت">الكويت</option>
+										<option style="direction: rtl;" value="البحرين">البحرين</option>
+										<option style="direction: rtl;" value="قطر">قطر</option>
+										<option style="direction: rtl;" value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
+										<option style="direction: rtl;" value="عمان">عمان</option>
+										<option style="direction: rtl;" value="ألمانيا">ألمانيا</option>
+										<option style="direction: rtl;" value="أمريكا">أمريكا</option>
+										<option style="direction: rtl;" value="إيطاليا">إيطاليا</option>
+										<option style="direction: rtl;" value="إسبانيا">إسبانيا</option>
+										<option style="direction: rtl;" value="أستراليا">أستراليا</option>
+										<option style="direction: rtl;" value="كندا">كندا</option>
+										<option style="direction: rtl;" value="لا شيء">لا شيء</option>
+									</select>
+								{% endif %}
 
 						</div>
 
