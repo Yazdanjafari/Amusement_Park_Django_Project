@@ -202,10 +202,25 @@
 			border-radius: 8px;
 			margin-top: 10px;
 		}	
-		.flag-icon:focus, .flag-icon:active, .flag-icon:hover {
-			outline: none;
-			box-shadow: none; 
-			border:none;
+		.language-switcher .btn {
+			border: none !important;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* سایه کم */
+			margin: 0 4px;
+			padding: 6px 8px;
+			transition: all 0.2s ease-in-out;
+		  }
+		
+		  .language-switcher .btn:hover {
+			box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+		  }
+		
+		  .flag-icon {
+			width: 44px;
+			height: auto;
+		  }
+		
+		  .language-switcher .active {
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		  }
 			  
 		{% comment %} End Flag design {% endcomment %}
@@ -367,11 +382,11 @@
 						<a class="nav-link bg-primary bg-opacity-10  rounded-3 text-primary px-3 py-3 py-xl-0 cart-link" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu" {% block disabled_cart %}{% endblock disabled_cart %}>
 							<i class="bi bi-cart me-2"></i><span>
 								{% if request.language == 'fa' %}
-									سبد خرید 
+									 خرید 
 								{% elif request.language == 'en' %}
-									Shopping Cart
+									Shopping 
 								{% elif request.language == 'ar' %}
-									سلة التسوّق		
+									 التسوّق		
 								{% endif %}
 							</span>
 						</a>
@@ -382,11 +397,11 @@
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>
 								{% if request.language == 'fa' %}
-									صفحه اصلی	 
+									خانه	 
 								{% elif request.language == 'en' %}
-									Home Page
+									Home
 								{% elif request.language == 'ar' %}
-									الصفحة الرئيسية		
+									الرئيسية		
 								{% endif %}
 						</a>
 					</li>
@@ -395,11 +410,11 @@
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>
 								{% if request.language == 'fa' %}
-									ثبت مجدد تراکنش	 
+									ثبت مجدد 	 
 								{% elif request.language == 'en' %}
-									Resubmit Transaction
+									Resubmit
 								{% elif request.language == 'ar' %}
-									إعادة إرسال المعاملة		
+									إعادة إرسال 		
 								{% endif %}
 						</a>
 					</li>
@@ -413,7 +428,7 @@
 								{% elif request.language == 'en' %}
 									Refund
 								{% elif request.language == 'ar' %}
-									استرجاع المبلغ		
+									استرجاع 		
 								{% endif %}
 						</a>
 					</li>
@@ -423,11 +438,11 @@
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link" href="{% url 'Amusement_Park:Scanner' %}" id="demoMenu">
 								{% if request.language == 'fa' %}
-									اسکن بارکد
+									اسکن 
 								{% elif request.language == 'en' %}
-									Scan Barcode
+									Scan 
 								{% elif request.language == 'ar' %}
-									مسح الرمز الشريطي
+									المسح	
 								{% endif %}
 						</a>
 					</li>				
@@ -437,11 +452,11 @@
 						<li class="nav-item dropdown">
 							<a style="font-size: 13px;" class="nav-link" href="/admin" id="demoMenu">
 								{% if request.language == 'fa' %}
-									پنل ادمین
+									 ادمین
 								{% elif request.language == 'en' %}
-									Admin Panel
+									Admin 
 								{% elif request.language == 'ar' %}
-									لوحة التحكم الإدارية
+									لوحة التحكم	
 								{% endif %}
 							</a>
 						</li>			
@@ -601,14 +616,13 @@
 						</li> 
 						
 						<li>
-							<div class="language-switcher">						
-								{% with current_path=request.get_full_path %}
+							<div class="language-switcher">
+							  {% with current_path=request.get_full_path %}
 								<a
 								  href="{% url 'Amusement_Park:switch_language' 'fa' %}?next={{ current_path }}"
 								  class="btn btn-sm{% if request.language == 'fa' %} active bg-white{% endif %}"
 								>
-								<img class="flag-icon" id="flagImage" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
-
+								  <img class="flag-icon" src="{% static 'assets/images/ir.svg' %}" alt="Persian">
 								</a>
 								<a
 								  href="{% url 'Amusement_Park:switch_language' 'en' %}?next={{ current_path }}"
@@ -622,10 +636,9 @@
 								>
 								  <img class="flag-icon" src="{% static 'assets/images/sa.svg' %}" alt="Arabic">
 								</a>
-							  {% endwith %}							  
+							  {% endwith %}
 							</div>
-						</li>
-						
+						  </li>
 						  
 						
 						
