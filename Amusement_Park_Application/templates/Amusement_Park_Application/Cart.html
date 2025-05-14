@@ -2282,7 +2282,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 {% comment %} PcPos _ move number correctly to hidden input Finish {% endcomment %}
 
-{% comment %} PcPos _ For save the bill correctly Start {% endcomment %}
 document.addEventListener('DOMContentLoaded', function() {
 	const cashInput = document.getElementById('cash-amount');
 	const cardInput = document.getElementById('card-amount');
@@ -2290,60 +2289,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	const resetButton = document.getElementById('reset-button');
 	const finalPriceElement = document.getElementById('final-price');
 	const payButton = document.getElementById('search');
-
-	const amountInput      = document.getElementById('amount');
-	const cardButton       = document.querySelector('[data-bs-target="#collapse-card-reader"]');
-	const cardCollapse     = document.getElementById('collapse-card-reader');
-	const cashButton       = document.querySelector('[data-bs-target="#collapse-cash"]');
-	const cashCollapse     = document.getElementById('collapse-cash');
-	const combinedButton   = document.querySelector('[data-bs-target="#collapse-combined"]');
-	const combinedCollapse = document.getElementById('collapse-combined');
-	const allButtons    = [ cardButton, cashButton, combinedButton ];
-	const allCollapses  = [ cardCollapse, cashCollapse, combinedCollapse ];	
-
-	function forceCashMode() {
-		const amount = parseInt(amountInput.value, 10) || 0;
-	
-		if (amount === 0) {
-		  // disable non-cash buttons
-		  allButtons.forEach(btn => {
-			if (btn !== cashButton) btn.setAttribute('disabled', true);
-			else                   btn.removeAttribute('disabled');
-		  });
-		  // collapse everything, then open cash
-		  allCollapses.forEach(el => {
-			const inst = bootstrap.Collapse.getInstance(el) || new bootstrap.Collapse(el, { toggle: false });
-			inst.hide();
-		  });
-		  const cashInst = bootstrap.Collapse.getInstance(cashCollapse)
-						 || new bootstrap.Collapse(cashCollapse, { toggle: false });
-		  cashInst.show();
-		  // update aria & classes
-		  allButtons.forEach(btn => btn.classList.add('collapsed'));
-		  cashButton.classList.remove('collapsed');
-		  cashButton.setAttribute('aria-expanded', 'true');
-		} else {
-		  // re-enable all
-		  allButtons.forEach(btn => btn.removeAttribute('disabled'));
-		}
-	  }
-	
-	  // ─── detect both UI & AJAX changes to amount ───────────────────────────
-	  let lastVal = amountInput.value;
-	  // 1) user typing or manual change
-	  amountInput.addEventListener('input', () => {
-		lastVal = amountInput.value;
-		forceCashMode();
-	  });
-	  // 2) polling for programmatic/AJAX updates
-	  setInterval(() => {
-		if (amountInput.value !== lastVal) {
-		  lastVal = amountInput.value;
-		  forceCashMode();
-		}
-	  }, 250);
-	
-	  forceCashMode();	
 
 	function updateFinalPrice() {
 		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
