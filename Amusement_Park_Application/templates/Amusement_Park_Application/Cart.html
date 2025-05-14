@@ -1545,6 +1545,8 @@ Page content START -->
 <input style="display:none;" type="text" placeholder="Service Group" id="service_group" />
 <textarea style="display:none;" cols="40" rows="5" placeholder="Settelment" id="settelment"></textarea>
 <textarea style="display:none;" cols="40" rows="5" placeholder="Key Value" id="key_value"></textarea>
+<div>Result:</div>
+<section id="result"></section>
 <!-- =======================
 Page content END -->
 {% endblock body %}
@@ -2514,27 +2516,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		function proceedWithPayment() {
-			const amount = parseInt(document.getElementById('amount').value) || 0;
 
-			if (amount === 0 && (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0))) {
-				Swal.fire({
-					icon: 'warning',
-					title: 'خطا',
-					text: 'نمیتوان مبلغ ۰ ریال را با کارتخوان پرداخت کرد. نوع فروش را به نقدی تغیر دهید',
-					confirmButtonText: 'باشه'
-				});
-			} else if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 				Swal.fire({
 					title: 'پرداخت از طریق دستگاه کارتخوان...',
 					allowOutsideClick: false,
 					didOpen: () => { Swal.showLoading(); }
 				});
-			
+
 				const formData = new URLSearchParams();
 				formData.append('payment', cardPaymentAmount);
 				formData.append('ip', cardReaderIP);
 				formData.append('port', cardReaderPort);
-			
+
 				fetch('{% url "Amusement_Park:test_payment" %}', {
 					method: 'POST',
 					headers: {
