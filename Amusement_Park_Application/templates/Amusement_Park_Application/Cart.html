@@ -1076,7 +1076,7 @@ Page content START -->
 									  aria-labelledby="heading-card-reader"
 									  data-bs-parent="#accordioncircle"
 									></div>
-								  </div>
+								</div>
 
 								<!-- Cash -->
 								<div class="accordion-item mb-3">
@@ -1118,7 +1118,7 @@ Page content START -->
 									  aria-labelledby="heading-cash"
 									  data-bs-parent="#accordioncircle"
 									></div>
-								  </div>
+								</div>
 								<!-- Combined payment -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-combined">
@@ -1238,18 +1238,43 @@ Page content START -->
 								<!-- Card reader (Default) -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
-										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
-										{% if request.language == 'fa' %}
+									  <button
+										class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+										<span>
+										  {% if request.language == 'fa' %}
 											دستگاه کارتخوان
-										{% elif request.language == 'en' %}
+										  {% elif request.language == 'en' %}
 											POS Terminal
-										{% elif request.language == 'ar' %}
+										  {% elif request.language == 'ar' %}
 											جهاز نقاط البيع
-										{% endif %}		
-										</button>
+										  {% endif %}
+										</span>
+									  </button>
 									</h6>
-									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
-									</div>
+									<div
+									  id="collapse-card-reader"
+									  class="accordion-collapse collapse show"
+									  aria-labelledby="heading-card-reader"
+									  data-bs-parent="#accordioncircle"
+									></div>
 								</div>								
 
 								<!-- Cash -->
@@ -2255,7 +2280,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 {% comment %} PcPos _ move number correctly to hidden input Finish {% endcomment %}
 
-{% comment %} PcPos _ For save the bill correctly Start  {% endcomment %}
+{% comment %} PcPos _ For save the bill correctly Start {% endcomment %}
 document.addEventListener('DOMContentLoaded', function() {
 	const cashInput = document.getElementById('cash-amount');
 	const cardInput = document.getElementById('card-amount');
@@ -2263,6 +2288,60 @@ document.addEventListener('DOMContentLoaded', function() {
 	const resetButton = document.getElementById('reset-button');
 	const finalPriceElement = document.getElementById('final-price');
 	const payButton = document.getElementById('search');
+
+	const amountInput      = document.getElementById('amount');
+	const cardButton       = document.querySelector('[data-bs-target="#collapse-card-reader"]');
+	const cardCollapse     = document.getElementById('collapse-card-reader');
+	const cashButton       = document.querySelector('[data-bs-target="#collapse-cash"]');
+	const cashCollapse     = document.getElementById('collapse-cash');
+	const combinedButton   = document.querySelector('[data-bs-target="#collapse-combined"]');
+	const combinedCollapse = document.getElementById('collapse-combined');
+	const allButtons    = [ cardButton, cashButton, combinedButton ];
+	const allCollapses  = [ cardCollapse, cashCollapse, combinedCollapse ];	
+
+	function forceCashMode() {
+		const amount = parseInt(amountInput.value, 10) || 0;
+	
+		if (amount === 0) {
+		  // disable non-cash buttons
+		  allButtons.forEach(btn => {
+			if (btn !== cashButton) btn.setAttribute('disabled', true);
+			else                   btn.removeAttribute('disabled');
+		  });
+		  // collapse everything, then open cash
+		  allCollapses.forEach(el => {
+			const inst = bootstrap.Collapse.getInstance(el) || new bootstrap.Collapse(el, { toggle: false });
+			inst.hide();
+		  });
+		  const cashInst = bootstrap.Collapse.getInstance(cashCollapse)
+						 || new bootstrap.Collapse(cashCollapse, { toggle: false });
+		  cashInst.show();
+		  // update aria & classes
+		  allButtons.forEach(btn => btn.classList.add('collapsed'));
+		  cashButton.classList.remove('collapsed');
+		  cashButton.setAttribute('aria-expanded', 'true');
+		} else {
+		  // re-enable all
+		  allButtons.forEach(btn => btn.removeAttribute('disabled'));
+		}
+	  }
+	
+	  // ─── detect both UI & AJAX changes to amount ───────────────────────────
+	  let lastVal = amountInput.value;
+	  // 1) user typing or manual change
+	  amountInput.addEventListener('input', () => {
+		lastVal = amountInput.value;
+		forceCashMode();
+	  });
+	  // 2) polling for programmatic/AJAX updates
+	  setInterval(() => {
+		if (amountInput.value !== lastVal) {
+		  lastVal = amountInput.value;
+		  forceCashMode();
+		}
+	  }, 250);
+	
+	  forceCashMode();	
 
 	function updateFinalPrice() {
 		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
@@ -2435,19 +2514,27 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		function proceedWithPayment() {
+			const amount = parseInt(document.getElementById('amount').value) || 0;
 
-			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+			if (amount === 0 && (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0))) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'خطا',
+					text: 'نمیتوان مبلغ ۰ ریال را با کارتخوان پرداخت کرد. نوع فروش را به نقدی تغیر دهید',
+					confirmButtonText: 'باشه'
+				});
+			} else if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 				Swal.fire({
 					title: 'پرداخت از طریق دستگاه کارتخوان...',
 					allowOutsideClick: false,
 					didOpen: () => { Swal.showLoading(); }
 				});
-
+			
 				const formData = new URLSearchParams();
 				formData.append('payment', cardPaymentAmount);
 				formData.append('ip', cardReaderIP);
 				formData.append('port', cardReaderPort);
-
+			
 				fetch('{% url "Amusement_Park:test_payment" %}', {
 					method: 'POST',
 					headers: {
@@ -2609,9 +2696,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 {% comment %} PcPos _ For save the bill correctly Finish {% endcomment %}
-
-
-
 
 
 
