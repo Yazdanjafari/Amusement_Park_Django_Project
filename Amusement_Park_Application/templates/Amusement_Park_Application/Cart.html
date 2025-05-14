@@ -2290,6 +2290,73 @@ document.addEventListener('DOMContentLoaded', function() {
 	const finalPriceElement = document.getElementById('final-price');
 	const payButton = document.getElementById('search');
 
+	const amountInput = document.getElementById('amount');
+	const cardButton = document.querySelector('[data-bs-target="#collapse-card-reader"]');
+	const cardCollapse = document.getElementById('collapse-card-reader');
+	const cashButton = document.querySelector('[data-bs-target="#collapse-cash"]');
+	const cashCollapse = document.getElementById('collapse-cash');
+	const combinedButton = document.querySelector('[data-bs-target="#collapse-combined"]');
+	const combinedCollapse = document.getElementById('collapse-combined');
+	const allButtons = [cardButton, cashButton, combinedButton];
+	const allCollapses = [cardCollapse, cashCollapse, combinedCollapse];
+  
+	let userOverrode = false; // new flag
+  
+	function forceCashMode() {
+	  const amount = parseInt(amountInput.value, 10) || 0;
+  
+	  if (amount === 0 && !userOverrode) {
+		// disable non-cash buttons
+		allButtons.forEach(btn => {
+		  if (btn !== cashButton) btn.setAttribute('disabled', true);
+		  else btn.removeAttribute('disabled');
+		});
+  
+		// collapse all and show cash
+		allCollapses.forEach(el => {
+		  const inst = bootstrap.Collapse.getInstance(el) || new bootstrap.Collapse(el, { toggle: false });
+		  inst.hide();
+		});
+		const cashInst = bootstrap.Collapse.getInstance(cashCollapse)
+		  || new bootstrap.Collapse(cashCollapse, { toggle: false });
+		cashInst.show();
+  
+		allButtons.forEach(btn => btn.classList.add('collapsed'));
+		cashButton.classList.remove('collapsed');
+		cashButton.setAttribute('aria-expanded', 'true');
+	  } else {
+		// enable all
+		allButtons.forEach(btn => btn.removeAttribute('disabled'));
+	  }
+	}
+  
+	// Detect user manual override
+	allButtons.forEach(btn => {
+	  btn.addEventListener('click', () => {
+		userOverrode = true;
+		// Once the user clicks anything, stop enforcing cash mode
+		allButtons.forEach(b => b.removeAttribute('disabled'));
+	  });
+	});
+  
+	// Track changes to amount input
+	let lastVal = amountInput.value;
+	amountInput.addEventListener('input', () => {
+	  lastVal = amountInput.value;
+	  forceCashMode();
+	});
+  
+	setInterval(() => {
+	  if (amountInput.value !== lastVal) {
+		lastVal = amountInput.value;
+		forceCashMode();
+	  }
+	}, 250);
+  
+	forceCashMode();
+	
+
+
 	function updateFinalPrice() {
 		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
 		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
