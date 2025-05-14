@@ -50,16 +50,26 @@ Instructor grid START -->
                             <!-- Overlay -->
                             <div class="card-img-overlay d-flex flex-column p-2 z-index-1">
                                 <div>
-                                    <span class="badge text-bg-dark">
-                                        <i class="bi bi-currency-dollar text-warning me-2"></i>{{ i.price|intcomma:False }} 
+									<span class="badge text-bg-dark d-inline-flex align-items-center"
+										style="
+											direction: {% if request.language == 'en' %}ltr{% else %}rtl{% endif %};
+											justify-content: {% if request.language == 'en' %}flex-start{% else %}flex-start{% endif %};
+											padding-left: {% if request.language == 'en' %}0{% else %}0.5rem{% endif %};
+											padding-right: {% if request.language == 'en' %}0.5rem{% else %}0{% endif %};
+											width: 43%;
+										">
+									
+										<i class="bi bi-currency-dollar text-warning" style="margin-right: 4px; margin-left: 0;"></i>
+										{{ i.price|intcomma:False }} 
 										{% if request.language == 'fa' %}
 											ریال
 										{% elif request.language == 'en' %}
 											Rial
 										{% elif request.language == 'ar' %}
 											ریال
-										{% endif %}						
-                                    </span>
+										{% endif %}
+									</span>
+
                                 </div>
                             </div>
                         </div>
