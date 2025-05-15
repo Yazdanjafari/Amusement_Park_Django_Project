@@ -75,25 +75,28 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">
-                                    {% if request.language == 'fa' %}
-                                        صفحه اصلی
-                                    {% elif request.language == 'en' %}
-                                        Home Page
-                                    {% elif request.language == 'ar' %}
-                                        الصفحة الرئيسية
-                                    {% endif %}
-                                </a></li>
-								<li class="breadcrumb-item active" aria-current="page">
-                                    {% if request.language == 'fa' %}
-                                        ثبت مجدد تراکنش
-                                    {% elif request.language == 'en' %}
-                                        Re-register Transaction
-                                    {% elif request.language == 'ar' %}
-                                        إعادة تسجيل المعاملة
-                                    {% endif %}
-                                </a></li>
-							</ol>
+                                {% if request.language == 'en' %}
+                                    <li class="breadcrumb-item active" aria-current="page">Re-register Transaction</li>
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">Main Page</a>
+                                    </li>
+                                {% elif request.language == 'fa' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">صفحه اصلی</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">ثبت مجدد تراکنش</li>
+                                {% elif request.language == 'ar' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">الصفحة الرئيسية</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">إعادة تسجيل المعاملة</li>
+                                {% endif %}
+                            </ol>
+                            
+                            
+
+                            
+                            
 						</nav>
 					</div>
 				</div>
@@ -296,11 +299,11 @@ Page content START -->
 									<h6 class="accordion-header" id="heading-card-reader">
 										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
 											{% if request.language == 'fa' %}
-                                                دستگاه کارتخوان:
+                                                دستگاه کارتخوان
                                             {% elif request.language == 'en' %}
-                                                POS Device:
+                                                POS Device
                                             {% elif request.language == 'ar' %}
-                                                جهاز القارئ:
+                                                جهاز القارئ
                                             {% endif %}
 										</button>
 									</h6>
@@ -330,11 +333,11 @@ Page content START -->
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
 											{% if request.language == 'fa' %}
-                                                ترکیبی:
+                                                ترکیبی
                                             {% elif request.language == 'en' %}
-                                                Combined:
+                                                Combined
                                             {% elif request.language == 'ar' %}
-                                                مركب:
+                                                مركب
                                             {% endif %}
 										</button>
 									</h6>
@@ -404,11 +407,11 @@ Page content START -->
 												<div class="col-12">
 													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
                                                         {% if request.language == 'fa' %}
-                                                            تلاش مجدد:
+                                                            تلاش مجدد
                                                         {% elif request.language == 'en' %}
-                                                            Retry:
+                                                            Retry
                                                         {% elif request.language == 'ar' %}
-                                                            محاولة أخرى:
+                                                            محاولة أخرى
                                                         {% endif %}
                                                     </button>
 												</div>
@@ -425,11 +428,11 @@ Page content START -->
 									<h6 class="accordion-header" id="heading-card-reader">
 										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
 											{% if request.language == 'fa' %}
-                                                دستگاه کارتخوان:
+                                                دستگاه کارتخوان
                                             {% elif request.language == 'en' %}
-                                                POS Device:
+                                                POS Device
                                             {% elif request.language == 'ar' %}
-                                                جهاز القارئ:
+                                                جهاز القارئ
                                             {% endif %}
 										</button>
 									</h6>
@@ -459,11 +462,11 @@ Page content START -->
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
 											{% if request.language == 'fa' %}
-                                                ترکیبی:
+                                                ترکیبی
                                             {% elif request.language == 'en' %}
-                                                Combined:
+                                                Combined
                                             {% elif request.language == 'ar' %}
-                                                مركب:
+                                                مركب
                                             {% endif %}
 										</button>
 									</h6>
@@ -533,11 +536,11 @@ Page content START -->
 												<div class="col-12">
 													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
                                                         {% if request.language == 'fa' %}
-                                                            تلاش مجدد:
+                                                            تلاش مجدد
                                                         {% elif request.language == 'en' %}
-                                                            Retry:
+                                                            Retry
                                                         {% elif request.language == 'ar' %}
-                                                            محاولة أخرى:
+                                                            محاولة أخرى
                                                         {% endif %}
                                                     </button>
 												</div>
@@ -572,7 +575,8 @@ Page content START -->
                     </h4>
                     <hr>
                     <ul class="list-group list-group-borderless mb-2">
-                        <li class="list-group-item px-0 d-flex justify-content-between">
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                             <span class="h6 fw-light mb-0">
                                 {% if request.language == 'fa' %}
                                     قیمت
@@ -582,58 +586,61 @@ Page content START -->
                                     السعر
                                 {% endif %}
                             </span>
-                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">
+                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0
                                 {% if request.language == 'fa' %}
-                                    0 ریال
+                                    ریال
                                 {% elif request.language == 'en' %}
-                                    0 Rials
+                                    IRR
                                 {% elif request.language == 'ar' %}
-                                    0 ريال
+                                    ريال
                                 {% endif %}
                             </span>
                         </li>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                             <span class="h6 fw-light mb-0">
                                 {% if request.language == 'fa' %}
                                     مالیات (%10)
                                 {% elif request.language == 'en' %}
-                                    Tax (10%)
+                                    Tax (%10)
                                 {% elif request.language == 'ar' %}
-                                    الضريبة (%10)
+                                    ضريبة (%10)
                                 {% endif %}
                             </span>
-                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">
+                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0
                                 {% if request.language == 'fa' %}
-                                    0 ریال
+                                    ریال
                                 {% elif request.language == 'en' %}
-                                    0 Rials
+                                    IRR
                                 {% elif request.language == 'ar' %}
-                                    0 ريال
+                                    ريال
                                 {% endif %}
                             </span>
                         </li>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                             <span class="h6 fw-light mb-0">
                                 {% if request.language == 'fa' %}
                                     تخفیف
                                 {% elif request.language == 'en' %}
                                     Discount
                                 {% elif request.language == 'ar' %}
-                                    الخصم
+                                    خصم
                                 {% endif %}
                             </span>
-                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">
+                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0
                                 {% if request.language == 'fa' %}
-                                    0 ریال
+                                    ریال
                                 {% elif request.language == 'en' %}
-                                    0 Rials
+                                    IRR
                                 {% elif request.language == 'ar' %}
-                                    0 ريال
+                                    ريال
                                 {% endif %}
                             </span>
                         </li>
                         <br>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                             <span class="h5 mb-0">
                                 {% if request.language == 'fa' %}
                                     قیمت نهایی
@@ -643,13 +650,13 @@ Page content START -->
                                     السعر النهائي
                                 {% endif %}
                             </span>
-                            <span id="finalPrice" class="text-danger h5">
+                            <span id="finalPrice" class="text-danger h5">0
                                 {% if request.language == 'fa' %}
-                                    0 ریال
+                                    ریال
                                 {% elif request.language == 'en' %}
-                                    0 Rials
+                                    IRR
                                 {% elif request.language == 'ar' %}
-                                    0 ريال
+                                    ريال
                                 {% endif %}
                             </span>
                         </li>
