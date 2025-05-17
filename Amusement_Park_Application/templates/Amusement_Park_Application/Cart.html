@@ -2529,16 +2529,19 @@ document.addEventListener('DOMContentLoaded', function() {
 			proceedWithPayment();
 		}
 
-		payButton.addEventListener('click', function (e) {
-			e.preventDefault();		
-			
 		function proceedWithPayment() {
+
 			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 				Swal.fire({
 					title: 'پرداخت از طریق دستگاه کارتخوان...',
 					allowOutsideClick: false,
 					didOpen: () => { Swal.showLoading(); }
 				});
+
+				const formData = new URLSearchParams();
+				formData.append('payment', cardPaymentAmount);
+				formData.append('ip', cardReaderIP);
+				formData.append('port', cardReaderPort);
 
 				fetch('{% url "Amusement_Park:test_payment" %}', {
 					method: 'POST',
