@@ -2529,19 +2529,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			proceedWithPayment();
 		}
 
+		payButton.addEventListener('click', function (e) {
+			e.preventDefault();		
+			
 		function proceedWithPayment() {
-
 			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 				Swal.fire({
 					title: 'پرداخت از طریق دستگاه کارتخوان...',
 					allowOutsideClick: false,
 					didOpen: () => { Swal.showLoading(); }
 				});
-
-				const formData = new URLSearchParams();
-				formData.append('payment', cardPaymentAmount);
-				formData.append('ip', cardReaderIP);
-				formData.append('port', cardReaderPort);
 
 				fetch('{% url "Amusement_Park:test_payment" %}', {
 					method: 'POST',
@@ -2551,36 +2548,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					},
 					body: formData
 				})
-				.then(response => response.json())
-				.then(cardResponse => {
-					if (cardResponse.status === 'success') {
-						Swal.fire({
-							icon: 'success',
-							title: 'پرداخت کارتخوان موفق',
-							text: cardResponse.message,
-							timer: 1500,
-							showConfirmButton: false
-						}).then(() => {
-							submitPayment();
-						});
-					} else {
-						Swal.fire({
-							icon: 'error',
-							title: 'خطا در پرداخت کارتخوان',
-							text: cardResponse.message,
-							confirmButtonText: 'باشه'
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Error in card payment:', error);
-					Swal.fire({
-						icon: 'error',
-						title: 'خطا در ارتباط با دستگاه کارتخوان',
-						text: 'خطا در ارتباط با دستگاه کارتخوان.',
-						confirmButtonText: 'باشه'
-					});
-				});
+
 			} else {
 				submitPayment();
 			}
