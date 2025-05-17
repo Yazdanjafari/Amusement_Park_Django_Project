@@ -2079,6 +2079,26 @@ function check1() {
 
 		const amountValue = parseFloat($('#amount').val().replace(/,/g, '')) || 0;
 		const isCashSale = document.getElementById('collapse-cash').classList.contains('show');
+		$('#result').empty();
+
+		$.ajax({
+			type: "POST",
+			url: $('#pcpos_url').val(),
+			data: JSON.stringify(req_params),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			timeout: 120 * 1000,
+			success: function(data) {
+				$('#result').empty();
+				$('#result').append(JSON.stringify(data, null, "\t"));
+				if (callback) {
+					callback(data);  // <-- pass data to your function
+				}
+			},
+			failure: function(errMsg) {
+				alert(errMsg);
+			}
+		});		
 		
 		if (amountValue <= 0 || isCashSale) {
 			return;
@@ -2531,17 +2551,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		function proceedWithPayment() {
 
+			console.log(result);
+			
 			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 				Swal.fire({
 					title: 'پرداخت از طریق دستگاه کارتخوان...',
 					allowOutsideClick: false,
 					didOpen: () => { Swal.showLoading(); }
 				});
-
-				const formData = new URLSearchParams();
-				formData.append('payment', cardPaymentAmount);
-				formData.append('ip', cardReaderIP);
-				formData.append('port', cardReaderPort);
 
 				fetch('{% url "Amusement_Park:test_payment" %}', {
 					method: 'POST',
