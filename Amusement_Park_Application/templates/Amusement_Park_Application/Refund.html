@@ -184,7 +184,26 @@ Page content START -->
                             <!-- Card reader (Default) -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-card-reader">
-                                    <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+                                    <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader"
+                                    class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
                                         {% if request.language == 'fa' %}
                                             نقدی
                                         {% elif request.language == 'en' %}
@@ -199,7 +218,26 @@ Page content START -->
                             <!-- Cash -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-cash">
-                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash"
+                                    class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
                                             {% if request.language == 'fa' %}
                                                 کارت به کارت
                                             {% elif request.language == 'en' %}
@@ -311,7 +349,26 @@ Page content START -->
                             <!-- Combined payment -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-combined">
-                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined"
+                                    class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
                                             {% if request.language == 'fa' %}
                                                 انتقال با شماره شبا
                                             {% elif request.language == 'en' %}
@@ -836,7 +893,7 @@ Page content END -->
 										{% endif %}	                          
                         </h6>
                     </div>
-                </td
+                </td>
             {% if request.language == 'fa' %}
                 <td class="text-center">
                                 <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.total_price).toLocaleString()} ریال</h5>

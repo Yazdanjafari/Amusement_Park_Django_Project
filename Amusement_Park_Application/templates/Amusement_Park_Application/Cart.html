@@ -6,6 +6,13 @@
 {% block style %}
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<style>
+		[data-bs-theme="dark"] {
+			--my-label-color: #bfc0c9;
+		}
+		[data-bs-theme="light"] {
+			--my-label-color: #2c3e50;
+		}
+
 		.form-label {
 			display: block;
 			font-size: 14px;
@@ -216,8 +223,8 @@ Page content START -->
 							</button>
 						</div>
 					
-						<div class="col-md-6 bg-light-input">
-							<label for="firstName" class="form-label">
+						<div class="col-md-6 bg-light-input" >
+							<label for="firstName" class=" form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									نام :
 								{% elif request.language == 'en' %}
@@ -237,7 +244,7 @@ Page content START -->
 						
 						
 						<div class="col-md-6 bg-light-input">
-							<label for="lastName" class="form-label">
+							<label for="lastName" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									نام خانوادگی :
 								{% elif request.language == 'en' %}
@@ -254,7 +261,7 @@ Page content START -->
 								   {% endif %}>
 						</div>
 						<div class="col-md-4 bg-light-input">
-							<label for="gender" class="form-label">
+							<label for="gender" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									جنسیت :
 								{% elif request.language == 'en' %}
@@ -285,7 +292,7 @@ Page content START -->
 						</div>
 						
 						<div class="col-md-4 bg-light-input"> 
-							<label for="city" class="form-label">
+							<label for="city" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									استان :
 								{% elif request.language == 'en' %}
@@ -405,7 +412,7 @@ Page content START -->
 						
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="country" class="form-label">
+							<label for="country" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									کشور:
 								{% elif request.language == 'en' %}
@@ -494,7 +501,7 @@ Page content START -->
 						</div>
 
 						<div class="col-md-4 bg-light-input">
-							<label for="birthDay" class="form-label">
+							<label for="birthDay" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									روز تولد:
 								{% elif request.language == 'en' %}
@@ -540,7 +547,7 @@ Page content START -->
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthMonth" class="form-label">
+							<label for="birthMonth" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									ماه تولد:
 								{% elif request.language == 'en' %}
@@ -567,7 +574,7 @@ Page content START -->
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthYear" class="form-label">
+							<label for="birthYear" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									سال تولد:
 								{% elif request.language == 'en' %}
