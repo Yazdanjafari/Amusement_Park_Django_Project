@@ -2181,10 +2181,59 @@ function check1() {
 		
 	}
 	
-	var doSuccess = function(data){
+	var doSuccess = function(data) {
+		function findRSValue(obj) {
+			if (typeof obj !== 'object' || obj === null) return null;
+	
+			if (obj.tag === "RS") {
+				return obj.value;
+			}
+	
+			if (Array.isArray(obj)) {
+				for (let i = 0; i < obj.length; i++) {
+					let result = findRSValue(obj[i]);
+					if (result !== null) return result;
+				}
+			}
+	
+			for (var key in obj) {
+				let result = findRSValue(obj[key]);
+				if (result !== null) return result;
+			}
+	
+			return null;
+		}
+	
+		// Map of RS values to messages
+		const rsMessages = {
+			"00": "پرداخت با موفقیت انجام شد",
+			"55": "رمز اشتباه است",
+			"51": "موجودی کافی نیست",
+			"50": "مشکل ارتباط اینترنت",
+			"91": "کارت عابر بانک توسط بانک مبدا پشتیبانی نمیشد",
+			"99": "تراکنش لغو شد",
+			"58": "مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمیشود",
+			"": "کارتخوان متصل نیست یا وقتی کاربر درخواست جدیدی میفرستد اما درخواست قبل هنوز در حال اجرا هست"
+		};
+	
+		let rsValue = findRSValue(data);
+	
+		if (rsValue !== null && rsMessages.hasOwnProperty(rsValue)) {
+			Swal.close();
+			Swal.fire({
+				icon: rsValue === "00" ? 'success' : 'error',
+				title: rsMessages[rsValue],
+				confirmButtonText: 'باشه'
+			});
+			return; // Stop further processing
+		}
+	
+		// Default behavior
+		Swal.close();
 		$('#result').empty();
-		$('#result').append(JSON.stringify(data,null, "\t"));
-	}
+		$('#result').append(JSON.stringify(data, null, "\t"));
+	};
+	
 	
 	$('#search').click(doPCPOS);
 {% comment %} PcPos JS Setting Finish {% endcomment %}
