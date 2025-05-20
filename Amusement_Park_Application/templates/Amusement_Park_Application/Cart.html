@@ -2191,59 +2191,142 @@ function check1() {
 	var doSuccess = function(data) {
 		function findRSValue(obj) {
 			if (typeof obj !== 'object' || obj === null) return null;
-	
-			if (obj.tag === "RS") {
-				return obj.value;
-			}
-	
+			if (obj.tag === "RS") return obj.value;
 			if (Array.isArray(obj)) {
 				for (let i = 0; i < obj.length; i++) {
 					let result = findRSValue(obj[i]);
 					if (result !== null) return result;
 				}
 			}
-	
 			for (var key in obj) {
 				let result = findRSValue(obj[key]);
 				if (result !== null) return result;
 			}
-	
 			return null;
 		}
 	
-		// Map of RS values to messages
 		const rsMessages = {
 			"00": "پرداخت با موفقیت انجام شد !",
 			"55": "رمز اشتباه است !",
 			"51": "موجودی کافی نیست !",
 			"50": "مشکل ارتباط اینترنت !",
-			"91": "کارت عابر بانک توسط بانک مبدا پشتیبانی نمیشد !",
+			"91": "کارت توسط بانک مبدا پشتیبانی نمی‌شود !",
 			"99": "تراکنش لغو شد !",
-			"58": "مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمیشود !",
-			"": "کارتخوان متصل نیست !" 
+			"58": "مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمی‌شود !",
+			"":   "کارتخوان متصل نیست !"
 		};
 	
 		let rsValue = findRSValue(data);
 	
 		if (rsValue !== null && rsMessages.hasOwnProperty(rsValue)) {
 			Swal.close();
-			Swal.fire({
-				icon: rsValue === "00" ? 'success' : 'error',
-				title: rsMessages[rsValue],
-				confirmButtonText: 'باشه'
-			});
-			return; // Stop further processing
+	
+			if (rsValue === "00") {
+				// ۱. نمایش پیام موفقیت
+				Swal.fire({
+					icon: 'success',
+					title: rsMessages[rsValue],
+					confirmButtonText: 'باشه'
+				}).then(result => {
+					if (!result.isConfirmed) return;
+	
+					// === اینجا داده‌ها را دقیقاً مثل فروش نقدی جمع‌آوری می‌کنیم ===
+					const phone = document.getElementById('phoneInput').value;
+					const firstName = document.getElementById('firstName').value;
+					const lastName = document.getElementById('lastName').value;
+					const birthYear = document.getElementById('birthYear').value;
+					const birthMonth = document.getElementById('birthMonth').value;
+					const birthDay = document.getElementById('birthDay').value;
+	
+					const customerData = phone ? {
+						phone: phone,
+						firstName: firstName || null,
+						lastName: lastName || null,
+						birthYear: birthYear || null,
+						birthMonth: birthMonth || null,
+						birthDay: birthDay || null,
+					} : null;
+	
+					const cartItems = [];
+					document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
+						const productId = item.getAttribute('data-ticket-product-id');
+						const quantity = item.querySelector('.counter').innerText;
+						cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
+					});
+	
+					// اگر در صفحه‌تان input‌های card و cash دارید، مثلاً:
+					const cardInput = document.getElementById('cardInput');
+					const cashInput = document.getElementById('cashInput');
+	
+					const transactionData = {
+						type: 'card',  // یا getTransactionType() اگر تابع تعریف کرده‌اید
+						discount_code: document.getElementById('discount-code').value || null,
+						discount_amount: parseFloat(
+							document.getElementById('discount-display').innerText
+							.replace(/[^0-9.-]+/g, "")
+						) || 0,
+						mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
+						mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
+					};
+					// === پایان جمع‌آوری داده‌ها ===
+	
+					// ارسال به سرور
+					fetch('{% url "Amusement_Park:submit_pay" %}', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-CSRFToken': '{{ csrf_token }}'
+						},
+						body: JSON.stringify({
+							customer_data: customerData,
+							cart_items: cartItems,
+							transaction_data: transactionData,
+						})
+					})
+					.then(res => res.json())
+					.then(payload => {
+						if (payload.success) {
+							// ریدایرکت به صفحه پرینت تیکت
+							window.location.href = `/Amusement_Park/tickets/${payload.ticket_id}/print_qr/`;
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'خطا در ثبت تراکنش',
+								text: payload.error || 'لطفاً دوباره تلاش کنید.',
+								confirmButtonText: 'باشه'
+							});
+						}
+					})
+					.catch(() => {
+						Swal.fire({
+							icon: 'error',
+							title: 'خطا در ارتباط با سرور',
+							confirmButtonText: 'باشه'
+						});
+					});
+				});
+	
+			} else {
+				// خطاهای کارتخوان
+				Swal.fire({
+					icon: 'error',
+					title: rsMessages[rsValue],
+					confirmButtonText: 'باشه'
+				});
+			}
+			return;
 		}
 	
+		// در صورت نبودن پاسخ RS
 		Swal.fire({
 			icon: 'error',
 			title: "کارتخوان متصل نیست !",
 			confirmButtonText: 'باشه'
 		});
-		
-		$('#result').empty();
-		$('#result').append(JSON.stringify(data, null, "\t"));
+		$('#result').empty().append(JSON.stringify(data, null, "\t"));
 	};
+	
+	
 	
 	
 	$('#search').click(doPCPOS);

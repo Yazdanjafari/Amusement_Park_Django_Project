@@ -382,7 +382,7 @@
 						<a class="nav-link bg-primary bg-opacity-10  rounded-3 text-primary px-3 py-3 py-xl-0 cart-link" href="{% url 'Amusement_Park:Cart' %}" id="categoryMenu" {% block disabled_cart %}{% endblock disabled_cart %}>
 							<i class="bi bi-cart me-2"></i><span>
 								{% if request.language == 'fa' %}
-									 خرید 
+									 سبد خرید
 								{% elif request.language == 'en' %}
 									Shopping 
 								{% elif request.language == 'ar' %}
@@ -397,7 +397,7 @@
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link {% block active_main %}{% endblock active_main %}" href="{% url 'Amusement_Park:Products' %}" id="demoMenu" {% block disabled_main %}{% endblock disabled_main %}>
 								{% if request.language == 'fa' %}
-									خانه	 
+									صفحه اصلی	 
 								{% elif request.language == 'en' %}
 									Home
 								{% elif request.language == 'ar' %}
