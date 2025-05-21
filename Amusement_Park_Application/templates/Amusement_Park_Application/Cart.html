@@ -862,7 +862,7 @@ Page content START -->
 									<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
 									<i class="fas fa-exclamation-triangle"></i> 
 									يرجى إدخال المعلومات بعناية حيث أنه لا يمكن تعديلها بعد الحفظ.
-									
+
 								{% endif %}
 							</small>
 							<br>
@@ -1898,28 +1898,27 @@ Page content END -->
 			.then(response => response.json())
 			.then(data => {
 				if (data.exists) {
+					// نمایش نام و نام خانوادگی
 					document.getElementById('firstName').value = data.first_name || '';
 					document.getElementById('lastName').value = data.last_name || '';
-	
-					if (data.date_of_birth) {
-						const dateParts = data.date_of_birth.split('-');
-						document.getElementById('birthYear').value = dateParts[0];
-						document.getElementById('birthMonth').value = dateParts[1];
-						document.getElementById('birthDay').value = dateParts[2];
-					}
-	
-					document.getElementById('firstName').setAttribute('disabled', true);
-					document.getElementById('lastName').setAttribute('disabled', true);
-					document.getElementById('birthYear').setAttribute('disabled', true);
-					document.getElementById('gender').setAttribute('disabled', true);
-					document.getElementById('city').setAttribute('disabled', true);
-					document.getElementById('country').setAttribute('disabled', true);
-					document.getElementById('birthMonth').setAttribute('disabled', true);
-					document.getElementById('birthDay').setAttribute('disabled', true);
+				
+					document.getElementById('firstName').removeAttribute('disabled');
+					document.getElementById('lastName').removeAttribute('disabled');
+				
+					// مخفی کردن بقیه فیلدها
+					const fieldsToHide = ['birthYear', 'birthMonth', 'birthDay', 'gender', 'city', 'country'];
+					fieldsToHide.forEach(id => {
+						const element = document.getElementById(id);
+						if (element) {
+							element.closest('.col-md-4, .col-md-6').style.display = 'none'; // مخفی کردن کل بخش
+						}
+					});
+				
 					document.querySelector('button[type="submit"]').setAttribute('disabled', true);
-	
 					phoneInput.setAttribute('disabled', true);
 					document.getElementById('applyButton').setAttribute('disabled', true);
+
+					
 	
 					Swal.fire({
 						icon: 'info',
@@ -2229,7 +2228,6 @@ function check1() {
 			Swal.close();
 	
 			if (rsValue === "00") {
-				// ۱. نمایش پیام موفقیت
 				Swal.fire({
 					icon: 'success',
 					title: rsMessages[rsValue],
@@ -2237,7 +2235,6 @@ function check1() {
 				}).then(result => {
 					if (!result.isConfirmed) return;
 	
-					// === اینجا داده‌ها را دقیقاً مثل فروش نقدی جمع‌آوری می‌کنیم ===
 					const phone = document.getElementById('phoneInput').value;
 					const firstName = document.getElementById('firstName').value;
 					const lastName = document.getElementById('lastName').value;
@@ -2261,12 +2258,11 @@ function check1() {
 						cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
 					});
 	
-					// اگر در صفحه‌تان input‌های card و cash دارید، مثلاً:
 					const cardInput = document.getElementById('cardInput');
 					const cashInput = document.getElementById('cashInput');
 	
 					const transactionData = {
-						type: 'card',  // یا getTransactionType() اگر تابع تعریف کرده‌اید
+						type: 'card',  
 						discount_code: document.getElementById('discount-code').value || null,
 						discount_amount: parseFloat(
 							document.getElementById('discount-display').innerText
@@ -2275,9 +2271,7 @@ function check1() {
 						mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
 						mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
 					};
-					// === پایان جمع‌آوری داده‌ها ===
 	
-					// ارسال به سرور
 					fetch('{% url "Amusement_Park:submit_pay" %}', {
 						method: 'POST',
 						headers: {
@@ -2293,7 +2287,6 @@ function check1() {
 					.then(res => res.json())
 					.then(payload => {
 						if (payload.success) {
-							// ریدایرکت به صفحه پرینت تیکت
 							window.location.href = `/Amusement_Park/tickets/${payload.ticket_id}/print_qr/`;
 						} else {
 							Swal.fire({
@@ -2314,7 +2307,6 @@ function check1() {
 				});
 	
 			} else {
-				// خطاهای کارتخوان
 				Swal.fire({
 					icon: 'error',
 					title: rsMessages[rsValue],
@@ -2324,7 +2316,6 @@ function check1() {
 			return;
 		}
 	
-		// در صورت نبودن پاسخ RS
 		Swal.fire({
 			icon: 'error',
 			title: "کارتخوان متصل نیست !",
