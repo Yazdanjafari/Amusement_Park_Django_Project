@@ -1898,14 +1898,12 @@ Page content END -->
 			.then(response => response.json())
 			.then(data => {
 				if (data.exists) {
-					// نمایش نام و نام خانوادگی
 					document.getElementById('firstName').value = data.first_name || '';
 					document.getElementById('lastName').value = data.last_name || '';
 				
 					document.getElementById('firstName').removeAttribute('disabled');
 					document.getElementById('lastName').removeAttribute('disabled');
 				
-					// مخفی کردن بقیه فیلدها
 					const fieldsToHide = ['birthYear', 'birthMonth', 'birthDay', 'gender', 'city', 'country'];
 					fieldsToHide.forEach(id => {
 						const element = document.getElementById(id);
@@ -2258,20 +2256,21 @@ function check1() {
 						cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
 					});
 	
-					const cardInput = document.getElementById('cardInput');
-					const cashInput = document.getElementById('cashInput');
+					const cardInput = document.getElementById('card-amount');
+					const cashInput = document.getElementById('cash-amount');
 	
+					const transactionType = getTransactionType();
+
 					const transactionData = {
-						type: 'card',  
+						type: transactionType,
 						discount_code: document.getElementById('discount-code').value || null,
-						discount_amount: parseFloat(
-							document.getElementById('discount-display').innerText
-							.replace(/[^0-9.-]+/g, "")
-						) || 0,
-						mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
-						mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
+						discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
+						mix_pc: cardInput && cardInput.value ? parseFloat(cardInput.value.replace(/,/g, '')) : 0,
+						mix_cash: cashInput && cashInput.value ? parseFloat(cashInput.value.replace(/,/g, '')) : 0,
 					};
-	
+
+					console.log('transactionData:', transactionData);
+					
 					fetch('{% url "Amusement_Park:submit_pay" %}', {
 						method: 'POST',
 						headers: {
