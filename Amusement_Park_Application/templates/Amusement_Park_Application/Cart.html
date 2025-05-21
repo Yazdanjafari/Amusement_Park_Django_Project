@@ -848,14 +848,21 @@ Page content START -->
 								{% endif %}
 							</button>
 							<br>
-							<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
-								<i class="fas fa-exclamation-triangle"></i> 
 								{% if request.language == 'fa' %}
+									<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
+									<i class="fas fa-exclamation-triangle"></i> 
 									لطفا اطلاعات را با دقت وارد کنید زیرا پس از ذخیره امکان تغییر آن وجود ندارد.
+
 								{% elif request.language == 'en' %}
-									Please enter the information carefully, as it cannot be changed after saving.
+									<small class="text-danger position-absolute" style="bottom: -20px; left: 0;">
+									<i class="fas fa-exclamation-triangle"></i> 
+									Please enter the information carefully, as it cannot be changed after saving.		
+
 								{% elif request.language == 'ar' %}
+									<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
+									<i class="fas fa-exclamation-triangle"></i> 
 									يرجى إدخال المعلومات بعناية حيث أنه لا يمكن تعديلها بعد الحفظ.
+									
 								{% endif %}
 							</small>
 							<br>
