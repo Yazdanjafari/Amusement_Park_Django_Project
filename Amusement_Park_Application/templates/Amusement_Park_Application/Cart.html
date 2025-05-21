@@ -1526,7 +1526,7 @@ Page content START -->
 
 <input style="display:none;" type="text" placeholder="URL" value="http://127.0.0.1:8080/pcpos" id="pcpos_url" />
 <input style="display:none;" type="text" placeholder="Pr Code" value="000000" id="pr_code" />
-<input type="text" placeholder="Amount" value="1234" id="amount" />
+<input type="text" placeholder="Amount" value="1234" id="amount" style="display:none;"/>
 <input style="display:none;" type="text" placeholder="Currency" value="364" id="currency" />
 <input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r_cardholder" />
 <input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r3" />
@@ -1559,8 +1559,8 @@ Page content START -->
 <input style="display:none;" type="text" placeholder="Service Group" id="service_group" />
 <textarea style="display:none;" cols="40" rows="5" placeholder="Settelment" id="settelment"></textarea>
 <textarea style="display:none;" cols="40" rows="5" placeholder="Key Value" id="key_value"></textarea>
-<div>Result:</div>
-<section id="result"></section>
+<div style="display:none;">Result:</div>
+<section id="result" style="display:none;"></section>
 <!-- =======================
 Page content END -->
 {% endblock body %}
@@ -2192,6 +2192,10 @@ function check1() {
 		
 	}
 	
+
+	{% comment %} PcPos JS Setting End {% endcomment %}
+	
+	{% comment %} PcPos Notif And Submit Pay Setting Start {% endcomment %}
 	var doSuccess = function(data) {
 		function findRSValue(obj) {
 			if (typeof obj !== 'object' || obj === null) return null;
@@ -2323,11 +2327,8 @@ function check1() {
 		$('#result').empty().append(JSON.stringify(data, null, "\t"));
 	};
 	
-	
-	
-	
 	$('#search').click(doPCPOS);
-{% comment %} PcPos JS Setting Finish {% endcomment %}
+{% comment %} PcPos Notif And Submit Pay Setting End {% endcomment %}
 
 {% comment %} PcPos _ move number to hidden input Start {% endcomment %}
 function updateFinalPrice() {
@@ -2348,9 +2349,7 @@ function updateFinalPrice() {
 			
 			return finalPrice;
 		}
-{% comment %} PcPos _ move number to hidden input Finish {% endcomment %}
 
-{% comment %} PcPos _ move number correctly to hidden input Start {% endcomment %}
 document.addEventListener('DOMContentLoaded', function() {
 	const amountInput       = document.getElementById('amount');
 	const cashInput         = document.getElementById('cash-amount');
@@ -2440,7 +2439,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			  resetButton.disabled = true;
 			});
 		});
-{% comment %} PcPos _ move number correctly to hidden input Finish {% endcomment %}
+{% comment %} PcPos _ move number to hidden input Finish {% endcomment %}
+
+
+
+{% comment %} PcPos _ For save the bill correctly Start {% endcomment %}
 
 document.addEventListener('DOMContentLoaded', function() {
 	const cashInput = document.getElementById('cash-amount');
