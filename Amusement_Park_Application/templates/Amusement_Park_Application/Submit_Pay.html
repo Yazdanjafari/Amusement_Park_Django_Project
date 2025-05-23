@@ -1079,7 +1079,7 @@ Page content END -->
             event.preventDefault();
             const transactionType = getTransactionType();
             const finalPrice = updateFinalPrice();
-    
+        
             if (transactionType === 'cash') {
                 Swal.fire({
                     title: 'تأیید فروش نقدی',
@@ -1095,7 +1095,7 @@ Page content END -->
                 });
                 return;
             }
-    
+        
             if (transactionType === 'mix') {
                 const cashVal = parseAmount(cashInput.value);
                 const cardVal = parseAmount(cardInput.value);
@@ -1118,10 +1118,65 @@ Page content END -->
                     return;
                 }
             }
-    
+        
             let cardPaymentAmount = 0;
             if (transactionType === 'pc') {
                 cardPaymentAmount = finalPrice;
+            } else if (transactionType === 'mix') {
+                cardPaymentAmount = parseAmount(cardInput.value);
+            }
+        
+            if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+                Swal.fire({
+                    title: 'پرداخت از طریق دستگاه کارتخوان...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        fetch('{% url "Amusement_Park:submit_pay" %}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                customer_data: customerData,
+                                cart_items: cartItems,
+                                transaction_data: transactionData,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            Swal.close();
+                            if (data.status === "success") {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'پرداخت موفق',
+                                    text: data.message,
+                                    confirmButtonText: 'باشه'
+                                }).then(() => {
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'خطا',
+                                    text: data.message,
+                                    confirmButtonText: 'باشه'
+                                });
+                            }
+                        })
+                        .catch(() => {
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا در ارتباط با سرور',
+                                text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                                confirmButtonText: 'باشه'
+                            });
+                        });
+                    }
+                });
+        
+                return;
             } else if (transactionType === 'mix') {
                 cardPaymentAmount = parseAmount(cardInput.value);
             }
