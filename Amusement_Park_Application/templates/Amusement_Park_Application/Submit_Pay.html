@@ -883,13 +883,6 @@ Page content END -->
                 document.getElementById('totalTax').textContent = parseInt(transaction.tax).toLocaleString() + ' ریال';
                 document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + ' ریال';
                 document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + ' ریال';
-
-                const cashInput    = document.getElementById('cash-amount');
-                const cardInput    = document.getElementById('card-amount');
-                const applyButton  = document.getElementById('apply-button');
-                const resetButton  = document.getElementById('reset-button');
-                const finalPriceEl = document.getElementById('finalPrice'); 
-                const payButton    = document.getElementById('search');                
     
                 const finalPriceNumber = parseInt(transaction.price) || 0;
                 function updateAmountInput() {
@@ -948,11 +941,18 @@ Page content END -->
                 confirmButtonText: 'باشه'
             });
         });
+    });
 {% comment %} Move Amount to Pos Machine - Finish {% endcomment %}
     
 
 
-
+    document.addEventListener('DOMContentLoaded', function() {
+        const cashInput    = document.getElementById('cash-amount');
+        const cardInput    = document.getElementById('card-amount');
+        const applyButton  = document.getElementById('apply-button');
+        const resetButton  = document.getElementById('reset-button');
+        const finalPriceEl = document.getElementById('finalPrice'); 
+        const payButton    = document.getElementById('search');
     
         function parseAmount(amount) {
             let cleanAmount = amount.replace(/,/g, '').replace(/[^\d.]/g, '');
