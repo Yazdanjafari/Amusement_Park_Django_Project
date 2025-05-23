@@ -1469,13 +1469,13 @@ Page content START -->
 						<br>					
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							{% if request.language == 'en' %}
-								<span class="text-danger h5" id="final-price">1,100,000 Rial</span>
+								<span class="text-danger h5" id="final-price">0 Rial</span>
 								<span class="h5 fw-bold">Final Price</span>
 							{% else %}
 								<span class="h5 fw-bold">
 									{% if request.language == 'fa' %} قیمت نهایی {% elif request.language == 'ar' %} السعر النهائي {% endif %}
 								</span>
-								<span class="text-danger h5" id="final-price">1,100,000 ریال</span>
+								<span class="text-danger h5" id="final-price">0 ریال</span>
 							{% endif %}
 						</li>
 					</ul>		
@@ -1526,7 +1526,7 @@ Page content START -->
 
 <input style="display:none;" type="text" placeholder="URL" value="http://127.0.0.1:8080/pcpos" id="pcpos_url" />
 <input style="display:none;" type="text" placeholder="Pr Code" value="000000" id="pr_code" />
-<input type="text" placeholder="Amount" value="1234" id="amount" style="display:none;"/>
+<input type="text" placeholder="Amount" value="1234" id="amount"/>
 <input style="display:none;" type="text" placeholder="Currency" value="364" id="currency" />
 <input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r_cardholder" />
 <input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r3" />
@@ -2835,18 +2835,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 {% comment %} PcPos _ For save the bill correctly Finish {% endcomment %}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	</script>
 	{% endblock script %}
