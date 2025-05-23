@@ -959,14 +959,14 @@ Page content END -->
             return parseFloat(cleanAmount) || 0;
         }
         function formatAmount(amount) {
-            return amount.toLocaleString() + ' ریال';
+            return parseInt(amount);
         }
         function updateFinalPrice() {
             const totalPrice    = parseFloat(document.getElementById('totalPrice').innerText.replace(/,/g, ''));
             const taxAmount     = parseFloat(document.getElementById('totalTax').innerText.replace(/,/g, ''));
             const discountAmount= parseFloat(document.getElementById('totalDiscount').innerText.replace(/,/g, ''));
             const finalPrice    = totalPrice + taxAmount - discountAmount;
-            finalPriceEl.innerText = finalPrice.toLocaleString() + ' ریال';
+            finalPriceEl.innerText = parseInt(finalPrice);
             return finalPrice;
         }
         function resetCombinedFields() {
