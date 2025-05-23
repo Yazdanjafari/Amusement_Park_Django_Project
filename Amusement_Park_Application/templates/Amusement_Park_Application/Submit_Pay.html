@@ -803,7 +803,20 @@ Page content END -->
 		return phone;
 	}
 
-
+    function getTransactionType() {
+        const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
+        const isCashOpen       = document.getElementById('collapse-cash').classList.contains('show');
+        const isCombinedOpen   = document.getElementById('collapse-combined').classList.contains('show');
+        if (isCardReaderOpen) {
+            return 'pc';
+        } else if (isCashOpen) {
+            return 'cash';
+        } else if (isCombinedOpen) {
+            return 'mix';
+        } else {
+            return 'pc';
+        }
+    }
 	
     document.getElementById('applyButton').addEventListener('click', function() {
         const transactionId = document.getElementById('ticketCodeInput').value;
@@ -830,7 +843,7 @@ Page content END -->
             } else {
                 const transaction = data.data;
                 const tbody = document.querySelector('tbody');
-                tbody.innerHTML = ''; 
+                tbody.innerHTML = '';
     
                 transaction.products.forEach(product => {
                     const tr = document.createElement('tr');
@@ -860,6 +873,8 @@ Page content END -->
                     tbody.appendChild(tr);
                 });
     
+{% comment %} Move Amount to Pos Machine - Start {% endcomment %}
+
                 document.getElementById('createAt').value = transaction.create_at;
                 document.getElementById('userPhone').value = maskPhoneNumber(transaction.customer.phone);
                 document.getElementById('userFirstName').value = transaction.customer.first_name;
@@ -868,18 +883,59 @@ Page content END -->
                 document.getElementById('totalTax').textContent = parseInt(transaction.tax).toLocaleString() + ' ریال';
                 document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + ' ریال';
                 document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + ' ریال';
+
+                const cashInput    = document.getElementById('cash-amount');
+                const cardInput    = document.getElementById('card-amount');
+                const applyButton  = document.getElementById('apply-button');
+                const resetButton  = document.getElementById('reset-button');
+                const finalPriceEl = document.getElementById('finalPrice'); 
+                const payButton    = document.getElementById('search');                
+    
+                const finalPriceNumber = parseInt(transaction.price) || 0;
+                function updateAmountInput() {
+                    const transactionType = getTransactionType();
+                    const amountInput = document.getElementById('amount');
+                    const cardAmountInput = document.getElementById('card-amount');
+                    
+                    if (transactionType === 'cash') {
+                        amountInput.value = 0;
+                    } else if (transactionType === 'mix') {
+                        amountInput.value = cardAmountInput.value || 0;
+                    } else {
+                        amountInput.value = finalPriceNumber;
+                    }
+                }
+    
+                updateAmountInput();
     
                 document.getElementById('transactionDetails').style.display = 'block';
-    
                 document.getElementById('rightSidebar').style.display = 'block';
-    
                 document.getElementById('applyButton').disabled = true;
     
+                setInterval(() => {
+                    if (getTransactionType() === 'mix') {
+                        const cardVal = document.getElementById('card-amount').value || 0;
+                        document.getElementById('amount').value = cardVal;
+                    }
+                }, 500);
+
                 Swal.fire({
                     icon: 'success',
                     title: 'موفقیت',
                     text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
                     confirmButtonText: 'باشه'
+                });
+    
+                document.getElementById('card-amount').addEventListener('input', () => {
+                    if (getTransactionType() === 'mix') {
+                        document.getElementById('amount').value = document.getElementById('card-amount').value || 0;
+                    }
+                });
+                
+                ['collapse-cash', 'collapse-card-reader', 'collapse-combined'].forEach(id => {
+                    const el = document.getElementById(id);
+                    el.addEventListener('shown.bs.collapse', updateAmountInput);
+                    el.addEventListener('hidden.bs.collapse', updateAmountInput);
                 });
             }
         })
@@ -892,16 +948,11 @@ Page content END -->
                 confirmButtonText: 'باشه'
             });
         });
-    });
+{% comment %} Move Amount to Pos Machine - Finish {% endcomment %}
+    
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const cashInput    = document.getElementById('cash-amount');
-        const cardInput    = document.getElementById('card-amount');
-        const applyButton  = document.getElementById('apply-button');
-        const resetButton  = document.getElementById('reset-button');
-        const finalPriceEl = document.getElementById('finalPrice'); 
-        const payButton    = document.getElementById('search');
+
     
         function parseAmount(amount) {
             let cleanAmount = amount.replace(/,/g, '').replace(/[^\d.]/g, '');
@@ -1001,7 +1052,6 @@ Page content END -->
         });
         observer.observe(finalPriceEl, { attributes: true });
         
-        // رویدادهای مربوط به تغییرات تخفیف
         document.querySelectorAll('.discount-input').forEach(input => {
             input.addEventListener('input', resetCombinedFields);
         });
@@ -1024,21 +1074,6 @@ Page content END -->
                 }
             });
         });
-    
-        function getTransactionType() {
-            const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
-            const isCashOpen       = document.getElementById('collapse-cash').classList.contains('show');
-            const isCombinedOpen   = document.getElementById('collapse-combined').classList.contains('show');
-            if (isCardReaderOpen) {
-                return 'pc';
-            } else if (isCashOpen) {
-                return 'cash';
-            } else if (isCombinedOpen) {
-                return 'mix';
-            } else {
-                return 'pc';
-            }
-        }
     
         payButton.addEventListener('click', function(event) {
             event.preventDefault();
@@ -1243,6 +1278,96 @@ Page content END -->
       
       
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
       {% comment %} PcPos JS Setting Start {% endcomment %}
