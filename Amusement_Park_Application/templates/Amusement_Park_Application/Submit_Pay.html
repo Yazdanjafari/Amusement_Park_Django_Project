@@ -879,10 +879,10 @@ Page content END -->
                 document.getElementById('userPhone').value = maskPhoneNumber(transaction.customer.phone);
                 document.getElementById('userFirstName').value = transaction.customer.first_name;
                 document.getElementById('userLastName').value = transaction.customer.last_name;
-                document.getElementById('totalPrice').textContent = parseInt(transaction.product_prices).toLocaleString() + ' ریال';
-                document.getElementById('totalTax').textContent = parseInt(transaction.tax).toLocaleString() + ' ریال';
-                document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + ' ریال';
-                document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + ' ریال';
+                document.getElementById('totalPrice').textContent = parseInt(transaction.product_prices).toLocaleString() + {% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ریال ' {% endif %};
+                document.getElementById('totalTax').textContent = parseInt(transaction.tax).toLocaleString() + {% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ریال ' {% endif %};
+                document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + {% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ریال ' {% endif %};
+                document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + {% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ریال ' {% endif %};
     
                 const finalPriceNumber = parseInt(transaction.price) || 0;
                 function updateAmountInput() {
@@ -966,7 +966,7 @@ Page content END -->
             const taxAmount     = parseFloat(document.getElementById('totalTax').innerText.replace(/,/g, ''));
             const discountAmount= parseFloat(document.getElementById('totalDiscount').innerText.replace(/,/g, ''));
             const finalPrice    = totalPrice + taxAmount - discountAmount;
-            finalPriceEl.innerText = parseInt(finalPrice).toLocaleString() + ' ریال';
+            finalPriceEl.innerText = parseInt(finalPrice).toLocaleString() + {% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ریال ' {% endif %};
             return finalPrice;
         }
         function resetCombinedFields() {
@@ -1330,99 +1330,6 @@ Page content END -->
           cardAmountInput.addEventListener("input", validateAmount);
         });
       });
-      
-      
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
       {% comment %} PcPos JS Setting Start {% endcomment %}
