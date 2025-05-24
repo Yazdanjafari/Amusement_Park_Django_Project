@@ -3,299 +3,186 @@
 {% block body %}
 
 
+	
 <!-- =======================
-Page Banner START -->
-<br><br>
-<section class="py-0">
+Faqs START -->
+<section class="position-relative overflow-hidden pt-0 pt-sm-5">
 	<div class="container">
+
+		<!-- Title -->
+		<div class="row position-relative z-index-9">
+			<div class="col-12 text-center mx-auto">
+				<h2 class="mb-0">پرسش و پاسخ</h2>
+			</div>
+		</div>
+
 		<div class="row">
-			<div class="col-12">
-				<div class="bg-light p-4 text-center rounded-3">
-					<h1 class="m-0 fs-2">تنظیمات</h1>
-					<!-- Breadcrumb -->
-					<div class="d-flex justify-content-center">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="{% url 'Amusement_Park:Products' %}">صفحه اصلی</a></li>
-								<li class="breadcrumb-item active" aria-current="page">تنظیمات</a></li>
-							</ol>
-						</nav>
+			<div class="col-lg-10 col-xl-8 mx-auto text-center position-relative">
+
+				<!-- SVG decoration -->
+				<figure class="position-absolute top-0 start-0 translate-middle ms-8">
+					<svg style="transform: scale(-1,1)" style="enable-background:new 0 0 141.7 143.9;">
+						<path class="fill-success" d="M137.7,53.1c9.6,29.3,1.8,64.7-20.2,80.7s-58.1,12.6-83.5-5.8C8.6,109.5-6.1,76.1,2.4,48.7 C10.8,21.1,42.2-0.7,71.5,0S128.1,23.8,137.7,53.1z"/>
+					</svg>
+				</figure>
+				
+				<!-- SVG decoration -->
+				<figure class="position-absolute bottom-0 end-0 me-n9 rotate-193">
+					<svg style="transform: scale(-1,1)" width="297.5px" height="295.9px">
+						<path stroke="#F99D2B" fill="none" stroke-width="13" d="M286.2,165.5c-9.8,74.9-78.8,128.9-153.9,120.4c-76-8.6-131.4-78.2-122.8-154.2C18.2,55.8,87.8,0.3,163.7,9"></path>
+					</svg>
+				</figure>
+
+				<!-- FAQ START -->
+				<div class="accordion accordion-icon accordion-shadow mt-4 text-start position-relative" id="accordionExample2">
+					<!-- Item -->
+					<div class="accordion-item mb-3">
+						<h6 class="accordion-header font-base" id="heading-1">
+							<button class="accordion-button fw-bold rounded collapsed pe-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="false" aria-controls="collapse-1">نحوه اتصال دستگاه کارتخوان
+						</h6>
+						<!-- Body -->
+						<div id="collapse-1" class="accordion-collapse collapse" aria-labelledby="heading-1" data-bs-parent="#accordionExample2">
+
+						  <div class="accordion-body mt-3">
+							<a href="https://www.aparat.com/video/video/embed/videohash/umyml2z/vt/frame" class="ms-2" target="_blank">تماشای ویدیو آموزش</a>
+							<br><br>
+							{% load static %}
+							<a href="{% static 'zip/sample.zip' %}" download>دانلود فایل کانکشن دستگاه کارتخوان</a><br><br>
+							<p style="color:#055fb5;">پسورد فایل کانکشن: 1661138</p>
+							<div>
+								<pre style="overflow-y: hidden; direction: rtl; text-align: right; padding: 0; margin: 0;">
+مراحل اتصال دستگاه کارتخوان پارسیان :
+
+پارت اول :
+● ابتدا اطمینان حاصل کنید که دستگاه کارتخوان توسط مرکز متصل است و میتوان به صورت عادی با آن تراکنش ایجاد کرد	
+
+پارت دوم :
+● کلید F2 را بفشارید و سپس رمز "0000" را وارد کنید
+● کلید شماره ۵ را بفشارید . اگر اتصال از قبل برقرار بود آن را لغو کنید و سپس به همین مرحله بازگردید . اگر هم برقرار نبود یعنی در جای درستی هستید . سپس نوع اتصال را روی "سریال" قرار دهید	
+
+پارت سوم :
+● فایل Citra_PcPos.zip را دانلود کرده و سپس آن را اکسترکت کنید
+● کابل تبدیل USB به RS-232 را که از شرکت پارسیان دریافت کردیم برداشته . پورت USB کابل خود را به کامپویتر و پورت RS232 را به دستگاه کارتخوان متصل میکنیم 
+● فایل CitraPcPos.exe را ران کنید و پیشنهاد میشود یک shourtcut از آن روی صفحه دسکتاپ ایجاد کنید
+● پسورد (پسورد :‌ 1661138) را در اینپوت "Input Password" وارد کنید و سپس روی دکمه "SaveConfig" کلیک کنید
+● نوع را روی "Serial" قرار دهید 
+● حالا باید "COM Port" را پیدا کنیم . برای اینکار در بخش سرچ ویندوز این واژه را سرچ کنید "Device Manager" و سپس وارد اپلیکیشن "Device Manager" شوید . وارد فیلد "Ports (Com & LPT)" شوید . روبروی این فیلد "Prolifix USB-to-serial Comm Port" یک پرانتز وجود دارد . نوشته و عدد آن را یادداشت کرده . مثال :‌ "Prolifix USB-to-serial Comm Port (COM3)" . سپس آن را در اپلیکیشن CitraPcPos.exe در بخش سریال وارد کنید
+● توجه داشته باشید که Timeout روی 120 و WindowsServicePort روی 8080 باشد .
+● پس از آن که همه مراحل را به درستی انجام دادید سپس روی دکمه StartService کلیک کنید
+
+
+نکته : برای هربار اتصال دستگاه کارتخوان باید پارت سوم را مجددا انجام دهید  (خبر خوب این است که بعد از اولین بار تنظیمات ذخیره میشود و فقط لازم است رمز عبور را وارد کنید و سپس دکمه استارت را بزنید)
+						</pre>
+							</div>
+						  </div>
+						</div>
+					  </div>
+					  
+					  
+
+					<!-- Item -->
+					<div class="accordion-item mb-3">
+						<h6 class="accordion-header font-base" id="heading-2">
+							<button class="accordion-button fw-bold rounded collapsed pe-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
+							نحوه کار با وب اپلیکیشن سیترا
+							</button>
+						</h6>
+						<!-- Body -->
+						<div id="collapse-2" class="accordion-collapse collapse" aria-labelledby="heading-2" data-bs-parent="#accordionExample2">
+							<div class="accordion-body mt-3">
+								<a href="https://www.aparat.com/video/video/embed/videohash/qlm5q62/vt/frame" class="ms-2" target="_blank">راهنمای کار با وب اپلیکیشن سیترا</a>
+							<br><br>
+							<a href="https://www.aparat.com/video/video/embed/videohash/ypm1kh6/vt/frame" class="ms-2" target="_blank">راهنمای کار با پنل ادمین وب اپلیکیشن سیترا</a>
+							<br><br>
+							</div>
+						</div>
 					</div>
+
+					<!-- Item -->
+					<div class="accordion-item mb-3">
+						<h6 class="accordion-header font-base" id="heading-3">
+							<button class="accordion-button fw-bold collapsed rounded pe-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
+								آپدیت ورژن 3.0.0
+							</button>
+						</h6>
+						<!-- Body -->
+						<div id="collapse-3" class="accordion-collapse collapse" aria-labelledby="heading-3" data-bs-parent="#accordionExample2">
+							<div class="accordion-body mt-3">
+								<pre style="overflow-y: hidden; direction: rtl; text-align: right; padding: 0; margin: 0;">
+مفتخریم تا اعلام کنیم وب اپلیکیشن سیترا توسط یزدان جعفری و پانیذ چاوشی به ورژن ۳.۰.۰ ارتقاع یافت
+
+
+● افزودن قابلیت سفارش چندیدن محصول به طور همزمان
+
+● افرودن قابلیت دارک مود و لایت مود
+
+● افزودن سه زبان عربی و انگلیسی و فارسی
+
+● افزودن قابلیت ثبت مجدد تراکنش
+
+● افزودن قابلیت ثبت عودت وجه
+
+● افزودن قابلیت ثبت اطلاعات مشتریان
+
+● گزارش فروش به تفکیک صندوق داران
+
+● گزارش فروش به تفکیک محصول
+
+● گزارش فروش به تفکیک مشتریان
+
+● افزودن قابلیت اعمال تخفیف در سه نوع مختلف
+
+● افزودن پنل ادمین حرفه ای
+
+● تغییر دیزاین سایت
+
+● افزودن پنل نوتیفیکیشن
+
+						</pre>
+						</div>
+						</div>
+					</div>
+
+					<!-- Item -->
+					<div class="accordion-item mb-3">
+						<h6 class="accordion-header font-base" id="heading-4">
+							<button class="accordion-button fw-bold collapsed rounded pe-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
+								نکات استفاده از وب اپلیکیشن
+							</button>
+						</h6>
+						<!-- Body -->
+						<div id="collapse-4" class="accordion-collapse collapse" aria-labelledby="heading-4" data-bs-parent="#accordionExample2">
+							<div class="accordion-body mt-3">
+<pre style="overflow-y: hidden; direction: rtl; text-align: right; padding: 0; margin: 0;">
+برخی از نکاتی که برای مدیریت بهینه وب اپلیکیشن رعایت کنید
+
+
+●  حتما اندازه عکس محصولات در ابعاد مربع (1*1) باشد  
+
+● سایز عکس ها کمتر از (100KB) باشد
+
+● لطفا از عکس های آماده استفاده کنید برای محصولات یا عکس های خود را با دوربین حرفه ای و فضای نور مناسب بندازید
+
+● لطفا قبل از راه اندازی محصولات مقدار مالیات را مشخص کنید
+
+● این وب اپلیکیشن برای موبایل طراحی نشده . با سیستم وارد آن شوید(به جز پنل اسکن)
+
+
+							</pre>
+							</div>
+						</div>
+					</div>
+
+					
 				</div>
+				<!-- FAQ END -->
 			</div>
 		</div>
 	</div>
 </section>
 <!-- =======================
-Page Banner END -->
+Faqs END -->
 
-
-
-<!-- =======================
-Page content START -->
-<section class="pt-5">
-	<div class="container-fluid px-4">
-		<div class="row g-4 g-sm-5">
-			<!-- Main content START -->
-			<div class="col-xl-8 mb-4 mb-sm-0 mx-auto">
-
-				<!-- Personal info START -->
-				<div class="card card-body shadow p-4">
-
-					<!-- Title -->
-					<h5 class="mb-0">تنظیمات :</h5>
-					<br>
-					<p style="font-size: 11px; color: red;">* نکته : آیپی دستگاه کارتخوان خود را روی "192.168.1.100" تنظیم کنید</p>
-					<p style="font-size: 11px; color: red;">* نکته : پورت دستگاه کارتخوان خود را روی "8000" تنظیم کنید</p>
-
-					<!-- Form START -->
-					<form id="cardReaderForm" class="row g-3 mt-3" action="{% url 'Amusement_Park:Products' %}">
-						<div class="col-md-12 bg-light-input d-flex align-items-center justify-content-between py-2">
-							<label class="form-label mb-0">عملکرد به عنوان دستگاه کارتخوان :</label>
-							<div class="toggle-switch">
-								<input type="checkbox" id="deviceModeToggle" class="toggle-input">
-								<label for="deviceModeToggle" class="toggle-label"></label>
-							</div>
-						</div>
-				
-						<div class="col-md-12 bg-light-input">
-							<label for="serialInput" class="form-label text-danger fw-bold small">* شماره سریال دستگاه</label>
-							<input type="text" class="form-control" id="serialInput" placeholder="مثال: 123456789">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="merchantInput" class="form-label text-danger fw-bold small">* شماره پذیرنده (Merchant ID)</label>
-							<input type="text" class="form-control" id="merchantInput" placeholder="مثال: 987654321">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="terminalInput" class="form-label text-danger fw-bold small">* شماره ترمینال (Terminal ID)</label>
-							<input type="text" class="form-control" id="terminalInput" placeholder="مثال: 456123">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="ipInput" class="form-label text-danger fw-bold small">* آدرس آی‌پی دستگاه</label>
-							<input type="text" class="form-control" id="ipInput" value="192.168.1.100" placeholder="مثال: 192.168.1.200">
-						</div>
-						
-						<div class="col-md-12 bg-light-input">
-							<label for="portInput" class="form-label text-danger fw-bold small">* شماره پورت ارتباطی</label>
-							<input type="text" class="form-control" id="portInput" value="1100" placeholder="مثال: 1100">
-						</div>
-						
-				
-						<!-- دکمه‌های تست ارتباط و تست پرداخت -->
-						<div class="d-flex justify-content-center align-items-center gap-2 w-100">
-							<button type="button" id="testConnectionBtn" class="btn btn-danger w-50 mb-1">تست ارتباط</button>
-							<button type="button" id="testPaymentBtn" class="btn btn-danger w-50 mb-1">تست پرداخت</button>
-						</div>
-				
-						<div class="d-flex justify-content-center align-items-center mt-2 w-100">
-							<button type="submit" class="btn btn-primary w-100 mb-0">ثبت</button>
-						</div>
-					</form>
-					<!-- Form END -->
-				</div>
-				<!-- Personal info END -->
-			</div>
-			<!-- Main content END -->
-		</div><!-- Row END -->
-	</div>
-</section>
-<!-- =======================
-Page content END -->
-
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
 {% endblock body %}
-
-
-{% block style %}
-<style>
-	/* Ensure full-width layout consistency */
-	.container-fluid {
-		max-width: 1200px; /* Set a fixed width for larger screens */
-		margin: auto; /* Center the container horizontally */
-	}
-	
-	/* Adjust input fields for better alignment */
-	.bg-light-input input {
-		background-color: #f8f9fa; /* Light background for inputs */
-		padding: 10px;
-		border-radius: 5px;
-}
-
-html[lang="fa"] body {
-	direction: rtl; 
-    text-align: right;
-}
-
-.text-end {
-	text-align: right !important; 
-}
-
-.toggle-switch {
-	position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 25px;
-}
-.toggle-input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.toggle-label {
-	position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-.toggle-label:before {
-	position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 4px;
-    bottom: 3.5px;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.3s;
-}
-.toggle-input:checked + .toggle-label {
-	background-color: #4caf50;
-}
-.toggle-input:checked + .toggle-label:before {
-	transform: translateX(25px);
-}
-</style>
-{% endblock style %}
-
-
-{% block script %}
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			document.querySelectorAll('.cart-link').forEach(link => {
-				link.addEventListener('click', function(event) {
-					event.preventDefault();
-					fetch("{% url 'Amusement_Park:check_cart' %}", {
-						method: "GET",
-						headers: {
-							"X-CSRFToken": getCookie('csrftoken')
-						}
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.cart_empty) {
-							Swal.fire({
-								title: 'سبد خرید شما خالی است!',
-								text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
-								icon: 'warning',
-								confirmButtonText: 'باشه'
-							});
-						} else {
-							window.location.href = "{% url 'Amusement_Park:Cart' %}";
-						}
-					})
-					.catch(error => {
-						console.error("Error:", error);
-					});
-				});
-			});
-	
-			function getCookie(name) {
-				let cookieValue = null;
-				if (document.cookie && document.cookie !== '') {
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-				return cookieValue;
-			}
-		});
-
-
-		$(document).ready(function(){
-			function getCookie(name) {
-				var cookieValue = null;
-				if (document.cookie && document.cookie !== '') {
-					var cookies = document.cookie.split(';');
-					for (var i = 0; i < cookies.length; i++) {
-						var cookie = $.trim(cookies[i]);
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-				return cookieValue;
-			}
-			var csrftoken = getCookie('csrftoken');
-			$.ajaxSetup({
-				beforeSend: function(xhr, settings) {
-					if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-						xhr.setRequestHeader("X-CSRFToken", csrftoken);
-					}
-				}
-			});
-	
-			$('#testConnectionBtn').click(function(e){
-				e.preventDefault();
-				var ip = $('#ipInput').val();
-				var port = $('#portInput').val();
-	
-				$.ajax({
-					url: "{% url 'Amusement_Park:test_connection' %}",
-					type: "POST",
-					data: {
-						ip: ip,
-						port: port
-					},
-					success: function(response){
-						alert(response.message);
-					},
-					error: function(){
-						alert("خطا در برقراری ارتباط");
-					}
-				});
-			});
-	
-			$('#testPaymentBtn').click(function(e){
-				e.preventDefault();
-				var payment = prompt("مقدار پرداخت را وارد کنید (عدد صحیح):");
-				if(payment === null) return; 
-				if(!/^\d+$/.test(payment)){
-					alert("لطفاً فقط عدد صحیح وارد کنید.");
-					return;
-				}
-				var ip = $('#ipInput').val();
-				var port = $('#portInput').val();
-	
-				$.ajax({
-					url: "{% url 'Amusement_Park:test_payment' %}",
-					type: "POST",
-					data: {
-						payment: payment,
-						ip: ip,
-						port: port
-					},
-					success: function(response){
-						alert(response.message);
-					},
-					error: function(){
-						alert("خطا در برقراری ارتباط برای پرداخت");
-					}
-				});
-			});
-		});
-
-	</script>
-{% endblock script %}
