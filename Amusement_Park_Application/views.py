@@ -184,7 +184,7 @@ def calculate_total_price(request):
             'tax': tax,  # Return tax as integer
         })
         
-        
+        # اینو شک داشتم تغییر بدم
 @login_required
 def check_discount_code(request):
     if request.method == 'GET':
