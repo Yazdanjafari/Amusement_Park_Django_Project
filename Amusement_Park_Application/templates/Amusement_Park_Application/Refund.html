@@ -791,10 +791,10 @@ Page content END -->
                 .then(data => {
                     if (data.cart_empty) {
                         Swal.fire({
-                            title: 'سبد خرید شما خالی است!',
-                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
+                            title: {% if request.language == 'fa' %} 'سبد خرید شما خالی است!' {% elif request.language == 'en' %} 'Your cart is empty!' {% elif request.language == 'ar' %} 'سلة التسوق فارغة!' {% endif %},
+                            text: {% if request.language == 'fa' %} 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.' {% elif request.language == 'en' %} 'Please add a product to the cart first.' {% elif request.language == 'ar' %} 'يرجى إضافة منتج إلى سلة التسوق أولاً.' {% endif %},
                             icon: 'warning',
-                            confirmButtonText: 'باشه'
+                            confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                         });
                     } else {
                         window.location.href = "{% url 'Amusement_Park:Cart' %}";
@@ -974,9 +974,9 @@ Page content END -->
                 event.preventDefault();
                 Swal.fire({
                     icon: "warning",
-                    title: "خطا!",
-                    text: "لطفاً همه فیلدهای اجباری را پر کنید.",
-                    confirmButtonText: "باشه"
+                    title: {% if request.language == 'fa' %} 'خطا!' {% elif request.language == 'en' %} 'Error!' {% elif request.language == 'ar' %} 'خطأ!' {% endif %},
+                    text: {% if request.language == 'fa' %} 'لطفاً همه فیلدهای اجباری را پر کنید.' {% elif request.language == 'en' %} 'Please fill in all required fields.' {% elif request.language == 'ar' %} 'يرجى ملء جميع الحقول الإلزامية.' {% endif %},
+                    confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                 });
                 return; 
             }
@@ -989,11 +989,11 @@ Page content END -->
             }
             const transactionId = transactionInput.value.trim();
         
-            let refundType = 'نقد'; // پیش‌فرض
+            let refundType = {% if request.language == 'fa' %} 'نقد' {% elif request.language == 'en' %} 'Cash' {% elif request.language == 'ar' %} 'نقداً' {% endif %}; 
             if (document.getElementById('collapse-cash') && document.getElementById('collapse-cash').classList.contains('show')) {
-                refundType = 'کارت به کارت';
+                refundType = {% if request.language == 'fa' %} 'کارت به کارت' {% elif request.language == 'en' %} 'Card to Card' {% elif request.language == 'ar' %} 'تحويل بنكي' {% endif %} ;
             } else if (document.getElementById('collapse-combined') && document.getElementById('collapse-combined').classList.contains('show')) {
-                refundType = 'انتقال با شماره شبا';
+                refundType = {% if request.language == 'fa' %} 'انتقال با شماره شبا' {% elif request.language == 'en' %} 'Transfer via IBAN' {% elif request.language == 'ar' %} 'التحويل عبر رقم IBAN' {% endif %};
             }
         
             const sourceCardHolderName = document.getElementById('source_card_holder_name') ? document.getElementById('source_card_holder_name').value : '';
@@ -1025,7 +1025,7 @@ Page content END -->
                 if (data.status === 'success') {
                     Swal.fire({
                         icon: 'success',
-                        title: 'موفقیت',
+                        title: {% if request.language == 'fa' %} 'موفقیت' {% elif request.language == 'en' %} 'Success' {% elif request.language == 'ar' %} 'نجاح' {% endif %} ,
                         text: data.message,
                     }).then(() => {
                         window.location.href = "{% url 'Amusement_Park:Products' %}";
@@ -1033,7 +1033,7 @@ Page content END -->
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'خطا',
+                        title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
                         text: data.message,
                     });
                 }
@@ -1042,8 +1042,8 @@ Page content END -->
                 console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطا',
-                    text: 'خطایی در ارسال اطلاعات رخ داده است.',
+                    title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
+                    text: {% if request.language == 'fa' %} 'خطایی در ارسال اطلاعات رخ داده است.' {% elif request.language == 'en' %} 'An error occurred while sending the information.' {% elif request.language == 'ar' %} 'حدث خطأ أثناء إرسال المعلومات.' {% endif %},
                 });
             });
         });
