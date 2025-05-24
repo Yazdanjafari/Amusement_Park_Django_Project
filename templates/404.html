@@ -1,7 +1,4 @@
-{% comment %} {% extends 'common.html' %} {% endcomment %}
 {% load static %}
-{% comment %} {% block body %} {% endcomment %}
-
 
 <!DOCTYPE html>
 {% if request.language == 'fa' %}
@@ -284,9 +281,25 @@
 					{% endif %}						 
 					
 					<!-- info -->
-					<p class="mb-4">یا مشکلی پیش آمده یا این صفحه وجود ندارد.</p>
+					
+					{% if request.language == 'fa' %}
+						<p class="mb-4">یا مشکلی پیش آمده یا این صفحه وجود ندارد.</p>
+					{% elif request.language == 'en' %}
+						<p class="mb-4">.Either something went wrong or this page does not exist</p>
+					{% elif request.language == 'ar' %}
+						<p class="mb-4">إما أن هناك خطأ ما أو أن هذه الصفحة غير موجودة.</p>
+					{% endif %}
+
 					<!-- Button -->
-					<a href="{% url "Amusement_Park:Products" %}" class="btn btn-primary mb-0">برگشت به صفحه اصلی</a>
+					<a href="{% url "Amusement_Park:Products" %}" class="btn btn-primary mb-0">
+						{% if request.language == 'fa' %}
+							برگشت به صفحه اصلی
+						{% elif request.language == 'en' %}
+							Back to Home Page
+						{% elif request.language == 'ar' %}
+							العودة إلى الصفحة الرئيسية
+						{% endif %}
+					</a>
 				</div>
 			</div>
 		</div>

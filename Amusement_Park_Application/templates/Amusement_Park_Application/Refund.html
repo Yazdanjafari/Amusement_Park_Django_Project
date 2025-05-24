@@ -23,27 +23,24 @@ Page Banner START -->
                     </h1>
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">
-                                    {% if request.language == 'fa' %}
-                                        صفحه اصلی
-                                    {% elif request.language == 'en' %}
-                                        Home Page
-                                    {% elif request.language == 'ar' %}
-                                        الصفحة الرئيسية
-                                    {% endif %}
-
-                                </a></li>
-								<li class="breadcrumb-item active" aria-current="page">
-                                    {% if request.language == 'fa' %}
-                                        عودت وجه    
-                                    {% elif request.language == 'en' %}
-                                        Refund
-                                    {% elif request.language == 'ar' %}
-                                        ریال
-                                    {% endif %}	
-                                </li>
-							</ol>
+                            <ol class="breadcrumb breadcrumb-dots mb-0">
+                                {% if request.language == 'en' %}
+                                    <li class="breadcrumb-item active" aria-current="page">Refund</li>
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">Main Page</a>
+                                    </li>
+                                {% elif request.language == 'fa' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">صفحه اصلی</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">عودت وجه </li>
+                                {% elif request.language == 'ar' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">الصفحة الرئيسية</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">ریال</li>
+                                {% endif %}
+                            </ol>
 						</nav>
 					</div>
 				</div>
@@ -66,11 +63,11 @@ Page content START -->
                     <!-- Title for transaction form -->
                     <h5 class="mb-0">  
                         {% if request.language == 'fa' %}
-                            :عودت وجه
+                            عودت وجه :
                         {% elif request.language == 'en' %}
-                            Refund:
+                            Refund :
                         {% elif request.language == 'ar' %}
-                            :استرداد المبلغ
+                            استرداد المبلغ :
                         {% endif %}
 
                     </h5>
@@ -187,7 +184,26 @@ Page content START -->
                             <!-- Card reader (Default) -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-card-reader">
-                                    <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
+                                    <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader"
+                                    class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
                                         {% if request.language == 'fa' %}
                                             نقدی
                                         {% elif request.language == 'en' %}
@@ -202,7 +218,26 @@ Page content START -->
                             <!-- Cash -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-cash">
-                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
+                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash"
+                                    class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
                                             {% if request.language == 'fa' %}
                                                 کارت به کارت
                                             {% elif request.language == 'en' %}
@@ -219,7 +254,7 @@ Page content START -->
                                         <!-- Form START -->
                                         <form class="row g-3">
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label" style="font-size: 13px;"><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         شماره کارت مبدا
                                                     {% elif request.language == 'en' %}
@@ -241,7 +276,7 @@ Page content START -->
                                                 {% endif %}   maxlength="16" minlength="16">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label" style="font-size: 13px;"><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         شماره کارت مقصد
                                                     {% elif request.language == 'en' %}
@@ -263,7 +298,7 @@ Page content START -->
                                                 {% endif %}  maxlength="16" minlength="16">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label " style="font-size: 13px;"><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         نام صاحب حساب مبدا
                                                     {% elif request.language == 'en' %}
@@ -285,7 +320,7 @@ Page content START -->
                                                 {% endif %} >
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label " style="font-size: 13px;"><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         نام صاحب حساب مقصد
                                                     {% elif request.language == 'en' %}
@@ -314,7 +349,26 @@ Page content START -->
                             <!-- Combined payment -->
                             <div class="accordion-item mb-3">
                                 <h6 class="accordion-header" id="heading-combined">
-                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
+                                    <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined"
+                                    class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
                                             {% if request.language == 'fa' %}
                                                 انتقال با شماره شبا
                                             {% elif request.language == 'en' %}
@@ -331,7 +385,7 @@ Page content START -->
                                         <!-- Form START -->
                                         <form class="row g-3">
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label" style="font-size: 13px;"><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         شماره شبا مبدا
                                                     {% elif request.language == 'en' %}
@@ -353,7 +407,7 @@ Page content START -->
                                                 {% endif %}  maxlength="24" minlength="24">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label" style="font-size: 13px;"><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         شماره شبا مقصد
                                                     {% elif request.language == 'en' %}
@@ -375,7 +429,7 @@ Page content START -->
                                                 {% endif %} maxlength="24" minlength="24">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label style="font-size: 13px;""><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         نام صاحب حساب مبدا
                                                     {% elif request.language == 'en' %}
@@ -397,7 +451,7 @@ Page content START -->
                                                 {% endif %} >
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label"><span class="text-danger">
+                                                <label class="form-label style="font-size: 13px;""><span class="text-danger">
                                                     {% if request.language == 'fa' %}
                                                         نام صاحب حساب مقصد
                                                     {% elif request.language == 'en' %}
@@ -445,7 +499,8 @@ Page content START -->
         </h4>
         <hr>
         <ul class="list-group list-group-borderless mb-2">
-            <li class="list-group-item px-0 d-flex justify-content-between">
+            <li class="list-group-item px-0 d-flex justify-content-between
+                {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                 <span class="h6 fw-light mb-0">
                     {% if request.language == 'fa' %}
                         قیمت
@@ -455,7 +510,7 @@ Page content START -->
                         السعر
                     {% endif %}
                 </span>
-                <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 
+                <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0
                     {% if request.language == 'fa' %}
                         ریال
                     {% elif request.language == 'en' %}
@@ -465,7 +520,8 @@ Page content START -->
                     {% endif %}
                 </span>
             </li>
-            <li class="list-group-item px-0 d-flex justify-content-between">
+            <li class="list-group-item px-0 d-flex justify-content-between
+                {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                 <span class="h6 fw-light mb-0">
                     {% if request.language == 'fa' %}
                         مالیات (%10)
@@ -475,7 +531,7 @@ Page content START -->
                         ضريبة (%10)
                     {% endif %}
                 </span>
-                <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 
+                <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0
                     {% if request.language == 'fa' %}
                         ریال
                     {% elif request.language == 'en' %}
@@ -485,7 +541,8 @@ Page content START -->
                     {% endif %}
                 </span>
             </li>
-            <li class="list-group-item px-0 d-flex justify-content-between">
+            <li class="list-group-item px-0 d-flex justify-content-between
+                {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                 <span class="h6 fw-light mb-0">
                     {% if request.language == 'fa' %}
                         تخفیف
@@ -495,7 +552,7 @@ Page content START -->
                         خصم
                     {% endif %}
                 </span>
-                <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 
+                <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0
                     {% if request.language == 'fa' %}
                         ریال
                     {% elif request.language == 'en' %}
@@ -506,7 +563,8 @@ Page content START -->
                 </span>
             </li>
             <br>
-            <li class="list-group-item px-0 d-flex justify-content-between">
+            <li class="list-group-item px-0 d-flex justify-content-between
+                {% if request.language == 'en' %} flex-row-reverse {% endif %}">
                 <span class="h5 mb-0">
                     {% if request.language == 'fa' %}
                         قیمت نهایی
@@ -516,7 +574,7 @@ Page content START -->
                         السعر النهائي
                     {% endif %}
                 </span>
-                <span id="finalPrice" class="text-danger h5">0 
+                <span id="finalPrice" class="text-danger h5">0
                     {% if request.language == 'fa' %}
                         ریال
                     {% elif request.language == 'en' %}
@@ -687,23 +745,11 @@ Page content END -->
                 .then(data => {
                     if (data.cart_empty) {
                         Swal.fire({
-                            title: `{% if request.language == 'fa'%}سبد خرید شما خالی است!
-                            {% elif request.language == 'en'%}Your cart is empty!
-                            {% elif request.language == 'ar'%}سلة التسوق فارغة!{% endif %}`,
-
-                            text: `{% if request.language == 'fa'%}لطفاً ابتدا محصولی به سبد خرید اضافه کنید.
-                            {% elif request.language == 'en'%}Please add a product to your cart first.
-                            {% elif request.language == 'ar'%}يرجى إضافة منتج إلى سلة التسوق أولاً.{% endif %}`,
-
+                            title: 'سبد خرید شما خالی است!',
+                            text: 'لطفاً ابتدا محصولی به سبد خرید اضافه کنید.',
                             icon: 'warning',
-
-                            confirmButtonText: `{% if request.language == 'fa'%}باشه{
-                            % elif request.language == 'en'%}OK
-                            {% elif request.language == 'ar'%}حسنًا{% endif %}`
+                            confirmButtonText: 'باشه'
                         });
-                    }
-                });
-                
                     } else {
                         window.location.href = "{% url 'Amusement_Park:Cart' %}";
                     }
@@ -848,9 +894,20 @@ Page content END -->
                         </h6>
                     </div>
                 </td>
+            {% if request.language == 'fa' %}
                 <td class="text-center">
-                    <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.total_price).toLocaleString()} ریال</h5>
-                </td>
+                                <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.total_price).toLocaleString()} ریال</h5>
+                            </td>
+            {% elif request.language == 'en' %}
+                <td class="text-center">
+                                <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.total_price).toLocaleString()} Rial</h5>
+                            </td>
+            {% elif request.language == 'ar' %}
+                <td class="text-center">
+                                <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.total_price).toLocaleString()} ریال</h5>
+                            </td>
+            {% endif %}
+                
                 <td>
                     <div class="d-flex justify-content-between align-items-center">
                         <button class="btn btn-success btn-sm disabled"><i class="bi bi-cart"></i></button>
@@ -862,16 +919,39 @@ Page content END -->
                 `;
                 tbody.appendChild(row);
             });
-            
-        document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('fa-IR') + ' ریال';
-        document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('fa-IR') + ' ریال';
-        document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('fa-IR') + ' ریال';
-        document.getElementById('finalPrice').innerText = Number(data.price).toLocaleString('fa-IR') + ' ریال';
-    
-        document.getElementById('transactionDetails').style.display = 'block';
-        document.getElementById('rightSidebar').style.display = 'block';
-    
-        document.getElementById('applyButton').disabled = true;
+                    {% if request.language == 'fa' %}
+                    document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('fa-IR') + ' ریال';
+                    document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('fa-IR') + ' ریال';
+                    document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('fa-IR') + ' ریال';
+                    document.getElementById('finalPrice').innerText = Number(data.price).toLocaleString('fa-IR') + ' ریال';
+                
+                    document.getElementById('transactionDetails').style.display = 'block';
+                    document.getElementById('rightSidebar').style.display = 'block';
+                
+                    document.getElementById('applyButton').disabled = true;
+                    {% elif request.language == 'en' %}
+                    document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('en-US') + ' Rial';
+                    document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('en-US') + ' Rial';
+                    document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('en-US') + ' Rial';
+                    document.getElementById('finalPrice').innerText = Number(data.price).toLocaleString('en-US') + ' Rial';
+
+                    document.getElementById('transactionDetails').style.display = 'block';
+                    document.getElementById('rightSidebar').style.display = 'block';
+
+                    document.getElementById('applyButton').disabled = true;
+
+                    {% elif request.language == 'ar' %}
+                    document.getElementById('totalPrice').innerText = Number(data.product_prices).toLocaleString('fa-IR') + ' ریال';
+                    document.getElementById('totalTax').innerText = Number(data.tax).toLocaleString('fa-IR') + ' ریال';
+                    document.getElementById('totalDiscount').innerText = Number(data.discount).toLocaleString('fa-IR') + ' ریال';
+                    document.getElementById('finalPrice').innerText = Number(data.price).toLocaleString('fa-IR') + ' ریال';
+
+                    document.getElementById('transactionDetails').style.display = 'block';
+                    document.getElementById('rightSidebar').style.display = 'block';
+
+                    document.getElementById('applyButton').disabled = true;	
+                    {% endif %}
+        
     }
     
     

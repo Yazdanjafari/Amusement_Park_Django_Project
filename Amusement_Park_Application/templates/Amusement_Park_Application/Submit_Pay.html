@@ -75,9 +75,28 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
-								<li class="breadcrumb-item active" aria-current="page">ثبت مجدد تراکنش</a></li>
-							</ol>
+                                {% if request.language == 'en' %}
+                                    <li class="breadcrumb-item active" aria-current="page">Re-register Transaction</li>
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">Main Page</a>
+                                    </li>
+                                {% elif request.language == 'fa' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">صفحه اصلی</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">ثبت مجدد تراکنش</li>
+                                {% elif request.language == 'ar' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">الصفحة الرئيسية</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">إعادة تسجيل المعاملة</li>
+                                {% endif %}
+                            </ol>
+                            
+                            
+
+                            
+                            
 						</nav>
 					</div>
 				</div>
@@ -98,13 +117,39 @@ Page content START -->
                 <!-- Personal info START -->
                 <div class="card card-body shadow p-4">
                     <!-- Title for transaction form -->
-                    <h5 class="mb-0">ثبت مجدد تراکنش :</h5>
+                    <h5 class="mb-0">
+                        {% if request.language == 'fa' %}
+                            ثبت مجدد تراکنش:
+                        {% elif request.language == 'en' %}
+                            Re-register the transaction:
+                        {% elif request.language == 'ar' %}
+                            إعادة تسجيل المعاملة:
+                        {% endif %}
+                    </h5>
                     <!-- Transaction form START -->
                     <form id="retransactionForm" method="post">
                         {% csrf_token %}
                         <div class="input-group mt-2">
-                            <input id="ticketCodeInput" name="transaction_id" class="form-control" placeholder="کد رهگیری فروش" type="text">
-                            <button id="applyButton" type="button" class="btn btn-primary">اعمال</button>
+                            <input id="ticketCodeInput" name="transaction_id" class="form-control" 
+                        {% if request.language == 'fa' %}
+                            placeholder="کد رهگیری فروش"
+                            style="text-align: right; direction: rtl;"
+                        {% elif request.language == 'en' %}
+                            placeholder="Transaction Tracking Code"
+                            style="text-align: left; direction: ltr;"
+                        {% elif request.language == 'ar' %}
+                            placeholder="رمز تتبع المعاملة"
+                            style="text-align: right; direction: rtl;"
+                        {% endif %}   type="text">
+                            <button id="applyButton" type="button" class="btn btn-primary">
+                                {% if request.language == 'fa' %}
+                                    اعمال
+                                {% elif request.language == 'en' %}
+                                    Apply
+                                {% elif request.language == 'ar' %}
+                                    تطبيق
+                                {% endif %}
+                            </button>
                         </div>
                     </form>
 				</div>
@@ -116,7 +161,15 @@ Page content START -->
 				<div class="card card-body shadow p-4">					
                     <!-- Transaction form END -->
                     <table class="table align-middle p-4 mb-0">
-                        <h5 class="">اطلاعات فاکتور ثبت شده :</h5>
+                        <h5 class="">
+                            {% if request.language == 'fa' %}
+                                اطلاعات فاکتور ثبت شده :
+                            {% elif request.language == 'en' %}
+                                Recorded Invoice Information :
+                            {% elif request.language == 'ar' %}
+                                معلومات الفاتورة المسجلة :
+                            {% endif %}
+                        </h5>
                         <tbody class="border-top-0">
                             <tr>
                                 <td>
@@ -125,12 +178,28 @@ Page content START -->
                                             <img id="productImage" src='{% static "assets/images/courses/4by3/08.jpg" %}' class="rounded" alt="">
                                         </div>
                                         <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
-                                            <a id="productName" href="#" style="font-size: 75%;">دوره جامع آموزش Sketch</a>
+                                            <a id="productName" href="#" style="font-size: 75%;">
+                                                {% if request.language == 'fa' %}
+                                                        دوره جامع آموزش Sketch
+                                                {% elif request.language == 'en' %}
+                                                        Comprehensive Sketch Training Course
+                                                {% elif request.language == 'ar' %}
+                                                        الدورة الشاملة لتدريب Sketch
+                                                {% endif %}   
+                                            </a>
                                         </h6>
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    <h5 id="productPrice" class="text-success mb-0" style="font-size: 75%;">0 ریال</h5>
+                                    <h5 id="productPrice" class="text-success mb-0" style="font-size: 75%;">
+                                        {% if request.language == 'fa' %}
+                                                0 ریال
+                                            {% elif request.language == 'en' %}
+                                                0 Rial
+                                            {% elif request.language == 'ar' %}
+                                                0 ریال
+                                            {% endif %}
+                                    </h5>
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-between align-items-center">
@@ -146,29 +215,79 @@ Page content START -->
                     <br>
                     <div class="row">
                         <div class="col-md-6 bg-light-input hidden">
-                            <label for="">* تاریخ ثبت فاکتور :</label>
+                            <label for="">
+                                {% if request.language == 'fa' %}
+                                    تاریخ ثبت فاکتور:
+                                {% elif request.language == 'en' %}
+                                    Invoice registration date:
+                                {% elif request.language == 'ar' %}
+                                    تاريخ تسجيل الفاتورة:
+                                {% endif %}
+                            </label>
                             <input id="createAt" type="text" class="form-control" readonly value="">
                         </div>
 						<div class="col-md-12 bg-light-input">
-							<label for="" style="font-size: 15px;">* شماره تماس :</label>
-							<input id="userPhone" type="text" class="form-control" readonly value="">
+							<label for="" style="font-size: 15px;">
+                                {% if request.language == 'fa' %}
+                                    شماره تماس:
+                                {% elif request.language == 'en' %}
+                                    Contact number:
+                                {% elif request.language == 'ar' %}
+                                    رقم الهاتف:
+                                {% endif %}
+                            </label>
+							<input id="userPhone" type="text" class="form-control" readonly value="" style="text-align: left;">
 						</div>
 						<div class="col-md-6 bg-light-input">
-							<label for="" style="font-size: 15px;">* نام :</label>
+							<label for="" style="font-size: 15px;">
+                                {% if request.language == 'fa' %}
+                                    نام:
+                                {% elif request.language == 'en' %}
+                                    Name:
+                                {% elif request.language == 'ar' %}
+                                    الاسم:
+                                {% endif %}
+                            </label>
 							<input id="userFirstName" type="text" class="form-control" readonly value="">
 						</div>
 						<div class="col-md-6 bg-light-input">
-							<label for="" style="font-size: 15px;">* نام خانوادگی :</label>
+							<label for="" style="font-size: 15px;">
+                                {% if request.language == 'fa' %}
+                                    نام خانوادگی:
+                                {% elif request.language == 'en' %}
+                                    Last name:
+                                {% elif request.language == 'ar' %}
+                                    اسم العائلة:
+                                {% endif %}
+                            </label>
 							<input id="userLastName" type="text" class="form-control" readonly value="">
 						</div>
                         <div class="col-12">
-                            <textarea id="desc" class="form-control" placeholder="توضیحات (اختیاری) :" hidden></textarea>
+                            <textarea id="desc" class="form-control" placeholder="توضیحات (اختیاری) :"
+                            {% if request.language == 'fa' %}
+                            placeholder="توضیحات (اختیاری):"
+                            style="text-align: right; direction: rtl;"
+                        {% elif request.language == 'en' %}
+                            placeholder="Notes (Optional):"
+                            style="text-align: left; direction: ltr;"
+                        {% elif request.language == 'ar' %}
+                            placeholder="ملاحظات (اختياري):"
+                            style="text-align: right; direction: rtl;"
+                        {% endif %} hidden></textarea>
                         </div>                        
                     </div>
                     <hr>
                     <!-- Payment method START -->
                     <div class="card card-body p-4 shadow">
-                        <h5 class="">روش های پرداخت :</h5>
+                        <h5 class="">
+                        {% if request.language == 'fa' %}
+                            روش های عودت وجه :
+                        {% elif request.language == 'en' %}
+                            Refund Methods:
+                        {% elif request.language == 'ar' %}
+                            طرق استرجاع المبالغ:
+                        {% endif %}
+                        </h5>
                         <div class="col-12">
                             <div class="accordion accordion-circle" id="accordioncircle">
                                 
@@ -178,8 +297,33 @@ Page content START -->
 								<!-- Card reader (Default) -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
-										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-											دستگاه کارتخوان
+										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader"
+                                        class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+											{% if request.language == 'fa' %}
+                                                دستگاه کارتخوان
+                                            {% elif request.language == 'en' %}
+                                                POS Device
+                                            {% elif request.language == 'ar' %}
+                                                جهاز القارئ
+                                            {% endif %}
 										</button>
 									</h6>
 									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
@@ -189,8 +333,33 @@ Page content START -->
 								<!-- Cash -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-cash">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											نقدی
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash"
+                                        class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+										{% if request.language == 'fa' %}
+                                            نقدی
+                                        {% elif request.language == 'en' %}
+                                            Cash
+                                        {% elif request.language == 'ar' %}
+                                            نقدًا
+                                        {% endif %}
 										</button>
 									</h6>
 									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
@@ -200,31 +369,108 @@ Page content START -->
 								<!-- Combined payment -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-combined">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-											ترکیبی
+										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined"
+                                        class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+											{% if request.language == 'fa' %}
+                                                ترکیبی
+                                            {% elif request.language == 'en' %}
+                                                Combined
+                                            {% elif request.language == 'ar' %}
+                                                مركب
+                                            {% endif %}
 										</button>
 									</h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
-													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+													<label class="form-label"><span class="text-danger2">
+                                                        {% if request.language == 'fa' %}
+                                                            مقدار مبلغ نقدی (ریال):
+                                                        {% elif request.language == 'en' %}
+                                                            Cash Amount (Rials):
+                                                        {% elif request.language == 'ar' %}
+                                                            مقدار المبلغ النقدي (ريال):
+                                                        {% endif %}
+                                                    </span></label>
+													<input type="text" id="cash-amount" class="form-control" 
+                                                    {% if request.language == 'fa' %}
+                                                        placeholder="مبلغ نقدی :"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% elif request.language == 'en' %}
+                                                        placeholder="Cash Amount:"
+                                                        style="text-align: left; direction: ltr;"
+                                                    {% elif request.language == 'ar' %}
+                                                        placeholder="المبلغ النقدي:"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% endif %} >
 												</div>
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+													<label class="form-label"><span class="text-danger2">
+                                                        {% if request.language == 'fa' %}
+                                                            مقدار مبلغ پرداخت با کارتخوان (ریال):
+                                                        {% elif request.language == 'en' %}
+                                                            Amount paid with POS Device (Rials):
+                                                        {% elif request.language == 'ar' %}
+                                                            مقدار المبلغ المدفوع بواسطة جهاز القارئ (ريال):
+                                                        {% endif %}
+                                                    </span></label>
+													<input type="text" id="card-amount" class="form-control" 
+                                                    {% if request.language == 'fa' %}
+                                                        placeholder="مبلغ کارتخوان:"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% elif request.language == 'en' %}
+                                                        placeholder="POS Device amount:"
+                                                        style="text-align: left; direction: ltr;"
+                                                    {% elif request.language == 'ar' %}
+                                                        placeholder="مبلغ جهاز القارئ:"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% endif %}>
 												</div>
 											</form>
 											<br>
 											<div class="row">
 												<div class="col-12">
-													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>
+                                                        {% if request.language == 'fa' %}
+                                                            اعمال
+                                                        {% elif request.language == 'en' %}
+                                                            Apply
+                                                        {% elif request.language == 'ar' %}
+                                                            تطبيق
+                                                        {% endif %}
+                                                    </button>
 												</div>
 												<br>
 												<br>
 												<div class="col-12">
-													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
+                                                        {% if request.language == 'fa' %}
+                                                            تلاش مجدد
+                                                        {% elif request.language == 'en' %}
+                                                            Retry
+                                                        {% elif request.language == 'ar' %}
+                                                            محاولة أخرى
+                                                        {% endif %}
+                                                    </button>
 												</div>
 											</div>
 											<br>
@@ -238,7 +484,13 @@ Page content START -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
 										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
-											دستگاه کارتخوان
+											{% if request.language == 'fa' %}
+                                                دستگاه کارتخوان
+                                            {% elif request.language == 'en' %}
+                                                POS Device
+                                            {% elif request.language == 'ar' %}
+                                                جهاز القارئ
+                                            {% endif %}
 										</button>
 									</h6>
 									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
@@ -249,7 +501,13 @@ Page content START -->
 								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-cash">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											نقدی
+										{% if request.language == 'fa' %}
+                                            نقدی
+                                        {% elif request.language == 'en' %}
+                                            Cash
+                                        {% elif request.language == 'ar' %}
+                                            نقدًا
+                                        {% endif %}
 										</button>
 									</h6>
 									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
@@ -260,30 +518,88 @@ Page content START -->
 								<div class="accordion-item mb-3 hidden">
 									<h6 class="accordion-header" id="heading-combined">
 										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-											ترکیبی
+											{% if request.language == 'fa' %}
+                                                ترکیبی
+                                            {% elif request.language == 'en' %}
+                                                Combined
+                                            {% elif request.language == 'ar' %}
+                                                مركب
+                                            {% endif %}
 										</button>
 									</h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ نقدی (ریال)</span></label>
-													<input type="text" id="cash-amount" class="form-control" placeholder="مبلغ نقدی :">
+													<label class="form-label"><span class="text-danger2">
+                                                        {% if request.language == 'fa' %}
+                                                            مقدار مبلغ نقدی (ریال):
+                                                        {% elif request.language == 'en' %}
+                                                            Cash Amount (Rials):
+                                                        {% elif request.language == 'ar' %}
+                                                            مقدار المبلغ النقدي (ريال):
+                                                        {% endif %}
+                                                    </span></label>
+													<input type="text" id="cash-amount" class="form-control" 
+                                                    {% if request.language == 'fa' %}
+                                                        placeholder="مبلغ نقدی :"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% elif request.language == 'en' %}
+                                                        placeholder="Cash Amount:"
+                                                        style="text-align: left; direction: ltr;"
+                                                    {% elif request.language == 'ar' %}
+                                                        placeholder="المبلغ النقدي:"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% endif %}>
 												</div>
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">* مقدار مبلغ پرداخت با کارتخوان (ریال)</span></label>
-													<input type="text" id="card-amount" class="form-control" placeholder="مبلغ کارتخوان :">
+													<label class="form-label"><span class="text-danger2">
+                                                        {% if request.language == 'fa' %}
+                                                            مقدار مبلغ پرداخت با کارتخوان (ریال):
+                                                        {% elif request.language == 'en' %}
+                                                            Amount paid with POS Device (Rials):
+                                                        {% elif request.language == 'ar' %}
+                                                            مقدار المبلغ المدفوع بواسطة جهاز القارئ (ريال):
+                                                        {% endif %}
+                                                    </span></label>
+													<input type="text" id="card-amount" class="form-control" 
+                                                    {% if request.language == 'fa' %}
+                                                        placeholder="مبلغ کارتخوان:"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% elif request.language == 'en' %}
+                                                        placeholder="POS Device amount:"
+                                                        style="text-align: left; direction: ltr;"
+                                                    {% elif request.language == 'ar' %}
+                                                        placeholder="مبلغ جهاز القارئ:"
+                                                        style="text-align: right; direction: rtl;"
+                                                    {% endif %}>
 												</div>
 											</form>
 											<br>
 											<div class="row">
 												<div class="col-12">
-													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>اعمال</button>
+													<button type="button" id="apply-button" class="btn btn-primary w-100 mb-0" disabled>
+                                                        {% if request.language == 'fa' %}
+                                                            اعمال
+                                                        {% elif request.language == 'en' %}
+                                                            Apply
+                                                        {% elif request.language == 'ar' %}
+                                                            تطبيق
+                                                        {% endif %}
+                                                    </button>
 												</div>
 												<br>
 												<br>
 												<div class="col-12">
-													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>تلاش مجدد</button>
+													<button type="button" id="reset-button" class="btn btn-danger w-100 mb-0" disabled>
+                                                        {% if request.language == 'fa' %}
+                                                            تلاش مجدد
+                                                        {% elif request.language == 'en' %}
+                                                            Retry
+                                                        {% elif request.language == 'ar' %}
+                                                            محاولة أخرى
+                                                        {% endif %}
+                                                    </button>
 												</div>
 											</div>
 											<br>
@@ -305,31 +621,124 @@ Page content START -->
             <div id="rightSidebar" class="col-lg-4" style="display: none;">
                 <!-- Card total START -->
                 <div class="card card-body p-4 shadow">
-                    <h4 class="mb-3 fs-5 text-center">صورت حساب</h4>
+                    <h4 class="mb-3 fs-5 text-center">
+                        {% if request.language == 'fa' %}
+                            صورت حساب
+                        {% elif request.language == 'en' %}
+                            Invoice
+                        {% elif request.language == 'ar' %}
+                            الفاتورة
+                        {% endif %}
+                    </h4>
                     <hr>
                     <ul class="list-group list-group-borderless mb-2">
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">قیمت</span>
-                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
+                            <span class="h6 fw-light mb-0">
+                                {% if request.language == 'fa' %}
+                                    قیمت
+                                {% elif request.language == 'en' %}
+                                    Price
+                                {% elif request.language == 'ar' %}
+                                    السعر
+                                {% endif %}
+                            </span>
+                            <span id="totalPrice" class="h6 fw-light mb-0 fw-bold">0
+                                {% if request.language == 'fa' %}
+                                    ریال
+                                {% elif request.language == 'en' %}
+                                    IRR
+                                {% elif request.language == 'ar' %}
+                                    ريال
+                                {% endif %}
+                            </span>
                         </li>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">مالیات (% 10)</span>
-                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
+                            <span class="h6 fw-light mb-0">
+                                {% if request.language == 'fa' %}
+                                    مالیات (%10)
+                                {% elif request.language == 'en' %}
+                                    Tax (%10)
+                                {% elif request.language == 'ar' %}
+                                    ضريبة (%10)
+                                {% endif %}
+                            </span>
+                            <span id="totalTax" class="h6 fw-light mb-0 fw-bold">0
+                                {% if request.language == 'fa' %}
+                                    ریال
+                                {% elif request.language == 'en' %}
+                                    IRR
+                                {% elif request.language == 'ar' %}
+                                    ريال
+                                {% endif %}
+                            </span>
                         </li>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h6 fw-light mb-0">تخفیف</span>
-                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0 ریال</span>
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
+                            <span class="h6 fw-light mb-0">
+                                {% if request.language == 'fa' %}
+                                    تخفیف
+                                {% elif request.language == 'en' %}
+                                    Discount
+                                {% elif request.language == 'ar' %}
+                                    خصم
+                                {% endif %}
+                            </span>
+                            <span id="totalDiscount" class="h6 fw-light mb-0 fw-bold">0
+                                {% if request.language == 'fa' %}
+                                    ریال
+                                {% elif request.language == 'en' %}
+                                    IRR
+                                {% elif request.language == 'ar' %}
+                                    ريال
+                                {% endif %}
+                            </span>
                         </li>
                         <br>
-                        <li class="list-group-item px-0 d-flex justify-content-between">
-                            <span class="h5 mb-0">قیمت نهایی</span>
-                            <span id="finalPrice" class="text-danger h5">0 ریال</span>
+                        <li class="list-group-item px-0 d-flex justify-content-between
+                            {% if request.language == 'en' %} flex-row-reverse {% endif %}">
+                            <span class="h5 mb-0">
+                                {% if request.language == 'fa' %}
+                                    قیمت نهایی
+                                {% elif request.language == 'en' %}
+                                    Final Price
+                                {% elif request.language == 'ar' %}
+                                    السعر النهائي
+                                {% endif %}
+                            </span>
+                            <span id="finalPrice" class="text-danger h5">0
+                                {% if request.language == 'fa' %}
+                                    ریال
+                                {% elif request.language == 'en' %}
+                                    IRR
+                                {% elif request.language == 'ar' %}
+                                    ريال
+                                {% endif %}
+                            </span>
                         </li>
                     </ul>
                     <hr>
                     <div class="d-grid">
-                        <a type="button" id="pay-button" class="btn btn-lg btn-success">پرداخت</a>
-                        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">لغو</a>
+                        <a type="button" id="search" class="btn btn-lg btn-success">
+                            {% if request.language == 'fa' %}
+                                پرداخت
+                            {% elif request.language == 'en' %}
+                                Payment
+                            {% elif request.language == 'ar' %}
+                                الدفع
+                            {% endif %}
+                        </a>
+                        <a href='{% url "Amusement_Park:Products" %}' class="btn btn-lg btn-outline-danger">
+                            {% if request.language == 'fa' %}
+                                لغو
+                            {% elif request.language == 'en' %}
+                                Cancel
+                            {% elif request.language == 'ar' %}
+                                إلغاء
+                            {% endif %}
+
+                        </a>
                     </div>
                 </div>
                 <!-- Card total END -->
@@ -342,11 +751,51 @@ Page content START -->
 Page content END -->
 
 
+<input style="display:none;" type="text" placeholder="URL" value="http://127.0.0.1:8080/pcpos" id="pcpos_url" />
+<input style="display:none;" type="text" placeholder="Pr Code" value="000000" id="pr_code" />
+<input style="display:none;" type="text" placeholder="Amount" value="1234" id="amount" />
+<input style="display:none;" type="text" placeholder="Currency" value="364" id="currency" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r_cardholder" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r3" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r5" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r7" />
+<input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r9" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r_merchant" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r4" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r6" />
+<input style="display:none;" type="text" placeholder="Merchant Reciept" id="r8" />
+<input style="display:none;" type="text" placeholder="Card Holder Title" id="t_cardholder" />
+<input style="display:none;" type="text" placeholder="Merchant Title" id="t_merchant" />
+<input style="display:none;" type="checkbox" id="chBox1" onclick="check1()" />
+<input style="display:none;" type="text" placeholder="WareHoff1" value="9430324404128" id="WareHoff1" />
+<input style="display:none;" type="text" placeholder="WareHoff2" value="40370492" id="WareHoff2" />
+<input style="display:none;" type="checkbox" id="chBox2" onclick="check2()" />
+<input style="display:none;" type="text" placeholder="Amount1" id="Amount1" />
+<input style="display:none;" type="text" placeholder="IBAN1" id="IBAN1" />
+<input style="display:none;" type="text" placeholder="ID1" id="ID1" />
+<input style="display:none;" type="text" placeholder="Amount2" id="Amount2" />
+<input style="display:none;" type="text" placeholder="IBAN2" id="IBAN2" />
+<input style="display:none;" type="text" placeholder="ID2" id="ID2" />
+<input style="display:none;" type="text" placeholder="Amount3" id="Amount3" />
+<input style="display:none;" type="text" placeholder="IBAN3" id="IBAN3" />
+<input style="display:none;" type="text" placeholder="ID3" id="ID3" />
+<input style="display:none;" type="text" placeholder="Amount4" id="Amount4" />
+<input style="display:none;" type="text" placeholder="IBAN4" id="IBAN4" />
+<input style="display:none;" type="text" placeholder="ID4" id="ID4" />
+<input style="display:none;" type="text" placeholder="Service" id="service" />
+<input style="display:none;" type="text" placeholder="Service Group" id="service_group" />
+<textarea style="display:none;" cols="40" rows="5" placeholder="Settelment" id="settelment"></textarea>
+<textarea style="display:none;" cols="40" rows="5" placeholder="Key Value" id="key_value"></textarea>
+<div style="display:none;">Result:</div>
+<section style="display:none;" id="result"></section>
+
+
 {% endblock body %}
 
 
 {% block script %}
 <script>
+
 	function maskPhoneNumber(phone) {
 		if (phone.length === 11) {
 			return phone.slice(8) + ' **** ' + phone.slice(0, 4);
@@ -354,7 +803,20 @@ Page content END -->
 		return phone;
 	}
 
-
+    function getTransactionType() {
+        const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
+        const isCashOpen       = document.getElementById('collapse-cash').classList.contains('show');
+        const isCombinedOpen   = document.getElementById('collapse-combined').classList.contains('show');
+        if (isCardReaderOpen) {
+            return 'pc';
+        } else if (isCashOpen) {
+            return 'cash';
+        } else if (isCombinedOpen) {
+            return 'mix';
+        } else {
+            return 'pc';
+        }
+    }
 	
     document.getElementById('applyButton').addEventListener('click', function() {
         const transactionId = document.getElementById('ticketCodeInput').value;
@@ -381,7 +843,7 @@ Page content END -->
             } else {
                 const transaction = data.data;
                 const tbody = document.querySelector('tbody');
-                tbody.innerHTML = ''; 
+                tbody.innerHTML = '';
     
                 transaction.products.forEach(product => {
                     const tr = document.createElement('tr');
@@ -411,6 +873,8 @@ Page content END -->
                     tbody.appendChild(tr);
                 });
     
+{% comment %} Move Amount to Pos Machine - Start {% endcomment %}
+
                 document.getElementById('createAt').value = transaction.create_at;
                 document.getElementById('userPhone').value = maskPhoneNumber(transaction.customer.phone);
                 document.getElementById('userFirstName').value = transaction.customer.first_name;
@@ -420,17 +884,51 @@ Page content END -->
                 document.getElementById('totalDiscount').textContent = parseInt(transaction.discount).toLocaleString() + ' ریال';
                 document.getElementById('finalPrice').textContent = parseInt(transaction.price).toLocaleString() + ' ریال';
     
+                const finalPriceNumber = parseInt(transaction.price) || 0;
+                function updateAmountInput() {
+                    const transactionType = getTransactionType();
+                    const amountInput = document.getElementById('amount');
+                    const cardAmountInput = document.getElementById('card-amount');
+                    
+                    if (transactionType === 'cash') {
+                        amountInput.value = 0;
+                    } else if (transactionType === 'mix') {
+                        amountInput.value = cardAmountInput.value || 0;
+                    } else {
+                        amountInput.value = finalPriceNumber;
+                    }
+                }
+    
+                updateAmountInput();
+    
                 document.getElementById('transactionDetails').style.display = 'block';
-    
                 document.getElementById('rightSidebar').style.display = 'block';
-    
                 document.getElementById('applyButton').disabled = true;
     
+                setInterval(() => {
+                    if (getTransactionType() === 'mix') {
+                        const cardVal = document.getElementById('card-amount').value || 0;
+                        document.getElementById('amount').value = cardVal;
+                    }
+                }, 500);
+
                 Swal.fire({
                     icon: 'success',
                     title: 'موفقیت',
                     text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
                     confirmButtonText: 'باشه'
+                });
+    
+                document.getElementById('card-amount').addEventListener('input', () => {
+                    if (getTransactionType() === 'mix') {
+                        document.getElementById('amount').value = document.getElementById('card-amount').value || 0;
+                    }
+                });
+                
+                ['collapse-cash', 'collapse-card-reader', 'collapse-combined'].forEach(id => {
+                    const el = document.getElementById(id);
+                    el.addEventListener('shown.bs.collapse', updateAmountInput);
+                    el.addEventListener('hidden.bs.collapse', updateAmountInput);
                 });
             }
         })
@@ -444,6 +942,8 @@ Page content END -->
             });
         });
     });
+{% comment %} Move Amount to Pos Machine - Finish {% endcomment %}
+    
 
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -452,21 +952,21 @@ Page content END -->
         const applyButton  = document.getElementById('apply-button');
         const resetButton  = document.getElementById('reset-button');
         const finalPriceEl = document.getElementById('finalPrice'); 
-        const payButton    = document.getElementById('pay-button');
+        const payButton    = document.getElementById('search');
     
         function parseAmount(amount) {
             let cleanAmount = amount.replace(/,/g, '').replace(/[^\d.]/g, '');
             return parseFloat(cleanAmount) || 0;
         }
         function formatAmount(amount) {
-            return amount.toLocaleString() + ' ریال';
+            return parseInt(amount);
         }
         function updateFinalPrice() {
             const totalPrice    = parseFloat(document.getElementById('totalPrice').innerText.replace(/,/g, ''));
             const taxAmount     = parseFloat(document.getElementById('totalTax').innerText.replace(/,/g, ''));
             const discountAmount= parseFloat(document.getElementById('totalDiscount').innerText.replace(/,/g, ''));
             const finalPrice    = totalPrice + taxAmount - discountAmount;
-            finalPriceEl.innerText = finalPrice.toLocaleString() + ' ریال';
+            finalPriceEl.innerText = parseInt(finalPrice).toLocaleString() + ' ریال';
             return finalPrice;
         }
         function resetCombinedFields() {
@@ -552,7 +1052,6 @@ Page content END -->
         });
         observer.observe(finalPriceEl, { attributes: true });
         
-        // رویدادهای مربوط به تغییرات تخفیف
         document.querySelectorAll('.discount-input').forEach(input => {
             input.addEventListener('input', resetCombinedFields);
         });
@@ -576,26 +1075,11 @@ Page content END -->
             });
         });
     
-        function getTransactionType() {
-            const isCardReaderOpen = document.getElementById('collapse-card-reader').classList.contains('show');
-            const isCashOpen       = document.getElementById('collapse-cash').classList.contains('show');
-            const isCombinedOpen   = document.getElementById('collapse-combined').classList.contains('show');
-            if (isCardReaderOpen) {
-                return 'pc';
-            } else if (isCashOpen) {
-                return 'cash';
-            } else if (isCombinedOpen) {
-                return 'mix';
-            } else {
-                return 'pc';
-            }
-        }
-    
         payButton.addEventListener('click', function(event) {
             event.preventDefault();
             const transactionType = getTransactionType();
             const finalPrice = updateFinalPrice();
-    
+        
             if (transactionType === 'cash') {
                 Swal.fire({
                     title: 'تأیید فروش نقدی',
@@ -611,7 +1095,7 @@ Page content END -->
                 });
                 return;
             }
-    
+        
             if (transactionType === 'mix') {
                 const cashVal = parseAmount(cashInput.value);
                 const cardVal = parseAmount(cardInput.value);
@@ -634,68 +1118,69 @@ Page content END -->
                     return;
                 }
             }
-    
+        
             let cardPaymentAmount = 0;
             if (transactionType === 'pc') {
                 cardPaymentAmount = finalPrice;
             } else if (transactionType === 'mix') {
                 cardPaymentAmount = parseAmount(cardInput.value);
             }
-    
+        
             if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
                 Swal.fire({
                     title: 'پرداخت از طریق دستگاه کارتخوان...',
                     allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
-                });
-                const cardReaderIP   = localStorage.getItem('cardReaderIP') || '192.168.1.100';
-                const cardReaderPort = localStorage.getItem('cardReaderPort') || '8000';
-                const formData = new URLSearchParams();
-                formData.append('payment', cardPaymentAmount);
-                formData.append('ip', cardReaderIP);
-                formData.append('port', cardReaderPort);
-    
-                fetch('{% url "Amusement_Park:test_payment" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(cardResponse => {
-                    if (cardResponse.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'پرداخت کارتخوان موفق',
-                            text: cardResponse.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            proceedWithPayment();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا در پرداخت کارتخوان',
-                            text: cardResponse.message,
-                            confirmButtonText: 'باشه'
+                    didOpen: () => {
+                        Swal.showLoading();
+                        fetch('{% url "Amusement_Park:submit_pay" %}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                customer_data: customerData,
+                                cart_items: cartItems,
+                                transaction_data: transactionData,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            Swal.close();
+                            if (data.status === "success") {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'پرداخت موفق',
+                                    text: data.message,
+                                    confirmButtonText: 'باشه'
+                                }).then(() => {
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'خطا',
+                                    text: data.message,
+                                    confirmButtonText: 'باشه'
+                                });
+                            }
+                        })
+                        .catch(() => {
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا در ارتباط با سرور',
+                                text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                                confirmButtonText: 'باشه'
+                            });
                         });
                     }
-                })
-                .catch(error => {
-                    console.error('Error in card payment:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطا در ارتباط با دستگاه کارتخوان',
-                        text: 'خطا در ارتباط با دستگاه کارتخوان.',
-                        confirmButtonText: 'باشه'
-                    });
                 });
-            } else {
-                proceedWithPayment();
+        
+                return;
+            } else if (transactionType === 'mix') {
+                cardPaymentAmount = parseAmount(cardInput.value);
             }
+    
         });
     
         function proceedWithPayment() {
@@ -760,7 +1245,7 @@ Page content END -->
           const applyButton = document.getElementById("apply-button");
           const resetButton = document.getElementById("reset-button");
           const finalPrice = document.getElementById("finalPrice");
-          const paymentButton = document.getElementById("pay-button");
+          const paymentButton = document.getElementById("search");
       
           cashAmountInput.value = "";
           cardAmountInput.value = "";
@@ -852,6 +1337,324 @@ Page content END -->
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {% comment %} PcPos JS Setting Start {% endcomment %}
+      function check1() {
+          var checkBox1 = document.getElementById("chBox1");
+              var checkBox2 = document.getElementById("chBox2");
+              if (checkBox1.checked == true){
+                  checkBox2.checked = false;
+              }
+          }
+          
+          function check2() {
+              var checkBox1 = document.getElementById("chBox1");
+              var checkBox2 = document.getElementById("chBox2");
+              if (checkBox2.checked == true){
+                  checkBox1.checked = false;
+              }
+          }
+          
+          var doPCPOS = function(){
+      
+              const amountValue = parseFloat($('#amount').val().replace(/,/g, '')) || 0;
+              const isCashSale = document.getElementById('collapse-cash').classList.contains('show');
+              $('#result').empty();
+      
+              $.ajax({
+                  type: "POST",
+                  url: $('#pcpos_url').val(),
+                  data: JSON.stringify(req_params),
+                  contentType: "application/json; charset=utf-8",
+                  dataType: "json",
+                  timeout: 120 * 1000,
+                  success: function(data) {
+                      $('#result').empty();
+                      $('#result').append(JSON.stringify(data, null, "\t"));
+                      if (callback) {
+                          callback(data);  // <-- pass data to your function
+                      }
+                  },
+                  failure: function(errMsg) {
+                      alert(errMsg);
+                  }
+              });		
+              
+              if (amountValue <= 0 || isCashSale) {
+                  return;
+              }		
+              
+              var req_params = new Object();
+              req_params.PR = $('#pr_code').val();
+              req_params.AM = $('#amount').val();
+              req_params.CU = $('#currency').val();
+              if (($('#r_cardholder').val().length > 0)) { req_params.R1 = $('#r_cardholder').val(); }
+              if (($('#r3').val().length > 0)) { req_params.R3 = $('#r3').val(); }
+              if (($('#r5').val().length > 0)) { req_params.R5 = $('#r5').val(); }
+              if (($('#r7').val().length > 0)) { req_params.R7 = $('#r7').val(); }
+              if (($('#r9').val().length > 0)) { req_params.R9 = $('#r9').val(); }
+              
+              if (($('#r4').val().length > 0)) { req_params.R4 = $('#r4').val(); }
+              if (($('#r6').val().length > 0)) { req_params.R6 = $('#r6').val(); }
+              if (($('#r8').val().length > 0)) { req_params.R8 = $('#r8').val(); }
+              
+              if (($('#r_merchant').val().length > 0))   { req_params.R2 = $('#r_merchant').val();   }
+              if (($('#t_cardholder').val().length > 0)) { req_params.T1 = $('#t_cardholder').val(); }
+              if (($('#t_merchant').val().length > 0))   { req_params.T2 = $('#t_merchant').val();   }
+              var checkBox1 = document.getElementById("chBox1");
+              if (checkBox1.checked == true){
+                  if (($('#WareHoff1').val().length > 0)  && ($('#WareHoff2').val().length > 0)){
+                      req_params.SV = $('#WareHoff1').val();
+                      req_params.SG = $('#WareHoff2').val();
+                  }
+              }
+              else{
+                  var checkBox2 = document.getElementById("chBox2");
+                  if (checkBox2.checked == true){
+                      if (($('#Amount1').val().length > 0) && ($('#IBAN1').val().length > 0) && ($('#ID1').val().length > 0)){
+                          req_params.A1 = $('#Amount1').val();
+                          req_params.D1 = $('#ID1').val();
+                          req_params.I1 = $('#IBAN1').val();
+                      }
+                      if (($('#Amount2').val().length > 0)  
+                      && ($('#IBAN2').val().length > 0) 
+                      && ($('#ID2').val().length > 0)){
+                          req_params.A2 = $('#Amount2').val();
+                          req_params.D2 = $('#ID2').val();
+                          req_params.I2 = $('#IBAN2').val();
+                      }
+                      if (($('#Amount3').val().length > 0)  
+                      && ($('#IBAN3').val().length > 0) 
+                      && ($('#ID3').val().length > 0)){
+                          req_params.A3 = $('#Amount3').val();
+                          req_params.D3 = $('#ID3').val();
+                          req_params.I3 = $('#IBAN3').val();
+                      }
+                      if (($('#Amount4').val().length > 0)  
+                      && ($('#IBAN4').val().length > 0) 
+                      && ($('#ID4').val().length > 0)){
+                          req_params.A4 = $('#Amount4').val();
+                          req_params.D4 = $('#ID4').val();
+                          req_params.I4 = $('#IBAN4').val();
+                      }
+                  }
+              }
+              req_params.AD = "";
+              req_params.PD = "1";
+              req_params.ST = $('#settelment').val().split(",");
+              req_params.AV = $('#key_value').val().split(",");
+              
+              
+              $('#result').empty();
+              $.ajax({
+                  type: "POST",
+                  url: $('#pcpos_url').val(),				
+                  data: JSON.stringify(req_params),
+                  contentType: "application/json; charset=utf-8",
+                  dataType: "json",
+                  timeout:120*1000,
+                  success: doSuccess,
+                  failure: function(errMsg) {
+                      alert(errMsg);
+                  }
+              });
+              
+          }
+          
+      
+          {% comment %} PcPos JS Setting End {% endcomment %}
+          
+          {% comment %} PcPos Notif And Submit Pay Setting Start {% endcomment %}
+          var doSuccess = function(data) {
+              function findRSValue(obj) {
+                  if (typeof obj !== 'object' || obj === null) return null;
+                  if (obj.tag === "RS") return obj.value;
+                  if (Array.isArray(obj)) {
+                      for (let i = 0; i < obj.length; i++) {
+                          let result = findRSValue(obj[i]);
+                          if (result !== null) return result;
+                      }
+                  }
+                  for (var key in obj) {
+                      let result = findRSValue(obj[key]);
+                      if (result !== null) return result;
+                  }
+                  return null;
+              }
+          
+              const rsMessages = {
+                  "00": "پرداخت با موفقیت انجام شد !",
+                  "55": "رمز اشتباه است !",
+                  "51": "موجودی کافی نیست !",
+                  "50": "مشکل ارتباط اینترنت !",
+                  "91": "کارت توسط بانک مبدا پشتیبانی نمی‌شود !",
+                  "99": "تراکنش لغو شد !",
+                  "58": "مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمی‌شود",
+                  "":   "کارتخوان متصل نیست !"
+              };
+          
+              let rsValue = findRSValue(data);
+          
+              if (rsValue !== null && rsMessages.hasOwnProperty(rsValue)) {
+                  Swal.close();
+          
+                  if (rsValue === "00") {
+                    const dataToSend = {
+                        transaction_id: document.getElementById('ticketCodeInput').value,
+                        transaction_type: getTransactionType(),
+                        mix_pc: document.getElementById('card-amount').value || null,
+                        mix_cash: document.getElementById('cash-amount').value || null,
+                        desc: document.getElementById('desc') ? document.getElementById('desc').value : ""
+                    };
+            
+                    fetch('{% url "Amusement_Park:save_retransaction" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'موفقیت',
+                                text: data.message,
+                                confirmButtonText: 'باشه'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا',
+                                text: data.message,
+                                confirmButtonText: 'باشه'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا در ارتباط با سرور',
+                            text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                            confirmButtonText: 'باشه'
+                        });
+                    });
+            
+          
+                  } else {
+                      Swal.fire({
+                          icon: 'error',
+                          title: rsMessages[rsValue],
+                          confirmButtonText: 'باشه'
+                      });
+                  }
+                  return;
+                }
+          
+              Swal.fire({
+                  icon: 'error',
+                  title: "کارتخوان متصل نیست !",
+                  confirmButtonText: 'باشه'
+              });
+              $('#result').empty().append(JSON.stringify(data, null, "\t"));
+          };
+          
+          $('#search').click(doPCPOS);
+      {% comment %} PcPos Notif And Submit Pay Setting End {% endcomment %}
+      
 
 </script>
 {% endblock script %}

@@ -6,6 +6,13 @@
 {% block style %}
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<style>
+		[data-bs-theme="dark"] {
+			--my-label-color: #bfc0c9;
+		}
+		[data-bs-theme="light"] {
+			--my-label-color: #2c3e50;
+		}
+
 		.form-label {
 			display: block;
 			font-size: 14px;
@@ -85,17 +92,17 @@ Page Banner START -->
 					<div class="d-flex justify-content-center">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb breadcrumb-dots mb-0">
-								{% if request.language == 'fa' %}
-									<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
-									<li class="breadcrumb-item active" aria-current="page">سبد خرید</li>
-								{% elif request.language == 'en' %}
-									<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">Main page</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Cart</li>
-								{% elif request.language == 'ar' %}
-									<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">الصفحة الرئيسية</a></li>
-									<li class="breadcrumb-item active" aria-current="page">سلة التسوّق</li>
-								{% endif %}										
-							</ol>
+									{% if request.language == 'fa' %}
+										<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">صفحه اصلی</a></li>
+										<li class="breadcrumb-item active" aria-current="page">سبد خرید</li>
+									{% elif request.language == 'en' %}
+										<li class="breadcrumb-item active" aria-current="page">Cart</li>
+										<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">Main page</a></li>
+									{% elif request.language == 'ar' %}
+										<li class="breadcrumb-item"><a href="{% url "Amusement_Park:Products" %}">الصفحة الرئيسية</a></li>
+										<li class="breadcrumb-item active" aria-current="page">سلة التسوّق</li>
+									{% endif %}
+							</ol>							
 						</nav>
 					</div>
 				</div>
@@ -142,11 +149,11 @@ Page content START -->
 										<td class="text-center">
 											<h5 class="text-success mb-0" style="font-size: 75%;">{{ item.product.price|intcomma:False|default_if_none:"0" }} 
 													{% if request.language == 'fa' %}
-													ریال
+														ریال
 													{% elif request.language == 'en' %}
-													Rial
+														Rial
 													{% elif request.language == 'ar' %}
-													ريال
+														ريال
 													{% endif %}
 
 											</h5>
@@ -216,8 +223,8 @@ Page content START -->
 							</button>
 						</div>
 					
-						<div class="col-md-6 bg-light-input">
-							<label for="firstName" class="form-label">
+						<div class="col-md-6 bg-light-input" >
+							<label for="firstName" class=" form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									نام :
 								{% elif request.language == 'en' %}
@@ -226,11 +233,18 @@ Page content START -->
 									الاسم:
 								{% endif %}
 							</label>
-							<input type="text" id="firstName" name="firstName" class="form-control" disabled>
+						
+							<input type="text" id="firstName" name="firstName" class="form-control" disabled
+								   {% if request.language == 'en' %}
+									   style="text-align: left; direction: ltr;"
+								   {% else %}
+									   style="text-align: right; direction: rtl;"
+								   {% endif %}>
 						</div>
 						
+						
 						<div class="col-md-6 bg-light-input">
-							<label for="lastName" class="form-label">
+							<label for="lastName" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									نام خانوادگی :
 								{% elif request.language == 'en' %}
@@ -239,10 +253,15 @@ Page content START -->
 									اسم العائلة:
 								{% endif %}
 							</label>
-							<input type="text" id="lastName" name="lastName" class="form-control" disabled>
+							<input type="text" id="lastName" name="lastName" class="form-control" disabled
+								   {% if request.language == 'en' %}
+									   style="text-align: left; direction: ltr;"
+								   {% else %}
+									   style="text-align: right; direction: rtl;"
+								   {% endif %}>
 						</div>
 						<div class="col-md-4 bg-light-input">
-							<label for="gender" class="form-label">
+							<label for="gender" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									جنسیت :
 								{% elif request.language == 'en' %}
@@ -260,8 +279,8 @@ Page content START -->
 							{% elif request.language == 'en' %}
 								<select name="gender" id="gender" class="form-control" dir="ltr" disabled>
 									<option value="" disabled selected></option>
-									<option style="direction: ltr;" value="male">Male</option>
-									<option style="direction: ltr;" value="female">Female</option>
+									<option style="direction: ltr; text-align: left;" value="male">Male</option>
+									<option style="direction: ltr; text-align: left;" value="female">Female</option>
 								</select>
 							{% elif request.language == 'ar' %}
 								<select name="gender" id="gender" class="form-control" dir="rtl" disabled>
@@ -273,7 +292,7 @@ Page content START -->
 						</div>
 						
 						<div class="col-md-4 bg-light-input"> 
-							<label for="city" class="form-label">
+							<label for="city" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									استان :
 								{% elif request.language == 'en' %}
@@ -283,117 +302,117 @@ Page content START -->
 								{% endif %}
 							</label>
 							{% if request.language == 'fa' %}
-  <select name="city" id="city" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="مازندران">مازندران</option>
-    <option style="direction: rtl;" value="گلستان">گلستان</option>
-    <option style="direction: rtl;" value="گیلان">گیلان</option>
-    <option style="direction: rtl;" value="تهران">تهران</option>
-    <option style="direction: rtl;" value="البرز">البرز</option>
-    <option style="direction: rtl;" value="اردبیل">اردبیل</option>
-    <option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
-    <option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
-    <option style="direction: rtl;" value="بوشهر">بوشهر</option>
-    <option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
-    <option style="direction: rtl;" value="فارس">فارس</option>
-    <option style="direction: rtl;" value="همدان">همدان</option>
-    <option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
-    <option style="direction: rtl;" value="ایلام">ایلام</option>
-    <option style="direction: rtl;" value="اصفهان">اصفهان</option>
-    <option style="direction: rtl;" value="کرمان">کرمان</option>
-    <option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
-    <option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
-    <option style="direction: rtl;" value="کردستان">کردستان</option>
-    <option style="direction: rtl;" value="لرستان">لرستان</option>
-    <option style="direction: rtl;" value="مرکزی">مرکزی</option>
-    <option style="direction: rtl;" value="قزوین">قزوین</option>
-    <option style="direction: rtl;" value="قم">قم</option>
-    <option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
-    <option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
-    <option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
-    <option style="direction: rtl;" value="سمنان">سمنان</option>
-    <option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
-    <option style="direction: rtl;" value="یزد">یزد</option>
-    <option style="direction: rtl;" value="زنجان">زنجان</option>
-    <option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
-  </select>
-{% elif request.language == 'en' %}
-  <select name="city" id="city" class="form-control" dir="ltr" disabled>
-    <option value="" disabled selected></option>
-    <option value="Mazandaran">Mazandaran</option>
-    <option value="Gilan">Gilan</option>
-    <option value="Golestan">Golestan</option>
-    <option value="Tehran">Tehran</option>
-    <option value="Alborz">Alborz</option>
-    <option value="Ardabil">Ardabil</option>
-    <option value="East Azerbaijan">East Azerbaijan</option>
-    <option value="West Azerbaijan">West Azerbaijan</option>
-    <option value="Bushehr">Bushehr</option>
-    <option value="Chaharmahal and Bakhtiari">Chaharmahal and Bakhtiari</option>
-    <option value="Fars">Fars</option>
-    <option value="Hamedan">Hamedan</option>
-    <option value="Hormozgan">Hormozgan</option>
-    <option value="Ilam">Ilam</option>
-    <option value="Isfahan">Isfahan</option>
-    <option value="Kerman">Kerman</option>
-    <option value="Kermanshah">Kermanshah</option>
-    <option value="Kohgiluyeh and Boyer-Ahmad">Kohgiluyeh and Boyer-Ahmad</option>
-    <option value="Kurdistan">Kurdistan</option>
-    <option value="Lorestan">Lorestan</option>
-    <option value="Markazi">Markazi</option>
-    <option value="Qazvin">Qazvin</option>
-    <option value="Qom">Qom</option>
-    <option value="Razavi Khorasan">Razavi Khorasan</option>
-    <option value="North Khorasan">North Khorasan</option>
-    <option value="South Khorasan">South Khorasan</option>
-    <option value="Semnan">Semnan</option>
-    <option value="Sistan and Baluchestan">Sistan and Baluchestan</option>
-    <option value="Yazd">Yazd</option>
-    <option value="Zanjan">Zanjan</option>
-    <option value="None">None</option>
-  </select>
-{% elif request.language == 'ar' %}
-  <select name="city" id="city" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="مازندران">مازندران</option>
-    <option style="direction: rtl;" value="گیلان">گیلان</option>
-    <option style="direction: rtl;" value="گلستان">گلستان</option>
-    <option style="direction: rtl;" value="تهران">تهران</option>
-    <option style="direction: rtl;" value="البرز">البرز</option>
-    <option style="direction: rtl;" value="اردبیل">اردبیل</option>
-    <option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
-    <option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
-    <option style="direction: rtl;" value="بوشهر">بوشهر</option>
-    <option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
-    <option style="direction: rtl;" value="فارس">فارس</option>
-    <option style="direction: rtl;" value="همدان">همدان</option>
-    <option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
-    <option style="direction: rtl;" value="ایلام">ایلام</option>
-    <option style="direction: rtl;" value="اصفهان">اصفهان</option>
-    <option style="direction: rtl;" value="کرمان">کرمان</option>
-    <option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
-    <option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
-    <option style="direction: rtl;" value="کردستان">کردستان</option>
-    <option style="direction: rtl;" value="لرستان">لرستان</option>
-    <option style="direction: rtl;" value="مرکزی">مرکزی</option>
-    <option style="direction: rtl;" value="قزوین">قزوین</option>
-    <option style="direction: rtl;" value="قم">قم</option>
-    <option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
-    <option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
-    <option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
-    <option style="direction: rtl;" value="سمنان">سمنان</option>
-    <option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
-    <option style="direction: rtl;" value="یزد">یزد</option>
-    <option style="direction: rtl;" value="زنجان">زنجان</option>
-    <option style="direction: rtl;" value="لا شيء">لا شيء</option>
-  </select>
-{% endif %}
+								<select name="city" id="city" class="form-control" dir="rtl" disabled>
+									<option value="" disabled selected></option>
+									<option style="direction: rtl;" value="مازندران">مازندران</option>
+									<option style="direction: rtl;" value="گلستان">گلستان</option>
+									<option style="direction: rtl;" value="گیلان">گیلان</option>
+									<option style="direction: rtl;" value="تهران">تهران</option>
+									<option style="direction: rtl;" value="البرز">البرز</option>
+									<option style="direction: rtl;" value="اردبیل">اردبیل</option>
+									<option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
+									<option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
+									<option style="direction: rtl;" value="بوشهر">بوشهر</option>
+									<option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
+									<option style="direction: rtl;" value="فارس">فارس</option>
+									<option style="direction: rtl;" value="همدان">همدان</option>
+									<option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
+									<option style="direction: rtl;" value="ایلام">ایلام</option>
+									<option style="direction: rtl;" value="اصفهان">اصفهان</option>
+									<option style="direction: rtl;" value="کرمان">کرمان</option>
+									<option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
+									<option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
+									<option style="direction: rtl;" value="کردستان">کردستان</option>
+									<option style="direction: rtl;" value="لرستان">لرستان</option>
+									<option style="direction: rtl;" value="مرکزی">مرکزی</option>
+									<option style="direction: rtl;" value="قزوین">قزوین</option>
+									<option style="direction: rtl;" value="قم">قم</option>
+									<option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
+									<option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
+									<option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
+									<option style="direction: rtl;" value="سمنان">سمنان</option>
+									<option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
+									<option style="direction: rtl;" value="یزد">یزد</option>
+									<option style="direction: rtl;" value="زنجان">زنجان</option>
+									<option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
+								</select>
+							{% elif request.language == 'en' %}
+							<select name="city" id="city" class="form-control" dir="ltr" disabled>
+								<option value="" disabled selected></option>
+								<option style="text-align: left;" value="Mazandaran">Mazandaran</option>
+								<option style="text-align: left;"  value="Gilan">Gilan</option>
+								<option style="text-align: left;"  value="Golestan">Golestan</option>
+								<option style="text-align: left;"  value="Tehran">Tehran</option>
+								<option style="text-align: left;"  value="Alborz">Alborz</option>
+								<option style="text-align: left;"  value="Ardabil">Ardabil</option>
+								<option style="text-align: left;"  value="East Azerbaijan">East Azerbaijan</option>
+								<option style="text-align: left;"  value="West Azerbaijan">West Azerbaijan</option>
+								<option style="text-align: left;"  value="Bushehr">Bushehr</option>
+								<option style="text-align: left;"  value="Chaharmahal and Bakhtiari">Chaharmahal and Bakhtiari</option>
+								<option style="text-align: left;"  value="Fars">Fars</option>
+								<option style="text-align: left;"  value="Hamedan">Hamedan</option>
+								<option style="text-align: left;"  value="Hormozgan">Hormozgan</option>
+								<option style="text-align: left;"  value="Ilam">Ilam</option>
+								<option style="text-align: left;"  value="Isfahan">Isfahan</option>
+								<option style="text-align: left;"  value="Kerman">Kerman</option>
+								<option style="text-align: left;"  value="Kermanshah">Kermanshah</option>
+								<option style="text-align: left;"  value="Kohgiluyeh and Boyer-Ahmad">Kohgiluyeh and Boyer-Ahmad</option>
+								<option style="text-align: left;"  value="Kurdistan">Kurdistan</option>
+								<option style="text-align: left;"  value="Lorestan">Lorestan</option>
+								<option style="text-align: left;"  value="Markazi">Markazi</option>
+								<option style="text-align: left;"  value="Qazvin">Qazvin</option>
+								<option style="text-align: left;"  value="Qom">Qom</option>
+								<option style="text-align: left;"  value="Razavi Khorasan">Razavi Khorasan</option>
+								<option style="text-align: left;"  value="North Khorasan">North Khorasan</option>
+								<option style="text-align: left;"  value="South Khorasan">South Khorasan</option>
+								<option style="text-align: left;"  value="Semnan">Semnan</option>
+								<option style="text-align: left;"  value="Sistan and Baluchestan">Sistan and Baluchestan</option>
+								<option style="text-align: left;" value="Yazd">Yazd</option>
+								<option style="text-align: left;"  value="Zanjan">Zanjan</option>
+								<option style="text-align: left;"  value="None">None</option>
+							</select>
+						{% elif request.language == 'ar' %}
+						<select name="city" id="city" class="form-control" dir="rtl" disabled>
+							<option value="" disabled selected></option>
+							<option style="direction: rtl;" value="مازندران">مازندران</option>
+							<option style="direction: rtl;" value="گیلان">گیلان</option>
+							<option style="direction: rtl;" value="گلستان">گلستان</option>
+							<option style="direction: rtl;" value="تهران">تهران</option>
+							<option style="direction: rtl;" value="البرز">البرز</option>
+							<option style="direction: rtl;" value="اردبیل">اردبیل</option>
+							<option style="direction: rtl;" value="آذربایجان شرقی">آذربایجان شرقی</option>
+							<option style="direction: rtl;" value="آذربایجان غربی">آذربایجان غربی</option>
+							<option style="direction: rtl;" value="بوشهر">بوشهر</option>
+							<option style="direction: rtl;" value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
+							<option style="direction: rtl;" value="فارس">فارس</option>
+							<option style="direction: rtl;" value="همدان">همدان</option>
+							<option style="direction: rtl;" value="هرمزگان">هرمزگان</option>
+							<option style="direction: rtl;" value="ایلام">ایلام</option>
+							<option style="direction: rtl;" value="اصفهان">اصفهان</option>
+							<option style="direction: rtl;" value="کرمان">کرمان</option>
+							<option style="direction: rtl;" value="کرمانشاه">کرمانشاه</option>
+							<option style="direction: rtl;" value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
+							<option style="direction: rtl;" value="کردستان">کردستان</option>
+							<option style="direction: rtl;" value="لرستان">لرستان</option>
+							<option style="direction: rtl;" value="مرکزی">مرکزی</option>
+							<option style="direction: rtl;" value="قزوین">قزوین</option>
+							<option style="direction: rtl;" value="قم">قم</option>
+							<option style="direction: rtl;" value="خراسان رضوی">خراسان رضوی</option>
+							<option style="direction: rtl;" value="خراسان شمالی">خراسان شمالی</option>
+							<option style="direction: rtl;" value="خراسان جنوبی">خراسان جنوبی</option>
+							<option style="direction: rtl;" value="سمنان">سمنان</option>
+							<option style="direction: rtl;" value="سیستان و بلوچستان">سیستان و بلوچستان</option>
+							<option style="direction: rtl;" value="یزد">یزد</option>
+							<option style="direction: rtl;" value="زنجان">زنجان</option>
+							<option style="direction: rtl;" value="لا شيء">لا شيء</option>
+						</select>
+						{% endif %}
 
 						</div>
 						
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="country" class="form-label">
+							<label for="country" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									کشور:
 								{% elif request.language == 'en' %}
@@ -403,86 +422,86 @@ Page content START -->
 								{% endif %}
 							</label>
 							{% if request.language == 'fa' %}
-  <select name="country" id="country" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="ایران">ایران</option>
-    <option style="direction: rtl;" value="افغانستان">افغانستان</option>
-    <option style="direction: rtl;" value="پاکستان">پاکستان</option>
-    <option style="direction: rtl;" value="عراق">عراق</option>
-    <option style="direction: rtl;" value="ترکیه">ترکیه</option>
-    <option style="direction: rtl;" value="ارمنستان">ارمنستان</option>
-    <option style="direction: rtl;" value="آذربایجان">آذربایجان</option>
-    <option style="direction: rtl;" value="ترکمنستان">ترکمنستان</option>
-    <option style="direction: rtl;" value="عربستان سعودی">عربستان سعودی</option>
-    <option style="direction: rtl;" value="کویت">کویت</option>
-    <option style="direction: rtl;" value="بحرین">بحرین</option>
-    <option style="direction: rtl;" value="قطر">قطر</option>
-    <option style="direction: rtl;" value="امارات متحده عربی">امارات متحده عربی</option>
-    <option style="direction: rtl;" value="عمان">عمان</option>
-    <option style="direction: rtl;" value="آلمان">آلمان</option>
-    <option style="direction: rtl;" value="آمریکا">آمریکا</option>
-    <option style="direction: rtl;" value="ایتالیا">ایتالیا</option>
-    <option style="direction: rtl;" value="اسپانیا">اسپانیا</option>
-    <option style="direction: rtl;" value="استرالیا">استرالیا</option>
-    <option style="direction: rtl;" value="کانادا">کانادا</option>
-    <option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
-  </select>
-{% elif request.language == 'en' %}
-  <select name="country" id="country" class="form-control" dir="ltr" disabled>
-    <option value="" disabled selected></option>
-    <option value="Iran">Iran</option>
-    <option value="Afghanistan">Afghanistan</option>
-    <option value="Pakistan">Pakistan</option>
-    <option value="Iraq">Iraq</option>
-    <option value="Turkey">Turkey</option>
-    <option value="Armenia">Armenia</option>
-    <option value="Azerbaijan">Azerbaijan</option>
-    <option value="Turkmenistan">Turkmenistan</option>
-    <option value="Saudi Arabia">Saudi Arabia</option>
-    <option value="Kuwait">Kuwait</option>
-    <option value="Bahrain">Bahrain</option>
-    <option value="Qatar">Qatar</option>
-    <option value="UAE">United Arab Emirates</option>
-    <option value="Oman">Oman</option>
-    <option value="Germany">Germany</option>
-    <option value="USA">USA</option>
-    <option value="Italy">Italy</option>
-    <option value="Spain">Spain</option>
-    <option value="Australia">Australia</option>
-    <option value="Canada">Canada</option>
-    <option value="None">None</option>
-  </select>
-{% elif request.language == 'ar' %}
-  <select name="country" id="country" class="form-control" dir="rtl" disabled>
-    <option value="" disabled selected></option>
-    <option style="direction: rtl;" value="إيران">إيران</option>
-    <option style="direction: rtl;" value="أفغانستان">أفغانستان</option>
-    <option style="direction: rtl;" value="باكستان">باكستان</option>
-    <option style="direction: rtl;" value="العراق">العراق</option>
-    <option style="direction: rtl;" value="تركيا">تركيا</option>
-    <option style="direction: rtl;" value="أرمينيا">أرمينيا</option>
-    <option style="direction: rtl;" value="أذربيجان">أذربيجان</option>
-    <option style="direction: rtl;" value="تركمانستان">تركمانستان</option>
-    <option style="direction: rtl;" value="السعودية">السعودية</option>
-    <option style="direction: rtl;" value="الكويت">الكويت</option>
-    <option style="direction: rtl;" value="البحرين">البحرين</option>
-    <option style="direction: rtl;" value="قطر">قطر</option>
-    <option style="direction: rtl;" value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
-    <option style="direction: rtl;" value="عمان">عمان</option>
-    <option style="direction: rtl;" value="ألمانيا">ألمانيا</option>
-    <option style="direction: rtl;" value="أمريكا">أمريكا</option>
-    <option style="direction: rtl;" value="إيطاليا">إيطاليا</option>
-    <option style="direction: rtl;" value="إسبانيا">إسبانيا</option>
-    <option style="direction: rtl;" value="أستراليا">أستراليا</option>
-    <option style="direction: rtl;" value="كندا">كندا</option>
-    <option style="direction: rtl;" value="لا شيء">لا شيء</option>
-  </select>
-{% endif %}
+								<select name="country" id="country" class="form-control" dir="rtl" disabled>
+									<option value="" disabled selected></option>
+									<option style="direction: rtl;" value="ایران">ایران</option>
+									<option style="direction: rtl;" value="افغانستان">افغانستان</option>
+									<option style="direction: rtl;" value="پاکستان">پاکستان</option>
+									<option style="direction: rtl;" value="عراق">عراق</option>
+									<option style="direction: rtl;" value="ترکیه">ترکیه</option>
+									<option style="direction: rtl;" value="ارمنستان">ارمنستان</option>
+									<option style="direction: rtl;" value="آذربایجان">آذربایجان</option>
+									<option style="direction: rtl;" value="ترکمنستان">ترکمنستان</option>
+									<option style="direction: rtl;" value="عربستان سعودی">عربستان سعودی</option>
+									<option style="direction: rtl;" value="کویت">کویت</option>
+									<option style="direction: rtl;" value="بحرین">بحرین</option>
+									<option style="direction: rtl;" value="قطر">قطر</option>
+									<option style="direction: rtl;" value="امارات متحده عربی">امارات متحده عربی</option>
+									<option style="direction: rtl;" value="عمان">عمان</option>
+									<option style="direction: rtl;" value="آلمان">آلمان</option>
+									<option style="direction: rtl;" value="آمریکا">آمریکا</option>
+									<option style="direction: rtl;" value="ایتالیا">ایتالیا</option>
+									<option style="direction: rtl;" value="اسپانیا">اسپانیا</option>
+									<option style="direction: rtl;" value="استرالیا">استرالیا</option>
+									<option style="direction: rtl;" value="کانادا">کانادا</option>
+									<option style="direction: rtl;" value="هیچکدام">هیچکدام</option>
+								</select>
+							{% elif request.language == 'en' %}
+									<select name="country" id="country" class="form-control" dir="ltr" disabled>
+										<option style="text-align: left;"  value="" disabled selected></option>
+										<option style="text-align: left;"  value="Iran">Iran</option>
+										<option style="text-align: left;"  value="Afghanistan">Afghanistan</option>
+										<option style="text-align: left;"  value="Pakistan">Pakistan</option>
+										<option style="text-align: left;"  value="Iraq">Iraq</option>
+										<option style="text-align: left;"  value="Turkey">Turkey</option>
+										<option style="text-align: left;"  value="Armenia">Armenia</option>
+										<option style="text-align: left;"  value="Azerbaijan">Azerbaijan</option>
+										<option style="text-align: left;"  value="Turkmenistan">Turkmenistan</option>
+										<option style="text-align: left;"  value="Saudi Arabia">Saudi Arabia</option>
+										<option style="text-align: left;"  value="Kuwait">Kuwait</option>
+										<option style="text-align: left;"  value="Bahrain">Bahrain</option>
+										<option style="text-align: left;"  value="Qatar">Qatar</option>
+										<option style="text-align: left;"  value="UAE">United Arab Emirates</option>
+										<option style="text-align: left;"  value="Oman">Oman</option>
+										<option style="text-align: left;"  value="Germany">Germany</option>
+										<option style="text-align: left;"  value="USA">USA</option>
+										<option style="text-align: left;"  value="Italy">Italy</option>
+										<option style="text-align: left;"  value="Spain">Spain</option>
+										<option style="text-align: left;"  value="Australia">Australia</option>
+										<option style="text-align: left;"  value="Canada">Canada</option>
+										<option style="text-align: left;"  value="None">None</option>
+									</select>
+							{% elif request.language == 'ar' %}
+									<select name="country" id="country" class="form-control" dir="rtl" disabled>
+										<option value="" disabled selected></option>
+										<option style="direction: rtl;" value="إيران">إيران</option>
+										<option style="direction: rtl;" value="أفغانستان">أفغانستان</option>
+										<option style="direction: rtl;" value="باكستان">باكستان</option>
+										<option style="direction: rtl;" value="العراق">العراق</option>
+										<option style="direction: rtl;" value="تركيا">تركيا</option>
+										<option style="direction: rtl;" value="أرمينيا">أرمينيا</option>
+										<option style="direction: rtl;" value="أذربيجان">أذربيجان</option>
+										<option style="direction: rtl;" value="تركمانستان">تركمانستان</option>
+										<option style="direction: rtl;" value="السعودية">السعودية</option>
+										<option style="direction: rtl;" value="الكويت">الكويت</option>
+										<option style="direction: rtl;" value="البحرين">البحرين</option>
+										<option style="direction: rtl;" value="قطر">قطر</option>
+										<option style="direction: rtl;" value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
+										<option style="direction: rtl;" value="عمان">عمان</option>
+										<option style="direction: rtl;" value="ألمانيا">ألمانيا</option>
+										<option style="direction: rtl;" value="أمريكا">أمريكا</option>
+										<option style="direction: rtl;" value="إيطاليا">إيطاليا</option>
+										<option style="direction: rtl;" value="إسبانيا">إسبانيا</option>
+										<option style="direction: rtl;" value="أستراليا">أستراليا</option>
+										<option style="direction: rtl;" value="كندا">كندا</option>
+										<option style="direction: rtl;" value="لا شيء">لا شيء</option>
+									</select>
+								{% endif %}
 
 						</div>
 
 						<div class="col-md-4 bg-light-input">
-							<label for="birthDay" class="form-label">
+							<label for="birthDay" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									روز تولد:
 								{% elif request.language == 'en' %}
@@ -493,42 +512,42 @@ Page content START -->
 							</label>
 							<select id="birthDay" name="birthDay" class="form-control" disabled>
 								<option value="" disabled selected></option>
-								<option value="01">1</option>
-								<option value="02">2</option>
-								<option value="03">3</option>
-								<option value="04">4</option>
-								<option value="05">5</option>
-								<option value="06">6</option>
-								<option value="07">7</option>
-								<option value="08">8</option>
-								<option value="09">9</option>
-								<option value="10">10</option>
-								<option value="11">11</option>
-								<option value="12">12</option>
-								<option value="13">13</option>
-								<option value="14">14</option>
-								<option value="15">15</option>
-								<option value="16">16</option>
-								<option value="17">17</option>
-								<option value="18">18</option>
-								<option value="19">19</option>
-								<option value="20">20</option>
-								<option value="21">21</option>
-								<option value="22">22</option>
-								<option value="23">23</option>
-								<option value="24">24</option>
-								<option value="25">25</option>
-								<option value="26">26</option>
-								<option value="27">27</option>
-								<option value="28">28</option>
-								<option value="29">29</option>
-								<option value="30">30</option>
-								<option value="31">31</option>
+								<option style="text-align: left;"  value="01">1</option>
+								<option style="text-align: left;"  value="02">2</option>
+								<option style="text-align: left;"  value="03">3</option>
+								<option style="text-align: left;"  value="04">4</option>
+								<option style="text-align: left;"  value="05">5</option>
+								<option style="text-align: left;"  value="06">6</option>
+								<option style="text-align: left;"  value="07">7</option>
+								<option style="text-align: left;"  value="08">8</option>
+								<option style="text-align: left;"  value="09">9</option>
+								<option style="text-align: left;"  value="10">10</option>
+								<option style="text-align: left;"  value="11">11</option>
+								<option style="text-align: left;"  value="12">12</option>
+								<option style="text-align: left;"  value="13">13</option>
+								<option style="text-align: left;"  value="14">14</option>
+								<option style="text-align: left;"  value="15">15</option>
+								<option style="text-align: left;"  value="16">16</option>
+								<option style="text-align: left;"  value="17">17</option>
+								<option style="text-align: left;"  value="18">18</option>
+								<option style="text-align: left;"  value="19">19</option>
+								<option style="text-align: left;"  value="20">20</option>
+								<option style="text-align: left;"  value="21">21</option>
+								<option style="text-align: left;"  value="22">22</option>
+								<option style="text-align: left;"  value="23">23</option>
+								<option style="text-align: left;"  value="24">24</option>
+								<option style="text-align: left;"  value="25">25</option>
+								<option style="text-align: left;"  value="26">26</option>
+								<option style="text-align: left;"  value="27">27</option>
+								<option style="text-align: left;"  value="28">28</option>
+								<option style="text-align: left;"  value="29">29</option>
+								<option style="text-align: left;"  value="30">30</option>
+								<option style="text-align: left;"  value="31">31</option>
 							</select>
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthMonth" class="form-label">
+							<label for="birthMonth" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									ماه تولد:
 								{% elif request.language == 'en' %}
@@ -539,23 +558,23 @@ Page content START -->
 							</label>
 							<select id="birthMonth" name="birthMonth" class="form-control" disabled>
 								<option value="" disabled selected></option> <!-- Placeholder -->
-								<option value="01">1</option>
-								<option value="02">2</option>
-								<option value="03">3</option>
-								<option value="04">4</option>
-								<option value="05">5</option>
-								<option value="06">6</option>
-								<option value="07">7</option>
-								<option value="08">8</option>
-								<option value="09">9</option>
-								<option value="10">10</option>
-								<option value="11">11</option>
-								<option value="12">12</option>
+								<option style="text-align: left;"  value="01">1</option>
+								<option style="text-align: left;"  value="02">2</option>
+								<option style="text-align: left;"  value="03">3</option>
+								<option style="text-align: left;"  value="04">4</option>
+								<option style="text-align: left;"  value="05">5</option>
+								<option style="text-align: left;"  value="06">6</option>
+								<option style="text-align: left;"  value="07">7</option>
+								<option style="text-align: left;"  value="08">8</option>
+								<option style="text-align: left;"  value="09">9</option>
+								<option style="text-align: left;"  value="10">10</option>
+								<option style="text-align: left;"  value="11">11</option>
+								<option style="text-align: left;"  value="12">12</option>
 							</select>
 						</div>
 						
 						<div class="col-md-4 bg-light-input">
-							<label for="birthYear" class="form-label">
+							<label for="birthYear" class="form-label" style="color: var(--my-label-color);">
 								{% if request.language == 'fa' %}
 									سال تولد:
 								{% elif request.language == 'en' %}
@@ -569,248 +588,248 @@ Page content START -->
 							
 								<!-- فارسی -->
 								{% if request.language == 'fa' %}
-								<option value="1401">1401</option>
-								<option value="1400">1400</option>
-								<option value="1399">1399</option>
-								<option value="1398">1398</option>
-								<option value="1397">1397</option>
-								<option value="1396">1396</option>
-								<option value="1395">1395</option>
-								<option value="1394">1394</option>
-								<option value="1393">1393</option>
-								<option value="1392">1392</option>
-								<option value="1391">1391</option>
-								<option value="1390">1390</option>
-								<option value="1389">1389</option>
-								<option value="1388">1388</option>
-								<option value="1387">1387</option>
-								<option value="1386">1386</option>
-								<option value="1385">1385</option>
-								<option value="1384">1384</option>
-								<option value="1383">1383</option>
-								<option value="1382">1382</option>
-								<option value="1381">1381</option>
-								<option value="1380">1380</option>
-								<option value="1379">1379</option>
-								<option value="1378">1378</option>
-								<option value="1377">1377</option>
-								<option value="1376">1376</option>
-								<option value="1375">1375</option>
-								<option value="1374">1374</option>
-								<option value="1373">1373</option>
-								<option value="1372">1372</option>
-								<option value="1371">1371</option>
-								<option value="1370">1370</option>
-								<option value="1369">1369</option>
-								<option value="1368">1368</option>
-								<option value="1367">1367</option>
-								<option value="1366">1366</option>
-								<option value="1365">1365</option>
-								<option value="1364">1364</option>
-								<option value="1363">1363</option>
-								<option value="1362">1362</option>
-								<option value="1361">1361</option>
-								<option value="1360">1360</option>
-								<option value="1359">1359</option>
-								<option value="1358">1358</option>
-								<option value="1357">1357</option>
-								<option value="1356">1356</option>
-								<option value="1355">1355</option>
-								<option value="1354">1354</option>
-								<option value="1353">1353</option>
-								<option value="1352">1352</option>
-								<option value="1351">1351</option>
-								<option value="1350">1350</option>
-								<option value="1349">1349</option>
-								<option value="1348">1348</option>
-								<option value="1347">1347</option>
-								<option value="1346">1346</option>
-								<option value="1345">1345</option>
-								<option value="1344">1344</option>
-								<option value="1343">1343</option>
-								<option value="1342">1342</option>
-								<option value="1341">1341</option>
-								<option value="1340">1340</option>
-								<option value="1339">1339</option>
-								<option value="1338">1338</option>
-								<option value="1337">1337</option>
-								<option value="1336">1336</option>
-								<option value="1335">1335</option>
-								<option value="1334">1334</option>
-								<option value="1333">1333</option>
-								<option value="1332">1332</option>
-								<option value="1331">1331</option>
-								<option value="1330">1330</option>
+								<option style="text-align: left;"  value="1401">1401</option>
+								<option style="text-align: left;"  value="1400">1400</option>
+								<option style="text-align: left;"  value="1399">1399</option>
+								<option style="text-align: left;"  value="1398">1398</option>
+								<option style="text-align: left;"  value="1397">1397</option>
+								<option style="text-align: left;"  value="1396">1396</option>
+								<option style="text-align: left;"  value="1395">1395</option>
+								<option style="text-align: left;"  value="1394">1394</option>
+								<option style="text-align: left;"  value="1393">1393</option>
+								<option style="text-align: left;"  value="1392">1392</option>
+								<option style="text-align: left;"  value="1391">1391</option>
+								<option style="text-align: left;"  value="1390">1390</option>
+								<option style="text-align: left;"  value="1389">1389</option>
+								<option style="text-align: left;"  value="1388">1388</option>
+								<option style="text-align: left;"  value="1387">1387</option>
+								<option style="text-align: left;"  value="1386">1386</option>
+								<option style="text-align: left;"  value="1385">1385</option>
+								<option style="text-align: left;"  value="1384">1384</option>
+								<option style="text-align: left;"  value="1383">1383</option>
+								<option style="text-align: left;"  value="1382">1382</option>
+								<option style="text-align: left;"  value="1381">1381</option>
+								<option style="text-align: left;"  value="1380">1380</option>
+								<option style="text-align: left;"  value="1379">1379</option>
+								<option style="text-align: left;"  value="1378">1378</option>
+								<option style="text-align: left;"  value="1377">1377</option>
+								<option style="text-align: left;"  value="1376">1376</option>
+								<option style="text-align: left;"  value="1375">1375</option>
+								<option style="text-align: left;"  value="1374">1374</option>
+								<option style="text-align: left;"  value="1373">1373</option>
+								<option style="text-align: left;"  value="1372">1372</option>
+								<option style="text-align: left;"  value="1371">1371</option>
+								<option style="text-align: left;"  value="1370">1370</option>
+								<option style="text-align: left;"  value="1369">1369</option>
+								<option style="text-align: left;"  value="1368">1368</option>
+								<option style="text-align: left;"  value="1367">1367</option>
+								<option style="text-align: left;"  value="1366">1366</option>
+								<option style="text-align: left;"  value="1365">1365</option>
+								<option style="text-align: left;"  value="1364">1364</option>
+								<option style="text-align: left;"  value="1363">1363</option>
+								<option style="text-align: left;"  value="1362">1362</option>
+								<option style="text-align: left;"  value="1361">1361</option>
+								<option style="text-align: left;"  value="1360">1360</option>
+								<option style="text-align: left;"  value="1359">1359</option>
+								<option style="text-align: left;"  value="1358">1358</option>
+								<option style="text-align: left;"  value="1357">1357</option>
+								<option style="text-align: left;"  value="1356">1356</option>
+								<option style="text-align: left;"  value="1355">1355</option>
+								<option style="text-align: left;"  value="1354">1354</option>
+								<option style="text-align: left;"  value="1353">1353</option>
+								<option style="text-align: left;"  value="1352">1352</option>
+								<option style="text-align: left;"  value="1351">1351</option>
+								<option style="text-align: left;"  value="1350">1350</option>
+								<option style="text-align: left;"  value="1349">1349</option>
+								<option style="text-align: left;"  value="1348">1348</option>
+								<option style="text-align: left;"  value="1347">1347</option>
+								<option style="text-align: left;"  value="1346">1346</option>
+								<option style="text-align: left;"  value="1345">1345</option>
+								<option style="text-align: left;"  value="1344">1344</option>
+								<option style="text-align: left;"  value="1343">1343</option>
+								<option style="text-align: left;"  value="1342">1342</option>
+								<option style="text-align: left;"  value="1341">1341</option>
+								<option style="text-align: left;"  value="1340">1340</option>
+								<option style="text-align: left;"  value="1339">1339</option>
+								<option style="text-align: left;"  value="1338">1338</option>
+								<option style="text-align: left;"  value="1337">1337</option>
+								<option style="text-align: left;"  value="1336">1336</option>
+								<option style="text-align: left;"  value="1335">1335</option>
+								<option style="text-align: left;"  value="1334">1334</option>
+								<option style="text-align: left;"  value="1333">1333</option>
+								<option style="text-align: left;"  value="1332">1332</option>
+								<option style="text-align: left;"  value="1331">1331</option>
+								<option style="text-align: left;"  value="1330">1330</option>
 
 								{% elif request.language == 'en' %}
-								<option value="2025">2025</option>
-								<option value="2024">2024</option>
-								<option value="2023">2023</option>
-								<option value="2022">2022</option>
-								<option value="2021">2021</option>
-								<option value="2020">2020</option>
-								<option value="2019">2019</option>
-								<option value="2018">2018</option>
-								<option value="2017">2017</option>
-								<option value="2016">2016</option>
-								<option value="2015">2015</option>
-								<option value="2014">2014</option>
-								<option value="2013">2013</option>
-								<option value="2012">2012</option>
-								<option value="2011">2011</option>
-								<option value="2010">2010</option>
-								<option value="2009">2009</option>
-								<option value="2008">2008</option>
-								<option value="2007">2007</option>
-								<option value="2006">2006</option>
-								<option value="2005">2005</option>
-								<option value="2004">2004</option>
-								<option value="2003">2003</option>
-								<option value="2002">2002</option>
-								<option value="2001">2001</option>
-								<option value="2000">2000</option>
-								<option value="1999">1999</option>
-								<option value="1998">1998</option>
-								<option value="1997">1997</option>
-								<option value="1996">1996</option>
-								<option value="1995">1995</option>
-								<option value="1994">1994</option>
-								<option value="1993">1993</option>
-								<option value="1992">1992</option>
-								<option value="1991">1991</option>
-								<option value="1990">1990</option>
-								<option value="1989">1989</option>
-								<option value="1988">1988</option>
-								<option value="1987">1987</option>
-								<option value="1986">1986</option>
-								<option value="1985">1985</option>
-								<option value="1984">1984</option>
-								<option value="1983">1983</option>
-								<option value="1982">1982</option>
-								<option value="1981">1981</option>
-								<option value="1980">1980</option>
-								<option value="1979">1979</option>
-								<option value="1978">1978</option>
-								<option value="1977">1977</option>
-								<option value="1976">1976</option>
-								<option value="1975">1975</option>
-								<option value="1974">1974</option>
-								<option value="1973">1973</option>
-								<option value="1972">1972</option>
-								<option value="1971">1971</option>
-								<option value="1970">1970</option>
-								<option value="1969">1969</option>
-								<option value="1968">1968</option>
-								<option value="1967">1967</option>
-								<option value="1966">1966</option>
-								<option value="1965">1965</option>
-								<option value="1964">1964</option>
-								<option value="1963">1963</option>
-								<option value="1962">1962</option>
-								<option value="1961">1961</option>
-								<option value="1960">1960</option>
-								<option value="1959">1959</option>
-								<option value="1958">1958</option>
-								<option value="1957">1957</option>
-								<option value="1956">1956</option>
-								<option value="1955">1955</option>
-								<option value="1954">1954</option>
-								<option value="1953">1953</option>
-								<option value="1952">1952</option>
-								<option value="1951">1951</option>
-								<option value="1950">1950</option>
-								<option value="1949">1949</option>
-								<option value="1948">1948</option>
-								<option value="1947">1947</option>
-								<option value="1946">1946</option>
-								<option value="1945">1945</option>
-								<option value="1944">1944</option>
-								<option value="1943">1943</option>
-								<option value="1942">1942</option>
-								<option value="1941">1941</option>
-								<option value="1940">1940</option>
-								<option value="1939">1939</option>
-								<option value="1938">1938</option>
-								<option value="1937">1937</option>
-								<option value="1936">1936</option>
-								<option value="1935">1935</option>
-								<option value="1934">1934</option>
-								<option value="1933">1933</option>
-								<option value="1932">1932</option>
-								<option value="1931">1931</option>
-								<option value="1930">1930</option>
+								<option style="text-align: left;"  value="2025">2025</option>
+								<option style="text-align: left;"  value="2024">2024</option>
+								<option style="text-align: left;"  value="2023">2023</option>
+								<option style="text-align: left;"  value="2022">2022</option>
+								<option style="text-align: left;"  value="2021">2021</option>
+								<option style="text-align: left;"  value="2020">2020</option>
+								<option style="text-align: left;"  value="2019">2019</option>
+								<option style="text-align: left;"  value="2018">2018</option>
+								<option style="text-align: left;"  value="2017">2017</option>
+								<option style="text-align: left;"  value="2016">2016</option>
+								<option style="text-align: left;"  value="2015">2015</option>
+								<option style="text-align: left;"  value="2014">2014</option>
+								<option style="text-align: left;"  value="2013">2013</option>
+								<option style="text-align: left;"  value="2012">2012</option>
+								<option style="text-align: left;"  value="2011">2011</option>
+								<option style="text-align: left;"  value="2010">2010</option>
+								<option style="text-align: left;"  value="2009">2009</option>
+								<option style="text-align: left;"  value="2008">2008</option>
+								<option style="text-align: left;"  value="2007">2007</option>
+								<option style="text-align: left;"  value="2006">2006</option>
+								<option style="text-align: left;"  value="2005">2005</option>
+								<option style="text-align: left;"  value="2004">2004</option>
+								<option style="text-align: left;"  value="2003">2003</option>
+								<option style="text-align: left;"  value="2002">2002</option>
+								<option style="text-align: left;"  value="2001">2001</option>
+								<option style="text-align: left;"  value="2000">2000</option>
+								<option style="text-align: left;"  value="1999">1999</option>
+								<option style="text-align: left;"  value="1998">1998</option>
+								<option style="text-align: left;"  value="1997">1997</option>
+								<option style="text-align: left;"  value="1996">1996</option>
+								<option style="text-align: left;"  value="1995">1995</option>
+								<option style="text-align: left;"  value="1994">1994</option>
+								<option style="text-align: left;"  value="1993">1993</option>
+								<option style="text-align: left;"  value="1992">1992</option>
+								<option style="text-align: left;"  value="1991">1991</option>
+								<option style="text-align: left;"  value="1990">1990</option>
+								<option style="text-align: left;"  value="1989">1989</option>
+								<option style="text-align: left;"  value="1988">1988</option>
+								<option style="text-align: left;"  value="1987">1987</option>
+								<option style="text-align: left;"  value="1986">1986</option>
+								<option style="text-align: left;"  value="1985">1985</option>
+								<option style="text-align: left;"  value="1984">1984</option>
+								<option style="text-align: left;"  value="1983">1983</option>
+								<option style="text-align: left;"  value="1982">1982</option>
+								<option style="text-align: left;"  value="1981">1981</option>
+								<option style="text-align: left;"  value="1980">1980</option>
+								<option style="text-align: left;"  value="1979">1979</option>
+								<option style="text-align: left;"  value="1978">1978</option>
+								<option style="text-align: left;"  value="1977">1977</option>
+								<option style="text-align: left;"  value="1976">1976</option>
+								<option style="text-align: left;"  value="1975">1975</option>
+								<option style="text-align: left;"  value="1974">1974</option>
+								<option style="text-align: left;"  value="1973">1973</option>
+								<option style="text-align: left;"  value="1972">1972</option>
+								<option style="text-align: left;"  value="1971">1971</option>
+								<option style="text-align: left;"  value="1970">1970</option>
+								<option style="text-align: left;"  value="1969">1969</option>
+								<option style="text-align: left;"  value="1968">1968</option>
+								<option style="text-align: left;"  value="1967">1967</option>
+								<option style="text-align: left;"  value="1966">1966</option>
+								<option style="text-align: left;"  value="1965">1965</option>
+								<option style="text-align: left;"  value="1964">1964</option>
+								<option style="text-align: left;"  value="1963">1963</option>
+								<option style="text-align: left;"  value="1962">1962</option>
+								<option style="text-align: left;"  value="1961">1961</option>
+								<option style="text-align: left;"  value="1960">1960</option>
+								<option style="text-align: left;"  value="1959">1959</option>
+								<option style="text-align: left;"  value="1958">1958</option>
+								<option style="text-align: left;"  value="1957">1957</option>
+								<option style="text-align: left;"  value="1956">1956</option>
+								<option style="text-align: left;"  value="1955">1955</option>
+								<option style="text-align: left;"  value="1954">1954</option>
+								<option style="text-align: left;"  value="1953">1953</option>
+								<option style="text-align: left;"  value="1952">1952</option>
+								<option style="text-align: left;"  value="1951">1951</option>
+								<option style="text-align: left;"  value="1950">1950</option>
+								<option style="text-align: left;"  value="1949">1949</option>
+								<option style="text-align: left;"  value="1948">1948</option>
+								<option style="text-align: left;"  value="1947">1947</option>
+								<option style="text-align: left;"  value="1946">1946</option>
+								<option style="text-align: left;"  value="1945">1945</option>
+								<option style="text-align: left;"  value="1944">1944</option>
+								<option style="text-align: left;"  value="1943">1943</option>
+								<option style="text-align: left;"  value="1942">1942</option>
+								<option style="text-align: left;"  value="1941">1941</option>
+								<option style="text-align: left;"  value="1940">1940</option>
+								<option style="text-align: left;"  value="1939">1939</option>
+								<option style="text-align: left;"  value="1938">1938</option>
+								<option style="text-align: left;"  value="1937">1937</option>
+								<option style="text-align: left;"  value="1936">1936</option>
+								<option style="text-align: left;"  value="1935">1935</option>
+								<option style="text-align: left;"  value="1934">1934</option>
+								<option style="text-align: left;"  value="1933">1933</option>
+								<option style="text-align: left;"  value="1932">1932</option>
+								<option style="text-align: left;"  value="1931">1931</option>
+								<option style="text-align: left;"  value="1930">1930</option>
 
 
 								{% elif request.language == 'ar' %}
-								<option value="1447">١٤٤٧ هـ</option>
-								<option value="1446">١٤٤٦ هـ</option>
-								<option value="1445">١٤٤٥ هـ</option>
-								<option value="1444">١٤٤٤ هـ</option>
-								<option value="1443">١٤٤٣ هـ</option>
-								<option value="1442">١٤٤٢ هـ</option>
-								<option value="1441">١٤٤١ هـ</option>
-								<option value="1440">١٤٤٠ هـ</option>
-								<option value="1439">١٤٣٩ هـ</option>
-								<option value="1438">١٤٣٨ هـ</option>
-								<option value="1437">١٤٣٧ هـ</option>
-								<option value="1436">١٤٣٦ هـ</option>
-								<option value="1435">١٤٣٥ هـ</option>
-								<option value="1434">١٤٣٤ هـ</option>
-								<option value="1433">١٤٣٣ هـ</option>
-								<option value="1432">١٤٣٢ هـ</option>
-								<option value="1431">١٤٣١ هـ</option>
-								<option value="1430">١٤٣٠ هـ</option>
-								<option value="1429">١٤٢٩ هـ</option>
-								<option value="1428">١٤٢٨ هـ</option>
-								<option value="1427">١٤٢٧ هـ</option>
-								<option value="1426">١٤٢٦ هـ</option>
-								<option value="1425">١٤٢٥ هـ</option>
-								<option value="1424">١٤٢٤ هـ</option>
-								<option value="1423">١٤٢٣ هـ</option>
-								<option value="1422">١٤٢٢ هـ</option>
-								<option value="1421">١٤٢١ هـ</option>
-								<option value="1420">١٤٢٠ هـ</option>
-								<option value="1419">١٤١٩ هـ</option>
-								<option value="1418">١٤١٨ هـ</option>
-								<option value="1417">١٤١٧ هـ</option>
-								<option value="1416">١٤١٦ هـ</option>
-								<option value="1415">١٤١٥ هـ</option>
-								<option value="1414">١٤١٤ هـ</option>
-								<option value="1413">١٤١٣ هـ</option>
-								<option value="1412">١٤١٢ هـ</option>
-								<option value="1411">١٤١١ هـ</option>
-								<option value="1410">١٤١٠ هـ</option>
-								<option value="1409">١٤٠٩ هـ</option>
-								<option value="1408">١٤٠٨ هـ</option>
-								<option value="1407">١٤٠٧ هـ</option>
-								<option value="1406">١٤٠٦ هـ</option>
-								<option value="1405">١٤٠٥ هـ</option>
-								<option value="1404">١٤٠٤ هـ</option>
-								<option value="1403">١٤٠٣ هـ</option>
-								<option value="1402">١٤٠٢ هـ</option>
-								<option value="1401">١٤٠١ هـ</option>
-								<option value="1400">١٤٠٠ هـ</option>
-								<option value="1399">١٣٩٩ هـ</option>
-								<option value="1398">١٣٩٨ هـ</option>
-								<option value="1397">١٣٩٧ هـ</option>
-								<option value="1396">١٣٩٦ هـ</option>
-								<option value="1395">١٣٩٥ هـ</option>
-								<option value="1394">١٣٩٤ هـ</option>
-								<option value="1393">١٣٩٣ هـ</option>
-								<option value="1392">١٣٩٢ هـ</option>
-								<option value="1391">١٣٩١ هـ</option>
-								<option value="1390">١٣٩٠ هـ</option>
-								<option value="1389">١٣٨٩ هـ</option>
-								<option value="1388">١٣٨٨ هـ</option>
-								<option value="1387">١٣٨٧ هـ</option>
-								<option value="1386">١٣٨٦ هـ</option>
-								<option value="1385">١٣٨٥ هـ</option>
-								<option value="1384">١٣٨٤ هـ</option>
-								<option value="1383">١٣٨٣ هـ</option>
-								<option value="1382">١٣٨٢ هـ</option>
-								<option value="1381">١٣٨١ هـ</option>
-								<option value="1380">١٣٨٠ هـ</option>
-								<option value="1379">١٣٧٩ هـ</option>
+								<option style="text-align: left;"  value="1447">١٤٤٧ هـ</option>
+								<option style="text-align: left;"  value="1446">١٤٤٦ هـ</option>
+								<option style="text-align: left;"  value="1445">١٤٤٥ هـ</option>
+								<option style="text-align: left;"  value="1444">١٤٤٤ هـ</option>
+								<option style="text-align: left;"  value="1443">١٤٤٣ هـ</option>
+								<option style="text-align: left;"  value="1442">١٤٤٢ هـ</option>
+								<option style="text-align: left;"  value="1441">١٤٤١ هـ</option>
+								<option style="text-align: left;"  value="1440">١٤٤٠ هـ</option>
+								<option style="text-align: left;"  value="1439">١٤٣٩ هـ</option>
+								<option style="text-align: left;"  value="1438">١٤٣٨ هـ</option>
+								<option style="text-align: left;"  value="1437">١٤٣٧ هـ</option>
+								<option style="text-align: left;"  value="1436">١٤٣٦ هـ</option>
+								<option style="text-align: left;"  value="1435">١٤٣٥ هـ</option>
+								<option style="text-align: left;"  value="1434">١٤٣٤ هـ</option>
+								<option style="text-align: left;"  value="1433">١٤٣٣ هـ</option>
+								<option style="text-align: left;"  value="1432">١٤٣٢ هـ</option>
+								<option style="text-align: left;"  value="1431">١٤٣١ هـ</option>
+								<option style="text-align: left;"  value="1430">١٤٣٠ هـ</option>
+								<option style="text-align: left;"  value="1429">١٤٢٩ هـ</option>
+								<option style="text-align: left;"  value="1428">١٤٢٨ هـ</option>
+								<option style="text-align: left;"  value="1427">١٤٢٧ هـ</option>
+								<option style="text-align: left;"  value="1426">١٤٢٦ هـ</option>
+								<option style="text-align: left;"  value="1425">١٤٢٥ هـ</option>
+								<option style="text-align: left;"  value="1424">١٤٢٤ هـ</option>
+								<option style="text-align: left;"  value="1423">١٤٢٣ هـ</option>
+								<option style="text-align: left;"  value="1422">١٤٢٢ هـ</option>
+								<option style="text-align: left;"  value="1421">١٤٢١ هـ</option>
+								<option style="text-align: left;"  value="1420">١٤٢٠ هـ</option>
+								<option style="text-align: left;"  value="1419">١٤١٩ هـ</option>
+								<option style="text-align: left;"  value="1418">١٤١٨ هـ</option>
+								<option style="text-align: left;"  value="1417">١٤١٧ هـ</option>
+								<option style="text-align: left;"  value="1416">١٤١٦ هـ</option>
+								<option style="text-align: left;"  value="1415">١٤١٥ هـ</option>
+								<option style="text-align: left;"  value="1414">١٤١٤ هـ</option>
+								<option style="text-align: left;"  value="1413">١٤١٣ هـ</option>
+								<option style="text-align: left;"  value="1412">١٤١٢ هـ</option>
+								<option style="text-align: left;"  value="1411">١٤١١ هـ</option>
+								<option style="text-align: left;"  value="1410">١٤١٠ هـ</option>
+								<option style="text-align: left;"  value="1409">١٤٠٩ هـ</option>
+								<option style="text-align: left;"  value="1408">١٤٠٨ هـ</option>
+								<option style="text-align: left;"  value="1407">١٤٠٧ هـ</option>
+								<option style="text-align: left;"  value="1406">١٤٠٦ هـ</option>
+								<option style="text-align: left;"  value="1405">١٤٠٥ هـ</option>
+								<option style="text-align: left;"  value="1404">١٤٠٤ هـ</option>
+								<option style="text-align: left;"  value="1403">١٤٠٣ هـ</option>
+								<option style="text-align: left;"  value="1402">١٤٠٢ هـ</option>
+								<option style="text-align: left;"  value="1401">١٤٠١ هـ</option>
+								<option style="text-align: left;"  value="1400">١٤٠٠ هـ</option>
+								<option style="text-align: left;"  value="1399">١٣٩٩ هـ</option>
+								<option style="text-align: left;"  value="1398">١٣٩٨ هـ</option>
+								<option style="text-align: left;"  value="1397">١٣٩٧ هـ</option>
+								<option style="text-align: left;"  value="1396">١٣٩٦ هـ</option>
+								<option style="text-align: left;"  value="1395">١٣٩٥ هـ</option>
+								<option style="text-align: left;"  value="1394">١٣٩٤ هـ</option>
+								<option style="text-align: left;"  value="1393">١٣٩٣ هـ</option>
+								<option style="text-align: left;"  value="1392">١٣٩٢ هـ</option>
+								<option style="text-align: left;"  value="1391">١٣٩١ هـ</option>
+								<option style="text-align: left;"  value="1390">١٣٩٠ هـ</option>
+								<option style="text-align: left;"  value="1389">١٣٨٩ هـ</option>
+								<option style="text-align: left;"  value="1388">١٣٨٨ هـ</option>
+								<option style="text-align: left;"  value="1387">١٣٨٧ هـ</option>
+								<option style="text-align: left;"  value="1386">١٣٨٦ هـ</option>
+								<option style="text-align: left;"  value="1385">١٣٨٥ هـ</option>
+								<option style="text-align: left;"  value="1384">١٣٨٤ هـ</option>
+								<option style="text-align: left;"  value="1383">١٣٨٣ هـ</option>
+								<option style="text-align: left;"  value="1382">١٣٨٢ هـ</option>
+								<option style="text-align: left;"  value="1381">١٣٨١ هـ</option>
+								<option style="text-align: left;"  value="1380">١٣٨٠ هـ</option>
+								<option style="text-align: left;"  value="1379">١٣٧٩ هـ</option>
 							{% endif %}
 								</select>
 								
@@ -829,14 +848,21 @@ Page content START -->
 								{% endif %}
 							</button>
 							<br>
-							<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
-								<i class="fas fa-exclamation-triangle"></i> 
 								{% if request.language == 'fa' %}
+									<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
+									<i class="fas fa-exclamation-triangle"></i> 
 									لطفا اطلاعات را با دقت وارد کنید زیرا پس از ذخیره امکان تغییر آن وجود ندارد.
+
 								{% elif request.language == 'en' %}
-									Please enter the information carefully, as it cannot be changed after saving.
+									<small class="text-danger position-absolute" style="bottom: -20px; left: 0;">
+									<i class="fas fa-exclamation-triangle"></i> 
+									Please enter the information carefully, as it cannot be changed after saving.		
+
 								{% elif request.language == 'ar' %}
+									<small class="text-danger position-absolute" style="bottom: -20px; right: 0;">
+									<i class="fas fa-exclamation-triangle"></i> 
 									يرجى إدخال المعلومات بعناية حيث أنه لا يمكن تعديلها بعد الحفظ.
+
 								{% endif %}
 							</small>
 							<br>
@@ -1027,50 +1053,120 @@ Page content START -->
 								<!-- Card reader (Default) -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
-										<button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-card-reader" aria-expanded="true" aria-controls="collapse-card-reader">
-										{% if request.language == 'fa' %}
+									  <button
+										class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+										<span>
+										  {% if request.language == 'fa' %}
 											دستگاه کارتخوان
-										{% elif request.language == 'en' %}
+										  {% elif request.language == 'en' %}
 											POS Terminal
-										{% elif request.language == 'ar' %}
+										  {% elif request.language == 'ar' %}
 											جهاز نقاط البيع
-										{% endif %}									
-										</button>
+										  {% endif %}
+										</span>
+									  </button>
 									</h6>
-									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
-									</div>
+									<div
+									  id="collapse-card-reader"
+									  class="accordion-collapse collapse show"
+									  aria-labelledby="heading-card-reader"
+									  data-bs-parent="#accordioncircle"
+									></div>
 								</div>
 
 								<!-- Cash -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-cash">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-cash" aria-expanded="false" aria-controls="collapse-cash">
-											{% if request.language == 'fa' %}
-												نقدی
-											{% elif request.language == 'en' %}
-												Cash
-											{% elif request.language == 'ar' %}
-												نقداً
-											{% endif %}
-										</button>
+									  <button
+										class="accordion-button collapsed rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-cash"
+										aria-expanded="false"
+										aria-controls="collapse-cash"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+										<span>
+										  {% if request.language == 'fa' %}
+											نقدی
+										  {% elif request.language == 'en' %}
+											Cash
+										  {% elif request.language == 'ar' %}
+											نقداً
+										  {% endif %}
+										</span>
+									  </button>
 									</h6>
-									<div id="collapse-cash" class="accordion-collapse collapse" aria-labelledby="heading-cash" data-bs-parent="#accordioncircle">
-									</div>
+									<div
+									  id="collapse-cash"
+									  class="accordion-collapse collapse"
+									  aria-labelledby="heading-cash"
+									  data-bs-parent="#accordioncircle"
+									></div>
 								</div>
-
 								<!-- Combined payment -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-combined">
-										<button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-combined" aria-expanded="false" aria-controls="collapse-combined">
-											{% if request.language == 'fa' %}
-												ترکیبی
-											{% elif request.language == 'en' %}
-												Combined
-											{% elif request.language == 'ar' %}
-												مُختلَط
+										<button
+										  class="accordion-button collapsed rounded d-flex align-items-center"
+										  type="button"
+										  data-bs-toggle="collapse"
+										  data-bs-target="#collapse-combined"
+										  aria-expanded="false"
+										  aria-controls="collapse-combined"
+										  style="
+											width: auto;
+											{% if request.language == 'en' %}
+											  margin-left: 0;
+											  margin-right: auto;
+											  flex-direction: row; 
+											{% else %}
+											  margin-right: 0;
+											  margin-left: auto;
+											  flex-direction: row;
 											{% endif %}
+										  "
+										>
+										  <span>
+											{% if request.language == 'fa' %}
+											  ترکیبی
+											{% elif request.language == 'en' %}
+											  Combined
+											{% elif request.language == 'ar' %}
+											  مُختلَط
+											{% endif %}
+										  </span>
 										</button>
-									</h6>
+									  </h6>
 									<div id="collapse-combined" class="accordion-collapse collapse" aria-labelledby="heading-combined" data-bs-parent="#accordioncircle">
 										<div class="accordion-body">
 											<form class="row g-3">
@@ -1156,18 +1252,43 @@ Page content START -->
 								<!-- Card reader (Default) -->
 								<div class="accordion-item mb-3">
 									<h6 class="accordion-header" id="heading-card-reader">
-										<button class="accordion-button rounded" type="button" style="pointer-events: none;">
-										{% if request.language == 'fa' %}
+									  <button
+										class="accordion-button rounded d-flex align-items-center"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-card-reader"
+										aria-expanded="true"
+										aria-controls="collapse-card-reader"
+										style="
+										  width: auto;
+										  {% if request.language == 'en' %}
+											margin-left: 0;
+											margin-right: auto;
+											flex-direction: row; 
+										  {% else %}
+											margin-right: 0;
+											margin-left: auto;
+											flex-direction: row; 
+										  {% endif %}
+										"
+									  >
+										<span>
+										  {% if request.language == 'fa' %}
 											دستگاه کارتخوان
-										{% elif request.language == 'en' %}
+										  {% elif request.language == 'en' %}
 											POS Terminal
-										{% elif request.language == 'ar' %}
+										  {% elif request.language == 'ar' %}
 											جهاز نقاط البيع
-										{% endif %}		
-										</button>
+										  {% endif %}
+										</span>
+									  </button>
 									</h6>
-									<div id="collapse-card-reader" class="accordion-collapse collapse show" aria-labelledby="heading-card-reader" data-bs-parent="#accordioncircle">
-									</div>
+									<div
+									  id="collapse-card-reader"
+									  class="accordion-collapse collapse show"
+									  aria-labelledby="heading-card-reader"
+									  data-bs-parent="#accordioncircle"
+									></div>
 								</div>								
 
 								<!-- Cash -->
@@ -1311,95 +1432,60 @@ Page content START -->
 					<!-- Price and detail -->
 					<ul class="list-group list-group-borderless mb-2">
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">
-								{% if request.language == 'fa' %}
-									قیمت
-								{% elif request.language == 'en' %}
-									Price
-								{% elif request.language == 'ar' %}
-									السعر
-								{% endif %}
-							</span>
-							<span class="h6 fw-light mb-0 fw-bold" id="item-total-price"> 
-								{% if request.language == 'fa' %}
-									ریال
-								{% elif request.language == 'en' %}
-									Rial
-								{% elif request.language == 'ar' %}
-									ريال
-								{% endif %}
-							</span> <!-- Dynamic price -->
+							{% if request.language == 'en' %}
+								<span class="h6 fw-light mb-0 fw-bold" id="item-total-price">1,000,000 Rial</span>
+								<span class="h6 fw-light mb-0">Price</span>
+							{% else %}
+								<span class="h6 fw-light mb-0">
+									{% if request.language == 'fa' %} قیمت {% elif request.language == 'ar' %} السعر {% endif %}
+								</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="item-total-price">1,000,000 ریال</span>
+							{% endif %}
+						</li>				
+						<li class="list-group-item px-0 d-flex justify-content-between">
+							{% if request.language == 'en' %}
+								<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">100,000 Rial</span>
+								<span class="h6 fw-light mb-0">Tax (%{{ get_TaxRate.rate|floatformat:0 }})</span>
+							{% else %}
+								<span class="h6 fw-light mb-0">
+									{% if request.language == 'fa' %} مالیات {% elif request.language == 'ar' %} ضريبة {% endif %}
+									(%{{ get_TaxRate.rate|floatformat:0 }})
+								</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">100,000 ریال</span>
+							{% endif %}
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">
-								{% if request.language == 'fa' %}
-									مالیات
-								{% elif request.language == 'en' %}
-									Tax
-								{% elif request.language == 'ar' %}
-									ضريبة
-								{% endif %}
-
-								(%{{ get_TaxRate.rate|floatformat:0 }})</span>
-							<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">
-								{% if request.language == 'fa' %}
-									0 ریال
-								{% elif request.language == 'en' %}
-									0 Rial
-								{% elif request.language == 'ar' %}
-									0 ريال
-								{% endif %}
-							</span> <!-- Dynamic tax -->
+							{% if request.language == 'en' %}
+								<span class="h6 fw-light mb-0 fw-bold" id="discount-display">0 Rial</span>
+								<span class="h6 fw-light mb-0">Discount</span>
+							{% else %}
+								<span class="h6 fw-light mb-0">
+									{% if request.language == 'fa' %} تخفیف {% elif request.language == 'ar' %} خصم {% endif %}
+								</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="discount-display">0 ریال</span>
+							{% endif %}
 						</li>
+					
+						<br>					
 						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h6 fw-light mb-0">
-								{% if request.language == 'fa' %}
-									تخفیف
-								{% elif request.language == 'en' %}
-									Discount
-								{% elif request.language == 'ar' %}
-									خصم
-								{% endif %}
-							</span>
-							<span class="h6 fw-light mb-0 fw-bold"  id="discount-display">
-								{% if request.language == 'fa' %}
-									0 ریال
-								{% elif request.language == 'en' %}
-									0 Rial
-								{% elif request.language == 'ar' %}
-									0 ريال
-								{% endif %}
-							</span>
+							{% if request.language == 'en' %}
+								<span class="text-danger h5" id="final-price">0 Rial</span>
+								<span class="h5 fw-bold">Final Price</span>
+							{% else %}
+								<span class="h5 fw-bold">
+									{% if request.language == 'fa' %} قیمت نهایی {% elif request.language == 'ar' %} السعر النهائي {% endif %}
+								</span>
+								<span class="text-danger h5" id="final-price">0 ریال</span>
+							{% endif %}
 						</li>
-						<br>
-						<li class="list-group-item px-0 d-flex justify-content-between">
-							<span class="h5 mb-0">
-								{% if request.language == 'fa' %}
-									قیمت نهایی
-								{% elif request.language == 'en' %}
-									Final Price
-								{% elif request.language == 'ar' %}
-									السعر النهائي
-								{% endif %}
-
-							</span>
-							<span class="text-danger h5" id="final-price">
-								{% if request.language == 'fa' %}
-									0 ریال
-								{% elif request.language == 'en' %}
-									0 Rial
-								{% elif request.language == 'ar' %}
-									0 ريال
-								{% endif %}
-							</span>
-						</li>
-					</ul>
+					</ul>		
+					
 					<hr>
 
 					<!-- Button -->
 					<div class="d-grid">
 						{% if cart_empty %}
-							<a id="pay-button" class="btn btn-lg btn-success disabled">
+							<a id="search" class="btn btn-lg btn-success disabled">
 								{% if request.language == 'fa' %}
 									پرداخت
 								{% elif request.language == 'en' %}
@@ -1409,7 +1495,7 @@ Page content START -->
 								{% endif %}
 							</a>
 						{% else %}
-							<a id="pay-button" class="btn btn-lg btn-success">
+							<a id="search" class="btn btn-lg btn-success">
 								{% if request.language == 'fa' %}
 									پرداخت
 								{% elif request.language == 'en' %}
@@ -1440,7 +1526,7 @@ Page content START -->
 
 <input style="display:none;" type="text" placeholder="URL" value="http://127.0.0.1:8080/pcpos" id="pcpos_url" />
 <input style="display:none;" type="text" placeholder="Pr Code" value="000000" id="pr_code" />
-<input type="text" placeholder="Amount" value="1234" id="amount" />
+<input style="display:none;" type="text" placeholder="Amount" value="1234" id="amount"/>
 <input style="display:none;" type="text" placeholder="Currency" value="364" id="currency" />
 <input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r_cardholder" />
 <input style="display:none;" type="text" placeholder="Card Holder Reciept" id="r3" />
@@ -1473,6 +1559,8 @@ Page content START -->
 <input style="display:none;" type="text" placeholder="Service Group" id="service_group" />
 <textarea style="display:none;" cols="40" rows="5" placeholder="Settelment" id="settelment"></textarea>
 <textarea style="display:none;" cols="40" rows="5" placeholder="Key Value" id="key_value"></textarea>
+<div style="display:none;">Result:</div>
+<section id="result" style="display:none;"></section>
 <!-- =======================
 Page content END -->
 {% endblock body %}
@@ -1812,26 +1900,23 @@ Page content END -->
 				if (data.exists) {
 					document.getElementById('firstName').value = data.first_name || '';
 					document.getElementById('lastName').value = data.last_name || '';
-	
-					if (data.date_of_birth) {
-						const dateParts = data.date_of_birth.split('-');
-						document.getElementById('birthYear').value = dateParts[0];
-						document.getElementById('birthMonth').value = dateParts[1];
-						document.getElementById('birthDay').value = dateParts[2];
-					}
-	
-					document.getElementById('firstName').setAttribute('disabled', true);
-					document.getElementById('lastName').setAttribute('disabled', true);
-					document.getElementById('birthYear').setAttribute('disabled', true);
-					document.getElementById('gender').setAttribute('disabled', true);
-					document.getElementById('city').setAttribute('disabled', true);
-					document.getElementById('country').setAttribute('disabled', true);
-					document.getElementById('birthMonth').setAttribute('disabled', true);
-					document.getElementById('birthDay').setAttribute('disabled', true);
+				
+					document.getElementById('firstName').removeAttribute('disabled');
+					document.getElementById('lastName').removeAttribute('disabled');
+				
+					const fieldsToHide = ['birthYear', 'birthMonth', 'birthDay', 'gender', 'city', 'country'];
+					fieldsToHide.forEach(id => {
+						const element = document.getElementById(id);
+						if (element) {
+							element.closest('.col-md-4, .col-md-6').style.display = 'none'; // مخفی کردن کل بخش
+						}
+					});
+				
 					document.querySelector('button[type="submit"]').setAttribute('disabled', true);
-	
 					phoneInput.setAttribute('disabled', true);
 					document.getElementById('applyButton').setAttribute('disabled', true);
+
+					
 	
 					Swal.fire({
 						icon: 'info',
@@ -2002,6 +2087,33 @@ function check1() {
 	}
 	
 	var doPCPOS = function(){
+
+		const amountValue = parseFloat($('#amount').val().replace(/,/g, '')) || 0;
+		const isCashSale = document.getElementById('collapse-cash').classList.contains('show');
+		$('#result').empty();
+
+		$.ajax({
+			type: "POST",
+			url: $('#pcpos_url').val(),
+			data: JSON.stringify(req_params),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			timeout: 120 * 1000,
+			success: function(data) {
+				$('#result').empty();
+				$('#result').append(JSON.stringify(data, null, "\t"));
+				if (callback) {
+					callback(data);  // <-- pass data to your function
+				}
+			},
+			failure: function(errMsg) {
+				alert(errMsg);
+			}
+		});		
+		
+		if (amountValue <= 0 || isCashSale) {
+			return;
+		}		
 		
 		var req_params = new Object();
 		req_params.PR = $('#pr_code').val();
@@ -2080,13 +2192,143 @@ function check1() {
 		
 	}
 	
-	var doSuccess = function(data){
-		$('#result').empty();
-		$('#result').append(JSON.stringify(data,null, "\t"));
-	}
+
+	{% comment %} PcPos JS Setting End {% endcomment %}
+	
+	{% comment %} PcPos Notif And Submit Pay Setting Start {% endcomment %}
+	var doSuccess = function(data) {
+		function findRSValue(obj) {
+			if (typeof obj !== 'object' || obj === null) return null;
+			if (obj.tag === "RS") return obj.value;
+			if (Array.isArray(obj)) {
+				for (let i = 0; i < obj.length; i++) {
+					let result = findRSValue(obj[i]);
+					if (result !== null) return result;
+				}
+			}
+			for (var key in obj) {
+				let result = findRSValue(obj[key]);
+				if (result !== null) return result;
+			}
+			return null;
+		}
+	
+		const rsMessages = {
+			"00": "پرداخت با موفقیت انجام شد !",
+			"55": "رمز اشتباه است !",
+			"51": "موجودی کافی نیست !",
+			"50": "مشکل ارتباط اینترنت !",
+			"91": "کارت توسط بانک مبدا پشتیبانی نمی‌شود !",
+			"99": "تراکنش لغو شد !",
+			"58": "مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمی‌شود",
+			"":   "کارتخوان متصل نیست !"
+		};
+	
+		let rsValue = findRSValue(data);
+	
+		if (rsValue !== null && rsMessages.hasOwnProperty(rsValue)) {
+			Swal.close();
+	
+			if (rsValue === "00") {
+				Swal.fire({
+					icon: 'success',
+					title: rsMessages[rsValue],
+					confirmButtonText: 'باشه'
+				}).then(result => {
+					if (!result.isConfirmed) return;
+	
+					const phone = document.getElementById('phoneInput').value;
+					const firstName = document.getElementById('firstName').value;
+					const lastName = document.getElementById('lastName').value;
+					const birthYear = document.getElementById('birthYear').value;
+					const birthMonth = document.getElementById('birthMonth').value;
+					const birthDay = document.getElementById('birthDay').value;
+	
+					const customerData = phone ? {
+						phone: phone,
+						firstName: firstName || null,
+						lastName: lastName || null,
+						birthYear: birthYear || null,
+						birthMonth: birthMonth || null,
+						birthDay: birthDay || null,
+					} : null;
+	
+					const cartItems = [];
+					document.querySelectorAll('[data-ticket-product-id]').forEach(item => {
+						const productId = item.getAttribute('data-ticket-product-id');
+						const quantity = item.querySelector('.counter').innerText;
+						cartItems.push({ product_id: productId, quantity: parseInt(quantity) });
+					});
+	
+					const cardInput = document.getElementById('card-amount');
+					const cashInput = document.getElementById('cash-amount');
+	
+					const transactionType = getTransactionType();
+
+					const transactionData = {
+						type: transactionType,
+						discount_code: document.getElementById('discount-code').value || null,
+						discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
+						mix_pc: cardInput && cardInput.value ? parseFloat(cardInput.value.replace(/,/g, '')) : 0,
+						mix_cash: cashInput && cashInput.value ? parseFloat(cashInput.value.replace(/,/g, '')) : 0,
+					};
+
+					console.log('transactionData:', transactionData);
+					
+					fetch('{% url "Amusement_Park:submit_pay" %}', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-CSRFToken': '{{ csrf_token }}'
+						},
+						body: JSON.stringify({
+							customer_data: customerData,
+							cart_items: cartItems,
+							transaction_data: transactionData,
+						})
+					})
+					.then(res => res.json())
+					.then(payload => {
+						if (payload.success) {
+							window.location.href = `/Amusement_Park/tickets/${payload.ticket_id}/print_qr/`;
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'خطا در ثبت تراکنش',
+								text: payload.error || 'لطفاً دوباره تلاش کنید.',
+								confirmButtonText: 'باشه'
+							});
+						}
+					})
+					.catch(() => {
+						Swal.fire({
+							icon: 'error',
+							title: 'خطا در ارتباط با سرور',
+							confirmButtonText: 'باشه'
+						});
+					});
+				});
+	
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: rsMessages[rsValue],
+					confirmButtonText: 'باشه'
+				});
+			}
+			return;
+		}
+	
+		Swal.fire({
+			icon: 'error',
+			title: "کارتخوان متصل نیست !",
+			confirmButtonText: 'باشه'
+		});
+		$('#result').empty().append(JSON.stringify(data, null, "\t"));
+	};
 	
 	$('#search').click(doPCPOS);
-{% comment %} PcPos JS Setting Finish {% endcomment %}
+{% comment %} PcPos Notif And Submit Pay Setting End {% endcomment %}
 
 {% comment %} PcPos _ move number to hidden input Start {% endcomment %}
 function updateFinalPrice() {
@@ -2107,9 +2349,7 @@ function updateFinalPrice() {
 			
 			return finalPrice;
 		}
-{% comment %} PcPos _ move number to hidden input Finish {% endcomment %}
 
-{% comment %} PcPos _ move number correctly to hidden input Start {% endcomment %}
 document.addEventListener('DOMContentLoaded', function() {
 	const amountInput       = document.getElementById('amount');
 	const cashInput         = document.getElementById('cash-amount');
@@ -2199,16 +2439,88 @@ document.addEventListener('DOMContentLoaded', function() {
 			  resetButton.disabled = true;
 			});
 		});
-{% comment %} PcPos _ move number correctly to hidden input Finish {% endcomment %}
+{% comment %} PcPos _ move number to hidden input Finish {% endcomment %}
 
-{% comment %} PcPos _ For save the bill correctly  {% endcomment %}
+
+
+{% comment %} PcPos _ For save the bill correctly Start {% endcomment %}
+
 document.addEventListener('DOMContentLoaded', function() {
 	const cashInput = document.getElementById('cash-amount');
 	const cardInput = document.getElementById('card-amount');
 	const applyButton = document.getElementById('apply-button');
 	const resetButton = document.getElementById('reset-button');
 	const finalPriceElement = document.getElementById('final-price');
+
 	const payButton = document.getElementById('search');
+	const resultSection = document.getElementById('result');
+
+	const amountInput = document.getElementById('amount');
+	const cardButton = document.querySelector('[data-bs-target="#collapse-card-reader"]');
+	const cardCollapse = document.getElementById('collapse-card-reader');
+	const cashButton = document.querySelector('[data-bs-target="#collapse-cash"]');
+	const cashCollapse = document.getElementById('collapse-cash');
+	const combinedButton = document.querySelector('[data-bs-target="#collapse-combined"]');
+	const combinedCollapse = document.getElementById('collapse-combined');
+	const allButtons = [cardButton, cashButton, combinedButton];
+	const allCollapses = [cardCollapse, cashCollapse, combinedCollapse];
+  
+	let userOverrode = false; // new flag
+  
+	function forceCashMode() {
+	  const amount = parseInt(amountInput.value, 10) || 0;
+  
+	  if (amount === 0 && !userOverrode) {
+		// disable non-cash buttons
+		allButtons.forEach(btn => {
+		  if (btn !== cashButton) btn.setAttribute('disabled', true);
+		  else btn.removeAttribute('disabled');
+		});
+  
+		// collapse all and show cash
+		allCollapses.forEach(el => {
+		  const inst = bootstrap.Collapse.getInstance(el) || new bootstrap.Collapse(el, { toggle: false });
+		  inst.hide();
+		});
+		const cashInst = bootstrap.Collapse.getInstance(cashCollapse)
+		  || new bootstrap.Collapse(cashCollapse, { toggle: false });
+		cashInst.show();
+  
+		allButtons.forEach(btn => btn.classList.add('collapsed'));
+		cashButton.classList.remove('collapsed');
+		cashButton.setAttribute('aria-expanded', 'true');
+	  } else {
+		// enable all
+		allButtons.forEach(btn => btn.removeAttribute('disabled'));
+	  }
+	}
+  
+	// Detect user manual override
+	allButtons.forEach(btn => {
+	  btn.addEventListener('click', () => {
+		userOverrode = true;
+		// Once the user clicks anything, stop enforcing cash mode
+		allButtons.forEach(b => b.removeAttribute('disabled'));
+	  });
+	});
+  
+	// Track changes to amount input
+	let lastVal = amountInput.value;
+	amountInput.addEventListener('input', () => {
+	  lastVal = amountInput.value;
+	  forceCashMode();
+	});
+  
+	setInterval(() => {
+	  if (amountInput.value !== lastVal) {
+		lastVal = amountInput.value;
+		forceCashMode();
+	  }
+	}, 250);
+  
+	forceCashMode();
+	
+
 
 	function updateFinalPrice() {
 		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
@@ -2382,17 +2694,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		function proceedWithPayment() {
 
+			console.log(result);
+			
 			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
 				Swal.fire({
 					title: 'پرداخت از طریق دستگاه کارتخوان...',
 					allowOutsideClick: false,
 					didOpen: () => { Swal.showLoading(); }
 				});
-
-				const formData = new URLSearchParams();
-				formData.append('payment', cardPaymentAmount);
-				formData.append('ip', cardReaderIP);
-				formData.append('port', cardReaderPort);
 
 				fetch('{% url "Amusement_Park:test_payment" %}', {
 					method: 'POST',
@@ -2402,36 +2711,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					},
 					body: formData
 				})
-				.then(response => response.json())
-				.then(cardResponse => {
-					if (cardResponse.status === 'success') {
-						Swal.fire({
-							icon: 'success',
-							title: 'پرداخت کارتخوان موفق',
-							text: cardResponse.message,
-							timer: 1500,
-							showConfirmButton: false
-						}).then(() => {
-							submitPayment();
-						});
-					} else {
-						Swal.fire({
-							icon: 'error',
-							title: 'خطا در پرداخت کارتخوان',
-							text: cardResponse.message,
-							confirmButtonText: 'باشه'
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Error in card payment:', error);
-					Swal.fire({
-						icon: 'error',
-						title: 'خطا در ارتباط با دستگاه کارتخوان',
-						text: 'خطا در ارتباط با دستگاه کارتخوان.',
-						confirmButtonText: 'باشه'
-					});
-				});
+
 			} else {
 				submitPayment();
 			}
@@ -2554,8 +2834,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-{% comment %} PcPos _ For save the bill correctly  {% endcomment %}
-
+{% comment %} PcPos _ For save the bill correctly Finish {% endcomment %}
 
 	</script>
 	{% endblock script %}
