@@ -1205,9 +1205,9 @@ Page content END -->
                 if (data.status === "success") {
                     Swal.fire({
                         icon: 'success',
-                        title: 'موفقیت',
+                        title: {% if request.language == 'fa' %} 'موفقیت' {% elif request.language == 'en' %} 'Success' {% elif request.language == 'ar' %} 'نجاح' {% endif %},
                         text: data.message,
-                        confirmButtonText: 'باشه'
+                        confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
@@ -1216,9 +1216,9 @@ Page content END -->
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'خطا',
+                        title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
                         text: data.message,
-                        confirmButtonText: 'باشه'
+                        confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                     });
                 }
             })
@@ -1227,7 +1227,7 @@ Page content END -->
                     icon: 'error',
                     title: 'خطا در ارتباط با سرور',
                     text: 'مشکلی در ارتباط با سرور رخ داده است.',
-                    confirmButtonText: 'باشه'
+                    confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                 });
             });
         }
