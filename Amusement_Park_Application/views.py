@@ -469,44 +469,94 @@ def get_transaction_details(request):
 
 
 
+from django.utils.translation import get_language_from_request
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from .models import Transaction, ReturnedTransaction
+
+# پیام‌ها برای چند زبان
+MESSAGES = {
+    'refund_success': {
+        'fa': 'عودت وجه با موفقیت ثبت شد.',
+        'en': 'Refund was successfully recorded.',
+        'ar': 'تم تسجيل استرداد المبلغ بنجاح.',
+    },
+    'invalid_request': {
+        'fa': 'درخواست نامعتبر',
+        'en': 'Invalid request',
+        'ar': 'طلب غير صالح',
+    },
+    'unsupported_language': {
+        'fa': 'زبان پشتیبانی نمی‌شود',
+        'en': 'Unsupported language',
+        'ar': 'اللغة غير مدعومة',
+    }
+}
+
+SUPPORTED_LANGUAGES = ['fa', 'en', 'ar']
+
+# زبان را از request یا هدر Accept-Language استخراج کن
+def get_request_language(request):
+    lang = getattr(request, 'LANGUAGE_CODE', None)
+
+    if lang and lang in SUPPORTED_LANGUAGES:
+        return lang
+
+    # اگر request.LANGUAGE_CODE نبود یا نامعتبر بود، از هدر Accept-Language بگیر
+    lang_from_header = get_language_from_request(request)
+    if lang_from_header in SUPPORTED_LANGUAGES:
+        return lang_from_header
+
+    return None
+
+# گرفتن پیام ترجمه‌شده بر اساس کلید و زبان
+def get_message(key, lang):
+    return MESSAGES.get(key, {}).get(lang, MESSAGES['unsupported_language'].get(lang, 'Unsupported language'))
+
 @login_required
 def save_refund(request):
-    if request.method == 'POST':
-        try:
-            transaction_id = request.POST.get('transaction_id')
-            refund_type = request.POST.get('refund_type')
-            desc = request.POST.get('desc', '')
-            source_card_holder_name = request.POST.get('source_card_holder_name', '')
-            destination_card_holder_name = request.POST.get('destination_card_holder_name', '')
-            source_card_number = request.POST.get('source_card_number', '')
-            destination_card_number = request.POST.get('destination_card_number', '')
-            source_sheba_number = request.POST.get('source_sheba_number', '')
-            destination_sheba_number = request.POST.get('destination_sheba_number', '')
+    lang = get_request_language(request)
 
-            transaction = get_object_or_404(Transaction, id=transaction_id)
-            user = request.user
+    if not lang:
+        return JsonResponse({'status': 'error', 'message': get_message('unsupported_language', 'en')}, status=400)
 
-            returned_transaction = ReturnedTransaction(
-                transaction=transaction,
-                type=refund_type,
-                user=user,
-                desc=desc,
-                source_card_holder_name=source_card_holder_name,
-                destination_card_holder_name=destination_card_holder_name,
-                source_card_number=source_card_number,
-                destination_card_number=destination_card_number,
-                source_sheba_number=source_sheba_number,
-                destination_sheba_number=destination_sheba_number
-            )
-            returned_transaction.save()
-            
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': get_message('invalid_request', lang)}, status=400)
 
-            return JsonResponse({'status': 'success', 'message': 'عودت وجه با موفقیت ثبت شد.'})
+    try:
+        transaction_id = request.POST.get('transaction_id')
+        refund_type = request.POST.get('refund_type')
+        desc = request.POST.get('desc', '')
+        source_card_holder_name = request.POST.get('source_card_holder_name', '')
+        destination_card_holder_name = request.POST.get('destination_card_holder_name', '')
+        source_card_number = request.POST.get('source_card_number', '')
+        destination_card_number = request.POST.get('destination_card_number', '')
+        source_sheba_number = request.POST.get('source_sheba_number', '')
+        destination_sheba_number = request.POST.get('destination_sheba_number', '')
 
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+        transaction = get_object_or_404(Transaction, id=transaction_id)
+        user = request.user
 
-    return JsonResponse({'status': 'error', 'message': 'درخواست نامعتبر'}, status=400)
+        ReturnedTransaction.objects.create(
+            transaction=transaction,
+            type=refund_type,
+            user=user,
+            desc=desc,
+            source_card_holder_name=source_card_holder_name,
+            destination_card_holder_name=destination_card_holder_name,
+            source_card_number=source_card_number,
+            destination_card_number=destination_card_number,
+            source_sheba_number=source_sheba_number,
+            destination_sheba_number=destination_sheba_number
+        )
+
+        return JsonResponse({'status': 'success', 'message': get_message('refund_success', lang)})
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
 
 
 

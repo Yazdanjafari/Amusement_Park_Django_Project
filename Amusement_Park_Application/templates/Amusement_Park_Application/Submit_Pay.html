@@ -402,7 +402,7 @@ Page content START -->
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">
+													<label class="form-label" style="color: var(--my-label-color);"><span class="text-danger2">
                                                         {% if request.language == 'fa' %}
                                                             مقدار مبلغ نقدی (ریال):
                                                         {% elif request.language == 'en' %}
@@ -424,7 +424,7 @@ Page content START -->
                                                     {% endif %} >
 												</div>
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">
+													<label class="form-label" style="color: var(--my-label-color);"><span class="text-danger2">
                                                         {% if request.language == 'fa' %}
                                                             مقدار مبلغ پرداخت با کارتخوان (ریال):
                                                         {% elif request.language == 'en' %}
@@ -531,7 +531,7 @@ Page content START -->
 										<div class="accordion-body">
 											<form class="row g-3">
 												<div class="col-12">
-													<label class="form-label"><span class="text-danger2">
+													<label class="form-label" style="color: var(--my-label-color);"><span class="text-danger2" >
                                                         {% if request.language == 'fa' %}
                                                             مقدار مبلغ نقدی (ریال):
                                                         {% elif request.language == 'en' %}
@@ -859,7 +859,8 @@ Page content END -->
                             </div>
                         </td>
                         <td class="text-center">
-                            <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.price).toLocaleString()} ریال</h5>
+                        {% if request.language == 'fa' %} <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.price).toLocaleString()} ریال</h5> {% elif request.language == 'en' %} <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.price).toLocaleString()} Rial</h5> {% elif request.language == 'ar' %} <h5 class="text-success mb-0" style="font-size: 75%;">${parseInt(product.price).toLocaleString()} ریال</h5> {% endif %}
+                            
                         </td>
                         <td>
                             <div class="d-flex justify-content-between align-items-center">
@@ -1225,8 +1226,8 @@ Page content END -->
             .catch(error => {
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطا در ارتباط با سرور',
-                    text: 'مشکلی در ارتباط با سرور رخ داده است.',
+                    title: {% if request.language == 'fa' %} 'خطا در ارتباط با سرور' {% elif request.language == 'en' %} 'Error connecting to the server' {% elif request.language == 'ar' %} 'خطأ في الاتصال بالخادم' {% endif %},
+                    text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور رخ داده است.' {% elif request.language == 'en' %} 'There was a problem connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %},
                     confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                 });
             });
@@ -1272,10 +1273,10 @@ Page content END -->
       
             if (cashAmount > finalPriceValue || cardAmount > finalPriceValue) {
               Swal.fire({
-                title: "خطا",
-                text: "مقدار وارد شده بیش از قیمت نهایی است!",
+                title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
+                text: {% if request.language == 'fa' %} 'مقدار وارد شده بیش از قیمت نهایی است!' {% elif request.language == 'en' %} 'The entered amount exceeds the final price!' {% elif request.language == 'ar' %} 'المبلغ المُدخل يتجاوز السعر النهائي!' {% endif %},
                 icon: "error",
-                confirmButtonText: "باشه"
+                confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
               });
               if (cashAmount > finalPriceValue) cashAmountInput.value = "";
               if (cardAmount > finalPriceValue) cardAmountInput.value = "";
@@ -1318,10 +1319,10 @@ Page content END -->
       
             if (cashAmount === 0 && cardAmount === 0) {
               Swal.fire({
-                title: "خطا",
-                text: "لطفاً مقادیر نقدی و کارتخوان را وارد کنید.",
+                title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
+                text: {% if request.language == 'fa' %} 'لطفاً مقادیر نقدی و کارتخوان را وارد کنید.' {% elif request.language == 'en' %} 'Please enter the cash and card reader amounts.' {% elif request.language == 'ar' %} 'يرجى إدخال مبالغ النقدي وجهاز البطاقة.' {% endif %} ,
                 icon: "error",
-                confirmButtonText: "باشه"
+                confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
               });
             }
           });
@@ -1514,9 +1515,9 @@ Page content END -->
                         if (data.status === "success") {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'موفقیت',
+                                title: {% if request.language == 'fa' %} 'موفقیت' {% elif request.language == 'en' %} 'Success' {% elif request.language == 'ar' %} 'نجاح' {% endif %},
                                 text: data.message,
-                                confirmButtonText: 'باشه'
+                                confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     window.location.href = `/Amusement_Park/tickets/${data.ticket_id}/print_qr/`;
@@ -1525,18 +1526,18 @@ Page content END -->
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'خطا',
+                                title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
                                 text: data.message,
-                                confirmButtonText: 'باشه'
+                                confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                             });
                         }
                     })
                     .catch(error => {
                         Swal.fire({
                             icon: 'error',
-                            title: 'خطا در ارتباط با سرور',
-                            text: 'مشکلی در ارتباط با سرور رخ داده است.',
-                            confirmButtonText: 'باشه'
+                            title: {% if request.language == 'fa' %} 'خطا در ارتباط با سرور' {% elif request.language == 'en' %} 'Error connecting to the server' {% elif request.language == 'ar' %} 'خطأ في الاتصال بالخادم' {% endif %} ,
+                            text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور رخ داده است.' {% elif request.language == 'en' %} 'There was a problem connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %},
+                            confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                         });
                     });
             
@@ -1545,7 +1546,7 @@ Page content END -->
                       Swal.fire({
                           icon: 'error',
                           title: rsMessages[rsValue],
-                          confirmButtonText: 'باشه'
+                          confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                       });
                   }
                   return;
@@ -1553,8 +1554,8 @@ Page content END -->
           
               Swal.fire({
                   icon: 'error',
-                  title: "کارتخوان متصل نیست !",
-                  confirmButtonText: 'باشه'
+                  title: {% if request.language == 'fa' %} 'کارتخوان متصل نیست!' {% elif request.language == 'en' %} 'Card reader is not connected!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل!' {% endif %},
+                  confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
               });
               $('#result').empty().append(JSON.stringify(data, null, "\t"));
           };
