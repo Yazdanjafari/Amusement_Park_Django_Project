@@ -18,8 +18,8 @@ db.sqlite3
 .env
 
 # Media and static files (if generated dynamically)
-# /media/
-# /staticfiles/
+/media/
+/staticfiles/
 
 # IDE-specific files
 .idea/
