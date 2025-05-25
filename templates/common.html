@@ -10,7 +10,7 @@
 {% endif %}
 
 <head>
-	<title>وب اپلیکیشن شهربازی | Amusement Park Web-App</title>
+	<title>{% if request.language == 'fa' %} شهربازی سیترا {% elif request.language == 'en' %} Citra Amusement Park {% elif request.language == 'ar' %} مدينة ألعاب سيترا {% endif %}</title>
 
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
@@ -406,11 +406,11 @@
 						</a>
 					</li>
 
-					{% if request.user.is_superuser or request.user.is_staff %}					
+					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'kiosk' %}					
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>
 								{% if request.language == 'fa' %}
-									ثبت مجدد 	 
+									ثبت مجدد تراکنش
 								{% elif request.language == 'en' %}
 									Resubmit
 								{% elif request.language == 'ar' %}

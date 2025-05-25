@@ -279,14 +279,14 @@ Page content START -->
 							{% elif request.language == 'en' %}
 								<select name="gender" id="gender" class="form-control" dir="ltr" disabled>
 									<option value="" disabled selected></option>
-									<option style="direction: ltr; text-align: left;" value="male">Male</option>
-									<option style="direction: ltr; text-align: left;" value="female">Female</option>
+									<option style="direction: ltr; text-align: left;" value="آقا">Male</option>
+									<option style="direction: ltr; text-align: left;" value="خانم">Female</option>
 								</select>
 							{% elif request.language == 'ar' %}
 								<select name="gender" id="gender" class="form-control" dir="rtl" disabled>
 									<option value="" disabled selected></option>
-									<option style="direction: rtl;" value="ذكر">ذكر</option>
-									<option style="direction: rtl;" value="أنثى">أنثى</option>
+									<option style="direction: rtl;" value="آقا">ذكر</option>
+									<option style="direction: rtl;" value="خانم">أنثى</option>
 								</select>
 							{% endif %}
 						</div>
@@ -1691,7 +1691,7 @@ Page content END -->
 		if (discountValue > maxDiscount) {
 			Swal.fire({
 				title: {% if request.language == 'fa' %} ' خطا ' {% elif request.language == 'en' %} ' Error ' {% elif request.language == 'ar' %} '  خطا ' {% endif %},
-				text: `حداکثر مقدار تخفیف قابل اعمال ${maxDiscount.toLocaleString()} ریال است.`,
+				text: {% if request.language == 'fa' %} `حداکثر مقدار تخفیف قابل اعمال ${maxDiscount.toLocaleString()} ریال است.` {% elif request.language == 'en' %} `The maximum applicable discount is ${maxDiscount.toLocaleString()} Rials.` {% elif request.language == 'ar' %} `الحد الأقصى للخصم المسموح هو ${maxDiscount.toLocaleString()} ريال.` {% endif %},
 				icon: 'error',
 				confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 			});
@@ -2222,7 +2222,7 @@ function check1() {
 			"91": {% if request.language == 'fa' %} 'کارت توسط بانک مبدا پشتیبانی نمی‌شود !' {% elif request.language == 'en' %} 'Card not supported by the issuing bank!' {% elif request.language == 'ar' %} 'البطاقة غير مدعومة من قبل البنك المصدر!' {% endif %},
 			"99": {% if request.language == 'fa' %} 'تراکنش لغو شد !' {% elif request.language == 'en' %} 'Transaction cancelled!' {% elif request.language == 'ar' %} 'تم إلغاء المعاملة!' {% endif %},
 			"58": {% if request.language == 'fa' %} 'مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمی‌شود' {% elif request.language == 'en' %} 'Amounts below 1000 Rials are not supported' {% elif request.language == 'ar' %} 'المبالغ أقل من ١٠٠٠ ريال غير مدعومة' {% endif %},
-			"":   {% if request.language == 'fa' %} 'کارتخوان متصل نیست !' {% elif request.language == 'en' %} 'Card reader is not connected!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل!' {% endif %}
+			"":   {% if request.language == 'fa' %} 'کارتخوان متصل نیست یا درحال رسیدگی به تراکنش دیگری است!' {% elif request.language == 'en' %} 'The card reader is not connected or is processing another transaction!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل أو يعالج معاملة أخرى!' {% endif %}
 		};
 	
 		let rsValue = findRSValue(data);
@@ -2322,7 +2322,7 @@ function check1() {
 	
 		Swal.fire({
 			icon: 'error',
-			title: {% if request.language == 'fa' %} 'کارتخوان متصل نیست !' {% elif request.language == 'en' %} 'Card reader is not connected!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل!' {% endif %},
+			title: {% if request.language == 'fa' %} 'کارتخوان متصل نیست یا درحال رسیدگی به تراکنش دیگری است!' {% elif request.language == 'en' %} 'The card reader is not connected or is processing another transaction!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل أو يعالج معاملة أخرى!' {% endif %},
 			confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 		});
 		$('#result').empty().append(JSON.stringify(data, null, "\t"));
@@ -2666,7 +2666,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (cashAmount === 0 && cardAmountInput === 0) {
 				Swal.fire({
 					title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
-					text: 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.',
+					text: {% if request.language == 'fa' %} 'لطفاً ابتدا مشخص کنید چقدر از فروش ترکیبی شما نقد است و چقدر با دستگاه کارتخوان پرداخت می‌شود.' {% elif request.language == 'en' %} 'Please first specify how much of your combined sale is in cash and how much is paid by card reader.' {% elif request.language == 'ar' %} 'يرجى تحديد مقدار الدفع نقداً ومقدار الدفع عن طريق جهاز البطاقة أولاً.' {% endif %},
 					icon: 'error',
 					confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 				});
@@ -2674,7 +2674,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			} else if (cashInput.disabled === false || cardInput.disabled === false) {
 				Swal.fire({
 					title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
-					text: 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.',
+					text: {% if request.language == 'fa' %} 'لطفاً دکمه "اعمال" را بزنید تا مبالغ نقدی و کارتخوان تأیید شوند.' {% elif request.language == 'en' %} 'Please click the "Apply" button to confirm the cash and card reader amounts.' {% elif request.language == 'ar' %} 'يرجى الضغط على زر "تطبيق" لتأكيد مبالغ النقد وجهاز البطاقة.' {% endif %},
 					icon: 'error',
 					confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 				});
@@ -2704,24 +2704,52 @@ document.addEventListener('DOMContentLoaded', function() {
 			console.log(result);
 			
 			if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+				let controller = new AbortController(); 
+			
 				Swal.fire({
 					title: {% if request.language == 'fa' %} 'پرداخت از طریق دستگاه کارتخوان...' {% elif request.language == 'en' %} 'Paying via card reader...' {% elif request.language == 'ar' %} 'الدفع عبر جهاز قارئ البطاقة...' {% endif %},
+					html: `
+						<div id="swal-cancel-container" style="margin-top: 10px;">
+							<button id="cancel-button" style="background-color: red; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+								{% if request.language == 'fa' %} لغو {% elif request.language == 'en' %} Cancel {% elif request.language == 'ar' %} إلغاء {% endif %}
+							</button>
+						</div>
+					`,
 					allowOutsideClick: false,
-					didOpen: () => { Swal.showLoading(); }
+					showConfirmButton: false,
+					didOpen: () => {
+						Swal.showLoading();
+			
+						document.getElementById('cancel-button').addEventListener('click', () => {
+							controller.abort();  
+							Swal.close();
+						});
+			
+						fetch('{% url "Amusement_Park:test_payment" %}', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded',
+								'X-CSRFToken': '{{ csrf_token }}'
+							},
+							body: formData,
+							signature: controller.signal
+						})
+						.catch(error => {
+							if (error.name !== 'AbortError') {
+								Swal.close();
+								Swal.fire({
+									icon: 'error',
+									title: {% if request.language == 'fa' %} 'خطا در پرداخت' {% elif request.language == 'en' %} 'Payment Error' {% elif request.language == 'ar' %} 'خطأ في الدفع' {% endif %},
+									text: {% if request.language == 'fa' %} 'مشکلی در انجام پرداخت رخ داده است.' {% elif request.language == 'en' %} 'A problem occurred during the payment process.' {% elif request.language == 'ar' %} 'حدثت مشكلة أثناء عملية الدفع.' {% endif %},
+									confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
+								});
+							}
+						});
+					}
 				});
-
-				fetch('{% url "Amusement_Park:test_payment" %}', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-						'X-CSRFToken': '{{ csrf_token }}'
-					},
-					body: formData
-				})
-
 			} else {
 				submitPayment();
-			}
+			}			
 		}
 
 		function submitPayment() {

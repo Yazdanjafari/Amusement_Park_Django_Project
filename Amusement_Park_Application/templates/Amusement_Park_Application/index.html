@@ -202,11 +202,9 @@ Instructor grid END -->
 		const text = document.getElementById("saleModeText");
 		const icon = document.getElementById("saleModeIcon");
 	
-		// دریافت زبان از مسیر URL
 		const pathParts = window.location.pathname.split('/');
 		const langPrefix = (pathParts[1] === 'Amusement_Park' || !pathParts[1]) ? 'fa' : pathParts[1];
 	
-		// تعریف پیام‌ها برای چند زبان
 		const messages = {
 			fa: { normal: 'فروش عادی', tourist: 'فروش توریستی' },
 			en: { normal: 'Normal Sale', tourist: 'Tourist Sale' },
@@ -215,7 +213,6 @@ Instructor grid END -->
 	
 		const msg = messages[langPrefix] || messages.fa;
 	
-		// خواندن sale_mode از پارامتر URL
 		const urlParams = new URLSearchParams(window.location.search);
 		const saleModeParam = urlParams.get("sale_mode") || "normal";
 		

@@ -848,7 +848,7 @@ Page content END -->
                         {% elif request.language == 'ar' %}
                             title: 'غلط',
 						{% endif %}		                        
-                        text: data.error,
+                        text: {% if request.language == 'fa' %} 'عملیات با موفقیت انجام نشد' {% elif request.language == 'en' %} 'The operation was not successful' {% elif request.language == 'ar' %} 'لم تتم العملية بنجاح' {% endif %},
                     });
                 } else {
                     Swal.fire({
@@ -885,10 +885,6 @@ Page content END -->
                         </div>
                         <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">  
 										{% if request.language == 'fa' %}
-                                            <a style="font-size: 75%;">${product.name}</a>
-                                        {% elif request.language == 'en' %}
-                                            <a style="font-size: 75%;">${product.name}</a>
-                                        {% elif request.language == 'ar' %}
                                             <a style="font-size: 75%;">${product.name}</a>
 										{% endif %}	                          
                         </h6>
@@ -1026,7 +1022,7 @@ Page content END -->
                     Swal.fire({
                         icon: 'success',
                         title: {% if request.language == 'fa' %} 'موفقیت' {% elif request.language == 'en' %} 'Success' {% elif request.language == 'ar' %} 'نجاح' {% endif %} ,
-                        text: data.message,
+                        text: {% if request.language == 'fa' %} 'عملیات با موفقیت انجام شد' {% elif request.language == 'en' %} 'The operation was successful' {% elif request.language == 'ar' %} 'تمت العملية بنجاح' {% endif %},
                     }).then(() => {
                         window.location.href = "{% url 'Amusement_Park:Products' %}";
                     });
@@ -1034,7 +1030,7 @@ Page content END -->
                     Swal.fire({
                         icon: 'error',
                         title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
-                        text: data.message,
+                        text: {% if request.language == 'fa' %} 'عملیات با موفقیت انجام نشد' {% elif request.language == 'en' %} 'The operation was not successful' {% elif request.language == 'ar' %} 'لم تتم العملية بنجاح' {% endif %},
                     });
                 }
             })

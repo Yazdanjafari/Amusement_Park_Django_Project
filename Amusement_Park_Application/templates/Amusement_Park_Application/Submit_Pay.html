@@ -540,17 +540,7 @@ Page content START -->
                                                             مقدار المبلغ النقدي (ريال):
                                                         {% endif %}
                                                     </span></label>
-													<input type="text" id="cash-amount" class="form-control" 
-                                                    {% if request.language == 'fa' %}
-                                                        placeholder="مبلغ نقدی :"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% elif request.language == 'en' %}
-                                                        placeholder="Cash Amount:"
-                                                        style="text-align: left; direction: ltr;"
-                                                    {% elif request.language == 'ar' %}
-                                                        placeholder="المبلغ النقدي:"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% endif %}>
+													<input type="text" id="cash-amount" class="form-control">
 												</div>
 												<div class="col-12">
 													<label class="form-label"><span class="text-danger2">
@@ -562,17 +552,7 @@ Page content START -->
                                                             مقدار المبلغ المدفوع بواسطة جهاز القارئ (ريال):
                                                         {% endif %}
                                                     </span></label>
-													<input type="text" id="card-amount" class="form-control" 
-                                                    {% if request.language == 'fa' %}
-                                                        placeholder="مبلغ کارتخوان:"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% elif request.language == 'en' %}
-                                                        placeholder="POS Device amount:"
-                                                        style="text-align: left; direction: ltr;"
-                                                    {% elif request.language == 'ar' %}
-                                                        placeholder="مبلغ جهاز القارئ:"
-                                                        style="text-align: right; direction: rtl;"
-                                                    {% endif %}>
+													<input type="text" id="card-amount" class="form-control">
 												</div>
 											</form>
 											<br>
@@ -837,7 +817,7 @@ Page content END -->
                 Swal.fire({
                     icon: 'error',
                     title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %} ,
-                    text: data.message,
+                    text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور رخ داده است.' {% elif request.language == 'en' %} 'There was a problem connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %},
                     confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                 });
             } else {
@@ -853,9 +833,11 @@ Page content END -->
                                 <div class="w-100px w-md-80px mb-2 mb-md-0">
                                     <img src="${product.image}" class="rounded" alt="">
                                 </div>
+                                {% if request.language == 'fa' %}
                                 <h6 class="mb-0 ms-lg-3 mt-2 mt-lg-0">    
                                     <a href="#" style="font-size: 75%;">${product.title}</a>
                                 </h6>
+                                {% endif %}
                             </div>
                         </td>
                         <td class="text-center">
@@ -1128,11 +1110,26 @@ Page content END -->
             }
         
             if (transactionType === 'pc' || (transactionType === 'mix' && cardPaymentAmount > 0)) {
+                let controller = new AbortController(); 
                 Swal.fire({
-                    title: {% if request.language == 'fa' %} 'پرداخت از طریق دستگاه کارتخوان...' {% elif request.language == 'en' %} 'Payment via card reader device...' {% elif request.language == 'ar' %} 'الدفع عبر جهاز قارئ البطاقة...' {% endif %} ,
+                    title: {% if request.language == 'fa' %} 'پرداخت از طریق دستگاه کارتخوان...' {% elif request.language == 'en' %} 'Paying via card reader...' {% elif request.language == 'ar' %} 'الدفع عبر جهاز قارئ البطاقة...' {% endif %},
+                    html: `
+                        <div id="swal-cancel-container" style="margin-top: 10px;">
+                            <button id="cancel-button" style="background-color: red; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+                                {% if request.language == 'fa' %} لغو {% elif request.language == 'en' %} Cancel {% elif request.language == 'ar' %} إلغاء {% endif %}
+                            </button>
+                        </div>
+                    `,
                     allowOutsideClick: false,
+                    showConfirmButton: false,
                     didOpen: () => {
                         Swal.showLoading();
+            
+                        document.getElementById('cancel-button').addEventListener('click', () => {
+                            controller.abort(); 
+                            Swal.close();
+                        });
+            
                         fetch('{% url "Amusement_Park:submit_pay" %}', {
                             method: 'POST',
                             headers: {
@@ -1144,6 +1141,7 @@ Page content END -->
                                 cart_items: cartItems,
                                 transaction_data: transactionData,
                             }),
+                            signal: controller.signal
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -1152,32 +1150,35 @@ Page content END -->
                                 Swal.fire({
                                     icon: 'success',
                                     title: {% if request.language == 'fa' %} 'پرداخت موفق' {% elif request.language == 'en' %} 'Payment Successful' {% elif request.language == 'ar' %} 'تم الدفع بنجاح' {% endif %},
-                                    text: data.message,
+                                    text: {% if request.language == 'fa' %} 'فروش مجدد با موفقیت ثبت شد.' {% elif request.language == 'en' %} 'Resale was successfully recorded.' {% elif request.language == 'ar' %} 'تم تسجيل إعادة البيع بنجاح.' {% endif %},
                                     confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
-                                }).then(() => {
                                 });
                             } else {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %} ,
-                                    text: data.message,
+                                    title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
+                                    text: {% if request.language == 'fa' %} 'ثبت تراکنش مجدد موفقیت‌آمیز نبود.' {% elif request.language == 'en' %} 'Resubmitting the transaction was not successful.' {% elif request.language == 'ar' %} 'لم تنجح إعادة تسجيل المعاملة.' {% endif %},
                                     confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                                 });
                             }
                         })
-                        .catch(() => {
+                        .catch((error) => {
                             Swal.close();
-                            Swal.fire({
-                                icon: 'error',
-                                title: {% if request.language == 'fa' %} 'خطا در ارتباط با سرور' {% elif request.language == 'en' %} 'Error connecting to the server' {% elif request.language == 'ar' %} 'خطأ في الاتصال بالخادم' {% endif %},
-                                text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور رخ داده است.' {% elif request.language == 'en' %} 'There was a problem connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %} ,
-                                confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
-                            });
+                            if (error.name !== 'AbortError') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: {% if request.language == 'fa' %} 'خطا در ارتباط با سرور' {% elif request.language == 'en' %} 'Error connecting to the server' {% elif request.language == 'ar' %} 'خطأ في الاتصال بالخادم' {% endif %},
+                                    text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور رخ داده است.' {% elif request.language == 'en' %} 'There was a problem connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %},
+                                    confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
+                                });
+                            }
                         });
                     }
                 });
-        
+            
                 return;
+            
+            
             } else if (transactionType === 'mix') {
                 cardPaymentAmount = parseAmount(cardInput.value);
             }
@@ -1207,7 +1208,7 @@ Page content END -->
                     Swal.fire({
                         icon: 'success',
                         title: {% if request.language == 'fa' %} 'موفقیت' {% elif request.language == 'en' %} 'Success' {% elif request.language == 'ar' %} 'نجاح' {% endif %},
-                        text: data.message,
+                        text: {% if request.language == 'fa' %} 'فروش مجدد با موفقیت ثبت شد.' {% elif request.language == 'en' %} 'Resale was successfully recorded.' {% elif request.language == 'ar' %} 'تم تسجيل إعادة البيع بنجاح.' {% endif %},
                         confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -1218,7 +1219,7 @@ Page content END -->
                     Swal.fire({
                         icon: 'error',
                         title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
-                        text: data.message,
+                        text: {% if request.language == 'fa' %} 'ثبت تراکنش مجدد موفقیت‌آمیز نبود.' {% elif request.language == 'en' %} 'Resubmitting the transaction was not successful.' {% elif request.language == 'ar' %} 'لم تنجح إعادة تسجيل المعاملة.' {% endif %},
                         confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                     });
                 }
@@ -1477,16 +1478,16 @@ Page content END -->
                   return null;
               }
           
-              const rsMessages = {
-                  "00": "پرداخت با موفقیت انجام شد !",
-                  "55": "رمز اشتباه است !",
-                  "51": "موجودی کافی نیست !",
-                  "50": "مشکل ارتباط اینترنت !",
-                  "91": "کارت توسط بانک مبدا پشتیبانی نمی‌شود !",
-                  "99": "تراکنش لغو شد !",
-                  "58": "مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمی‌شود",
-                  "":   "کارتخوان متصل نیست !"
-              };
+            const rsMessages = {
+                "00": {% if request.language == 'fa' %} 'پرداخت با موفقیت انجام شد !' {% elif request.language == 'en' %} 'Payment completed successfully!' {% elif request.language == 'ar' %} 'تمت عملية الدفع بنجاح!' {% endif %},
+                "55": {% if request.language == 'fa' %} 'رمز اشتباه است !' {% elif request.language == 'en' %} 'Incorrect password!' {% elif request.language == 'ar' %} 'الرمز غير صحيح!' {% endif %},
+                "51": {% if request.language == 'fa' %} 'موجودی کافی نیست !' {% elif request.language == 'en' %} 'Insufficient balance!' {% elif request.language == 'ar' %} 'الرصيد غير كافٍ!' {% endif %},
+                "50": {% if request.language == 'fa' %} 'مشکل ارتباط اینترنت !' {% elif request.language == 'en' %} 'Internet connection issue!' {% elif request.language == 'ar' %} 'مشكلة في الاتصال بالإنترنت!' {% endif %},
+                "91": {% if request.language == 'fa' %} 'کارت توسط بانک مبدا پشتیبانی نمی‌شود !' {% elif request.language == 'en' %} 'Card not supported by the issuing bank!' {% elif request.language == 'ar' %} 'البطاقة غير مدعومة من قبل البنك المصدر!' {% endif %},
+                "99": {% if request.language == 'fa' %} 'تراکنش لغو شد !' {% elif request.language == 'en' %} 'Transaction cancelled!' {% elif request.language == 'ar' %} 'تم إلغاء المعاملة!' {% endif %},
+                "58": {% if request.language == 'fa' %} 'مبلغ زیر ۱۰۰۰ ریال پشتیبانی نمی‌شود' {% elif request.language == 'en' %} 'Amounts below 1000 Rials are not supported' {% elif request.language == 'ar' %} 'المبالغ أقل من ١٠٠٠ ريال غير مدعومة' {% endif %},
+                "":   {% if request.language == 'fa' %} 'کارتخوان متصل نیست یا درحال رسیدگی به تراکنش دیگری است!' {% elif request.language == 'en' %} 'The card reader is not connected or is processing another transaction!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل أو يعالج معاملة أخرى!' {% endif %}
+            };
           
               let rsValue = findRSValue(data);
           
@@ -1516,7 +1517,7 @@ Page content END -->
                             Swal.fire({
                                 icon: 'success',
                                 title: {% if request.language == 'fa' %} 'موفقیت' {% elif request.language == 'en' %} 'Success' {% elif request.language == 'ar' %} 'نجاح' {% endif %},
-                                text: data.message,
+                                text: {% if request.language == 'fa' %} 'فروش مجدد با موفقیت ثبت شد.' {% elif request.language == 'en' %} 'Resale was successfully recorded.' {% elif request.language == 'ar' %} 'تم تسجيل إعادة البيع بنجاح.' {% endif %},
                                 confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                             }).then((result) => {
                                 if (result.isConfirmed) {
@@ -1527,7 +1528,7 @@ Page content END -->
                             Swal.fire({
                                 icon: 'error',
                                 title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
-                                text: data.message,
+                                text: {% if request.language == 'fa' %} 'ثبت تراکنش مجدد موفقیت‌آمیز نبود.' {% elif request.language == 'en' %} 'Resubmitting the transaction was not successful.' {% elif request.language == 'ar' %} 'لم تنجح إعادة تسجيل المعاملة.' {% endif %},
                                 confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
                             });
                         }
@@ -1554,7 +1555,7 @@ Page content END -->
           
               Swal.fire({
                   icon: 'error',
-                  title: {% if request.language == 'fa' %} 'کارتخوان متصل نیست!' {% elif request.language == 'en' %} 'Card reader is not connected!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل!' {% endif %},
+                  title: {% if request.language == 'fa' %} 'کارتخوان متصل نیست یا درحال رسیدگی به تراکنش دیگری است!' {% elif request.language == 'en' %} 'The card reader is not connected or is processing another transaction!' {% elif request.language == 'ar' %} 'قارئ البطاقة غير متصل أو يعالج معاملة أخرى!' {% endif %},
                   confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
               });
               $('#result').empty().append(JSON.stringify(data, null, "\t"));
