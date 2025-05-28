@@ -4,17 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کد کیو آر بلیت</title>
+
+    {% if request.language == 'fa' %}
+        <title>بلیت شما</title>
+    {% elif request.language == 'en' %}
+        <title>Your Ticket</title>
+    {% elif request.language == 'ar' %}
+        <title>تذكرتك</title>
+    {% endif %}
+
+   
+    
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
 
     <style>
+
         @font-face {
             font-family: 'IRANSans';
             src: url('{% static "fonts/IRANSans.woff2" %}') format('woff2');
         }
+
         body {
             font-family: 'IRANSans', Arial, sans-serif;
             background-color: black;
@@ -25,6 +37,7 @@
             align-items: center;
             min-height: 100vh;
         }
+
         .container {
             width: 90%;
             max-width: 400px;
@@ -38,17 +51,20 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
+
         h1 {
             color: #000;
             font-size: 22px;
             text-align: center;
         }
+
         .tracking-id {
             font-size: 16px;
             color: #333;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
+
         .qr-code {
             width: 80%;
             max-width: 250px;
@@ -56,15 +72,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 3px solid #000;
-            padding: 8px;
-            background: #fff;
-            border-radius: 8px;
         }
+
         .qr-code img {
             width: 100%;
             height: 100%;
         }
+
         .print-button {
             background-color: #000;
             color: white;
@@ -75,20 +89,23 @@
             border-radius: 6px;
             transition: background-color 0.3s ease;
             font-weight: bold;
-            margin-top: 15px;
+            margin-top: 5px;
         }
+
         .print-button:hover {
             background-color: #333;
         }
+
         @media print {
             @page {
-                size: A4 portrait;
+                size: auto;
                 margin: 0;
             }
             body {
                 background-color: white;
                 margin: 0;
                 padding: 0;
+                font-size: 100pt;
             }
             .container {
                 width: 100%;
@@ -97,18 +114,36 @@
                 border: none;
                 padding: 0;
             }
+            h1 {
+                font-size: 50pt;
+            }         
+            .tracking-id {
+                font-size: 30pt;
+            }
+            .container div {
+                font-size: 25pt !important; 
+            }               
             .print-button {
                 display: none;
             }
 
             .qr-code {
-                width: 185mm;
-                height: 185mm;
+                width: 150mm;
+                height: 150mm;
                 max-width: none;
-                padding: 8mm;
             }
+
+            h1, p, div {
+                margin: 0;
+                padding: 0;
+                line-height: 1.5;
+                        }
+
         }
+
+        
     </style>
+
     <script>
         function printPage() {
             window.print();
@@ -122,40 +157,37 @@
             history.replaceState(null, null, location.href);
         };
     </script>
+
 </head>
+
 <body>
     <div class="container">
-        {% if request.language == 'fa' %}
-            <h1>بلیت شما</h1>
-        {% elif request.language == 'en' %}
-            <h1>Ticket</h1>
-        {% elif request.language == 'ar' %}
-            <h1>تذكرتك</h1>
-        {% endif %}	        
         
         <p class="tracking-id">
             {% if request.language == 'fa' %}
-                کد رهگیری فروش : <b>{{ transaction_id }}</b> | کد رهگیری بلیت : <b>{{ ticket.id }}</b>
+                کد رهگیری فروش : <b>{{ transaction_id }}</b></br>کد رهگیری بلیت : <b>{{ ticket.id }}</b>
             {% elif request.language == 'en' %}
-                Sale Tracking Code: <b>{{ transaction_id }}</b> | Ticket Tracking Code: <b>{{ ticket.id }}</b>
+                Sale Tracking Code: <b>{{ transaction_id }}</b></br>Ticket Tracking Code: <b>{{ ticket.id }}</b>
             {% elif request.language == 'ar' %}
-                كود تتبع البيع : <b>{{ transaction_id }}</b> | كود تتبع التذكرة : <b>{{ ticket.id }}</b>
+                كود تتبع البيع : <b>{{ transaction_id }}</b></br>كود تتبع التذكرة : <b>{{ ticket.id }}</b>
             {% endif %}
         </p>
 
         <p>
             {% for tp in ordered_products %}
-                <div style="font-size: 65%;">
+                <div style="font-size: 75%;">
+                    <b>
                     {{ tp.quantity }} × 
                     {% if language == "fa" %}
-                        {{ tp.product.title }}✅
+                        {{ tp.product.title }}
                     {% elif language == "en" %}
-                        {{ tp.product.title_en }}✅
+                        {{ tp.product.title_en }}
                     {% elif language == "ar" %}
-                        {{ tp.product.title_ar }}✅
+                        {{ tp.product.title_ar }}
                     {% else %}
-                        {{ tp.product.title }}✅
+                        {{ tp.product.title }}
                     {% endif %}
+                    </b>                    
                 </div>
             {% endfor %}
         </p>
@@ -174,6 +206,8 @@
         <div class="qr-code">
             <img src="{{ qr_code_image }}" alt="QR Code">
         </div>
+
     </div>
+    
 </body>
 </html>
