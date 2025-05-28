@@ -675,31 +675,30 @@ def print_qr(request, ticket_id, lang=None):
     language = request.session.get('language', 'fa')
     ticket = get_object_or_404(Ticket, id=ticket_id)
     transaction = Transaction.objects.filter(ticket=ticket).first()    
-
-    ordered_products = ticket.ticket_products.select_related('product')  # ✅ Get products with their details
+    ordered_products = ticket.ticket_products.select_related('product')
 
     qr_content = {
         "ticket_id": ticket.id,
         "products": [
             {
-                "ticket_product_id": tp.id,
-                "product_id": tp.product.id,
-                "title": tp.product.title,
+                "tpid": tp.id,
+                "pid": tp.product.id,
             }
             for tp in ordered_products
         ]
     }
-    qr_json = json.dumps(qr_content)
+    qr_json = json.dumps(qr_content, separators=(',', ':')) 
 
     qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
+        error_correction=qrcode.constants.ERROR_CORRECT_H, 
+        box_size=14,  
         border=4,
     )
     qr.add_data(qr_json)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
+
+    img = qr.make_image(fill_color="black", back_color="white").resize((800, 800))
+
     buffer = BytesIO()
     img.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
@@ -710,8 +709,10 @@ def print_qr(request, ticket_id, lang=None):
         "qr_code_image": qr_code_image,
         "transaction_id": transaction.id if transaction else None,
         "language": language,
-        "ordered_products": ordered_products,  # ✅ Send to template
+        "ordered_products": ordered_products,
     })
+
+
 
 
 

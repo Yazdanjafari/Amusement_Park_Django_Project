@@ -123,10 +123,9 @@
             return '';
         }
 
-        let scannerReady = true; // فلگ کنترل اجرای مجدد تابع
+        let scannerReady = true;
 
         function startScanner() {
-            // اگر تابع طی یک ثانیه پیش از این اجرا شده باشد، کاری نکند
             if (!scannerReady) {
                 return;
             }
@@ -151,10 +150,13 @@
                             fps: 10,
                             qrbox: { width: 250, height: 250 },
                             videoConstraints: {
-                                facingMode: "environment",
-                                zoom: 1.0                
+                                deviceId: cameraId, 
+                                width: { ideal: 1000 },  
+                                height: { ideal: 1000 },
+                                advanced: [{ zoom: 1.5 }]
                             }
                         },
+
                         (decodedText) => {
                             // If scanning is not allowed, simply return without doing anything
                             if (!scanningAllowed) {
