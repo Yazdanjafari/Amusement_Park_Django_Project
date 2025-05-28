@@ -35,3 +35,4 @@ htmlcov/
 
 # MacOS and Linux system files
 .DS_Store
+db.sqlite3
