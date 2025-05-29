@@ -90,10 +90,36 @@
         .logout-btn:active {
             transform: scale(0.95);
         }
+
+        #reader {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: red;
+        animation: scanLineMove 3s linear infinite;
+        pointer-events: none;
+        z-index: 1000;
+        }
+
+        @keyframes scanLineMove {
+        0% { top: 0; }
+        50% { top: calc(100% - 3px); }
+        100% { top: 0; }
+        }
+
+
     </style>
 </head>
 <body>
     <h1>QR-Code Scanner</h1>
+    <p> ثابت نگه دارید QR-Code دوربین را ۳ ثانیه روی</p>
     
     <select id="product-select">
         <option value="">-- انتخاب محصول --</option>
@@ -133,43 +159,39 @@
             setTimeout(() => {
                 scannerReady = true;
             }, 4000);
-        
+
             document.getElementById("reader").style.display = "block"; 
-        
+
             Html5Qrcode.getCameras().then(devices => {
                 if (devices && devices.length > 0) {
                     const backCamera = devices.find(device => device.label.toLowerCase().includes("back"));
                     const cameraId = backCamera ? backCamera.id : devices[0].id;
                             
                     console.log("Starting scanner with camera:", cameraId);
-        
+
                     const html5QrCode = new Html5Qrcode("reader");
                     html5QrCode.start(
                         cameraId,
                         {
-                            fps: 10,
-                            qrbox: { width: 250, height: 250 },
+                            fps: 30,
+                            qrbox: { width: 300, height: 300 },
                             videoConstraints: {
                                 deviceId: cameraId, 
                                 width: { ideal: 1000 },  
                                 height: { ideal: 1000 },
-                                advanced: [{ zoom: 1.5 }]
+                                advanced: [{ zoom: 2.5 }]
                             }
                         },
 
                         (decodedText) => {
-                            // If scanning is not allowed, simply return without doing anything
                             if (!scanningAllowed) {
                                 return;
                             }
-        
-                            // Disable scanning for 1 second
                             scanningAllowed = false;
                             setTimeout(() => {
                                 scanningAllowed = true;
                             }, 4000);
-        
-                            // Continue processing the scanned barcode
+
                             const selectedProduct = document.getElementById("product-select").value;
                             if (!selectedProduct) {
                                 Swal.fire({
@@ -179,9 +201,7 @@
                                 });
                                 return;
                             }
-        
-                            {% comment %} document.getElementById('result').innerText = `متن اسکن شده: ${decodedText}`; {% endcomment %}
-        
+
                             fetch("{% url 'Amusement_Park:verify_qr_code' %}", {
                                 method: 'POST',
                                 headers: {
@@ -213,7 +233,13 @@
                         (errorMessage) => {
                             console.log(`خطا در اسکن: ${errorMessage}`);
                         }
-                    ).catch(err => {
+                    ).then(() => {
+                        if (!document.querySelector(".scan-line")) {
+                            const scanLine = document.createElement("div");
+                            scanLine.className = "scan-line";
+                            document.getElementById("reader").appendChild(scanLine);
+                        }
+                    }).catch(err => {
                         Swal.fire({
                             icon: 'error',
                             title: 'خطا',
@@ -221,7 +247,7 @@
                         });
                         console.error("خطا در شروع اسکنر:", err);
                     });
-        
+
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -238,7 +264,8 @@
                 console.error("خطا در دسترسی به دوربین:", err);
             });
         }
-        
+
+                
 
         window.onload = function() {
             startScanner();

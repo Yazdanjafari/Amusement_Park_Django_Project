@@ -677,17 +677,8 @@ def print_qr(request, ticket_id, lang=None):
     transaction = Transaction.objects.filter(ticket=ticket).first()    
     ordered_products = ticket.ticket_products.select_related('product')
 
-    qr_content = {
-        "ticket_id": ticket.id,
-        "products": [
-            {
-                "tpid": tp.id,
-                "pid": tp.product.id,
-            }
-            for tp in ordered_products
-        ]
-    }
-    qr_json = json.dumps(qr_content, separators=(',', ':')) 
+    qr_content = {"ticket_id": ticket.id}
+    qr_json = json.dumps(qr_content, separators=(',', ':'))
 
     qr = qrcode.QRCode(
         error_correction=qrcode.constants.ERROR_CORRECT_H, 
