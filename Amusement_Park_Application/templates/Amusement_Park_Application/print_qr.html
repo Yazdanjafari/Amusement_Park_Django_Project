@@ -38,6 +38,10 @@
             min-height: 100vh;
         }
 
+        .ordered-item {
+            font-size: 10px !important; /* اندازه کوچکتر برای چاپ */
+        }        
+
         .container {
             width: 90%;
             max-width: 400px;
@@ -97,6 +101,14 @@
         }
 
         @media print {
+            .container div {
+                font-size: 50pt;
+            }
+        
+            .container .ordered-products .ordered-item {
+                font-size: 75% !important;
+            }
+
             @page {
                 size: auto;
                 margin: 0;
@@ -106,7 +118,8 @@
                 margin: 0;
                 padding: 0;
                 font-size: 100pt;
-            }
+            }        
+
             .container {
                 width: 100%;
                 height: auto;
@@ -139,31 +152,74 @@
                 line-height: 1.5;
                         }
 
-        }
+            #datetime {
+                font-size: 30pt !important;
+                font-weight: bold !important;
+                display: block !important;
+                margin: 10pt 0 !important;
+            }                        
 
+        }
+        
+        .ordered-item {
+            border-bottom: 1px dashed #999;
+            padding: 4px 0;
+        }     
+        
+        .ordered-products {
+            border: 2px solid black;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px; 
+        }        
         
     </style>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>    
     <script>
         function printPage() {
             window.print();
         }
         
-        window.onafterprint = function() {
-            window.location.replace("{% url 'Amusement_Park:Products' %}");
-        };
+        {% if request.user.role == 'kiosk' %}
+            window.onafterprint = function() {
+                window.location.replace("{% url 'Amusement_Park:Products' %}");
+            };
 
-        window.onload = function() {
-            history.replaceState(null, null, location.href);
-        };
+            window.onload = function() {
+                history.replaceState(null, null, location.href);
+            };
+        {% endif %}
+
+
+        function confirmGoHome() {
+            Swal.fire({
+                title: 'آیا مطمئن هستید؟',
+                text: 'آیا مطمئن هستید که می‌خواهید به صفحه اصلی بروید؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'خیر',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{% url 'Amusement_Park:Products' %}";
+                }
+            });
+        }
+
     </script>
 
 </head>
 
 <body>
     <div class="container">
+
+        <h1 style="font-weight: bold; text-decoration: underline;">TICKET</h1>
+
+        <p id="datetime" style="font-size: 15px; font-weight: bold;"></p>
         
-        <p class="tracking-id">
+        <p class="tracking-id" style="font-weight: bold";>
             {% if request.language == 'fa' %}
                 کد رهگیری فروش : <b>{{ transaction_id }}</b></br>کد رهگیری بلیت : <b>{{ ticket.id }}</b>
             {% elif request.language == 'en' %}
@@ -173,41 +229,71 @@
             {% endif %}
         </p>
 
-        <p>
+        
+        <div class="ordered-products">
             {% for tp in ordered_products %}
-                <div style="font-size: 75%;">
-                    <b>
+            <div class="ordered-item">
+                <b>
                     {{ tp.quantity }} × 
                     {% if language == "fa" %}
-                        {{ tp.product.title }}
+                    {{ tp.product.title }} = {{ tp.product.price }} ریال
                     {% elif language == "en" %}
-                        {{ tp.product.title_en }}
+                    {{ tp.product.title_en }} = {{ tp.product.price }} Rial
                     {% elif language == "ar" %}
-                        {{ tp.product.title_ar }}
+                    {{ tp.product.title_ar }} = {{ tp.product.price }} ریال
                     {% else %}
-                        {{ tp.product.title }}
+                    {{ tp.product.title }}
                     {% endif %}
-                    </b>                    
-                </div>
+                </b>
+            </div>
             {% endfor %}
-        </p>
-
-        <button class="print-button" onclick="printPage()">
-            {% if request.language == 'fa' %}
-                🖨 چاپ بلیت
-            {% elif request.language == 'en' %}
-                🖨 Print Ticket
-            {% elif request.language == 'ar' %}
-                🖨 طباعة التذكرة
-            {% endif %}
-        </button>
+        </div>
         
-        <br>
+        <button class="print-button" onclick="printPage()">
+            🖨 چاپ بلیت 🖨
+        </button>
+
+        {% if request.user.is_superuser or request.user.is_staff %}
+            <button class="print-button" onclick="confirmGoHome()">
+                🏠 صفحه اصلی 🏠
+            </button>
+        {% endif %}
+        
         <div class="qr-code">
             <img src="{{ qr_code_image }}" alt="QR Code">
         </div>
 
     </div>
     
+
+    <script>
+        const now = new Date();
+
+        const f = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    
+        const parts = f.formatToParts(now);
+        let date = "", time = "";
+    
+        parts.forEach(part => {
+            if (part.type === "year" || part.type === "month" || part.type === "day") {
+                date += part.value + "/";
+            } else if (part.type === "hour") {
+                time += part.value + ":";
+            } else if (part.type === "minute") {
+                time += part.value;
+            }
+        });
+    
+        date = date.slice(0, -1);
+    
+        document.getElementById("datetime").textContent = date + " - " + time;
+    </script>
+
 </body>
 </html>
