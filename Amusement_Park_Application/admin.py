@@ -11,6 +11,8 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import F, Sum, Count, Q
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import timedelta
 
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
@@ -229,38 +231,73 @@ class TransactionAdminClass(admin.ModelAdmin):
 
 
     def changelist_view(self, request, extra_context=None):
-        # Filter the queryset for `is_success=True`
-        queryset = self.get_queryset(request).filter(is_success=True)
+        base_queryset = self.get_queryset(request).filter(is_success=True)
 
-        # Calculate totals for product prices, price, tax, discount
-        totals = queryset.aggregate(
+        totals_all = base_queryset.aggregate(
             total_product_prices=Sum('product_prices'),
             total_price=Sum('price'),
             total_tax=Sum('tax'),
             total_discount=Sum('discount')
         )
+        total_pc_all = base_queryset.filter(type='pc').aggregate(total_pc=Sum('price'))['total_pc'] or 0
+        total_cash_all = base_queryset.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
+        total_mix_all = base_queryset.filter(type='mix').aggregate(total_mix=Sum('price'))['total_mix'] or 0
+        total_mix_pc_all = base_queryset.filter(type='mix').aggregate(total_mix_pc=Sum('mix_pc'))['total_mix_pc'] or 0
+        total_mix_cash_all = base_queryset.filter(type='mix').aggregate(total_mix_cash=Sum('mix_cash'))['total_mix_cash'] or 0
 
-        # Calculate totals for sales from each payment method
-        total_pc_sales = queryset.filter(type='pc').aggregate(total_pc=Sum('price'))['total_pc'] or 0
-        total_cash_sales = queryset.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
-        total_mix_sales = queryset.filter(type='mix').aggregate(total_mix=Sum('price'))['total_mix'] or 0
+        def compute_totals_for_interval(hours, suffix):
+            now = timezone.now()
+            threshold = now - timedelta(hours=hours)
+            qs_interval = base_queryset.filter(create_at__gte=threshold)
 
-        # Calculate totals for mix_pc and mix_cash
-        total_mix_pc = queryset.filter(type='mix').aggregate(total_mix_pc=Sum('mix_pc'))['total_mix_pc'] or 0
-        total_mix_cash = queryset.filter(type='mix').aggregate(total_mix_cash=Sum('mix_cash'))['total_mix_cash'] or 0
+            interval_totals = qs_interval.aggregate(
+                total_product_prices=Sum('product_prices'),
+                total_price=Sum('price'),
+                total_tax=Sum('tax'),
+                total_discount=Sum('discount'),
+            )
+            pc = qs_interval.filter(type='pc').aggregate(total_pc=Sum('price'))['total_pc'] or 0
+            cash = qs_interval.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
+            mix = qs_interval.filter(type='mix').aggregate(total_mix=Sum('price'))['total_mix'] or 0
+            mix_pc = qs_interval.filter(type='mix').aggregate(total_mix_pc=Sum('mix_pc'))['total_mix_pc'] or 0
+            mix_cash = qs_interval.filter(type='mix').aggregate(total_mix_cash=Sum('mix_cash'))['total_mix_cash'] or 0
 
-        # Add all totals to extra_context
+            return {
+                f'total_product_prices_{suffix}': interval_totals['total_product_prices'] or 0,
+                f'total_price_{suffix}': interval_totals['total_price'] or 0,
+                f'total_tax_{suffix}': interval_totals['total_tax'] or 0,
+                f'total_discount_{suffix}': interval_totals['total_discount'] or 0,
+                f'total_pc_sales_{suffix}': pc,
+                f'total_cash_sales_{suffix}': cash,
+                f'total_mix_sales_{suffix}': mix,
+                f'total_mix_pc_{suffix}': mix_pc,
+                f'total_mix_cash_{suffix}': mix_cash,
+            }
+
+        stats_24h   = compute_totals_for_interval(24,   '24h')
+        stats_168h  = compute_totals_for_interval(168,  '168h')
+        stats_720h  = compute_totals_for_interval(720,  '720h')
+        stats_8760h = compute_totals_for_interval(8760, '8760h')
+
         extra_context = extra_context or {}
         extra_context.update({
-            'total_product_prices': totals['total_product_prices'] or 0,
-            'total_price': totals['total_price'] or 0,
-            'total_tax': totals['total_tax'] or 0,
-            'total_discount': totals['total_discount'] or 0,
-            'total_pc_sales': total_pc_sales,
-            'total_cash_sales': total_cash_sales,
-            'total_mix_sales': total_mix_sales,
-            'total_mix_pc': total_mix_pc,  
-            'total_mix_cash': total_mix_cash,  #
+            'total_product_prices': totals_all['total_product_prices'] or 0,
+            'total_price': totals_all['total_price'] or 0,
+            'total_tax': totals_all['total_tax'] or 0,
+            'total_discount': totals_all['total_discount'] or 0,
+            'total_pc_sales': total_pc_all,
+            'total_cash_sales': total_cash_all,
+            'total_mix_sales': total_mix_all,
+            'total_mix_pc': total_mix_pc_all,
+            'total_mix_cash': total_mix_cash_all,
+
+            **stats_24h,
+
+            **stats_168h,
+
+            **stats_720h,
+
+            **stats_8760h,
         })
 
         return super().changelist_view(request, extra_context=extra_context)
