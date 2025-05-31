@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     {% if request.language == 'fa' %}
-        <title>بلیت شما</title>
+        <title>بلیط شما</title>
     {% elif request.language == 'en' %}
         <title>Your Ticket</title>
     {% elif request.language == 'ar' %}
@@ -221,7 +221,7 @@
         
         <p class="tracking-id" style="font-weight: bold";>
             {% if request.language == 'fa' %}
-                کد رهگیری فروش : <b>{{ transaction_id }}</b></br>کد رهگیری بلیت : <b>{{ ticket.id }}</b>
+                کد رهگیری فروش : <b>{{ transaction_id }}</b></br>کد رهگیری بلیط : <b>{{ ticket.id }}</b>
             {% elif request.language == 'en' %}
                 Sale Tracking Code: <b>{{ transaction_id }}</b></br>Ticket Tracking Code: <b>{{ ticket.id }}</b>
             {% elif request.language == 'ar' %}
@@ -250,7 +250,7 @@
         </div>
         
         <button class="print-button" onclick="printPage()">
-            🖨 چاپ بلیت 🖨
+            🖨 چاپ بلیط 🖨
         </button>
 
         {% if request.user.is_superuser or request.user.is_staff %}

@@ -28,4 +28,5 @@ urlpatterns = [
     path('search-customer/', views.search_customer_by_phone, name='search_customer_by_phone'),
     path('save_customer/', views.save_customer, name='save_customer'),
     path("submit_pay", views.submit_pay, name="submit_pay"),
+    path("re_print_qrcode", views.re_print_qr, name="re_print_qrcode"),
 ]

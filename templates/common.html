@@ -409,13 +409,13 @@
 					{% if request.user.is_superuser or request.user.is_staff or request.user.role == 'kiosk' %}					
 					<li class="nav-item dropdown">
 						<a style="font-size: 13px;" class="nav-link {% block active_buy_retransaction %}{% endblock active_buy_retransaction %}" href="{% url 'Amusement_Park:retransaction' %}" id="demoMenu" {% block disabled_buy_retransaction %}{% endblock disabled_buy_retransaction %}>
-								{% if request.language == 'fa' %}
-									ثبت مجدد تراکنش
-								{% elif request.language == 'en' %}
-									Resubmit
-								{% elif request.language == 'ar' %}
-									إعادة إرسال 		
-								{% endif %}
+							{% if request.language == 'fa' %}
+								تراکنش مجدد
+							{% elif request.language == 'en' %}
+								Retry Transaction
+							{% elif request.language == 'ar' %}
+								إعادة المعاملة
+							{% endif %}
 						</a>
 					</li>
 					{% endif %}
@@ -554,7 +554,21 @@
 							  الدعم
 							  {% endif %}
 							</a>
-						  </li> 
+						</li> 
+						{% endif %}
+						{% if request.user.is_superuser or request.user.is_staff %}
+						<li>
+							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Amusement_Park:re_print_qrcode' %}" style="display: flex; flex-direction: {% if request.language == 'fa' or request.language == 'ar' %} row {% else %} row-reverse {% endif %}; align-items: center;">
+							  <i class="bi bi-printer fa-fw me-2"></i>	
+							  {% if request.language == 'fa' %}
+							 	 چاپ مجدد بلیط
+							  {% elif request.language == 'en' %}
+							 	 Reprint Ticket
+							  {% elif request.language == 'ar' %}
+							  	إعادة طباعة التذكرة
+							  {% endif %}
+							</a>
+						</li> 
 						{% endif %}
 						<li>
 							<a class="dropdown-item bg-danger-soft-hover" href="{% url 'Authenticate:Logout' %}"

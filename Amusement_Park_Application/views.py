@@ -284,7 +284,7 @@ def create_ticket(request):
         ticket = Ticket.objects.create(
             customer=customer,
             user=request.user,
-            desc='توضیحات بلیت'
+            desc='توضیحات بلیط'
         )
 
         for item in cart_items:
@@ -295,7 +295,7 @@ def create_ticket(request):
                 quantity=item['quantity']
             )
 
-        return JsonResponse({'success': True, 'message': 'بلیت با موفقیت ایجاد شد.', 'ticket_id': ticket.id})
+        return JsonResponse({'success': True, 'message': 'بلیط با موفقیت ایجاد شد.', 'ticket_id': ticket.id})
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})    
     
 
@@ -313,7 +313,7 @@ def create_transaction(request):
         try:
             ticket = Ticket.objects.get(id=ticket_id)
         except Ticket.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'بلیت یافت نشد.'})
+            return JsonResponse({'success': False, 'message': 'بلیط یافت نشد.'})
 
         offer = None
         if discount_code:
@@ -369,7 +369,7 @@ def submit_pay(request):
             ticket = Ticket.objects.create(
                 customer=customer, 
                 user=request.user,
-                desc='توضیحات بلیت'
+                desc='توضیحات بلیط'
             )
 
             for item in cart_items:
@@ -422,7 +422,7 @@ def submit_pay(request):
 @login_required
 def refund(request, lang=None):
     language = request.session.get('language', 'fa')
-    if request.user.role == 'kiosk':
+    if request.user.role == 'kiosk' or request.user.role == 'scanner':
         raise Http404("Page not found")  
     return render(request, "Amusement_Park_Application/Refund.html", {'language': language,})
 
@@ -722,18 +722,18 @@ def verify_qr_code(request):
                 return JsonResponse({"status": "error", "message": "داده‌های کیو آر کد نامعتبر است."})
             ticket_id = qr_content.get("ticket_id")
             if not ticket_id:
-                return JsonResponse({"status": "error", "message": "کد بلیت موجود نیست."})
+                return JsonResponse({"status": "error", "message": "کد بلیط موجود نیست."})
             ticket = Ticket.objects.get(id=ticket_id)
             try:
                 ticket_product = ticket.ticket_products.get(product__id=product_id)
             except TicketProduct.DoesNotExist:
-                return JsonResponse({"status": "error", "message": "❌ این بلیت یافت نشد ❌"})
+                return JsonResponse({"status": "error", "message": "❌ این بلیط یافت نشد ❌"})
             if ticket_product.scanned:
-                return JsonResponse({"status": "error", "message": "⛔ این بلیت منقضی شده است ⛔"})
+                return JsonResponse({"status": "error", "message": "⛔ این بلیط منقضی شده است ⛔"})
 
             ticket_product.scanned = True
             ticket_product.save()
-            return JsonResponse({"status": "success", "message": "✅ بلیت با موفقیت یافت شد ✅"})
+            return JsonResponse({"status": "success", "message": "✅ بلیط با موفقیت یافت شد ✅"})
         except Exception as e:
             return JsonResponse({"status": "error", "message": "خطایی رخ داده است."})
     return JsonResponse({"status": "error", "message": "درخواست نامعتبر است."})
@@ -744,3 +744,14 @@ def scanner(request, lang=None):
     language = request.session.get('language', 'fa')     
     products = Product.objects.all()
     return render(request, "Amusement_Park_Application/scanner.html", {"products": products, 'language': language,})
+
+
+
+# --------------------------------------------- Re_Print_Qr --------------------------------------------- #
+@login_required
+def re_print_qr(request, lang=None):
+    if request.user.role == 'kiosk' or request.user.role == 'scanner':
+        raise Http404("Page not found")     
+    return render(request, "Amusement_Park_Application/re_print_qr.html")
+
+

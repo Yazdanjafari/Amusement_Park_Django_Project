@@ -1,0 +1,145 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block body %}
+
+<!-- =======================
+Page Banner START -->
+<br><br>
+<section class="py-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="bg-light p-4 text-center rounded-3">
+					<h1 class="m-0 fs-2">
+                        {% if request.language == 'fa' %}
+                            چاپ مجدد بلیط   
+                        {% elif request.language == 'en' %}
+                            Reprint Ticket
+                        {% elif request.language == 'ar' %}
+                            إعادة طباعة التذكرة 
+                        {% endif %}
+                    </h1>
+					<div class="d-flex justify-content-center">
+						<nav aria-label="breadcrumb">
+                            <ol class="breadcrumb breadcrumb-dots mb-0">
+                                {% if request.language == 'en' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">Main Page</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">Reprint Ticket</li>
+                                {% elif request.language == 'fa' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">صفحه اصلی</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">چاپ مجدد بلیط</li>
+                                {% elif request.language == 'ar' %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{% url 'Amusement_Park:Products' %}">الصفحة الرئيسية</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">إعادة طباعة التذكرة</li>
+                                {% endif %}
+                            </ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- =======================
+Page Banner END -->
+
+
+<!-- =======================
+Page content START -->
+<section class="pt-5">
+    <div class="container">
+        <div class="row g-4 g-sm-5">
+            <!-- Main content START -->
+            <div class="col-12 mb-4 mb-sm-0">
+                <!-- Personal info START -->
+                <div class="card card-body shadow p-4">
+                    <!-- Title for transaction form -->
+                    <h5 class="mb-0">  
+                        {% if request.language == 'fa' %}
+                            چاپ مجدد بلیط :
+                        {% elif request.language == 'en' %}
+                            Reprint Ticket:
+                        {% elif request.language == 'ar' %}
+                            إعادة طباعة التذكرة:
+                        {% endif %}
+                    </h5>
+
+                    <!-- Transaction form START -->
+                    <form id="retransactionForm" method="post">
+                        {% csrf_token %}
+                        <div class="input-group mt-2">
+                            <input id="ticketCodeInput" name="transaction_id" class="form-control" 
+                            {% if request.language == 'fa' %}
+                                placeholder="کد رهگیری بلیط"
+                                style="text-align: right; direction: rtl;"
+                            {% elif request.language == 'en' %}
+                                placeholder="Ticket Tracking Code"
+                                style="text-align: left; direction: ltr;"
+                            {% elif request.language == 'ar' %}
+                                placeholder="رمز تتبع التذكرة"
+                                style="text-align: right; direction: rtl;"
+                            {% endif %}
+                            type="text">
+                            <button id="applyButton" type="button" class="btn btn-primary">
+                                {% if request.language == 'fa' %}
+                                    اعمال
+                                {% elif request.language == 'en' %}
+                                    Apply
+                                {% elif request.language == 'ar' %}
+                                    تطبيق
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Optional: Result message -->
+                    <div id="refundResult" class="mt-3 text-success" style="display: none;">
+                        <!-- You can fill this via JavaScript or Django messages -->
+                    </div>
+                    <!-- Transaction form END -->
+                </div>
+                <!-- Personal info END -->
+            </div>
+            <!-- Main content END -->
+        </div>
+    </div>
+</section>
+<!-- =======================
+Page content END -->
+
+
+
+
+{% endblock body %}
+
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById("applyButton").addEventListener("click", function(event) {
+            event.preventDefault(); 
+    
+            const input = document.getElementById("ticketCodeInput").value.trim();
+    
+            const isOnlyEnglishNumber = /^\d+$/;
+    
+            if (input === "" || !isOnlyEnglishNumber.test(input)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ورودی شما اشتباه است',
+                    text: 'شما فقط مجاز هستید از اعداد انگلیسی استفاده کنید',
+                    confirmButtonText: 'باشه'
+                });
+            } else {
+                window.location.href = `/Amusement_Park/tickets/${input}/print_qr/`;
+            }
+        });
+    </script>
+
+{% endblock script %}
