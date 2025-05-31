@@ -7,53 +7,6 @@
     <table class="totals" style="margin-top: 1em; border-collapse: collapse; width: 100%;">
         <tfoot>
 
-
-            <tr>
-                <td colspan="3" style="color: red;"><b>آمار کل فروش ها:</b></td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
-                <td>{{ total_product_prices|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
-                <td>{{ total_tax|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
-                <td>{{ total_discount|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>
-                    (قیمت محصولات + مالیات) – تخفیف‌ها =
-                </b></td>
-                <td>{{ total_price|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>محاسبه فروش‌ها بر حسب نوع فروش :</b></td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
-                <td>{{ total_pc_sales|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
-                <td>{{ total_cash_sales|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
-                <td>{{ total_mix_sales|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع پرداخت‌های کارتخوان در فروش ترکیبی :</b></td>
-                <td>{{ total_mix_pc|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>مجموع پرداخت‌های نقدی در فروش ترکیبی :</b></td>
-                <td>{{ total_mix_cash|intcomma:False|default_if_none:"0" }} ریال</td>
-            </tr>
-
-
             <tr><td colspan="4" style="padding-top:1em; color: red;"><b>آمار فروش ۲۴ ساعت گذشته:</b></td></tr>
             <tr>
                 <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
@@ -208,6 +161,53 @@
                 <td colspan="3"><b>پرداخت نقدی در فروش ترکیبی :</b></td>
                 <td>{{ total_mix_cash_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
             </tr>
+
+
+            <tr>
+                <td colspan="3" style="padding-top:1em; color: red;"><b>آمار کل فروش ها:</b></td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
+                <td>{{ total_product_prices|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
+                <td>{{ total_tax|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
+                <td>{{ total_discount|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>
+                    (قیمت محصولات + مالیات) – تخفیف‌ها =
+                </b></td>
+                <td>{{ total_price|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>محاسبه فروش‌ها بر حسب نوع فروش :</b></td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
+                <td>{{ total_pc_sales|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
+                <td>{{ total_cash_sales|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
+                <td>{{ total_mix_sales|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع پرداخت‌های کارتخوان در فروش ترکیبی :</b></td>
+                <td>{{ total_mix_pc|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+            <tr>
+                <td colspan="3"><b>مجموع پرداخت‌های نقدی در فروش ترکیبی :</b></td>
+                <td>{{ total_mix_cash|intcomma:False|default_if_none:"0" }} ریال</td>
+            </tr>
+
 
         </tfoot>
     </table>
