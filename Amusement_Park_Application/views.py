@@ -230,7 +230,7 @@ def save_customer(request):
     if request.method == 'POST':
         phone = request.POST.get('phone')
         if not phone:
-            return JsonResponse({'success': False,})
+            return JsonResponse({'success': False, 'message': 'شماره تلفن ضروری است.'})
 
         first_name = request.POST.get('firstName')
         last_name = request.POST.get('lastName')
@@ -241,23 +241,22 @@ def save_customer(request):
         birth_month = request.POST.get('birthMonth')
         birth_day = request.POST.get('birthDay')
 
-        try:
-            date_of_birth = f"{birth_year}-{birth_month}-{birth_day}"
-        except Exception as e:
-            return JsonResponse({'success': False,})
+        customer_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'gender': gender,
+            'city': city,
+            'country': country,
+            'first_purchase': timezone.now(),
+            'last_purchase': timezone.now(),
+        }
+
+        if birth_year and birth_month and birth_day:
+            customer_data['date_of_birth'] = f"{birth_year}-{birth_month.zfill(2)}-{birth_day.zfill(2)}"
 
         customer, created = Customer.objects.get_or_create(
             phone=phone,
-            defaults={
-                'first_name': first_name,
-                'last_name': last_name,
-                'gender': gender,
-                'city': city,
-                'country': country,
-                'date_of_birth': date_of_birth,
-                'first_purchase': timezone.now(),
-                'last_purchase': timezone.now(),
-            }
+            defaults=customer_data
         )
 
         if not created:
@@ -265,7 +264,9 @@ def save_customer(request):
             customer.save()
 
         return JsonResponse({'success': True, 'message': 'اطلاعات کاربر با موفقیت ذخیره شد.', 'customer_id': customer.id})
+
     return JsonResponse({'success': False, 'message': 'درخواست نامعتبر است.'})
+
  
     
     
