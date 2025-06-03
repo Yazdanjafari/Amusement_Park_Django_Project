@@ -1827,6 +1827,7 @@ Page content END -->
 						icon: 'success',
 						title: {% if request.language == 'fa' %} 'کاربر با موفقیت یافت شد' {% elif request.language == 'en' %} 'User found successfully' {% elif request.language == 'ar' %} 'تم العثور على المستخدم بنجاح' {% endif %},
 						text: {% if request.language == 'fa' %} 'خوش‌حال هستیم که ما شریک شادی شما هستیم.' {% elif request.language == 'en' %} 'We’re happy to be part of your joy.' {% elif request.language == 'ar' %} 'نحن سعداء لأننا جزء من فرحتك.' {% endif %},
+						confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 					});
 				} else {
 					document.getElementById('firstName').removeAttribute('disabled');
@@ -1845,7 +1846,8 @@ Page content END -->
 					Swal.fire({
 						icon: 'success',
 						title: {% if request.language == 'fa' %} 'کاربر جدید' {% elif request.language == 'en' %} 'New user' {% elif request.language == 'ar' %} 'مستخدم جديد' {% endif %},
-						text: {% if request.language == 'fa' %} 'لطفاً اطلاعات خود را وارد کنید.' {% elif request.language == 'en' %} 'Please enter your information.' {% elif request.language == 'ar' %} 'يرجى إدخال معلوماتك.' {% endif %},
+						text: {% if request.language == 'fa' %} 'لطفاً اطلاعات خود را وارد کنید. فراموش نکنید که دکمه "ذخیره" را بزنید.' {% elif request.language == 'en' %} 'Please enter your information and don’t forget to click the "Save" button.' {% elif request.language == 'ar' %} 'يرجى إدخال معلوماتك ولا تنسَ الضغط على زر "حفظ".' {% endif %},
+						confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}					
 					});
 				}
 			})
@@ -1855,6 +1857,7 @@ Page content END -->
 					icon: 'error',
 					title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
 					text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور به وجود آمد.' {% elif request.language == 'en' %} 'A problem occurred while connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %},
+					confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 				});
 			});
 	});
@@ -1909,12 +1912,14 @@ document.querySelector('form').addEventListener('submit', function (e) {
 					icon: 'success',
 					title: {% if request.language == 'fa' %} 'موفقیت‌آمیز' {% elif request.language == 'en' %} 'Successful' {% elif request.language == 'ar' %} 'ناجح' {% endif %},
 					text: {% if request.language == 'fa' %} 'اطلاعات کاربر با موفقیت ذخیره شد.' {% elif request.language == 'en' %} 'User information saved successfully.' {% elif request.language == 'ar' %} 'تم حفظ معلومات المستخدم بنجاح.' {% endif %},
+					confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 				});
 			} else {
 				Swal.fire({
 					icon: 'error',
 					title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
 					text: {% if request.language == 'fa' %} 'مشکلی در ذخیره اطلاعات به وجود آمد.' {% elif request.language == 'en' %} 'An error occurred while saving information.' {% elif request.language == 'ar' %} 'حدثت مشكلة أثناء حفظ المعلومات.' {% endif %},
+					confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 				});
 			}
 		})
@@ -1924,6 +1929,7 @@ document.querySelector('form').addEventListener('submit', function (e) {
 				icon: 'error',
 				title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
 				text: {% if request.language == 'fa' %} 'مشکلی در ارتباط با سرور به وجود آمد.' {% elif request.language == 'en' %} 'A problem occurred while connecting to the server.' {% elif request.language == 'ar' %} 'حدثت مشكلة في الاتصال بالخادم.' {% endif %},
+				confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 			});
 		});
 	});
@@ -2774,21 +2780,39 @@ document.addEventListener('DOMContentLoaded', function() {
 {% comment %} PcPos _ For save the bill correctly Finish {% endcomment %}
 
 
-document.getElementById("phoneInput").addEventListener("input", function (e) {
-    const input = e.target;
-    const englishDigitsOnly = /^[0-9]*$/;
+	document.getElementById("phoneInput").addEventListener("input", function (e) {
+		const input = e.target;
+		const englishDigitsOnly = /^[0-9]*$/;
 
-    if (!englishDigitsOnly.test(input.value)) {
-        Swal.fire({
-            icon: 'error',
-            title: {% if request.language == 'fa' %} 'ورودی شما اشتباه است' {% elif request.language == 'en' %} 'Your input is incorrect' {% elif request.language == 'ar' %} 'إدخالكم غير صحيح' {% endif %},
-            text: {% if request.language == 'fa' %} 'شما فقط مجاز هستید از اعداد انگلیسی استفاده کنید' {% elif request.language == 'en' %} 'You are only allowed to use English numbers' {% elif request.language == 'ar' %} 'يُسمح لك فقط باستخدام الأرقام الإنجليزية' {% endif %},
-			confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
-        });
+		if (!englishDigitsOnly.test(input.value)) {
+			Swal.fire({
+				icon: 'error',
+				title: {% if request.language == 'fa' %} 'ورودی شما اشتباه است' {% elif request.language == 'en' %} 'Your input is incorrect' {% elif request.language == 'ar' %} 'إدخالكم غير صحيح' {% endif %},
+				text: {% if request.language == 'fa' %} 'شما فقط مجاز هستید از اعداد انگلیسی استفاده کنید' {% elif request.language == 'en' %} 'You are only allowed to use English numbers' {% elif request.language == 'ar' %} 'يُسمح لك فقط باستخدام الأرقام الإنجليزية' {% endif %},
+				confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسناً' {% endif %}
+			});
 
-        input.value = input.value.replace(/[^0-9]/g, '');
-    }
-});
+			input.value = input.value.replace(/[^0-9]/g, '');
+		}
+	});
+
+
+	setInterval(function () {
+		const submitBtn = document.querySelector('button[type="submit"]');
+		const searchBtn = document.getElementById('search');
+
+		if (submitBtn.disabled) {
+			searchBtn.classList.remove('disabled');
+			searchBtn.setAttribute('href', '#'); 
+			searchBtn.style.pointerEvents = 'auto';
+			searchBtn.style.opacity = '1';
+		} else {
+			searchBtn.classList.add('disabled');
+			searchBtn.removeAttribute('href');
+			searchBtn.style.pointerEvents = 'none';
+			searchBtn.style.opacity = '0.6';	
+		}
+	}, 100); 
 
 
 	</script>

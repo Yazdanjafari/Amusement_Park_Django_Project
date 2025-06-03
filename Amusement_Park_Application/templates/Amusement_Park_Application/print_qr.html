@@ -39,7 +39,7 @@
         }
 
         .ordered-item {
-            font-size: 10px !important; /* اندازه کوچکتر برای چاپ */
+            font-size: 10px !important; 
         }        
 
         .container {
@@ -220,13 +220,7 @@
         <p id="datetime" style="font-size: 15px; font-weight: bold;"></p>
         
         <p class="tracking-id" style="font-weight: bold";>
-            {% if request.language == 'fa' %}
                 کد رهگیری فروش : <b>{{ transaction_id }}</b></br>کد رهگیری بلیط : <b>{{ ticket.id }}</b>
-            {% elif request.language == 'en' %}
-                Sale Tracking Code: <b>{{ transaction_id }}</b></br>Ticket Tracking Code: <b>{{ ticket.id }}</b>
-            {% elif request.language == 'ar' %}
-                كود تتبع البيع : <b>{{ transaction_id }}</b></br>كود تتبع التذكرة : <b>{{ ticket.id }}</b>
-            {% endif %}
         </p>
 
         
@@ -235,15 +229,7 @@
             <div class="ordered-item">
                 <b>
                     {{ tp.quantity }} × 
-                    {% if language == "fa" %}
                     {{ tp.product.title }} = {{ tp.product.price }} ریال
-                    {% elif language == "en" %}
-                    {{ tp.product.title_en }} = {{ tp.product.price }} Rial
-                    {% elif language == "ar" %}
-                    {{ tp.product.title_ar }} = {{ tp.product.price }} ریال
-                    {% else %}
-                    {{ tp.product.title }}
-                    {% endif %}
                 </b>
             </div>
             {% endfor %}
