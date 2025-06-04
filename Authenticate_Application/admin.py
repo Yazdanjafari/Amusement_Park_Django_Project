@@ -66,6 +66,14 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         (
+            'سطح دسترسی (این دسترسی برای نقش کاربری "کارمند" ها است)',  
+            {
+                'fields': (
+                    'groups',
+                ),
+            },
+        ),
+        (
             'تاریخ ها',  # Group for important dates
             {
                 'fields': (

@@ -9,7 +9,7 @@ class AdminAccessMiddleware:
     def __call__(self, request):
         # Check if the user is trying to access the admin panel
         if request.path.startswith('/admin/'):
-            if not request.user.is_superuser:
+            if not (request.user.is_superuser or request.user.is_staff):
                 raise Http404("Page not found")
         
         response = self.get_response(request)

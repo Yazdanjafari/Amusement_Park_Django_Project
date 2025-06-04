@@ -61,6 +61,17 @@
 			display: none !important;
 		}
 				
+		.dropdown-menu {
+			max-width: 100vw;         /* Prevent it from going outside the screen */
+			overflow-wrap: break-word;
+			white-space: normal;
+		}
+		
+		.dropdown-item {
+			white-space: normal;      /* Allow line wrapping */
+			word-break: break-word;   /* Break long words if needed */
+			padding: 10px 15px;       /* Optional: adds better spacing */
+		}
 
 	</style>
 
@@ -1311,6 +1322,46 @@ Page content START -->
 								<!-- Net banking END -->
 							</div>
 						</div>
+
+						{% if request.user.is_superuser or request.user.is_staff %}
+							<hr>
+							<div class="card card-body p-4 shadow">
+								<h5 class="">
+									{% if request.language == 'fa' %}
+										توضیحات فروش:
+									{% elif request.language == 'en' %}
+										Sales Description:
+									{% elif request.language == 'ar' %}
+										وصف المبيعات:
+									{% endif %}
+								</h5>
+								<br>
+							
+								<div class="mb-3">
+									<textarea id="salesDescription" class="form-control" rows="4" placeholder="{% if request.language == 'fa' %}توضیحات خود را بنویسید...{% elif request.language == 'en' %}Write your description...{% elif request.language == 'ar' %}اكتب الوصف...{% endif %}"></textarea>
+								</div>
+							
+								<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" style="background-color: #066ac9; color: #fff; border-color: #066ac9;">
+										{% if request.language == 'fa' %}
+											انتخاب از متن‌های آماده
+										{% elif request.language == 'en' %}
+											Choose from ready texts
+										{% elif request.language == 'ar' %}
+											اختر من النصوص الجاهزة
+										{% endif %}
+									</button>
+									<ul class="dropdown-menu">
+										{% for i in GetReadyTransactionInfo %}
+										<li>
+											<a class="dropdown-item" onclick="insertPreset(this)">
+												{{ i.desc }}
+											</a>
+										</li>
+										{% endfor %}
+									</ul>
+							</div>
+						{% endif %}
+
 					</div>
 					<!-- Payment method END -->
 				</div>
@@ -2180,6 +2231,7 @@ function check1() {
 						discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
 						mix_pc: cardInput && cardInput.value ? parseFloat(cardInput.value.replace(/,/g, '')) : 0,
 						mix_cash: cashInput && cashInput.value ? parseFloat(cashInput.value.replace(/,/g, '')) : 0,
+						desc: document.getElementById('salesDescription').value || null,
 					};
 
 					console.log('transactionData:', transactionData);
@@ -2690,6 +2742,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				discount_amount: parseFloat(document.getElementById('discount-display').innerText.replace(/[^0-9.-]+/g, "")) || 0,
 				mix_pc: cardInput ? parseFloat(cardInput.value.replace(/,/g, '')) : null,
 				mix_cash: cashInput ? parseFloat(cashInput.value.replace(/,/g, '')) : null,
+				desc: document.getElementById('salesDescription').value || null,
 			};
 
 			Swal.fire({
@@ -2813,6 +2866,21 @@ document.addEventListener('DOMContentLoaded', function() {
 			searchBtn.style.opacity = '0.6';	
 		}
 	}, 100); 
+
+	
+	function insertPreset(el) {
+		const textarea = document.getElementById('salesDescription');
+		const textToAdd = el.innerText;
+	
+		if (textarea.value.trim() !== '') {
+			textarea.value += '\n' + textToAdd;
+		} else {
+			textarea.value = textToAdd;
+		}
+	}
+
+
+
 
 
 	</script>

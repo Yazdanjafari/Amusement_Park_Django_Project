@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
+from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, RerecordingTransaction, ReadyTransactionInfo
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -121,6 +121,7 @@ def check_cart(request):
 def cart(request, lang=None):
     language = request.session.get('language', 'fa')
     get_TaxRate = TaxRate.objects.first()
+    GetReadyTransactionInfo = ReadyTransactionInfo.objects.all()
     cart = request.session.get('cart', [])
     cart_items = []
 
@@ -138,6 +139,7 @@ def cart(request, lang=None):
         'get_TaxRate': get_TaxRate,
         'cart_empty': cart_empty,
         'language': language,
+        'GetReadyTransactionInfo': GetReadyTransactionInfo,
     })
 
 
@@ -350,6 +352,9 @@ def submit_pay(request):
             transaction_type = transaction_data.get('type', 'pc')
             mix_pc = transaction_data.get('mix_pc')
             mix_cash = transaction_data.get('mix_cash')
+            discount_code = transaction_data.get('discount_code')
+            discount_amount = transaction_data.get('discount_amount', 0)
+            desc = transaction_data.get('desc') 
 
             if transaction_type == 'mix' and (mix_pc is None or mix_cash is None):
                 return JsonResponse({'success': False, 'message': 'برای تراکنش ترکیبی، مقادیر نقدی و کارتخوان باید پر شوند.'})
@@ -368,9 +373,9 @@ def submit_pay(request):
                 )
 
             ticket = Ticket.objects.create(
-                customer=customer, 
+                customer=customer,
                 user=request.user,
-                desc='توضیحات بلیط'
+                desc=''  
             )
 
             for item in cart_items:
@@ -382,19 +387,16 @@ def submit_pay(request):
                 )
 
             total_price = sum(tp.product.price * tp.quantity for tp in ticket.ticket_products.all())
-
-            tax_rate = TaxRate.objects.first().rate  
+            tax_rate = TaxRate.objects.first().rate if TaxRate.objects.exists() else 0
             tax = int(total_price * tax_rate / 100)
             final_price = total_price + tax
 
             offer = None
-            discount_amount = 0
-            if transaction_data.get('discount_code'):
-                offer = Offer.objects.filter(code=transaction_data['discount_code'], activate=True).first()
+            if discount_code:
+                offer = Offer.objects.filter(code=discount_code, activate=True).first()
                 if offer:
                     discount_amount = int(final_price * offer.persent / 100)
-            else:
-                discount_amount = transaction_data.get('discount_amount', 0)
+
             final_price -= discount_amount
 
             transaction = Transaction.objects.create(
@@ -403,12 +405,12 @@ def submit_pay(request):
                 type=transaction_type,
                 mix_pc=mix_pc,
                 mix_cash=mix_cash,
-                offer=offer, 
+                offer=offer,
                 manual_discount=0 if offer else discount_amount,
                 product_prices=total_price,
                 tax=tax,
                 price=final_price,
-                desc=None
+                desc=desc  
             )
 
             return JsonResponse({'success': True, 'message': 'پرداخت با موفقیت انجام شد.', 'ticket_id': ticket.id})
@@ -445,12 +447,18 @@ def get_transaction_details(request):
         except ValueError:
             return JsonResponse({'error': 'شناسه تراکنش باید عدد باشد'}, status=400)
 
+        scanned_names = []
+        if transaction.ticket.ticket_products.filter(scanned=True).exists():
+            scanned_products = transaction.ticket.ticket_products.filter(scanned=True)
+            scanned_names = [tp.product.title for tp in scanned_products]
+
         data = {
             'product_prices': transaction.product_prices,
             'tax': transaction.tax,
             'discount': transaction.discount,
             'price': transaction.price,
-            'products': []
+            'products': [],
+            'scanned_products': scanned_names 
         }
 
         for ticket_product in transaction.ticket.ticket_products.all():
@@ -467,6 +475,7 @@ def get_transaction_details(request):
         return JsonResponse(data)
 
     return JsonResponse({'error': 'درخواست نامعتبر'}, status=400)
+
 
 
 

@@ -841,29 +841,54 @@ Page content END -->
                 if (data.error) {
                     Swal.fire({
                         icon: 'error',
-						{% if request.language == 'fa' %}
+                        {% if request.language == 'fa' %}
                             title: 'خطا',
+                            text: 'عملیات با موفقیت انجام نشد',
                         {% elif request.language == 'en' %}
-                            title: 'error',
+                            title: 'Error',
+                            text: 'The operation was not successful',
                         {% elif request.language == 'ar' %}
-                            title: 'غلط',
-						{% endif %}		                        
-                        text: {% if request.language == 'fa' %} 'عملیات با موفقیت انجام نشد' {% elif request.language == 'en' %} 'The operation was not successful' {% elif request.language == 'ar' %} 'لم تتم العملية بنجاح' {% endif %},
+                            title: 'خطأ',
+                            text: 'لم تتم العملية بنجاح',
+                        {% endif %}
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'success',
-						{% if request.language == 'fa' %}
-                            title: 'موفقیت',
-                            text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
+                    if (data.scanned_products && data.scanned_products.length > 0) {
+                        let scannedList = '<ul style="text-align:right;direction:rtl;">';
+                        data.scanned_products.forEach(name => {
+                            scannedList += `<li>${name}</li>`;
+                        });
+                        scannedList += '</ul>';
+            
+                        Swal.fire({
+                            icon: 'warning',
+                            {% if request.language == 'fa' %}
+                                title: 'هشدار',
+                                html: `<p>بازی‌ های زیر قبلاً اسکن شده‌ است :</p>${scannedList}`,
                             {% elif request.language == 'en' %}
-                            title: 'Success',
-                            text: 'Transaction information received successfully.',
-                        {% elif request.language == 'ar' %}
-                            title: 'نجاح',
-                            text: 'تم استلام معلومات المعاملة بنجاح.',                        
-						{% endif %}                        
-                    });
+                                title: 'Warning',
+                                html: `<p>Some games have already been scanned:</p>${scannedList}`,
+                            {% elif request.language == 'ar' %}
+                                title: 'تحذير',
+                                html: `<p>تم مسح بعض الألعاب مسبقًا:</p>${scannedList}`,
+                            {% endif %}
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            {% if request.language == 'fa' %}
+                                title: 'موفقیت',
+                                text: 'اطلاعات تراکنش با موفقیت دریافت شد.',
+                            {% elif request.language == 'en' %}
+                                title: 'Success',
+                                text: 'Transaction information received successfully.',
+                            {% elif request.language == 'ar' %}
+                                title: 'نجاح',
+                                text: 'تم استلام معلومات المعاملة بنجاح.',                        
+                            {% endif %}
+                        });
+                    }
+            
                     updateTransactionDetails(data);
                 }
             })

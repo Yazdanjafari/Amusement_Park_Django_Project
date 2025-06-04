@@ -448,7 +448,7 @@
 					</li>				
 					{% endif %}
 					
-					{% if request.user.is_superuser %}
+					{% if request.user.is_superuser or request.user.is_staff %}
 						<li class="nav-item dropdown">
 							<a style="font-size: 13px;" class="nav-link" href="/admin" id="demoMenu">
 								{% if request.language == 'fa' %}

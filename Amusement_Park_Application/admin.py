@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport
+from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport, ReadyTransactionInfo
 from import_export.admin import ExportMixin
 from import_export import resources
 from import_export.fields import Field
@@ -60,9 +60,6 @@ class TicketProductInline(admin.TabularInline):
 class TicketProductAdmin(admin.ModelAdmin):
     list_display = ('ticket', 'product', 'quantity', 'scanned')
     list_filter = ('ticket', 'product', 'scanned')
-    
-    def has_change_permission(self, request, obj = ...):
-        return False
     
     def has_delete_permission(self, request, obj = ...):
         return False
@@ -175,7 +172,7 @@ class NotificationAdmin(admin.ModelAdmin):
 # _____________________________________________ MAIN SELLING SYSTEM _____________________________________________ #
 
 class TransactionAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'is_success', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'user', 'ticket', 'j_create_at')
+    list_display = ('id', 'ticket', 'is_success', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'user', 'j_create_at', 'desc')
     list_filter = ('is_success', 'create_at', 'user', 'type')
     search_fields = ('id', 'desc')
     ordering = ('-create_at',)
@@ -637,5 +634,6 @@ admin.site.register(RerecordingTransaction, RerecordingTransactionAdmin)
 admin.site.register(ProductSaleReport, ProductSaleReportAdmin)
 admin.site.register(SellerSaleReport, SellerSaleReportAdmin)
 admin.site.register(CustomerPurchaseReport, CustomerPurchaseReportAdmin)
+admin.site.register(ReadyTransactionInfo)
 
 

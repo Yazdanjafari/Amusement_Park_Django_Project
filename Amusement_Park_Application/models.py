@@ -593,3 +593,14 @@ class CustomerPurchaseReport(Transaction):
         verbose_name = "گزارش فروش به تفکیک مشتریان"
         verbose_name_plural = "گزارش فروش به تفکیک مشتریان"
     
+
+
+class ReadyTransactionInfo(models.Model):
+    desc = models.CharField(max_length=155, verbose_name='توضیحات فروش آماده', null=True, blank=True)
+
+    def __str__(self):
+        return self.desc    
+
+    class Meta:
+        verbose_name = "توضیحات فروش آماده"
+        verbose_name_plural = "توضیحات فروش آماده"
