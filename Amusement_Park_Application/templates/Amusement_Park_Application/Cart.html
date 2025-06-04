@@ -1324,6 +1324,7 @@ Page content START -->
 						</div>
 
 						{% if request.user.is_superuser or request.user.is_staff %}
+
 							<hr>
 							<div class="card card-body p-4 shadow">
 								<h5 class="">
@@ -1360,6 +1361,45 @@ Page content START -->
 										{% endfor %}
 									</ul>
 							</div>
+
+						{% else %}
+							
+							<div class="card card-body p-4 shadow hidden">
+								<h5 class="">
+									{% if request.language == 'fa' %}
+										توضیحات فروش:
+									{% elif request.language == 'en' %}
+										Sales Description:
+									{% elif request.language == 'ar' %}
+										وصف المبيعات:
+									{% endif %}
+								</h5>
+								<br>
+							
+								<div class="mb-3">
+									<textarea id="salesDescription" class="form-control" rows="4" placeholder="{% if request.language == 'fa' %}توضیحات خود را بنویسید...{% elif request.language == 'en' %}Write your description...{% elif request.language == 'ar' %}اكتب الوصف...{% endif %}"></textarea>
+								</div>
+							
+								<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" style="background-color: #066ac9; color: #fff; border-color: #066ac9;">
+										{% if request.language == 'fa' %}
+											انتخاب از متن‌های آماده
+										{% elif request.language == 'en' %}
+											Choose from ready texts
+										{% elif request.language == 'ar' %}
+											اختر من النصوص الجاهزة
+										{% endif %}
+									</button>
+									<ul class="dropdown-menu">
+										{% for i in GetReadyTransactionInfo %}
+										<li>
+											<a class="dropdown-item" onclick="insertPreset(this)">
+												{{ i.desc }}
+											</a>
+										</li>
+										{% endfor %}
+									</ul>
+							</div>
+
 						{% endif %}
 
 					</div>
@@ -1388,25 +1428,25 @@ Page content START -->
 					<ul class="list-group list-group-borderless mb-2">
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							{% if request.language == 'en' %}
-								<span class="h6 fw-light mb-0 fw-bold" id="item-total-price">1,000,000 Rial</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="item-total-price">1 Rial</span>
 								<span class="h6 fw-light mb-0">Price</span>
 							{% else %}
 								<span class="h6 fw-light mb-0">
 									{% if request.language == 'fa' %} قیمت {% elif request.language == 'ar' %} السعر {% endif %}
 								</span>
-								<span class="h6 fw-light mb-0 fw-bold" id="item-total-price">1,000,000 ریال</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="item-total-price">1 ریال</span>
 							{% endif %}
 						</li>				
 						<li class="list-group-item px-0 d-flex justify-content-between">
 							{% if request.language == 'en' %}
-								<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">100,000 Rial</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">0 Rial</span>
 								<span class="h6 fw-light mb-0">Tax (%{{ get_TaxRate.rate|floatformat:0 }})</span>
 							{% else %}
 								<span class="h6 fw-light mb-0">
 									{% if request.language == 'fa' %} مالیات {% elif request.language == 'ar' %} ضريبة {% endif %}
 									(%{{ get_TaxRate.rate|floatformat:0 }})
 								</span>
-								<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">100,000 ریال</span>
+								<span class="h6 fw-light mb-0 fw-bold" id="tax-amount">0 ریال</span>
 							{% endif %}
 						</li>
 						<li class="list-group-item px-0 d-flex justify-content-between">
@@ -1433,7 +1473,7 @@ Page content START -->
 								<span class="text-danger h5" id="final-price">0 ریال</span>
 							{% endif %}
 						</li>
-					</ul>		
+					</ul>	
 					
 					<hr>
 
