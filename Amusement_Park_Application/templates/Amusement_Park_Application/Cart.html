@@ -753,7 +753,7 @@ Page content START -->
 						</div>
 					
 						<div class="col-12 text-end p-0 position-relative">
-							<button type="submit" class="btn btn-primary w-100 mb-0" disabled>
+							<button id="saveButton" type="submit" class="btn btn-primary w-100 mb-0" disabled>
 								{% if request.language == 'fa' %}
 									ذخیره
 								{% elif request.language == 'en' %}
@@ -2888,25 +2888,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			input.value = input.value.replace(/[^0-9]/g, '');
 		}
 	});
-
-
-	setInterval(function () {
-		const submitBtn = document.querySelector('button[type="submit"]');
-		const searchBtn = document.getElementById('search');
-
-		if (submitBtn.disabled) {
-			searchBtn.classList.remove('disabled');
-			searchBtn.setAttribute('href', '#'); 
-			searchBtn.style.pointerEvents = 'auto';
-			searchBtn.style.opacity = '1';
-		} else {
-			searchBtn.classList.add('disabled');
-			searchBtn.removeAttribute('href');
-			searchBtn.style.pointerEvents = 'none';
-			searchBtn.style.opacity = '0.6';	
-		}
-	}, 100); 
-
 	
 	function insertPreset(el) {
 		const textarea = document.getElementById('salesDescription');
@@ -2920,7 +2901,30 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 
+    let isApplyClicked = false;
+    let isSaveClicked = false;
 
+    document.getElementById("applyButton").addEventListener("click", function () {
+        isApplyClicked = true;
+    });
+
+    document.getElementById("saveButton").addEventListener("click", function () {
+        isSaveClicked = true;
+    });
+
+    document.getElementById("search").addEventListener("click", function (e) {
+        if (isApplyClicked && !isSaveClicked) {
+            e.preventDefault(); 
+            e.stopImmediatePropagation(); 
+			Swal.fire({
+				icon: 'warning',
+				title: {% if request.language == 'fa' %}'توجه'{% elif request.language == 'en' %}'Warning'{% elif request.language == 'ar' %}'تحذير'{% endif %},
+				text: {% if request.language == 'fa' %}'لطفا در ابتدا دکمه "ذخیره" را بزنید سپس اقدام به پرداخت کنید'{% elif request.language == 'en' %}'Please click the "Save" button first, then proceed to payment'{% elif request.language == 'ar' %}'يرجى الضغط على زر "حفظ" أولاً ثم متابعة الدفع'{% endif %},
+				confirmButtonText: {% if request.language == 'fa' %}'باشه'{% elif request.language == 'en' %}'OK'{% elif request.language == 'ar' %}'حسناً'{% endif %}
+            });
+            return;
+        }
+    });
 
 
 	</script>
