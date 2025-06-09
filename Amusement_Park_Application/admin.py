@@ -13,7 +13,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
-
+from django.utils.timezone import localtime
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 admin.site.site_title = "پنل مدیریت"
@@ -172,9 +172,9 @@ class NotificationAdmin(admin.ModelAdmin):
 # _____________________________________________ MAIN SELLING SYSTEM _____________________________________________ #
 
 class TransactionAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'ticket', 'is_success', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'user', 'j_create_at', 'desc')
+    list_display = ('id', 'ticket', 'is_success', 'user', 'get_products', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'j_create_at', 'formatted_create_at', 'desc')
     list_filter = ('is_success', 'create_at', 'user', 'type')
-    search_fields = ('id', 'desc')
+    search_fields = ('id', 'desc', 'create_at')
     ordering = ('-create_at',)
     readonly_fields = ('create_at', 'tracking_code', 'product_prices', 'price', 'tax', 'discount', 'price')
 
@@ -189,6 +189,21 @@ class TransactionAdminClass(admin.ModelAdmin):
             'fields': ('tracking_code', 'product_prices', 'tax', 'discount', 'price', 'create_at')
         }),
     )
+
+
+    def formatted_create_at(self, obj):
+        return localtime(obj.create_at).strftime('%Y-%m-%d')
+    formatted_create_at.short_description = 'زمان ثبت تراکنش به میلادی'
+    formatted_create_at.admin_order_field = 'create_at'    
+
+    def get_products(self, obj):
+        if obj.ticket:
+            return ', '.join([
+                f"{tp.product.title} ({tp.quantity} × {tp.product.price})"
+                for tp in obj.ticket.ticket_products.all()
+            ])
+        return '-'
+    get_products.short_description = 'محصولات سفارش داده شده به همراه تعداد و قیمت هر محصول'  
 
     def save_model(self, request, obj, form, change):
         try:
