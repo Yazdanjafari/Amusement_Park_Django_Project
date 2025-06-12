@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
 from django.utils.timezone import localtime
+from rangefilter.filters import DateTimeRangeFilter
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 admin.site.site_title = "پنل مدیریت"
@@ -173,27 +174,27 @@ class NotificationAdmin(admin.ModelAdmin):
 
 class TransactionAdminClass(admin.ModelAdmin):
     list_display = ('id', 'ticket', 'is_success', 'user', 'get_products', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'j_create_at', 'formatted_create_at', 'desc')
-    list_filter = ('is_success', 'create_at', 'user', 'type')
+    list_filter = ('is_success', ('create_at', DateTimeRangeFilter), 'create_at', 'user', 'type',)
     search_fields = ('id', 'desc', 'create_at')
     ordering = ('-create_at',)
-    readonly_fields = ('create_at', 'tracking_code', 'product_prices', 'price', 'tax', 'discount', 'price')
+    readonly_fields = ('create_at', 'tracking_code', 'product_prices', 'price', 'tax', 'auto_percent_tax', 'discount', 'auto_percent_discount', 'price', 'offer', 'manual_discount',)
 
     fieldsets = (
         (None, {
-            'fields': ('user', 'ticket', 'type', 'is_success', 'has_tax', 'offer', 'manual_discount', 'desc')
+            'fields': ('user', 'ticket', 'type', 'is_success', 'has_tax', 'desc')
         }),
         ('فروش ترکیبی', {
             'fields': ('mix_pc', 'mix_cash')
         }),
         ('اتوماتیک', {
-            'fields': ('tracking_code', 'product_prices', 'tax', 'discount', 'price', 'create_at')
+            'fields': ('tracking_code', 'product_prices', 'tax', 'auto_percent_tax', 'offer', 'manual_discount', 'discount', 'auto_percent_discount', 'price', 'create_at')
         }),
     )
 
 
     def formatted_create_at(self, obj):
         return localtime(obj.create_at).strftime('%Y-%m-%d')
-    formatted_create_at.short_description = 'زمان ثبت تراکنش به میلادی'
+    formatted_create_at.short_description = 'زمان ثبت تراکنش به تاریخ میلادی'
     formatted_create_at.admin_order_field = 'create_at'    
 
     def get_products(self, obj):
@@ -442,7 +443,10 @@ class ReturnedTransactionAdmin(admin.ModelAdmin):
 
 class ProductSaleReportAdmin(admin.ModelAdmin):
     # Ensure the list_filter is properly set
-    list_filter = ('create_at',)
+    list_filter = (
+        ('create_at', DateTimeRangeFilter), 
+        'create_at',
+    )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -451,7 +455,7 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
         return False
 
     def has_add_permission(self, request, obj=None):
-        return False
+        return False  
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context=extra_context)
@@ -461,7 +465,6 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
         except (AttributeError, KeyError):
             return response
 
-        # Define metrics for sales, including unsuccessful transactions
         metrics = {
             'total_transactions': Count('id', filter=Q(is_success=True)),
             'total_sales': Sum(
@@ -471,12 +474,12 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
             'total_tickets': Sum('ticket__ticket_products__quantity', filter=Q(is_success=True)),
         }
 
+        filtered_ids = qs.filter(is_success=True).values_list('id', flat=True)
 
-        # Annotating with aggregated data for both successful and unsuccessful transactions
         summary_data = (
             TicketProduct.objects
-            .select_related('product', 'ticket')
-            .filter(ticket__transaction_obj__is_success=True)
+            .select_related('product', 'ticket', 'ticket__transaction_obj')
+            .filter(ticket__transaction_obj__id__in=filtered_ids)
             .values('product__title')
             .annotate(
                 total_transactions=Count('ticket'),
@@ -485,14 +488,8 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
             )
         )
 
-
-        # Add the summary data to the response context
         response.context_data['summary'] = summary_data
-
-        # Add the total summary metrics to the context (including ticket count)
-        response.context_data['summary_total'] = dict(
-            qs.aggregate(**metrics)
-        )
+        response.context_data['summary_total'] = dict(qs.aggregate(**metrics))
 
         return response
 
@@ -501,7 +498,10 @@ class ProductSaleReportAdmin(admin.ModelAdmin):
 
 
 class SellerSaleReportAdmin(admin.ModelAdmin):
-    list_filter = ('create_at',)
+    list_filter = (
+        ('create_at', DateTimeRangeFilter), 
+        'create_at',
+    )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -567,7 +567,10 @@ class SellerSaleReportAdmin(admin.ModelAdmin):
 
 # Customer Purchase Report Admin
 class CustomerPurchaseReportAdmin(admin.ModelAdmin):
-    list_filter = ('create_at',)
+    list_filter = (
+        ('create_at', DateTimeRangeFilter), 
+        'create_at',
+    )
 
     def has_delete_permission(self, request, obj=None):
         return False

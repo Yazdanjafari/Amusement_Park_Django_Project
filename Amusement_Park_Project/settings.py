@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_jalali',
     'import_export',
     'treebeard',
+    'rangefilter',
     'Authenticate_Application',
     'Amusement_Park_Application',
 ]

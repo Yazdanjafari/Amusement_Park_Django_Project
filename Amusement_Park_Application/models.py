@@ -190,7 +190,7 @@ class Transaction(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="کد رهگیری فروش")
     tracking_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='فروشنده')
-    ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='transaction_obj', verbose_name='بلیت')
+    ticket = models.ForeignKey('Ticket', on_delete=models.PROTECT, related_name='transaction_obj', verbose_name='بلیط')
     type = models.CharField(max_length=10, choices=TransactionType.choices, verbose_name='نوع تراکنش', default=TransactionType.pc)
     mix_pc = models.PositiveBigIntegerField(verbose_name='مقدار قیمت پرداخت شده با دستگاه کارتخوان',  null=True, blank=True, help_text="در صورتی که نوع فروش ترکیبی باشد این فیلد به صورت اتوماتیک دریافت میشود")
     mix_cash = models.PositiveBigIntegerField(verbose_name='مقدار قیمت پرداخت شده نقدی',  null=True, blank=True, help_text="در صورتی که نوع فروش ترکیبی باشد این فیلد به صورت اتوماتیک دریافت میشود")
@@ -200,7 +200,9 @@ class Transaction(models.Model):
     manual_discount = models.PositiveIntegerField(verbose_name='تخفیف دستی', default=0, null=True, blank=True)
     product_prices = models.PositiveBigIntegerField(verbose_name='مجموع مبلغ محصولات')
     tax = models.PositiveBigIntegerField(verbose_name='مبلغ مالیات', null=True, blank=True)
+    auto_percent_tax = models.PositiveBigIntegerField(verbose_name='درصد مالیات',  default=0, help_text='درصد این فیلد از فیلد "مجموع مبلغ محصولات" گرفته میشود')
     discount = models.PositiveBigIntegerField(verbose_name='مبلغ تخفیف',  null=True, blank=True)
+    auto_percent_discount = models.PositiveBigIntegerField(verbose_name='درصد تخفیف',  default=0, help_text='درصد این فیلد از فیلد ("مجموع مبلغ محصولات" + "مبلغ مالیات") گرفته میشود')
     price = models.PositiveBigIntegerField(verbose_name='قیمت نهایی',  null=True, blank=True,)
     desc = models.TextField('توضیحات', null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت تراکنش')
@@ -214,6 +216,7 @@ class Transaction(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
+    j_create_at.short_description = "زمان ثبت تراکنش به تاریخ شمسی"
 
     def __str__(self):
         return f'{self.id}'
@@ -265,20 +268,32 @@ class Transaction(models.Model):
         # Apply discount calculation
         if self.offer and self.offer.activate:
             offer_discount = total_amount * self.offer.persent / 100
-            # If an offer is applied, set manual_discount to 0
             self.manual_discount = 0
         else:
             offer_discount = 0
 
-        # Calculate the total discount: Offer discount + manual discount
         self.discount = offer_discount + self.manual_discount
 
         # Validate discount
         if self.discount > total_amount:
             raise ValidationError("مجموع تخفیف نمی‌تواند بیشتر از مجموع قیمت محصولات و مالیات باشد.")
 
-        # Calculate final price (product price + tax - discount)
+        # Calculate final price
         self.price = total_amount - self.discount
+
+        # ✅ Calculate and save the auto_percent_discount based on product_prices
+        if self.product_prices > 0:
+            percent = (self.discount / (self.product_prices + self.tax)) * 100
+            self.auto_percent_discount = round(percent)
+        else:
+            self.auto_percent_discount = 0
+
+        # ✅ Calculate and save the auto_percent_discount based on product_prices
+        if self.product_prices > 0:
+            percent = (self.tax / self.product_prices) * 100
+            self.auto_percent_tax = round(percent)
+        else:
+            self.auto_percent_tax = 0
 
         super().save(*args, **kwargs)
 
@@ -295,8 +310,8 @@ class Ticket(models.Model):
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
 
     class Meta:
-        verbose_name = 'بلیت'
-        verbose_name_plural = 'بلیت ها'
+        verbose_name = 'بلیط'
+        verbose_name_plural = 'بلیط ها'
         
 
     def j_create_at(self):
@@ -314,7 +329,7 @@ class Ticket(models.Model):
         return f'/tickets/{self.id}/print_qr/'
 
     def __str__(self):
-        return f'کد رهگیری بلیت: {self.id}'        
+        return f'کد رهگیری بلیط: {self.id}'        
     
     def total_price(self):
         return sum(item.product.price * item.quantity for item in self.ticket_products.all())
@@ -329,16 +344,16 @@ class Ticket(models.Model):
 
 
 class TicketProduct(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='ticket_products', verbose_name='بلیت')
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='ticket_products', verbose_name='بلیط')
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='ticket_products', verbose_name='محصول')
     quantity = models.PositiveIntegerField(verbose_name='تعداد', default=1)
     scanned = models.BooleanField(verbose_name="اسکن شده", default=False)
 
     class Meta:
-        verbose_name_plural = "محصولات بلیت"
+        verbose_name_plural = "محصولات بلیط"
 
     def __str__(self):
-        return f"کد رهگیری بلیت : {self.ticket.id} | محصولات : {self.product.title} (*) تعداد : {self.quantity} (*) قیمت : {self.product.price} ریال"
+        return f"کد رهگیری بلیط : {self.ticket.id} | محصولات : {self.product.title} (*) تعداد : {self.quantity} (*) قیمت : {self.product.price} ریال"
     
     def get_total_price(self):
         return self.product.price * self.quantity    

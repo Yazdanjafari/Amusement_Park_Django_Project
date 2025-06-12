@@ -167,3 +167,5 @@ TEST :
 ✅ تست ویدئو ها
 ✅ تست دانلود فایل زیپ 
 ✅ تست لاگین و خروج 
+
+psql -U yazdanja_database -d yazdanja_db

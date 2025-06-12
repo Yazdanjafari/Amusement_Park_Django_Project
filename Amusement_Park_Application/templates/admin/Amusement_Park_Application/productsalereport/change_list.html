@@ -18,32 +18,32 @@
                 </th>
                 <th>
                     <div class="text">
-                        <a href="#">تعداد بلیت</a>
+                        <a href="#">تعداد بلیط</a>
                     </div>
                 </th>
                 <th>
                     <div class="text">
-                        <a href="#">جمع کل فروش - ریال</a>
+                        <a href="#">مجموع مبلغ محصولات</a>
                     </div>
-                </th>
+                </th>            
             </tr>
         </thead>
         <tbody>
             {% for row in summary %}
             <tr>
-                <td>{{ row.product__title|default:'تراکنش فاقد بلیت' }}</td>
+                <td>{{ row.product__title|default:'تراکنش فاقد بلیط' }}</td>
                 <td>{{ row.total_transactions|intcomma }}</td>
                 <td>{{ row.total_tickets|intcomma }}</td>
-                <td>{{ row.total_sales|default:0|intcomma:False }}</td>
+                <td>{{ row.total_sales|default:0|intcomma:False }}</td>         
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr style="font-weight:bold; border-top:4px solid #DDDDDD;">
                 <td>مجموع</td>
-                <td>{{ summary_total.total_transactions|intcomma:False }}</td>
-                <td>{{ summary_total.total_tickets|intcomma:False }}</td>
-                <td>{{ summary_total.total_sales|default:0|intcomma:False }}</td>
+                <td>{{ summary_total.total_transactions|intcomma }}</td>
+                <td>{{ summary_total.total_tickets|intcomma }}</td>
+                <td>{{ summary_total.total_sales|intcomma:False }}</td>
             </tr>
         </tfoot>
     </table>    
@@ -52,15 +52,15 @@
     <p style="font-size: 80%; color: white; background-color:rgb(0, 0, 0); padding: 10px 15px; border: 2px solid #4CAF50; border-radius: 10px; line-height: 1.6; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <span style="font-weight: bold; color: #4CAF50;">نکته:</span> این جدول یک مجموعه آماری از فروش های موفق است
     </p>
-    <p style="font-size: 80%; color: white; background-color:rgb(0, 0, 0); padding: 10px 15px; border: 2px solid yellow; border-radius: 10px; line-height: 1.6; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-        <span style="font-weight: bold; color: yellow;">نکته:</span> این آمار حاصل "فروش محصولات" است فارغ از محاسبه مالیات و تخفیف‌ها.
-    </p>
     <p style="font-size: 75%; color: white; background-color:rgb(0, 0, 0); padding: 10px 15px; border: 2px solid blue; border-radius: 10px; line-height: 1.6; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <span style="font-weight: bold; color: blue;">نکته:</span> تعداد فروش به معنای تعداد فاکتور ثبت شده است و ممکن است در یک فاکتور چهار عدد از یک محصول ثبت شده باشد
     </p>
-    <p style="font-size: 80%; color: white; background-color:rgb(0, 0, 0); padding: 10px 15px; border: 2px solid red; border-radius: 10px; line-height: 1.6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-        <span style="font-weight: bold; color: red">نکته:</span> برای مشاهده مجموع مالیات‌ها و تخفیف‌ها می‌توانید به بخش "فروش‌ها" مراجعه کنید.
+    <p style="font-size: 75%; color: white; background-color:rgb(0, 0, 0); padding: 10px 15px; border: 2px solid yellow; border-radius: 10px; line-height: 1.6; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <span style="font-weight: bold; color: yellow;">نکته:</span> تعداد بلیط به این معنی است که دقیقا چند عدد از این محصول به فروش رفته
     </p>
+    <p style="font-size: 80%; color: white; background-color:rgb(0, 0, 0); padding: 10px 15px; border: 2px solid red; border-radius: 10px; line-height: 1.6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <span style="font-weight: bold; color: red">نکته:</span> در این آمار فروش تخفیف ها و مالیات ها محاسبه نشده. برای مشاهده مجموع مالیات‌ها و تخفیف‌ها می‌توانید به بخش "خریدها" مراجعه کنید.
+    </p>    
 
 </div>
 {% endblock %}

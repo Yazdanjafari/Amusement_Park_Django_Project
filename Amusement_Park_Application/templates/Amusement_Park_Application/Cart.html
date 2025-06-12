@@ -1725,38 +1725,40 @@ Page content END -->
 	// Function to apply percentage discount
 	function applyPercentageDiscount() {
 		const discountPercentInput = document.getElementById('discount-percent');
-		const discountPercentValue = parseFloat(discountPercentInput.value);  // Convert input to number
-		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));  // Get total price
-		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));  // Get tax amount
-		const totalAmount = totalPrice + taxAmount;  // Calculate total amount (price + tax)
-
-		// Validate input
-		if (isNaN(discountPercentValue) || discountPercentValue < 1 || discountPercentValue > 100) {
+		const inputValue = discountPercentInput.value.trim();
+	
+		const validIntegerRegex = /^(100|[1-9][0-9]?)$/;
+	
+		if (!validIntegerRegex.test(inputValue)) {
 			Swal.fire({
-				title: {% if request.language == 'fa' %} ' خطا ' {% elif request.language == 'en' %} ' Error ' {% elif request.language == 'ar' %} '  خطا ' {% endif %},
-				text: {% if request.language == 'fa' %} 'لطفاً یک درصد معتبر بین ۱ تا ۱۰۰ وارد کنید.' {% elif request.language == 'en' %} 'Please enter a valid percentage between 1 and 100.' {% elif request.language == 'ar' %} 'يرجى إدخال نسبة مئوية صالحة بين 1 و 100.' {% endif %},
+				title: {% if request.language == 'fa' %} 'خطا' {% elif request.language == 'en' %} 'Error' {% elif request.language == 'ar' %} 'خطأ' {% endif %},
+				text: {% if request.language == 'fa' %} 'لطفا یک عدد صحیح انگلیسی بین یک تا صد وارد کنید' {% elif request.language == 'en' %} 'Please enter an English integer between 1 and 100.' {% elif request.language == 'ar' %} 'يرجى إدخال عدد صحيح إنجليزي بين 1 و 100.' {% endif %},
 				icon: 'error',
 				confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 			});
 			return;
 		}
-
-		// Calculate discount amount
+	
+		const discountPercentValue = parseInt(inputValue);  
+	
+		const totalPrice = parseFloat(document.getElementById('item-total-price').innerText.replace(/,/g, ''));
+		const taxAmount = parseFloat(document.getElementById('tax-amount').innerText.replace(/,/g, ''));
+		const totalAmount = totalPrice + taxAmount;
+	
 		const discountAmount = (totalAmount / 100) * discountPercentValue;
-
-		// Update discount display
-		document.getElementById('discount-display').innerText = discountAmount.toLocaleString() + {% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ریال ' {% endif %};
-
-		// Show success notification
+	
+		document.getElementById('discount-display').innerText = discountAmount.toLocaleString() +
+			{% if request.language == 'fa' %} '  ریال ' {% elif request.language == 'en' %} ' Rial ' {% elif request.language == 'ar' %} '  ريال ' {% endif %};
+	
 		Swal.fire({
 			title: {% if request.language == 'fa' %} 'تخفیف اعمال شد!' {% elif request.language == 'en' %} 'Discount applied!' {% elif request.language == 'ar' %} 'تم تطبيق الخصم!' {% endif %},
 			text: {% if request.language == 'fa' %} `تخفیف ${discountPercentValue}% (${discountAmount.toLocaleString()} ریال) با موفقیت اعمال شد.` {% elif request.language == 'en' %} `Discount of ${discountPercentValue}% (${discountAmount.toLocaleString()} Rials) applied successfully.` {% elif request.language == 'ar' %} `تم تطبيق خصم بنسبة ${discountPercentValue}% (${discountAmount.toLocaleString()} ريال) بنجاح.` {% endif %},
 			icon: 'success',
 			confirmButtonText: {% if request.language == 'fa' %} 'باشه' {% elif request.language == 'en' %} 'OK' {% elif request.language == 'ar' %} 'حسنًا' {% endif %}
 		});
-		    // Set discount applied flag
-    			isDiscountApplied = true;
-				updateFinalPrice();
+	
+		isDiscountApplied = true;
+		updateFinalPrice();
 	}
 
 	// Add event listener to the percentage discount button
