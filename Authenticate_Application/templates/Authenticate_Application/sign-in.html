@@ -80,9 +80,9 @@
 								<div class="my-4"></div>
 
 								<!-- HCaptcha -->
-								<div class="captcha-container">
+								{% comment %} <div class="captcha-container">
 									<div class="h-captcha" data-sitekey="29c887a0-d0ba-4a92-bf3e-4534e9469a86"></div>
-								</div>
+								</div> {% endcomment %}
 							</form>
 							<!-- Form END -->
 						</div>
@@ -95,10 +95,27 @@
 <!-- **************** MAIN CONTENT END **************** -->
 {% endblock body %}
 
-{% block script %}
+{% comment %} {% block script %}
 	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 
 	{% if error_message and request.method == "POST" %}
+	<script>
+		Swal.fire({
+			icon: 'error',
+			title: 'خطا!',
+			text: "{{ error_message }}",
+			confirmButtonText: 'باشه'
+		});
+	</script>
+	{% endif %}
+{% endblock script %} {% endcomment %}
+
+
+{% block script %}
+	<!-- SweetAlert2 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	{% if error_message %}
 	<script>
 		Swal.fire({
 			icon: 'error',
