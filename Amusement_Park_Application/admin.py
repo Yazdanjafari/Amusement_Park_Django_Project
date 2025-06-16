@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport, ReadyTransactionInfo
+from .models import Product, TaxRate, Transaction, ReturnedTransaction, Ticket, TicketProduct, Category, Customer, Offer, SMS, Notification, RerecordingTransaction, ProductSaleReport, SellerSaleReport, CustomerPurchaseReport, ReadyTransactionInfo, SalesReport, DeviceSalesReport
 from import_export.admin import ExportMixin
 from import_export import resources
 from import_export.fields import Field
@@ -634,6 +634,29 @@ class CustomerPurchaseReportAdmin(admin.ModelAdmin):
 
 
 
+class DeviceSalesReportAdmin(admin.ModelAdmin):
+    list_display = ('device', 'device_compony', 'device_connection_type', 'device_serial_number', 'device_terminal_number', 'device_MID_number')
+
+
+class SalesReportAdmin(admin.ModelAdmin):
+    list_display = ('id', 'formatted_amount', 'user', 'j_create_at', 'create_at', 'j_update_at', 'update_at', 'desc')
+    search_fields = ('create_at',)
+    list_filter = ('create_at',)
+    readonly_fields = ('create_at', 'update_at')
+    exclude = ('user',)
+    
+    def save_model(self, request, obj, form, change):
+        if not obj.pk: 
+            obj.user = request.user
+        super().save_model(request, obj, form, change)    
+
+    def formatted_amount(self, obj):
+        if obj.amount is not None:
+            return '{:,}'.format(obj.amount)  # Format the amount with commas
+        return ''  # Return an empty string if amount is None
+    formatted_amount.admin_order_field = 'amount'  # Allow sorting by amount
+    formatted_amount.short_description = 'مجموع قیمت دستگاه کارتخوان'  # Set a custom label for the column
+
 
 
 # _____________________________________________ Registery _____________________________________________ #
@@ -653,5 +676,7 @@ admin.site.register(ProductSaleReport, ProductSaleReportAdmin)
 admin.site.register(SellerSaleReport, SellerSaleReportAdmin)
 admin.site.register(CustomerPurchaseReport, CustomerPurchaseReportAdmin)
 admin.site.register(ReadyTransactionInfo)
+admin.site.register(SalesReport, SalesReportAdmin)
+admin.site.register(DeviceSalesReport, DeviceSalesReportAdmin)
 
 

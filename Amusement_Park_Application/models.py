@@ -177,6 +177,8 @@ class Offer (models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''    
+    j_create_at.short_description = "زمان ثبت تراکنش به تاریخ شمسی"
+    
         
 
 
@@ -319,6 +321,7 @@ class Ticket(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
+    j_create_at.short_description = "زمان ثبت تراکنش به تاریخ شمسی"
 
     # Calculate the total price of related transactions.
     def get_total_transactions(self):
@@ -400,6 +403,7 @@ class ReturnedTransaction(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
+    j_create_at.short_description = "زمان ثبت تراکنش به تاریخ شمسی"
 
     def __str__(self):
         return f'{self.id}'      
@@ -482,6 +486,7 @@ class Notification(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at)  # Convert to Jalali
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''     
+    j_create_at.short_description = "زمان ثبت تراکنش به تاریخ شمسی"
     
 
 class RerecordingTransaction(models.Model):
@@ -573,6 +578,7 @@ class RerecordingTransaction(models.Model):
             jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
             return jalali_date.strftime('%Y/%m/%d %H:%M')
         return ''
+    j_create_at.short_description = "زمان ثبت تراکنش به تاریخ شمسی"
     
     
     
@@ -619,3 +625,54 @@ class ReadyTransactionInfo(models.Model):
     class Meta:
         verbose_name = "توضیحات فروش آماده"
         verbose_name_plural = "توضیحات فروش آماده"
+        
+        
+        
+class DeviceSalesReport(models.Model):
+    class FoundType(models.TextChoices):
+        manual = ('دستی', 'دستی')
+        ip = ('IP', 'IP')
+        serial_cabale = ('کابل سریال', 'کابل سریال')     
+        nothing = ('هیچکدام', 'هیچکدام')     
+    
+    device = models.CharField(verbose_name="نوع وسیله فروش", max_length=55)     
+    device_compony = models.CharField(verbose_name="شرکت ارائه دهنده دستگاه", max_length=55, null=True, blank=True)
+    device_connection_type = models.CharField(max_length=55, choices=FoundType.choices, verbose_name='نوع ارتباط با سیستم', default=FoundType.nothing)      
+    device_serial_number = models.CharField(verbose_name="شماره سریال دستگاه", max_length=55, null=True, blank=True)     
+    device_terminal_number  = models.CharField(verbose_name="شماره ترمینال دستگاه", max_length=55, null=True, blank=True)     
+    device_MID_number = models.CharField(verbose_name="شماره پذیرنده دستگاه", max_length=55, null=True, blank=True)     
+    desc = models.TextField('توضیحات', null=True, blank=True)
+    
+    def __str__(self):
+        return self.device
+    
+    class Meta:
+        verbose_name = 'نوع وسیله فروش'
+        verbose_name_plural = 'نوع وسیله فروش'       
+        
+        
+class SalesReport(models.Model): 
+    device = models.ForeignKey(DeviceSalesReport, on_delete=models.PROTECT, verbose_name="نوع وسیله فروش", null=True, blank=True)
+    amount = models.PositiveBigIntegerField(verbose_name= "مبلغ فروش به ریال", null=True, blank=True)
+    desc = models.TextField('توضیحات', null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name="زمان ثبت ریپورت به تاریخ میلادی")
+    update_at = models.DateTimeField(auto_now=True, verbose_name="زمان آپدیت ریپورت به تاریخ میلادی")
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name='ثبت کننده', null=True, blank=True)
+    
+    class Meta:
+        verbose_name = 'گزارش فروش روزانه'
+        verbose_name_plural = 'گزارش فروش روزانه'
+        
+    def j_create_at(self):
+        if self.create_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.create_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''            
+    j_create_at.short_description = "زمان ثبت ریپورت به تاریخ شمسی"
+    
+    def j_update_at(self):
+        if self.update_at:
+            jalali_date = jdatetime.datetime.fromgregorian(date=self.update_at.astimezone())
+            return jalali_date.strftime('%Y/%m/%d %H:%M')
+        return ''            
+    j_update_at.short_description = "زمان آپدیت ریپورت به تاریخ شمسی"
