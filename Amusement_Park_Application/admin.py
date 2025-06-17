@@ -639,9 +639,9 @@ class DeviceSalesReportAdmin(admin.ModelAdmin):
 
 
 class SalesReportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'formatted_amount', 'user', 'j_create_at', 'create_at', 'j_update_at', 'update_at', 'desc')
+    list_display = ('device', 'formatted_amount', 'user', 'j_create_at', 'create_at', 'j_update_at', 'update_at', 'desc')
     search_fields = ('create_at',)
-    list_filter = ('create_at',)
+    list_filter = ('create_at', 'device')
     readonly_fields = ('create_at', 'update_at')
     exclude = ('user',)
     
@@ -655,7 +655,7 @@ class SalesReportAdmin(admin.ModelAdmin):
             return '{:,}'.format(obj.amount)  # Format the amount with commas
         return ''  # Return an empty string if amount is None
     formatted_amount.admin_order_field = 'amount'  # Allow sorting by amount
-    formatted_amount.short_description = 'مجموع قیمت دستگاه کارتخوان'  # Set a custom label for the column
+    formatted_amount.short_description = 'مجموع قیمت (ریال)'  # Set a custom label for the column
 
 
 
