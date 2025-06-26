@@ -12,9 +12,10 @@ from django.db.models import F, Sum, Count, Q
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.utils.timezone import localtime
 from rangefilter.filters import DateTimeRangeFilter
+from django.utils.dateparse import parse_datetime
 
 admin.site.site_header = 'پنل مدیریت وب اپلیکیشن شهربازی'
 admin.site.site_title = "پنل مدیریت"
@@ -59,6 +60,7 @@ class TicketProductInline(admin.TabularInline):
 
 # RefundProduct Admin (this is for managing RefundProducts directly if needed)
 class TicketProductAdmin(admin.ModelAdmin):
+    list_per_page = 1000000000
     list_display = ('ticket', 'product', 'quantity', 'scanned')
     list_filter = ('ticket', 'product', 'scanned')
     
@@ -85,6 +87,7 @@ class TicketResource(resources.ModelResource):
         return ticket.j_create_at()
  
 class TicketAdminClass(ExportMixin, admin.ModelAdmin):
+    list_per_page = 1000000000
     resource_classes = [TicketResource]
     list_display = ('id', 'get_products', 'create_at', 'user', 'customer')
     list_filter = ('user', 'create_at')
@@ -117,6 +120,7 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
 
 # Customer Admin
 class CustomerAdmin(admin.ModelAdmin):
+    list_per_page = 1000000000
     list_display = ('id', 'first_name', 'last_name', 'city', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
     search_fields = ('first_name', 'last_name', 'phone')
     list_filter = ('gender', 'date_of_birth', 'first_purchase', 'last_purchase', 'city')
@@ -173,7 +177,8 @@ class NotificationAdmin(admin.ModelAdmin):
 # _____________________________________________ MAIN SELLING SYSTEM _____________________________________________ #
 
 class TransactionAdminClass(admin.ModelAdmin):
-    list_display = ('id', 'ticket', 'is_success', 'user', 'get_products', 'formatted_product_prices', 'formatted_tax', 'formatted_discount', 'formatted_price', 'type', 'j_create_at', 'formatted_create_at', 'desc')
+    list_per_page = 1000000000
+    list_display = ('id', 'ticket', 'is_success', 'user', 'formatted_price', 'formatted_tax', 'formatted_discount', 'formatted_product_prices', 'type', 'get_products', 'j_create_at', 'formatted_create_at', 'desc')
     list_filter = ('is_success', ('create_at', DateTimeRangeFilter), 'create_at', 'user', 'type',)
     search_fields = ('id', 'desc', 'create_at')
     ordering = ('-create_at',)
@@ -258,39 +263,91 @@ class TransactionAdminClass(admin.ModelAdmin):
         total_mix_pc_all = base_queryset.filter(type='mix').aggregate(total_mix_pc=Sum('mix_pc'))['total_mix_pc'] or 0
         total_mix_cash_all = base_queryset.filter(type='mix').aggregate(total_mix_cash=Sum('mix_cash'))['total_mix_cash'] or 0
 
+        total_pc_total_all = total_pc_all + total_mix_pc_all
+        total_cash_total_all = total_cash_all + total_mix_cash_all
+
         def compute_totals_for_interval(hours, suffix):
             now = timezone.now()
             threshold = now - timedelta(hours=hours)
-            qs_interval = base_queryset.filter(create_at__gte=threshold)
+            qs = base_queryset.filter(create_at__gte=threshold)
 
-            interval_totals = qs_interval.aggregate(
+            totals = qs.aggregate(
                 total_product_prices=Sum('product_prices'),
                 total_price=Sum('price'),
                 total_tax=Sum('tax'),
-                total_discount=Sum('discount'),
+                total_discount=Sum('discount')
             )
-            pc = qs_interval.filter(type='pc').aggregate(total_pc=Sum('price'))['total_pc'] or 0
-            cash = qs_interval.filter(type='cash').aggregate(total_cash=Sum('price'))['total_cash'] or 0
-            mix = qs_interval.filter(type='mix').aggregate(total_mix=Sum('price'))['total_mix'] or 0
-            mix_pc = qs_interval.filter(type='mix').aggregate(total_mix_pc=Sum('mix_pc'))['total_mix_pc'] or 0
-            mix_cash = qs_interval.filter(type='mix').aggregate(total_mix_cash=Sum('mix_cash'))['total_mix_cash'] or 0
+            pc = qs.filter(type='pc').aggregate(v=Sum('price'))['v'] or 0
+            cash = qs.filter(type='cash').aggregate(v=Sum('price'))['v'] or 0
+            mix = qs.filter(type='mix').aggregate(v=Sum('price'))['v'] or 0
+            mix_pc = qs.filter(type='mix').aggregate(v=Sum('mix_pc'))['v'] or 0
+            mix_cash = qs.filter(type='mix').aggregate(v=Sum('mix_cash'))['v'] or 0
 
             return {
-                f'total_product_prices_{suffix}': interval_totals['total_product_prices'] or 0,
-                f'total_price_{suffix}': interval_totals['total_price'] or 0,
-                f'total_tax_{suffix}': interval_totals['total_tax'] or 0,
-                f'total_discount_{suffix}': interval_totals['total_discount'] or 0,
+                f'total_product_prices_{suffix}': totals['total_product_prices'] or 0,
+                f'total_price_{suffix}': totals['total_price'] or 0,
+                f'total_tax_{suffix}': totals['total_tax'] or 0,
+                f'total_discount_{suffix}': totals['total_discount'] or 0,
                 f'total_pc_sales_{suffix}': pc,
                 f'total_cash_sales_{suffix}': cash,
                 f'total_mix_sales_{suffix}': mix,
                 f'total_mix_pc_{suffix}': mix_pc,
                 f'total_mix_cash_{suffix}': mix_cash,
+                f'total_pc_total_{suffix}': pc + mix_pc,
+                f'total_cash_total_{suffix}': cash + mix_cash,
             }
 
         stats_24h   = compute_totals_for_interval(24,   '24h')
         stats_168h  = compute_totals_for_interval(168,  '168h')
         stats_720h  = compute_totals_for_interval(720,  '720h')
         stats_8760h = compute_totals_for_interval(8760, '8760h')
+
+        start_date_str = request.GET.get('create_at__range__gte_0')
+        start_time_str = request.GET.get('create_at__range__gte_1')
+        end_date_str   = request.GET.get('create_at__range__lte_0')
+        end_time_str   = request.GET.get('create_at__range__lte_1')
+
+        start_datetime, end_datetime = None, None
+
+        try:
+            if start_date_str and start_time_str:
+                start_datetime = datetime.strptime(f"{start_date_str} {start_time_str}", "%Y-%m-%d %H:%M:%S")
+            if end_date_str and end_time_str:
+                end_datetime = datetime.strptime(f"{end_date_str} {end_time_str}", "%Y-%m-%d %H:%M:%S")
+        except Exception:
+            start_datetime, end_datetime = None, None
+
+        custom_stats = {}
+        if start_datetime and end_datetime:
+            qs = base_queryset.filter(create_at__gte=start_datetime, create_at__lte=end_datetime)
+
+            totals = qs.aggregate(
+                total_product_prices=Sum('product_prices'),
+                total_price=Sum('price'),
+                total_tax=Sum('tax'),
+                total_discount=Sum('discount')
+            )
+            pc = qs.filter(type='pc').aggregate(v=Sum('price'))['v'] or 0
+            cash = qs.filter(type='cash').aggregate(v=Sum('price'))['v'] or 0
+            mix = qs.filter(type='mix').aggregate(v=Sum('price'))['v'] or 0
+            mix_pc = qs.filter(type='mix').aggregate(v=Sum('mix_pc'))['v'] or 0
+            mix_cash = qs.filter(type='mix').aggregate(v=Sum('mix_cash'))['v'] or 0
+
+            custom_stats = {
+                'total_product_prices_custom': totals['total_product_prices'] or 0,
+                'total_price_custom': totals['total_price'] or 0,
+                'total_tax_custom': totals['total_tax'] or 0,
+                'total_discount_custom': totals['total_discount'] or 0,
+                'total_pc_sales_custom': pc,
+                'total_cash_sales_custom': cash,
+                'total_mix_sales_custom': mix,
+                'total_mix_pc_custom': mix_pc,
+                'total_mix_cash_custom': mix_cash,
+                'total_pc_total_custom': pc + mix_pc,
+                'total_cash_total_custom': cash + mix_cash,
+                'custom_range_start': start_datetime,
+                'custom_range_end': end_datetime,
+            }
 
         extra_context = extra_context or {}
         extra_context.update({
@@ -303,14 +360,14 @@ class TransactionAdminClass(admin.ModelAdmin):
             'total_mix_sales': total_mix_all,
             'total_mix_pc': total_mix_pc_all,
             'total_mix_cash': total_mix_cash_all,
+            'total_pc_total': total_pc_total_all,
+            'total_cash_total': total_cash_total_all,
 
             **stats_24h,
-
             **stats_168h,
-
             **stats_720h,
-
             **stats_8760h,
+            **custom_stats,
         })
 
         return super().changelist_view(request, extra_context=extra_context)
@@ -322,6 +379,7 @@ class TransactionAdminClass(admin.ModelAdmin):
 
 # _____________________________________________ ReturnedTransaction _____________________________________________ #
 class RerecordingTransactionAdmin(admin.ModelAdmin):
+    list_per_page = 1000000000
     list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
     list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
     search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
@@ -345,6 +403,8 @@ class RerecordingTransactionAdmin(admin.ModelAdmin):
 
 # _____________________________________________ ReturnedTransaction _____________________________________________ #
 class ReturnedTransactionAdmin(admin.ModelAdmin):
+    list_per_page = 1000000000
+    
     # Fields to be displayed in the admin list view
     list_display = ('id', 'transaction', 'type', 'desc', 'user', 'j_create_at')
 

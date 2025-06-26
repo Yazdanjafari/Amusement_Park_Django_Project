@@ -5,161 +5,245 @@
 {% block result_list %}
 {{ block.super }}
 {% if request.user.is_superuser %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <table class="totals" style="margin-top: 1em; border-collapse: collapse; width: 100%;">
     <tfoot>
+
+        {% if total_product_prices_custom %}
+        <tr><td colspan="4" style="padding-top:1em; color: red;">
+        <b>آمار فروش از تاریخ و ساعت ({{ custom_range_start }}) تا ({{ custom_range_end }}) :</b>
+        </td></tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-box-open"></i> مجموع قیمت محصولات:</b></td>
+            <td>{{ total_product_prices_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-receipt"></i> مجموع مالیات‌ها:</b></td>
+            <td>{{ total_tax_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-tags"></i> مجموع تخفیف‌ها:</b></td>
+            <td>{{ total_discount_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> مجموع کل فروش های کارتخوان (فروش کارتخوان +‌ فروش ترکیبی توسط کارتخوان) :</b></td>
+            <td>{{ total_pc_total_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> مجموع کل فروش های نقدی (فروش نقدی +‌ فروش ترکیبی نقدی) :</b></td>
+            <td>{{ total_cash_total_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>        
+        <tr>
+            <td colspan="3"><b><i class="fas fa-calculator"></i> (قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
+            <td>{{ total_price_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> فروش کارتخوان:</b></td>
+            <td>{{ total_pc_sales_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> فروش نقدی:</b></td>
+            <td>{{ total_cash_sales_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-exchange-alt"></i> فروش ترکیبی:</b></td>
+            <td>{{ total_mix_sales_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> پرداخت کارتخوان در فروش ترکیبی:</b></td>
+            <td>{{ total_mix_pc_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> پرداخت نقدی در فروش ترکیبی:</b></td>
+            <td>{{ total_mix_cash_custom|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        {% endif %}
         
+
         <tr><td colspan="4" style="padding-top:1em; color: red;"><b>آمار فروش ۲۴ ساعت گذشته:</b></td></tr>
         <tr>
-            <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
+            <td colspan="3"><b><i class="fas fa-box-open"></i> مجموع قیمت محصولات:</b></td>
             <td>{{ total_product_prices_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-receipt"></i> مجموع مالیات‌ها:</b></td>
             <td>{{ total_tax_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-tags"></i> مجموع تخفیف‌ها:</b></td>
             <td>{{ total_discount_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>(قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> مجموع کل فروش های کارتخوان (فروش کارتخوان +‌ فروش ترکیبی توسط کارتخوان) :</b></td>
+            <td>{{ total_pc_total_24h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> مجموع کل فروش های نقدی (فروش نقدی +‌ فروش ترکیبی نقدی) :</b></td>
+            <td>{{ total_cash_total_24h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-calculator"></i> (قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
             <td>{{ total_price_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> فروش کارتخوان:</b></td>
             <td>{{ total_pc_sales_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> فروش نقدی:</b></td>
             <td>{{ total_cash_sales_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-exchange-alt"></i> فروش ترکیبی:</b></td>
             <td>{{ total_mix_sales_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت کارتخوان در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> پرداخت کارتخوان در فروش ترکیبی:</b></td>
             <td>{{ total_mix_pc_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت نقدی در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> پرداخت نقدی در فروش ترکیبی:</b></td>
             <td>{{ total_mix_cash_24h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         
         
         <tr><td colspan="4" style="padding-top:1em; color: red;"><b>آمار فروش ۱۶۸ ساعت گذشته (۷ روز اخیر):</b></td></tr>
         <tr>
-            <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
+            <td colspan="3"><b><i class="fas fa-box-open"></i> مجموع قیمت محصولات:</b></td>
             <td>{{ total_product_prices_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-receipt"></i> مجموع مالیات‌ها:</b></td>
             <td>{{ total_tax_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-tags"></i> مجموع تخفیف‌ها:</b></td>
             <td>{{ total_discount_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>(قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> مجموع کل فروش های کارتخوان (فروش کارتخوان +‌ فروش ترکیبی توسط کارتخوان) :</b></td>
+            <td>{{ total_pc_total_168h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> مجموع کل فروش های نقدی (فروش نقدی +‌ فروش ترکیبی نقدی) :</b></td>
+            <td>{{ total_cash_total_168h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>        
+        <tr>
+            <td colspan="3"><b><i class="fas fa-calculator"></i> (قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
             <td>{{ total_price_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> فروش کارتخوان:</b></td>
             <td>{{ total_pc_sales_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> فروش نقدی:</b></td>
             <td>{{ total_cash_sales_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-exchange-alt"></i> فروش ترکیبی:</b></td>
             <td>{{ total_mix_sales_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت کارتخوان در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> پرداخت کارتخوان در فروش ترکیبی:</b></td>
             <td>{{ total_mix_pc_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت نقدی در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> پرداخت نقدی در فروش ترکیبی:</b></td>
             <td>{{ total_mix_cash_168h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         
         
         <tr><td colspan="4" style="padding-top:1em; color: red;"><b>آمار فروش ۷۲۰ ساعت گذشته (۳۰ روز اخیر):</b></td></tr>
         <tr>
-            <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
+            <td colspan="3"><b><i class="fas fa-box-open"></i> مجموع قیمت محصولات:</b></td>
             <td>{{ total_product_prices_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-receipt"></i> مجموع مالیات‌ها:</b></td>
             <td>{{ total_tax_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-tags"></i> مجموع تخفیف‌ها:</b></td>
             <td>{{ total_discount_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>(قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> مجموع کل فروش های کارتخوان (فروش کارتخوان +‌ فروش ترکیبی توسط کارتخوان) :</b></td>
+            <td>{{ total_pc_total_720h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> مجموع کل فروش های نقدی (فروش نقدی +‌ فروش ترکیبی نقدی) :</b></td>
+            <td>{{ total_cash_total_720h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>        
+        <tr>
+            <td colspan="3"><b><i class="fas fa-calculator"></i> (قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
             <td>{{ total_price_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> فروش کارتخوان:</b></td>
             <td>{{ total_pc_sales_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> فروش نقدی:</b></td>
             <td>{{ total_cash_sales_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-exchange-alt"></i> فروش ترکیبی:</b></td>
             <td>{{ total_mix_sales_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت کارتخوان در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> پرداخت کارتخوان در فروش ترکیبی:</b></td>
             <td>{{ total_mix_pc_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت نقدی در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> پرداخت نقدی در فروش ترکیبی:</b></td>
             <td>{{ total_mix_cash_720h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         
         
         <tr><td colspan="4" style="padding-top:1em; color: red;"><b>آمار فروش ۸۷۶۰ ساعت گذشته (یک سال اخیر):</b></td></tr>
         <tr>
-            <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
+            <td colspan="3"><b><i class="fas fa-box-open"></i> مجموع قیمت محصولات:</b></td>
             <td>{{ total_product_prices_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-receipt"></i> مجموع مالیات‌ها:</b></td>
             <td>{{ total_tax_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-tags"></i> مجموع تخفیف‌ها:</b></td>
             <td>{{ total_discount_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>(قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> مجموع کل فروش های کارتخوان (فروش کارتخوان +‌ فروش ترکیبی توسط کارتخوان) :</b></td>
+            <td>{{ total_pc_total_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> مجموع کل فروش های نقدی (فروش نقدی +‌ فروش ترکیبی نقدی) :</b></td>
+            <td>{{ total_cash_total_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>        
+        <tr>
+            <td colspan="3"><b><i class="fas fa-calculator"></i> (قیمت محصولات + مالیات) – تخفیف‌ها =</b></td>
             <td>{{ total_price_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> فروش کارتخوان:</b></td>
             <td>{{ total_pc_sales_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> فروش نقدی:</b></td>
             <td>{{ total_cash_sales_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-exchange-alt"></i> فروش ترکیبی:</b></td>
             <td>{{ total_mix_sales_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت کارتخوان در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> پرداخت کارتخوان در فروش ترکیبی:</b></td>
             <td>{{ total_mix_pc_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>پرداخت نقدی در فروش ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> پرداخت نقدی در فروش ترکیبی:</b></td>
             <td>{{ total_mix_cash_8760h|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         
@@ -168,17 +252,25 @@
             <td colspan="3" style="padding-top:1em; color: red;"><b>آمار کل فروش ها:</b></td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع قیمت محصولات :</b></td>
+            <td colspan="3"><b><i class="fas fa-box-open"></i> مجموع قیمت محصولات:</b></td>
             <td>{{ total_product_prices|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع مالیات‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-receipt"></i> مجموع مالیات‌ها:</b></td>
             <td>{{ total_tax|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع تخفیف‌ها :</b></td>
+            <td colspan="3"><b><i class="fas fa-tags"></i> مجموع تخفیف‌ها:</b></td>
             <td>{{ total_discount|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> مجموع کل فروش های کارتخوان (فروش کارتخوان +‌ فروش ترکیبی توسط کارتخوان) :</b></td>
+            <td>{{ total_pc_total|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>
+        <tr>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> مجموع کل فروش های نقدی (فروش نقدی +‌ فروش ترکیبی نقدی) :</b></td>
+            <td>{{ total_cash_total|intcomma:False|default_if_none:"0" }} ریال</td>
+        </tr>        
         <tr>
             <td colspan="3"><b>
                 (قیمت محصولات + مالیات) – تخفیف‌ها =
@@ -189,15 +281,15 @@
             <td colspan="3"><b>محاسبه فروش‌ها بر حسب نوع فروش :</b></td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌ها با دستگاه کارتخوان :</b></td>
+            <td colspan="3"><b><i class="fas fa-credit-card"></i> فروش کارتخوان:</b></td>
             <td>{{ total_pc_sales|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های نقدی :</b></td>
+            <td colspan="3"><b><i class="fas fa-money-bill-wave"></i> فروش نقدی:</b></td>
             <td>{{ total_cash_sales|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
-            <td colspan="3"><b>مجموع فروش‌های ترکیبی :</b></td>
+            <td colspan="3"><b><i class="fas fa-exchange-alt"></i> فروش ترکیبی:</b></td>
             <td>{{ total_mix_sales|intcomma:False|default_if_none:"0" }} ریال</td>
         </tr>
         <tr>
