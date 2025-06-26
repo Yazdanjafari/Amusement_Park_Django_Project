@@ -60,7 +60,6 @@ class TicketProductInline(admin.TabularInline):
 
 # RefundProduct Admin (this is for managing RefundProducts directly if needed)
 class TicketProductAdmin(admin.ModelAdmin):
-    list_per_page = 1000000000
     list_display = ('ticket', 'product', 'quantity', 'scanned')
     list_filter = ('ticket', 'product', 'scanned')
     
@@ -87,7 +86,6 @@ class TicketResource(resources.ModelResource):
         return ticket.j_create_at()
  
 class TicketAdminClass(ExportMixin, admin.ModelAdmin):
-    list_per_page = 1000000000
     resource_classes = [TicketResource]
     list_display = ('id', 'get_products', 'create_at', 'user', 'customer')
     list_filter = ('user', 'create_at')
@@ -120,7 +118,6 @@ class TicketAdminClass(ExportMixin, admin.ModelAdmin):
 
 # Customer Admin
 class CustomerAdmin(admin.ModelAdmin):
-    list_per_page = 1000000000
     list_display = ('id', 'first_name', 'last_name', 'city', 'phone', 'date_of_birth', 'j_first_purchase', 'j_last_purchase')
     search_fields = ('first_name', 'last_name', 'phone')
     list_filter = ('gender', 'date_of_birth', 'first_purchase', 'last_purchase', 'city')
@@ -177,7 +174,6 @@ class NotificationAdmin(admin.ModelAdmin):
 # _____________________________________________ MAIN SELLING SYSTEM _____________________________________________ #
 
 class TransactionAdminClass(admin.ModelAdmin):
-    list_per_page = 1000000000
     list_display = ('id', 'ticket', 'is_success', 'user', 'formatted_price', 'formatted_tax', 'formatted_discount', 'formatted_product_prices', 'type', 'get_products', 'j_create_at', 'formatted_create_at', 'desc')
     list_filter = ('is_success', ('create_at', DateTimeRangeFilter), 'create_at', 'user', 'type',)
     search_fields = ('id', 'desc', 'create_at')
@@ -379,7 +375,6 @@ class TransactionAdminClass(admin.ModelAdmin):
 
 # _____________________________________________ ReturnedTransaction _____________________________________________ #
 class RerecordingTransactionAdmin(admin.ModelAdmin):
-    list_per_page = 1000000000
     list_display = ('id', 'rerecording_transaction', 'type', 'is_success', 'j_create_at')  # Display these fields in the list view
     list_filter = ('type', 'is_success', 'create_at')  # Add filter options in the sidebar
     search_fields = ('rerecording_transaction__id', 'desc')  # Enable search for transaction code and description
@@ -403,7 +398,6 @@ class RerecordingTransactionAdmin(admin.ModelAdmin):
 
 # _____________________________________________ ReturnedTransaction _____________________________________________ #
 class ReturnedTransactionAdmin(admin.ModelAdmin):
-    list_per_page = 1000000000
     
     # Fields to be displayed in the admin list view
     list_display = ('id', 'transaction', 'type', 'desc', 'user', 'j_create_at')
